@@ -309,9 +309,11 @@ Next, we discuss the five types of logical nodes in our system: ledger, trading,
 Table~\ref{tab:logicalNodeTypes} shows an overview of these logical-node types.
 
 Every node has a pair of public and private keys as well as a digital certificate from the DSO, which proves the ownership of the public key.
-The nodes can use the key pair and the certificate prove their identity and to sign messages or transactions.
+The nodes can use the key pair and the certificate to prove their identity and to sign messages or transactions.
 A digital certificate may also specify the capabilities of a node.
 For example, the certificate of a prosumer node may specify the amount of energy that the node is allowed to trade for a single time interval.
+% physical node certificates may also describe roles that may be taken by the physical node
+% In addition to capabilities, the certificate may also describe roles, that is, logical nodes that can be implemented by the physical node.
 
 \subsubsection{Ledger nodes}
 Ledger nodes implement the distributed ledger by forming a peer-to-peer network with each other and reaching a consensus on the state of the ledger.
@@ -441,6 +443,66 @@ The ledger nodes accept and record a certificate-revocation transaction if
 \item signature is valid
 \item time interval is in the future.
 \end{itemize}
+
+
+\subsection{Privacy}
+
+Depending on the level of privacy that must be provided, the proposed system may be implemented in multiple ways.
+Here, we describe and discuss two approaches, called open and private systems, which are corner cases with respect to privacy.
+
+\subsubsection{Open System}
+This approach is aimed at cases when privacy within a microgrid is not a concern, and we can design the system to maximize its efficiency.
+\begin{itemize}
+\item We allow any physical node to become a trading or ledger node. This enhances reliability -- and potentially performance -- as the trading platform and distributed ledger can be implemented by a large set of physical nodes.
+\item The distributed ledger is public within the microgrid, which means that any node can query and receive the complete list of validated and recorded transactions.
+\end{itemize}
+% Advantages: easier accountability and reliability
+
+\subsubsection{Private System}
+This approach is aimed at cases when privacy is a crucial requirement, for example, when the DSO and the microgrid are legally required to provide privacy.
+% goal: hide any personal information
+\begin{itemize}
+\item We allow only a limited set of physical nodes to act as ledger or trading nodes. This constraint can be enforced through limiting the roles of a node within its certificate.
+\item The distributed ledger is private. When a node queries the status of the ledger, it will only receive 1) regulatory transactions, 2) aggregate information regarding expected consumption and production in future time steps, 3) list of transactions in which the node is involved.
+\end{itemize}
+To further enhance security, we can also enable the trading platform to mediate between prosumers who would like to trade energy. With the help of the trading platform, two prosumer nodes can create a financial transaction without learning each other's identity, and this transaction can then be submitted to the ledger by the trading platform.
+
+
+\subsection{Transaction Validation and Interpretation}
+
+Here, we discuss the validation and interpretation rules of financial and energy transactions.
+First, we detail the decision process of the ledger nodes that determines which transaction are valid and recorded in the distributed ledger.
+Second, we explain how the financial and energy transactions can be aggregated to determine the financial balance of a prosumer.
+
+Validation of Financial Transactions: Safety and Security
+
+First, the ledger nodes reach consensus on the order of the incoming transaction.
+Second, they reach consensus on validity of the ordered transaction.
+They determine the validity of the transactions one-by-one, making a decision for a transaction based on its contents and the contents of the valid preceding transactions.
+
+The certificate of each prosumer specifies the net amount of energy that the prosumer may trade for a single time step.
+More specifically, the certificate of prosumer $p$ states
+- net energy that prosumer $p$ may purchase $MaxNetBuy_p$
+- net energy that prosumer $p$ may sell $MaxNetSell_p$.
+
+To determine whether an incoming financial transaction is valid, the ledger nodes take the following steps:
+- let $T$ be the time step of the incoming transaction, and let $p_b$ and $p_s$ be the buying and selling prosumer, respectively;
+- let $NetBuy \gets 0$;
+- for every valid transaction on the ledger, if the tilmestep is $T$ and the buyer is $p_b$, then add the energy amount to $NetBuy$;
+- for every valid transaction on the ledger, if the tilmestep is $T$ and the seller is $p_b$, then subtract the energy amount from $NetBuy$;
+- let $NetSell \gets 0$;
+- for every valid transaction on the ledger, if the tilmestep is $T$ and the seller is $p_s$, then add the energy amount to $NetSell$;
+- for every valid transaction on the ledger, if the tilmestep is $T$ and the buyer is $p_s$, then subtract the energy amount from $NetSell$;
+- if $NetBuy \leq MaxNetBuy_{p_b}$, $NetSell \leq MaxNetSell_{p_s}$, signatures are valid, and $T$ is in the future, output valid;
+- else, output invalid.
+
+Aggregation of Financial and Energy Transactions: Financial Balance
+
+Even though prosumer nodes attempt to buy or sell the amount of energy that they will consumer or produce in advance, it is practically impossible to predict net consumption perfectly.
+Consequently, there will necessarily be an imbalance between the amount of energy bought in advance and the actual net consumption of the prosumer.
+This imbalance must be covered by the DSO, who will charge (or pay) the prosumer for the amount of energy consumed (or produced) beyond what was promised in the financial transactions.
+
+The amount that the DSO will charge (or pay) the prosumer is determined by the pricing policy of the DSO, which is set using regulatory transactions.
 
 
 \section{Related Work}
