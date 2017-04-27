@@ -470,36 +470,90 @@ To further enhance security, we can also enable the trading platform to mediate 
 
 \subsection{Transaction Validation and Interpretation}
 
-Here, we discuss the validation and interpretation rules of financial and energy transactions.
-First, we detail the decision process of the ledger nodes that determines which transaction are valid and recorded in the distributed ledger.
-Second, we explain how the financial and energy transactions can be aggregated to determine the financial balance of a prosumer.
+Here, we discuss the details of how to validate and interpret the financial and energy transactions.
+First, we detail how the ledger nodes determine which transactions are valid and recorded in the distributed ledger.
+Second, we explain how financial and energy transactions can be aggregated in order to determine the financial balance of a prosumer.
 
-Validation of Financial Transactions: Safety and Security
+\subsubsection{Validation of Financial Transactions: Safety and Security}
 
-First, the ledger nodes reach consensus on the order of the incoming transaction.
-Second, they reach consensus on validity of the ordered transaction.
-They determine the validity of the transactions one-by-one, making a decision for a transaction based on its contents and the contents of the valid preceding transactions.
+First, the ledger nodes reach consensus on the order of the transactions that have been submitted for recording on the ledger.
+Second, they reach consensus on the validity of the ordered transactions.
+They determine the validity of the transactions one-by-one, making a decision for each transaction based on its contents and the contents of the preceding valid transactions.
 
-The certificate of each prosumer specifies the net amount of energy that the prosumer may trade for a single time step.
-More specifically, the certificate of prosumer $p$ states
-- net energy that prosumer $p$ may purchase $MaxNetBuy_p$
-- net energy that prosumer $p$ may sell $MaxNetSell_p$.
+To ensure the safety and security of the microgrid, ledger nodes must be able to reject careless or malicious energy trading, which could destabilize the microgrid.
+To this end, the certificate of each prosumer specifies the net amount of energy that the prosumer may trade for a single time step.
+More specifically, the certificate of prosumer $p$ includes the following fields:
+\begin{itemize}
+\item $MaxNetBuy_p$: net energy that prosumer $p$ may purchase,
+\item $MaxNetSell_p$: net energy that prosumer $p$ may sell.
+\end{itemize}
 
-To determine whether an incoming financial transaction is valid, the ledger nodes take the following steps:
-- let $T$ be the time step of the incoming transaction, and let $p_b$ and $p_s$ be the buying and selling prosumer, respectively;
-- let $NetBuy \gets 0$;
-- for every valid transaction on the ledger, if the tilmestep is $T$ and the buyer is $p_b$, then add the energy amount to $NetBuy$;
-- for every valid transaction on the ledger, if the tilmestep is $T$ and the seller is $p_b$, then subtract the energy amount from $NetBuy$;
-- let $NetSell \gets 0$;
-- for every valid transaction on the ledger, if the tilmestep is $T$ and the seller is $p_s$, then add the energy amount to $NetSell$;
-- for every valid transaction on the ledger, if the tilmestep is $T$ and the buyer is $p_s$, then subtract the energy amount from $NetSell$;
-- if $NetBuy \leq MaxNetBuy_{p_b}$, $NetSell \leq MaxNetSell_{p_s}$, signatures are valid, and $T$ is in the future, output valid;
-- else, output invalid.
+To determine whether an incoming financial transaction is valid, a ledger node runs Algorithm~\ref{alg:validateFinancialTransaction}.
+%\begin{enumerate}
+%\item let $T$ be the time step of the incoming transaction, and let $p_b$ and $p_s$ be the buying and selling prosumers, respectively;
+%\item let $NetBuy \gets 0$;
+%\item for every valid transaction on the ledger, if the time step is $T$ and the buyer is $p_b$, then add the energy amount to $NetBuy$;
+%\item for every valid transaction on the ledger, if the time step is $T$ and the seller is $p_b$, then subtract the energy amount from $NetBuy$;
+%\item let $NetSell \gets 0$;
+%\item for every valid transaction on the ledger, if the time step is $T$ and the seller is $p_s$, then add the energy amount to $NetSell$;
+%\item for every valid transaction on the ledger, if the time step is $T$ and the buyer is $p_s$, then subtract the energy amount from $NetSell$;
+%\item if $NetBuy \leq MaxNetBuy_{p_b}$, $NetSell \leq MaxNetSell_{p_s}$, the signatures are valid, and $T$ is in the future, then output valid;
+%\item else, output invalid.
+%\end{enumerate}
 
-Aggregation of Financial and Energy Transactions: Financial Balance
+\begin{algorithm}[h!]
+\caption{Validation of Financial Transaction}
+\label{alg:validateFinancialTransaction}
+\begin{algorithmic}[1]
+\State{let $T$ be the time step of the incoming transaction, and let $p_b$ and $p_s$ be the buying and selling prosumers, respectively}
+\State{$NetBuy \gets 0$}
+\For{valid transaction on the ledger}
+  \If{time step is $T$ and buyer is $p_b$}
+    \State{$NetBuy \gets NetBuy + $ energy amount}
+  \EndIf
+  \If{time step is $T$ and seller is $p_b$}
+    \State{$NetBuy \gets NetBuy - $ energy amount}
+  \EndIf
+\EndFor
+\State{$NetSell \gets 0$}
+\For{valid transaction on the ledger}
+  \If{time step is $T$ and seller is $p_b$}
+    \State{$NetSell \gets NetSell + $ energy amount}
+  \EndIf
+  \If{time step is $T$ and buyer is $p_b$}
+    \State{$NetSell \gets NetSell - $ energy amount}
+  \EndIf
+\EndFor
+\If{$NetBuy \leq MaxNetBuy_{p_b}$, $NetSell \leq MaxNetSell_{p_s}$, the signatures are valid, and $T$ is in the future}
+  \State{\textbf{return} valid}
+\Else
+  \State{\textbf{return} invalid}
+\EndIf
+%
+%\State{$A \gets (\emptyset, \emptyset)$} 
+%\State{$\Loss^* \gets -\infty$}
+%\For{$b = 1, \ldots, B_A$}
+%  \For{$v \in V_A$}
+%    \For{$k \in \Gamma^{-1}(v)$}
+%      \State{$A' \gets A \cup \left(\{s\}, \left\{\hat{p}_{kv} = 1, \forall j \neq k : \hat{p}_{jv} = 0\right\}\right)$}
+%      \State{$\Loss' \gets \big[\left(1 - \Pr[\text{detect}]\right) \cdot \Loss(C, A)$}
+%      \State{\hspace{3.5em} $+ \Pr[\text{detect}] \cdot \min_M \max_R \Loss(C, A, M, R) \big]$}
+%      \If{$\Loss' \geq \Loss^*$}
+%        \State{$A^* \gets A'$}
+%        \State{$\Loss^* \gets \Loss'$}
+%      \EndIf
+%    \EndFor
+%    \State{$A \gets A^*$}
+%  \EndFor
+%\EndFor
+%\State{Output $A$}
+\end{algorithmic}
+\end{algorithm}
 
-Even though prosumer nodes attempt to buy or sell the amount of energy that they will consumer or produce in advance, it is practically impossible to predict net consumption perfectly.
-Consequently, there will necessarily be an imbalance between the amount of energy bought in advance and the actual net consumption of the prosumer.
+\subsubsection{Aggregation of Financial and Energy Transactions: Financial Balance}
+
+Even though prosumer nodes attempt to buy or sell in advance the amount of energy that they will consume or produce, it is practically impossible to predict their net consumption perfectly.
+Consequently, there will necessarily be an imbalance between the amount of energy bought (or sold) in advance and the actual net consumption (or production) of the prosumer.
 This imbalance must be covered by the DSO, who will charge (or pay) the prosumer for the amount of energy consumed (or produced) beyond what was promised in the financial transactions.
 
 The amount that the DSO will charge (or pay) the prosumer is determined by the pricing policy of the DSO, which is set using regulatory transactions.
