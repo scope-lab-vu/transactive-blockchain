@@ -159,6 +159,17 @@ Since the ledger is maintained by multiple ledger nodes, a key implementation re
 This consensus must be reached quickly, reliably, and securely even in the presence of erroneous or even malicious ledger nodes.
 We treat the consensus algorithm as a pluggable module, which can be based on blockchains with proof-of-stake consensus or Practical Byzantine Fault Tolerance algorithm~\cite{castro1999practical}.
 
+\subsection{Timing}
+
+\todo[inline]{
+\textbullet 
+look up timing assumptions from proposal, which are driven by control requirements
+\textbullet 
+map those timing assumptions to time interval in the transactive microgrid system
+\textbullet 
+discuss how supply and demand can be forecasted from energy trading between prosumers
+}
+
 \begin{figure}[h!]
 \begin{tikzpicture}[
   x=1.6cm,
@@ -193,28 +204,29 @@ We treat the consensus algorithm as a pluggable module, which can be based on bl
 \label{fig:timeline}
 \end{figure}
 
-Time is divided into fixed-length intervals, and energy trades are specified with respect to these intervals: financial transactions promise to consume or produce a certain amount of energy in a future interval, while energy transactions record the actual amount of energy produced or consumed in an earlier interval. 
-Figure~\ref{fig:timeline} shows a basic timeline of financial and energy transactions.
-
-\begin{figure*}
+\begin{figure*}[h!]
 \begin{tikzpicture}[
   x=1cm, 
   y=1cm,
-  nodeStyle/.style={fill=white, draw=black, drop shadow=black!30, minimum size=0.5cm}]
+  nodeStyle/.style={fill=white, draw=black, drop shadow=black!30, minimum size=0.5cm},
+  linkStyle/.style={<->, >=stealth, shorten >=1.5pt, shorten <=1.5pt},
+  batchStyle/.style={->, very thick, >=stealth},
+  braceStyle/.style={decorate, decoration={brace,amplitude=0.2cm}, yshift=-0.4cm},
+]
 
 % trading nodes
 \begin{scope}[xshift=1cm]
 
 \foreach \name/\x/\y in {{t1/0/0}, {t2/1/1.4}, {t3/2/0}}
-  \node [regular polygon, regular polygon sides=5, nodeStyle] (\name) at (\x,\y) {};
+  \node [nodeStyle, regular polygon, regular polygon sides=5] (\name) at (\x,\y) {};
 
-\foreach \name/\x/\y in {{tAnchorRight/2.5/0.7}}
+\foreach \name/\x/\y in {{tRight/2.5/0.7}}
   \coordinate (\name) at (\x,\y);
 
 \foreach \from/\to in {{t1/t2}, {t2/t3}, {t3/t1}}
-  \draw [<->, >=stealth, shorten >=1.5pt, shorten <=1.5pt] (\from) -- (\to);
+  \draw [linkStyle] (\from) -- (\to);
   
-\draw [decorate, decoration={brace,amplitude=0.2cm}, yshift=-0.4cm] (2.25, 0) -- (-0.25, 0) node [midway, below=0.2cm] {trading nodes};
+\draw [braceStyle] (2.25, 0) -- (-0.25, 0) node [midway, below=0.2cm] {trading nodes};
 \end{scope}
 
 % prosumer nodes
@@ -223,14 +235,13 @@ Figure~\ref{fig:timeline} shows a basic timeline of financial and energy transac
 \foreach \name/\x/\y in {{p1/0/0}, {p2/1.4/0}, {p3/0/1.4}, {p4/1.4/1.4}}
   \node [nodeStyle, rounded corners=0.1cm] (\name) at (\x,\y) {};
 
-\foreach \name/\x/\y in {{pAnchorLeft/-0.6/0.7}, {pAnchorRight/2/0.7}}
+\foreach \name/\x/\y in {{pLeft/-0.6/0.7}, {pRight/2/0.7}}
   \coordinate (\name) at (\x,\y);
 
 \foreach \from/\to in {{p1/p2}, {p1/p3}, {p1/p4}, {p2/p3}, {p2/p4}, {p3/p4}}
-  \draw [<->, >=stealth, shorten >=1.5pt, shorten <=1.5pt, dashed] (\from) -- (\to);
+  \draw [linkStyle, dashed] (\from) -- (\to);
   
-\draw [decorate, decoration={brace,amplitude=0.2cm}, yshift=-0.4cm] (1.65, 0) -- (-0.25, 0) node [midway, below=0.2cm] {prosumer nodes};
-
+\draw [braceStyle] (1.65, 0) -- (-0.25, 0) node [midway, below=0.2cm] {prosumer nodes};
 \end{scope}
 
 % smart-meter nodes
@@ -239,14 +250,13 @@ Figure~\ref{fig:timeline} shows a basic timeline of financial and energy transac
 \foreach \name/\x/\y in {{m1/0/0}, {m2/1.4/0}, {m3/0/1.4}, {m4/1.4/1.4}}
   \node [diamond, nodeStyle] (\name) at (\x,\y) {};
 
-\foreach \name/\x/\y in {{mAnchorRight/2/0.7}}
+\foreach \name/\x/\y in {{mRight/2/0.7}}
   \coordinate (\name) at (\x,\y);
 
 \foreach \from/\to in {{m1/m2}, {m1/m3}, {m1/m4}, {m2/m3}, {m2/m4}, {m3/m4}}
-  \draw [<->, >=stealth, shorten >=1.5pt, shorten <=1.5pt, dashed] (\from) -- (\to);
+  \draw [linkStyle, dashed] (\from) -- (\to);
   
-\draw [decorate, decoration={brace,amplitude=0.2cm}, yshift=0.4cm] (-0.25, 1.4) -- (1.65, 1.4) node [midway, above=0.2cm] {smart-meter nodes};
-
+\draw [braceStyle, yshift=0.8cm] (-0.25, 1.4) -- (1.65, 1.4) node [midway, above=0.2cm] {smart-meter nodes};
 \end{scope}
 
 % ledger nodes
@@ -255,38 +265,45 @@ Figure~\ref{fig:timeline} shows a basic timeline of financial and energy transac
 \foreach \name/\x/\y in {{l1/0/0}, {l2/1/1.4}, {l3/2/0}}
   \node [circle, nodeStyle] (\name) at (\x,\y) {};
 
-\foreach \name/\x/\y in {{lAnchorLeft/-0.5/0.7}, {lAnchorTopLeft/0/1.6}, {lAnchorTopRight/1.6/1.0}}
+\foreach \name/\x/\y in {{lLeft/-0.5/0.7}, {lTopLeft/0/1.6}, {lTopRight/1.6/1.0}}
   \coordinate (\name) at (\x,\y);
 
 \foreach \from/\to in {{l1/l2}, {l2/l3}, {l3/l1}}
   \draw [<->, >=stealth, shorten >=1.5pt, shorten <=1.5pt] (\from) -- (\to);
   
 \draw [decorate, decoration={brace,amplitude=0.2cm}, yshift=-0.4cm] (2.25, 0) -- (-0.25, 0) node [midway, below=0.2cm] {ledger nodes};
-
 \end{scope}
 
 % additional nodes
+\node [ellipse, nodeStyle] (dso) at (15cm, 3.1cm) {DSO node};
 
-\node [ellipse, nodeStyle] (dso) at (15.5cm, 3.0cm) {DSO node};
+\draw [->, >=stealth, bend right=10, shorten <=0.25cm, shorten >=0.5cm] (dso) to node [midway, above left=0cm, align=center] {regulatory\\[-0.25em]transactions} (lTopRight);
+\draw [<-, >=stealth, bend left=10, shorten <=0.25cm, shorten >=0.5cm] (dso) to node [midway, below right=0cm, align=center] {ledger status} (lTopRight);
 
-\draw [->, very thick, >=stealth, bend right=10, shorten <=0.5cm, shorten >=0.5cm] (dso) to node [midway, above left=0.0cm, align=center] {regulatory\\[-0.25em]transactions} (lAnchorTopRight);
-\draw [<-, very thick, >=stealth, bend left=10, shorten <=0.5cm, shorten >=0.5cm] (dso) to node [midway, below right=0.0cm, align=center] {ledger status} (lAnchorTopRight);
+\node [above=1.2cm of dso] (controller) {control algorithm}; 
+
+\draw [<-, >=stealth, bend right=10, shorten <=1.5pt] (dso) to node [midway, left=0.3cm, align=center] {measured and\\[-0.25em]expected load} (controller);
+\draw [->, >=stealth, bend left=10, shorten <=1.5pt] (dso) to node [midway, right=0.3cm, align=center] {control\\[-0.25em]signal} (controller);
 
 % connections between systems
-\draw [<-, very thick, >=stealth, bend left=5] ([yshift=0.0cm]tAnchorRight) to node [midway, above=0.1cm] {bids} ([yshift=0.0cm]pAnchorLeft);
-\draw [->, very thick, >=stealth, bend right=5] ([yshift=-0.4cm]tAnchorRight) to node [midway, below=0.1cm] {matches} ([yshift=-0.4cm]pAnchorLeft);
+\draw [batchStyle, <-, bend left=5] (tRight) to node [midway, above=0.1cm] {bids} (pLeft);
+\draw [batchStyle, bend right=5] ([yshift=-0.4cm]tRight) to node [midway, below=0.1cm] {matches} ([yshift=-0.4cm]pLeft);
 
-\draw [->, very thick, >=stealth, bend left=5] ([yshift=0.0cm]pAnchorRight) to node [midway, above=0.1cm, align=center] {financial\\[-0.25em]transactions} ([yshift=0.0cm]lAnchorLeft);
-\draw [<-, very thick, >=stealth, bend right=5] ([yshift=-0.4cm]pAnchorRight) to node [midway, below=0.1cm] {ledger status} ([yshift=-0.4cm]lAnchorLeft);
+\draw [batchStyle, bend left=5] (pRight) to node [midway, above=0.1cm, align=center] {financial\\[-0.25em]transactions} ([yshift=0cm]lLeft);
+\draw [batchStyle, <-, bend right=5] ([yshift=-0.4cm]pRight) to node [midway, below=0.1cm] {ledger status} ([yshift=-0.4cm]lLeft);
 
-\draw [->, very thick, >=stealth, bend left=15] ([yshift=0.2cm]mAnchorRight) to node [midway, above right=0.0cm, align=center] {energy\\[-0.25em]transactions} ([yshift=0.2cm]lAnchorTopLeft);
-\draw [<-, very thick, >=stealth, bend right=-5] ([yshift=-0.2cm]mAnchorRight) to node [midway, below left=0.0cm] {ledger status} ([yshift=-0.2cm]lAnchorTopLeft);
+\draw [batchStyle, bend left=15] ([yshift=0.2cm]mRight) to node [midway, above right=0cm, align=center] {energy\\[-0.25em]transactions} ([yshift=0.2cm]lTopLeft);
+\draw [batchStyle, <-, bend right=-5] ([yshift=-0.2cm]mRight) to node [midway, below left=0cm] {ledger status} ([yshift=-0.2cm]lTopLeft);
 
 \end{tikzpicture}
 \caption{High-level logical architecture of the trading platform and the distributed ledger. A physical node may implement multiple logical nodes.}
 \label{fig:logicalNodeArchitecture}
 \end{figure*}
 
+
+
+Time is divided into fixed-length intervals, and energy trades are specified with respect to these intervals: financial transactions promise to consume or produce a certain amount of energy in a future interval, while energy transactions record the actual amount of energy produced or consumed in an earlier interval. 
+Figure~\ref{fig:timeline} shows a basic timeline of financial and energy transactions.
 
 \begin{table*}
 \caption{Logical Node Types}
@@ -505,23 +522,25 @@ To determine whether an incoming financial transaction is valid, a ledger node r
 \caption{Validation of Financial Transaction}
 \label{alg:validateFinancialTransaction}
 \begin{algorithmic}[1]
+\Statex{\hspace{-\algorithmicindent}\textbf{Input:} incoming transaction, valid transactions on the ledger}
+\Statex{\hspace{-\algorithmicindent}\textbf{Output:} valid / invalid}
 \State{let $T$ be the time step of the incoming transaction, and let $p_b$ and $p_s$ be the buying and selling prosumers, respectively}
 \State{$NetBuy \gets 0$}
-\For{valid transaction on the ledger}
-  \If{time step is $T$ and buyer is $p_b$}
-    \State{$NetBuy \gets NetBuy + $ energy amount}
-  \EndIf
-  \If{time step is $T$ and seller is $p_b$}
-    \State{$NetBuy \gets NetBuy - $ energy amount}
-  \EndIf
-\EndFor
 \State{$NetSell \gets 0$}
 \For{valid transaction on the ledger}
-  \If{time step is $T$ and seller is $p_b$}
-    \State{$NetSell \gets NetSell + $ energy amount}
-  \EndIf
-  \If{time step is $T$ and buyer is $p_b$}
-    \State{$NetSell \gets NetSell - $ energy amount}
+  \If{time step is $T$}
+    \If{buyer is $p_b$}
+      \State{$NetBuy \gets NetBuy + $ energy amount}
+    \EndIf
+    \If{seller is $p_b$}
+      \State{$NetBuy \gets NetBuy - $ energy amount}
+    \EndIf
+    \If{seller is $p_s$}
+      \State{$NetSell \gets NetSell + $ energy amount}
+    \EndIf
+    \If{buyer is $p_s$}
+      \State{$NetSell \gets NetSell - $ energy amount}
+    \EndIf
   \EndIf
 \EndFor
 \If{$NetBuy \leq MaxNetBuy_{p_b}$, $NetSell \leq MaxNetSell_{p_s}$, the signatures are valid, and $T$ is in the future}
