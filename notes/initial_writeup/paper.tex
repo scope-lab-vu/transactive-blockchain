@@ -160,32 +160,21 @@ This consensus must be reached quickly, reliably, and securely even in the prese
 We treat the consensus algorithm as a pluggable module, which can be based on blockchains with proof-of-stake consensus or Practical Byzantine Fault Tolerance algorithm~\cite{castro1999practical}.
 
 \paragraph{Controller}
-The controller is responsible for stabilizing load within the microgrid and controlling it based on the load in the rest of the grid.
- 
-\todo[inline]{
-\textbullet 
-receives measured and expected load values from the ledger (as well as from the rest of the grid)
-\textbullet 
-produces a control signal that specifies the desired load for the future (may also include a tolerance level that specifies how much deviation from this load level is tolerable)
-\textbullet 
-may be implemented by the DSO node, as part of the RIAPS-based platform, or may be a legacy controller that interfaces with the DSO node
-}
+The controller is responsible for stabilizing load within the microgrid and controlling it based on the expected load in the rest of the grid.
+To this end, the controller first estimates the expected load in the microgrid based on outstanding energy trades on the ledger.
+By combining this estimate with the expected load in the remainder of the grid, the controller produces a control signal that specifies how much the load in the microgrid needs to be decreased or increased.
+Finally, based on this control signal, the controller updates the price policy for the microgrid to influence energy production and consumption.
+The controller may be implemented by the DSO node, as part of the RIAPS-based platform, or may be a legacy controller that interfaces with the DSO node.
 
 \input{figArchitecture.tex}
 
 \subsection{Timing}
 
-\todo[inline]{
-\textbullet 
-control signal from DSO may change at a 4 second interval
-\textbullet 
-we make 4 second the basic unit of timing in our platform
-(energy consumption and production are measured over 4 second units, prosumers may trade energy for durations that are multiples of 4 second units, etc.)
-\textbullet 
-map those timing assumptions to time interval in the transactive microgrid system
-\textbullet 
-discuss how supply and demand can be forecasted from energy trading between prosumers
-}
+Timing is a crucial part of our platform.
+For example, control signals specify how the load should change at certain points in time, energy trades specify when energy will be consumed or produced, etc.
+To facilitate processing signals and transactions, we divide time into fixed-length intervals, and specify points or periods in time using these discrete time intervals.
+The length of the time interval is determined by mapping the timing assumptions of the power system to our platform.
+In our implementation, for example, the default length of the time interval is 4 seconds, which corresponds to how frequently the control signal of the DSO changes.
 
 \begin{figure}[h!]
 \begin{tikzpicture}[
@@ -221,7 +210,7 @@ discuss how supply and demand can be forecasted from energy trading between pros
 \label{fig:timeline}
 \end{figure}
 
-Time is divided into fixed-length intervals, and energy trades are specified with respect to these intervals: financial transactions promise to consume or produce a certain amount of energy in a future interval, while energy transactions record the actual amount of energy produced or consumed in an earlier interval. 
+All transactions for energy trading are specified with respect to these discrete intervals: financial transactions promise to consume or produce a certain amount of energy in a future interval, while energy transactions record the actual amount of energy produced or consumed in an earlier interval. 
 Figure~\ref{fig:timeline} shows a basic timeline of financial and energy transactions.
 
 \begin{table*}
@@ -495,6 +484,17 @@ Consequently, there will necessarily be an imbalance between the amount of energ
 This imbalance must be covered by the DSO, who will charge (or pay) the prosumer for the amount of energy consumed (or produced) beyond what was promised in the financial transactions.
 
 The amount that the DSO will charge (or pay) the prosumer is determined by the pricing policy of the DSO, which is set using regulatory transactions.
+
+
+\subsection{Control Algorithm}
+
+\todo[inline]{
+\textbullet 
+receives measured and expected load values from the ledger (as well as from the rest of the grid)
+\textbullet 
+produces a control signal that specifies the desired load for the future (may also include a tolerance level that specifies how much deviation from this load level is tolerable)
+}
+
 
 
 \section{Related Work}
