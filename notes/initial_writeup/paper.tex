@@ -273,6 +273,7 @@ At the same time, it queries the active regulatory policies, such as energy pric
 Based on the estimated net demand and the active regulatory policies, it creates an energy trading bid, which it then submits to the trading platform.
 If the trading platform responds with one (or more) matching bid, then the prosumer node contacts the node that submitted a matching bid.
 The two nodes negotiate, agree on, create, and sign a new financial transaction, which they then submit to the distributed ledger.
+\todo[inline]{Extend: prosumer nodes may buy/sell electricity from/to DSO in advance. This is key to load prediction.}
 Once the ledger has verified and recorded the transaction, the electricity trade has been set up.
 
 \subsubsection{Smart-meter nodes}
@@ -296,6 +297,7 @@ Table~\ref{tab:transactionTypes} shows an overview of these transaction types.
 A financial transaction represents an agreement between two prosumers, called the seller and the buyer, who promise to respectively produce and consume a certain amount of energy in a future time interval.
 
 A financial transaction contains the following fields:
+\todo[inline]{Extend: prosumer nodes may buy/sell electricity from/to DSO in advance. This is key to load prediction.}
 \begin{itemize}
 \item \textbf{Seller ID}: Unique identifier of the selling prosumer node.
 \item \textbf{Buyer ID}: Unique identifier of the buying prosumer node.
@@ -426,6 +428,8 @@ To determine whether an incoming financial transaction is valid, a ledger node r
 %\item else, output invalid.
 %\end{enumerate}
 
+\todo[inline]{Extend: prosumer nodes may buy/sell electricity from/to DSO in advance. This is key to load prediction.}
+
 \begin{algorithm}[h!]
 \caption{Validation of Financial Transaction}
 \label{alg:validateFinancialTransaction}
@@ -479,6 +483,8 @@ To determine whether an incoming financial transaction is valid, a ledger node r
 
 \subsubsection{Aggregation of Financial and Energy Transactions: Financial Balance}
 
+\todo[inline]{Firstly, the prosumer must pay (or be paid) for the financial transactions recorded on the ledger in either a fiat currency (e.g., US dollars) or a cryptocurrency.}
+
 Even though prosumer nodes attempt to buy or sell in advance the amount of energy that they will consume or produce, it is practically impossible to predict their net consumption perfectly.
 Consequently, there will necessarily be an imbalance between the amount of energy bought (or sold) in advance and the actual net consumption (or production) of the prosumer.
 This imbalance must be covered by the DSO, who will charge (or pay) the prosumer for the amount of energy consumed (or produced) beyond what was promised in the financial transactions.
@@ -495,6 +501,7 @@ receives measured and expected load values from the ledger (as well as from the 
 produces a control signal that specifies the desired load for the future (may also include a tolerance level that specifies how much deviation from this load level is tolerable)
 }
 
+\todo[inline]{Figure: - data flow between nodes - control signals}
 
 
 \section{Related Work}
