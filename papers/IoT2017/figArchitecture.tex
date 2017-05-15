@@ -1,0 +1,96 @@
+\begin{figure*}
+\begin{tikzpicture}[
+  x=1cm, 
+  y=1cm,
+  nodeStyle/.style={fill=white, draw=black, drop shadow=black!30, minimum size=0.5cm},
+  linkStyle/.style={<->, >=stealth, shorten >=1.5pt, shorten <=1.5pt},
+  batchStyle/.style={->, very thick, >=stealth},
+  braceStyle/.style={decorate, decoration={brace,amplitude=0.2cm}, yshift=-0.4cm},
+]
+
+% trading nodes
+\begin{scope}[xshift=1cm]
+
+\foreach \name/\x/\y in {{t1/0/0}, {t2/1/1.4}, {t3/2/0}}
+  \node [nodeStyle, regular polygon, regular polygon sides=5] (\name) at (\x,\y) {};
+
+\foreach \name/\x/\y in {{tRight/2.5/0.7}}
+  \coordinate (\name) at (\x,\y);
+
+\foreach \from/\to in {{t1/t2}, {t2/t3}, {t3/t1}}
+  \draw [linkStyle] (\from) -- (\to);
+  
+\draw [braceStyle] (2.25, 0) -- (-0.25, 0) node [midway, below=0.2cm] {trading nodes};
+\end{scope}
+
+% prosumer nodes
+\begin{scope}[xshift=6cm]
+
+\foreach \name/\x/\y in {{p1/0/0}, {p2/1.4/0}, {p3/0/1.4}, {p4/1.4/1.4}}
+  \node [nodeStyle, rounded corners=0.1cm] (\name) at (\x,\y) {};
+
+\foreach \name/\x/\y in {{pLeft/-0.6/0.7}, {pRight/2/0.7}}
+  \coordinate (\name) at (\x,\y);
+
+\foreach \from/\to in {{p1/p2}, {p1/p3}, {p1/p4}, {p2/p3}, {p2/p4}, {p3/p4}}
+  \draw [linkStyle, dashed] (\from) -- (\to);
+  
+\draw [braceStyle] (1.65, 0) -- (-0.25, 0) node [midway, below=0.2cm] {prosumer nodes};
+\end{scope}
+
+% smart-meter nodes
+\begin{scope}[xshift=6cm, yshift=2.7cm]
+
+\foreach \name/\x/\y in {{m1/0/0}, {m2/1.4/0}, {m3/0/1.4}, {m4/1.4/1.4}}
+  \node [diamond, nodeStyle] (\name) at (\x,\y) {};
+
+\foreach \name/\x/\y in {{mRight/2/0.7}}
+  \coordinate (\name) at (\x,\y);
+
+\foreach \from/\to in {{m1/m2}, {m1/m3}, {m1/m4}, {m2/m3}, {m2/m4}, {m3/m4}}
+  \draw [linkStyle, dashed] (\from) -- (\to);
+  
+\draw [braceStyle, yshift=0.8cm] (-0.25, 1.4) -- (1.65, 1.4) node [midway, above=0.2cm] {smart-meter nodes};
+\end{scope}
+
+% ledger nodes
+\begin{scope}[xshift=11.5cm]
+
+\foreach \name/\x/\y in {{l1/0/0}, {l2/1/1.4}, {l3/2/0}}
+  \node [circle, nodeStyle] (\name) at (\x,\y) {};
+
+\foreach \name/\x/\y in {{lLeft/-0.5/0.7}, {lTopLeft/0/1.6}, {lTopRight/1.6/1.0}}
+  \coordinate (\name) at (\x,\y);
+
+\foreach \from/\to in {{l1/l2}, {l2/l3}, {l3/l1}}
+  \draw [<->, >=stealth, shorten >=1.5pt, shorten <=1.5pt] (\from) -- (\to);
+  
+\draw [decorate, decoration={brace,amplitude=0.2cm}, yshift=-0.4cm] (2.25, 0) -- (-0.25, 0) node [midway, below=0.2cm] {ledger nodes};
+\end{scope}
+
+% additional nodes
+\node [ellipse, nodeStyle] (dso) at (15cm, 3.1cm) {DSO node};
+
+\draw [->, >=stealth, bend right=10, shorten <=0.25cm, shorten >=0.5cm] (dso) to node [midway, above left=0cm, align=center] {regulatory\\[-0.25em]transactions} (lTopRight);
+\draw [<-, >=stealth, bend left=10, shorten <=0.25cm, shorten >=0.5cm] (dso) to node [midway, below right=0cm, align=center] {ledger status} (lTopRight);
+
+\node [above=1.2cm of dso] (controller) {control algorithm}; 
+
+\draw [<-, >=stealth, bend right=10, shorten <=1.5pt] (dso) to node [midway, left=0.3cm, align=center] {measured and\\[-0.25em]expected load} (controller);
+\draw [->, >=stealth, bend left=10, shorten <=1.5pt] (dso) to node [midway, right=0.3cm, align=center] {control\\[-0.25em]signal} (controller);
+
+% connections between systems
+\draw [batchStyle, <-, bend left=5] (tRight) to node [midway, above=0.1cm] {bids} (pLeft);
+\draw [batchStyle, bend right=5] ([yshift=-0.4cm]tRight) to node [midway, below=0.1cm] {matches} ([yshift=-0.4cm]pLeft);
+
+\draw [batchStyle, bend left=5] (pRight) to node [midway, above=0.1cm, align=center] {financial\\[-0.25em]transactions} ([yshift=0cm]lLeft);
+\draw [batchStyle, <-, bend right=5] ([yshift=-0.4cm]pRight) to node [midway, below=0.1cm] {ledger status} ([yshift=-0.4cm]lLeft);
+
+\draw [batchStyle, bend left=15] ([yshift=0.2cm]mRight) to node [midway, above right=0cm, align=center] {energy\\[-0.25em]transactions} ([yshift=0.2cm]lTopLeft);
+\draw [batchStyle, <-, bend right=-5] ([yshift=-0.2cm]mRight) to node [midway, below left=0cm] {ledger status} ([yshift=-0.2cm]lTopLeft);
+
+\end{tikzpicture}
+\caption{High-level logical architecture of the trading platform and the distributed ledger. A physical node may implement multiple logical nodes.}
+\label{fig:logicalNodeArchitecture}
+\end{figure*}
+
