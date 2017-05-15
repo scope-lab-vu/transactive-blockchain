@@ -92,11 +92,11 @@
 % Paper metadata (use plain text, for PDF inclusion and later
 % re-using, if desired).  Use \emtpyauthor when submitting for review
 % so you remain anonymous.
-\def\plaintitle{Private Blockchains for Transactive Energy}
+\def\plaintitle{Private Blockchains for Transactive Energy:\\Security, Privacy, and Safety}
 \def\plainauthor{First Author, Second Author, Third Author}
 \def\emptyauthor{}
-\def\plainkeywords{Transactive microgrid; blockchain; privacy; security.}
-\def\plaingeneralterms{} % TODO!
+\def\plainkeywords{Internet of Things; blockchain; transactive energy; privacy; security; transactive microgrid.}
+\def\plaingeneralterms{Design, Human Factors, Reliability, Security} % TODO: revise
 
 % llt: Define a global style for URLs, rather that the default one
 \makeatletter
@@ -171,10 +171,8 @@ We develop a set of powerful and novel distributed market middleware services th
 \end{abstract}
 
 % TODO!
-\category{H.5.m.}{Information Interfaces and Presentation
-  (e.g. HCI)}{Miscellaneous} \category{See
-  \url{http://acm.org/about/class/1998/} for the full list of ACM
-  classifiers. This section is required.}{}{}
+\category{K.6.m}{Miscellaneous}{Security}
+\category{D.4.7}{Organization and Design}{Distributed systems}
 
 \keywords{\plainkeywords}
 
@@ -184,6 +182,7 @@ We develop a set of powerful and novel distributed market middleware services th
 \section{Architecture Overview}
 
 \begin{figure}[h!]
+\center
 \begin{tikzpicture}[
   x=1.04cm,
   nodeStyle/.style={rounded corners=0.1cm, drop shadow={shadow xshift=0.04cm, shadow yshift=-0.05cm, fill=black}}]
@@ -243,6 +242,7 @@ The length of the time interval is determined by mapping the timing assumptions 
 In our implementation, for example, the default length of the time interval is 4 seconds, which corresponds to how frequently the control signal of the DSO changes.
 
 \begin{figure}[h!]
+\center
 \begin{tikzpicture}[
   x=1.6cm,
   font=\small,
@@ -280,9 +280,10 @@ All transactions for energy trading are specified with respect to these discrete
 Figure~\ref{fig:timeline} shows a basic timeline of financial and energy transactions.
 
 \begin{table*}
+\center
 \caption{Logical Node Types}
 \label{tab:logicalNodeTypes}
-\begin{tabular}{|c||l|l|l|}
+\begin{tabular}{|c||p{4.6cm}|l|l|}
 \hline
 \textbf{Type} & \textbf{Function} & \textbf{Cardinality} & \textbf{Physical node} \\
 \hline\hline
@@ -319,9 +320,10 @@ For example, the trading platform does not have to store history in a reliable a
 Consequently, trading nodes can be implemented by computationally less capable physical nodes (e.g., with limited storage).
 
 \begin{table*}
+\center
 \caption{Transaction Types}
 \label{tab:transactionTypes}
-\begin{tabular}{|c||l|l|p{5.8cm}|}
+\begin{tabular}{|c||l|l|p{5cm}|}
 \hline
 \textbf{Type} & \textbf{Creator} & \textbf{Contents} & \textbf{Validity} \\
 \hline\hline
