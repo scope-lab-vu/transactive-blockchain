@@ -167,7 +167,7 @@
 \maketitle
 
 \begin{abstract}
-We develop a set of powerful and novel distributed market middleware services that enable local prosumers (a consumer with renewable generation capability) to trade with each other, as well as to bid for power resources, while following the suggested timing constraints.
+We design a secure and efficient trading platform for transactive microgrids, which enables prosumers to trade energy without sacrificing their privacy.
 \end{abstract}
 
 % TODO!
@@ -178,6 +178,130 @@ We develop a set of powerful and novel distributed market middleware services th
 
 \section{Introduction}
 
+In order to take advantage of these capabilities, electric grids need to become more decentralized.
+
+%However, simply broadcasting these bids would be catastrophic for privacy, since all the prosumers within a microgrid would learn of each others' expected consumption and production.
+
+Transactive energy may pose a much greater threat to prosumers' privacy than smart metering.
+\begin{itemize}
+\item Firstly, since prosumers may purchase energy from each other in a transactive microgrid, transactions may inadvertently reveal the prosumers' detailed energy usage patterns to other prosumers within the microgrid.
+Addressing this issue in a decentralized trading platform is quite challenging as it requires hiding the identities of trade partners from each other.
+In comparison, secure smart metering reveals the prosumers' energy usage patterns only to the provider. 
+\item Secondly, transactions may reveal the future energy usage of a prosumer, which could be used to infer private information.
+For example, a smart home may know that its inhabitants will go out in the evening (e.g., by looking at their calendar), and it may trade energy futures accordingly in the morning.
+Without adequate privacy measures, these trades may reveal to other prosumers in the microgrid that the inhabitants will not be at home later.
+Note that energy futures, whose delivery may happen several hours after when the transaction is made, can play a very important role in predicting and controlling microgrid load.
+In comparison, smart metering reveals only current (and past) usage.
+\item Thirdly, transactions and energy usage data in a transactive microgrid are much richer source of information than the simple energy usage data collected by smart meters.
+More specifically, the information available in a transactive microgrid is a superset of what is available from smart metering, and it may be used to infer personal information, such as risk propensity and financial standing.
+\end{itemize}
+
+\section{Solution Approaches}
+
+\begin{figure*}[h]
+\center
+\begin{tikzpicture}[x=3.5cm, y=2cm, font=\small,
+  system/.style={draw, align=center, rounded corners=0.1cm, fill=black!5},
+  entity/.style={draw, align=center, rounded corners=0.1cm},
+  asset/.style={midway, align=center},
+  transfer/.style={->, >=stealth, shorten <=0.05cm, shorten >=0.05cm},
+]
+\node[entity] (smartmeter) at (0, 1) {smart\\meter};
+\node[entity] (prosumer1) at (1, 1) {prosumer};
+\node[system] (mixing1) at (2, 1) {mixing\\service};
+\node[entity] (prosumer2) at (3, 1) {prosumer\\(alternative ID)};
+\node[system] (bidstorage) at (4, 1) {bid\\storage};
+\node[entity] (partner) at (4, 0) {other prosumer};
+\node[entity] (prosumer3) at (3, 0) {prosumer\\(alternative ID)};
+\node[system] (mixing2) at (2, 0) {mixing\\service};
+\node[entity] (prosumer4) at (1, 0) {prosumer\\(second alternative ID)};
+
+
+\draw[transfer] (smartmeter) -- node [asset, above] {energy\\asset} (prosumer1);
+\draw[transfer] (prosumer1) -- node [asset, above] {energy\\asset} (mixing1);
+\draw[transfer] (mixing1) -- node [asset, above] {energy\\asset} (prosumer2);
+\draw[transfer, dashed] (prosumer2) -- node [asset, above] {sell\\bid} (bidstorage);
+\draw[transfer, dashed] (bidstorage) -- node [asset, right] {sell\\bid} (partner);
+\draw[transfer, bend right] (partner) to node [asset, below] {financial\\asset} (prosumer3);
+\draw[transfer] (prosumer2) -- node [asset, above right] {energy\\asset} (partner);
+\draw[transfer] (prosumer3) -- node [asset, below] {financial\\asset} (mixing2);
+\draw[transfer] (mixing2) -- node [asset, below] {financial\\asset} (prosumer4);
+\draw[transfer] (prosumer4) -- node [asset, below left] {financial\\asset} (smartmeter);
+\end{tikzpicture}
+\caption{Simplified overview of transactions for selling energy. Note that in order to prevent de-anonymization, a prosumer should use multiple addresses for mixing.}
+\end{figure*}
+
+
+\subsection{Communication Anonymity}
+Firstly, we must provide an anonymous communication layer, on which we can build an anonymous trading platform.
+Without this communication layer, bids and transactions could be easily de-anonymized based on the network identifiers of the sources (e.g., IP or MAC addresses).
+
+We can employ well-known and widely used techniques for anonymous communication, such as \emph{onion routing}.
+To build an onion network, the smart meters, inverters, and other devices can act as onion routers, and the list of onion routers in a microgrid can be published on a private blockchain.
+In our first implementation, we can use the free and open-source Tor software with private Directory Authorities.
+% ritter.vg: "run your own tor network"
+% https://ritter.vg/blog-run_your_own_tor_network.html
+
+\subsection{Transaction Anonymity}
+We must provide prosumers with the ability to create and publish transactions anonymously.
+More specifically, prosumers should be able to purchase or sell energy without revealing their identity; however, these transaction must also be verifiable and enforceable.
+
+We may achieve this goal using multiple approaches for blockchain transaction anonymity:
+\begin{itemize}
+\item Mixing services (also known as tumblers) mix potentially identifiable assets on a blockchain with others, thereby preventing tracing individual assets back to their original source. 
+In our case, assets to be mixed can include virtual balances of both fiat currencies and energy.
+\item Cryptographic anonymity for transactions is provided, for example, by Zerocoin~\cite{miers2013zerocoin}. Similarly to mixing service, Zerocoin can prevent tracing assets on a blockchain.
+\end{itemize}
+Using the above techniques, we can enable prosumers to trade energy anonymously (i.e., without revealing their true identities), but at the same time prevent them from altering their energy or financial balances without a valid transaction.
+
+However, 
+
+\subsection{Bidding Anonymity}
+Finally, we must provide prosumers with the ability to publish energy buy and sell bids anonymously.
+To this end, we create a storage for anonymous bids that is readable by all the prosumers in the microgrid.
+Any prosumer may submit a bid to this storage; however, in order to do so, they must provide a zero-knowledge proof of owning the assets that are to be traded:
+\begin{itemize}
+\item To submit an energy sell bid, the prosumer must prove that it owns an energy production asset on the chain.
+\item To submit an energy buy bid, the prosumer must prove that it own an energy consumption asset as well as financial assets on the chain.
+\end{itemize}
+
+
+\section{Related Work}
+
+\subsection{Smart Grid and Meter Privacy}
+
+
+
+\subsection{Blockchain Technology}
+
+Microsoft offers Blockchain as a Service (BaaS) on Azure.
+Project Bletchley is Microsoft's architectural approach to building an Enterprise Consortium Blockchain Ecosystem, introducing two new concepts: blockchain middleware and cryptlets~\cite{gray2016introducing}.
+
+Hyperledger Fabric is a platform for distributed ledger solutions, which was designed to support pluggable implementations of different components~\cite{hyperledger2017fabric}.
+
+Interledger is a protocol for payments across payment systems, which enables anyone with accounts on two ledgers to create
+a connection between them~\cite{thomas_protocol}.
+
+Bitcoin Lightning Network is decentralized system, in which transactions are sent over a network of micropayment channels whose transfer of value occurs off-blockchain~\cite{poon2016bitcoin}.
+
+\url{https://geli.net/residential/}
+\url{https://www.greentechmedia.com/articles/read/geli-raises-7m-to-take-energy-storage-software-to-the-next-level}
+
+
+
+
+
+
+% BALANCE COLUMNS
+\balance{}
+
+% REFERENCES FORMAT
+% References must be the same font size as other body text.
+\bibliographystyle{SIGCHI-Reference-Format}
+\bibliography{references}
+
+\clearpage
+\appendix
 
 \section{Architecture Overview}
 
@@ -570,30 +694,6 @@ produces a control signal that specifies the desired load for the future (may al
 }
 
 \todo[inline]{Figure: - data flow between nodes - control signals}
-
-
-\section{Related Work}
-
-Microsoft offers Blockchain as a Service (BaaS) on Azure.
-Project Bletchley is Microsoft's architectural approach to building an Enterprise Consortium Blockchain Ecosystem, introducing two new concepts: blockchain middleware and cryptlets~\cite{gray2016introducing}.
-
-Hyperledger Fabric is a platform for distributed ledger solutions, which was designed to support pluggable implementations of different components~\cite{hyperledger2017fabric}.
-
-Interledger is a protocol for payments across payment systems, which enables anyone with accounts on two ledgers to create
-a connection between them~\cite{thomas_protocol}.
-
-Bitcoin Lightning Network is decentralized system, in which transactions are sent over a network of micropayment channels whose transfer of value occurs off-blockchain~\cite{poon2016bitcoin}.
-
-\url{https://geli.net/residential/}
-\url{https://www.greentechmedia.com/articles/read/geli-raises-7m-to-take-energy-storage-software-to-the-next-level}
-
-% BALANCE COLUMNS
-\balance{}
-
-% REFERENCES FORMAT
-% References must be the same font size as other body text.
-\bibliographystyle{SIGCHI-Reference-Format}
-\bibliography{references}
 
 \end{document}
 
