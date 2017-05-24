@@ -1,0 +1,88 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+
+% Select what to do with command \comment:  
+\newcommand{\comment}[1]{}  %comment not showed
+%\newcommand{\comment}[1]
+%{\par {\bfseries \color{blue} #1 \par}} %comment showed
+
+%opening
+\title{}
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Introduction 
+% A. Briefly introduce significance of subject matter 
+% B. Thesis statement 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+Distributed power systems require a whole host of boht physical and electronic components to all work to allow for a marketplace to exist that allows for power distribution transactions to occur between the power company and users, but between users. In this paper we focus on the use of different blockchain implementations targetting this domain and discuss which we believe provides a better a distributed ledger.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Brief explanation of Work 1 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Ehtereum}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Brief explanation of Work 2 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Hyperledger Fabric}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Comparative Points
+%    Relation of point to first work
+%    Relation of point to second work
+%    Use specific examples from the readings and texts to support your argument
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Concensus}
+
+Determining concensus in a distributed system such as a ledger is one of the key advances that Bitcoin\comment{find good citation} contributed. However, Bitcoin's concensus methodology Proof-of-Work, is computationally intensive and prevents smaller more specialized ledgers from existing because it would allow for easy 50\%+1 attacks. Hyperledger provides an alternative to proof-of-work called proof-of-stake, where peers in the network are known stakeholders and are assumed to be good actors by default. Peers/Stakeholders are believed to be responsible/good actors because they would be punished by some kind of mechanism outside of the concensus algorithm, such as the fining of money, removal from authorized distributed ledger user list, etc. 
+
+
+\section{System Complexity}
+
+Ethereum when compared to Hyperledger is a much more robust ecosystem of capabilities. However, this robustness comes at the cost of additional system complexity. This complexity isn't just in the size of the codebase required to be maintained, it also includes the additional complexity of managing Ethereum specific currency tokens: Eth. Ethereum lists 4 drawbacks with the Bitcoin scripting language UTXO that is used to process transactions and why it prefers its implementation of Smart Contracts: Lack of Turing-completeness, Value-blindness, Lack of state, and Blockchain-blindness\cite{Buterin2014}. Throughout this paper we discuss each one of these and explain why their drawbacks of bitcoin's implementation aren't applicable in a domain specific usage such as a distributed energy marketplace.
+
+\subsection{Authorization Tokens}
+
+Blockchain is not a new technology or technique, but instead a combination of existing techniques and technologies to provide a distributed ledger. Ethereum requies the use of Ethereum specific tokens(cryptocurrency) to allow transactional edits to the distributed ledger to occur. Ethereum calls these tokens Ether and can be subdivided on a as-needed basis. However, Hyperledger doesn't require any authorization token to allow edits to the distributed ledger. Hyperledger's approach is more direct and doesn't require the pre-propagation of any sort of authorization token(s) to the nodes in the network before operations can begin when using the proof-of-stake concensus model. This cuts down on operational complexity and encourages the use of ledger as a distributed logging platform at all levels since there is no 'cost' for each log statement. A counter-argument can be made that Ethereum's approach of authorization tokens makes developers more selfconscious about what information they deem 'worthy' of logging to the distributed ledger. However, in the domain of distributed power grids, it is our belief that the scope of potential related transactions is small enough to encourage, indead of discourage, developers to make use of the distributed ledger. Ethereum's 'Value-blindness' and 'Blockchain-blindness' drawbacks are both eliminated with the usage of a system without authorization tokens.  
+
+
+\subsection{Code Complexity}
+
+Ethereum contains an entire virtual machine in which Turing-Complete Smart Contracts are ran to make modifications of the Ethereum blockchain. Whereas Hyperledger is only a library that allows for simple TCP/IP connections to be made between hosts and for custom written code to be executed to handle transactions. A case can be made that Ethereum's Smart-Contracts provide a faster turnaround when adding new features to the system. However, this comes with a significant increase in complexity of the blockchain ledger-portion of any system.
+
+
+\section{Security}
+
+The nature of the Turing-Complete virtual machine that Ethereum runs to process the transactions on the ledger inherently adds another layer of potential security vulnerabilities that need to be addressed before, during, and after deployment. The RIAPS platform already provides a means for deployed nodes to recieve updates to the code they are running. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Conclusion
+%   Restate thesis
+%   Brief summary of how you proved your argument
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+
+
+
+\bibliography{blockchain} 
+\bibliographystyle{ieeetr}
+
+\end{document}
