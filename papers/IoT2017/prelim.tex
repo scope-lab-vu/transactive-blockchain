@@ -1,0 +1,40 @@
+\section{Preliminaries and Requirements}
+
+\subsection{Transactive Microgrid}
+
+Here, we describe a basic system model for a transactive microgrid based on a distributed ledger, such as a blockchain.
+% - smart meters
+% - distributed ledger, such as blockchain
+
+\subsubsection{Distributed Ledger}
+The distributed ledger stores transactions that specify energy trades, change regulatory policies for the microgrid, etc.
+Since the ledger is maintained by multiple ledger nodes, a key implementation requirement is reaching consensus on which transactions are valid and stored in the ledger.
+This consensus must be reached quickly, reliably, and securely even in the presence of erroneous or even malicious ledger nodes.
+We treat the consensus algorithm as a pluggable module, which can be based on blockchains with proof-of-stake consensus or Practical Byzantine Fault Tolerance algorithm~\cite{castro1999practical}.
+
+\subsubsection{Bid Storage Service}
+Although individual prosumers trade energy with each other, for the sake of scalability, we need a service that enables prosumers to find trade partners.
+By providing a storage service for buy and sell bids, we relieve prosumer nodes from communicating with all potential trade partners.
+In addition to receiving and storing bids from prosumers, the bid storage service can also find matches and notify prosumers of the opportunity to make an energy trade.
+Even though the bid storage appears to the nodes as one entity, for the sake of scalability and reliability, it can be implemented in a distributed manner, using multiple nodes.
+
+\subsubsection{Microgrid Controller}
+The microgrid controller is responsible for stabilizing load within the microgrid and controlling it based on the expected load in the rest of the grid.
+To this end, the controller first estimates the expected load in the microgrid based on buy and sell bids in the bid storage as well as on outstanding energy trades in the ledger.
+By combining this estimate with the expected load in the remainder of the grid, the controller produces a control signal that specifies how much the microgrid load should be decreased or increased.
+Finally, based on this control signal, the controller updates the price policy for the microgrid to influence energy production and consumption.
+
+
+\subsection{Requirements}
+
+\subsubsection{Security}
+Prosumers (or outside attackers) should not be able to tamper with measured energy production and consumption values, with financial balances, with other prosumers' bids.
+
+\subsubsection{Safety}
+A careless or malicious prosumer may destabilize the grid by promising to produce (or consume) a large amount of energy, but failing to deliver.
+Trades which are unlikely to be delivered and would result in a gap between actual production and demand should be prevented.
+
+\subsubsection{Privacy} 
+Energy trading should not compromise the privacy of prosumers.
+More specifically, prosumers' private information, including energy consumption and production values, are available only to the DSO.
+

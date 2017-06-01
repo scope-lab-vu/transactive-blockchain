@@ -1,0 +1,40 @@
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Smart Grid and Meter Privacy}
+
+% http://ieeexplore.ieee.org/abstract/document/5054916/
+McDaniel and McLaughlin discuss privacy challenges in smart grids~\cite{mcdaniel2009security}.
+
+% https://arxiv.org/pdf/1108.2234.pdf
+% https://pdfs.semanticscholar.org/cdf8/a5b6256823bca38a1d2347ab36f8e4a2ca94.pdf
+Rajagopalan et al.\ use tools from information theory to present a framework, which abstracts both the privacy and the utility requirements of smart meter data~\cite{rajagopalan2011smart,sankar2013smart}. Their framework leads to a novel privacy-utility tradeoff problem with minimal assumptions. %, which is tractable.
+
+% http://www.comm.toronto.edu/~akhisti/sm.pdf
+Varodayan and Khisti study using rechargeable battery for partially protecting the privacy of information contained in a household's electrical load profile~\cite{varodayan2011smart}.
+They show that stochastic battery policies may leak 26\% less information than a best-effort policy, holds the output load constant whenever possible.
+
+% https://www.researchgate.net/profile/Georgios_Kalogridis/publication/224189766_Smart_Grid_Privacy_via_Anonymization_of_Smart_Metering_Data/links/541169510cf2b4da1bec4193.pdf
+Efthymiou and Kalogridis describe a method for securely anonymizing frequent electrical metering data sent by a smart meter~\cite{efthymiou2010smart}. 
+Their approach is based on the observation that frequent metering data may be required by an energy distribution network for operational reasons, but it may not necessarily need to be attributable to a specific smart meter.
+The authors describe a method that provides a third-party escrow mechanism for authenticated anonymous meter readings, which are difficult to associate with particular smart meter.
+
+% https://arxiv.org/pdf/1305.0735.pdf
+Tan et al.\ study privacy in a smart metering system from an information theoretic perspective in the presence of energy harvesting and storage units~\cite{tan2013increasing}. 
+They show that energy harvesting provides increased privacy by diversifying the energy source, while a storage device can be used to increase both energy efficiency and privacy. 
+They show that there exists a trade-off between the information leakage rate and the wasted energy rate, and study the impact of the energy harvesting rate and the size of the storage device on this trade-off.
+
+\subsection{Blockchain Technology}
+
+Microsoft offers Blockchain as a Service (BaaS) on Azure.
+Project Bletchley is Microsoft's architectural approach to building an Enterprise Consortium Blockchain Ecosystem, introducing two new concepts: blockchain middleware and cryptlets~\cite{gray2016introducing}.
+
+Hyperledger Fabric is a platform for distributed ledger solutions, which was designed to support pluggable implementations of different components~\cite{hyperledger2017fabric}.
+
+Interledger is a protocol for payments across payment systems, which enables anyone with accounts on two ledgers to create
+a connection between them~\cite{thomas_protocol}.
+
+Bitcoin Lightning Network is decentralized system, in which transactions are sent over a network of micropayment channels whose transfer of value occurs off-blockchain~\cite{poon2016bitcoin}.
+
+\url{https://geli.net/residential/}
+\url{https://www.greentechmedia.com/articles/read/geli-raises-7m-to-take-energy-storage-software-to-the-next-level}

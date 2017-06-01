@@ -1,0 +1,28 @@
+\section{Introduction}
+
+% electric grid is changing: renewables, storage capacity, etc. -> prosumers
+
+In order to take advantage of these capabilities, electric grids need to become more decentralized.
+% what are the advantages of decentralization?
+
+% transactive microgrid
+
+% there are pilot studies, however, providing privacy is an open problem
+For example, the Brooklyn Microgrid developed by LO3 Energy is a peer-to-peer energy market for locally generated renewable energy.\footnote{\url{http://brooklynmicrogrid.com/}}
+
+Transactive energy may pose a much greater threat to prosumers' privacy than smart metering.
+\begin{itemize}
+\item Firstly, since prosumers may purchase energy from each other in a transactive microgrid, transactions may inadvertently reveal the prosumers' detailed energy usage patterns to other prosumers within the microgrid.
+Addressing this issue in a decentralized trading platform is quite challenging as it requires hiding the identities of trade partners from each other.
+In comparison, secure smart metering reveals the prosumers' energy usage patterns only to the provider. 
+\item Secondly, transactions may reveal the future energy usage of a prosumer, which could be used to infer private information.
+For example, a smart home may know that its inhabitants will go out in the evening (e.g., by looking at their calendar), and it may trade energy futures accordingly in the morning.
+Without adequate privacy measures, these trades may reveal to other prosumers in the microgrid that the inhabitants will not be at home later.
+Note that energy futures, whose delivery may happen several hours after when the transaction is made, can play a very important role in predicting and controlling microgrid load.
+In comparison, smart metering reveals only current (and past) usage.
+\item Thirdly, transactions and energy usage data in a transactive microgrid are much richer source of information than the simple energy usage data collected by smart meters.
+More specifically, the information available in a transactive microgrid is a superset of what is available from smart metering, and it may be used to infer personal information, such as risk propensity and financial standing.
+\end{itemize}
+
+We propose a solution that enables trading energy futures in a secure and verifiable manner, preserves the prosumers' privacy, enables the DSO to regulate the trading platform and enforce certain safety rules.
+
