@@ -1,4 +1,33 @@
+%!TEX root = paper.tex
 \section{Introduction}
+
+% What are transactive energy systems
+% What is the key challenge : decentralized information architecture
+% What is the related research
+% What are the contributions of this paper
+% What is the outline of this paper
+
+
+Power grids are undergoing major changes due to rapid
+acceleration in renewable energy resources, such as wind and solar power \cite{EIA2014, 5430489}. For example, 
+$4,143$ megawatts of solar panels were installed in third quarter of 2016 \cite{seia}. This capacity is estimated to grow from 4\% in 2015 to 29\% in 2040 \cite{Randal}. At the same time the battery technology costs per kWh have been dropping significantly \cite{stock2015powerful}, reaching grid parity \cite{bronski2015economics}. This massive integration of renewable energy requires detailed information and visibility into all aspects of this network, making it difficult to manage, especially in the presence of variable distributed energy resources \cite{7452738}. Therefore, a different vision for the future of power-grid operations is emerging: a decentralized system in which local communities are arranged in microgrids \cite{rahimi2012transactive}. In this vision, energy generation, transmission, distribution and even storage (e.g., electric vehicles in a community) can be strategically used to balance load and demand spikes. 
+
+
+Furthering the concept of microgrids, transactive energy models have been proposed to support the next distribution system evolution \cite{kok2016society,cox2013structured,melton2013gridwise}. Transactive Energy is a set of market based constructs for dynamically balancing the demand and supply across the electrical infrastructure \cite{melton2013gridwise}. In this approach, customers on the same feeder (i.e. sharing a power line link) can operate in an open market, trading and exchanging generated energy locally. Distribution System Operators can be the custodian of this market, while still meeting the net demand \cite{7462854}. For example, the Brooklyn Microgrid developed by LO3 Energy is a peer-to-peer energy market for locally generated renewable energy.\footnote{\url{http://brooklynmicrogrid.com/}}
+
+On one hand, transactive energy is a decentralized power system controls problem \cite{7452738}, requiring strategic microgrid control to maintain the stability of the community and the utility. On the other hand, it is a distributed market problem where erroneous as well as malicious transactions can create a gap between demand and supply, eventually destabilizing the system. However, in both cases, this system requires a distributed  infrastructure comprising of smart meters, feeders, smart inverters, utility substations, the utility central offices, and the transmission system operator, which has to provide the necessary computation fabric to support the interplay between the energy control and the fiscal market challenges. For example, the Resilient Information Architecture Platform for Smart Grid (RIAPS) \cite{eisele2017riaps} is a distributed IoT  `operating system' that provides the foundations for all algorithms, isolates the hardware details from the algorithms, and provides essential mechanisms for resource management, fault tolerance, and security. \cite{Scott2017ICCPS} also describes a simple transactive energy application using the RIAPS platform.
+However, it does not provide the key supports required to handle the privacy challenges that arise from the required information exchange in this decentralized transactive system.
+
+
+% connect this back to the challenges described below
+Specifcally, 
+
+% This is where the RIAPS and computing services discussion will be included. However, it does not solve the following challenges, which is the focus of this paper.
+%
+
+
+
+
 
 % electric grid is changing: renewables, storage capacity, etc. -> prosumers
 
@@ -8,7 +37,6 @@ In order to take advantage of these capabilities, electric grids need to become 
 % transactive microgrid
 
 % there are pilot studies, however, providing privacy is an open problem
-For example, the Brooklyn Microgrid developed by LO3 Energy is a peer-to-peer energy market for locally generated renewable energy.\footnote{\url{http://brooklynmicrogrid.com/}}
 
 Transactive energy may pose a much greater threat to prosumers' privacy than smart metering.
 \begin{itemize}
