@@ -2,14 +2,15 @@
 
 \subsection{Transactive Microgrid}
 
-Here, we describe a basic system model for a transactive microgrid based on a distributed ledger, such as a blockchain.
-% - smart meters
-% - distributed ledger, such as blockchain
+Here, we describe a basic system model of a transactive microgrid based on a distributed ledger, such as a blockchain.
 
 \subsubsection{Distributed Ledger}
+% - energy trades must be stored on a ledger (to prevent malleability)
+% - distributed ledger for reliability
 The distributed ledger stores transactions that specify energy trades, change regulatory policies for the microgrid, etc.
 Since the ledger is maintained by multiple ledger nodes, a key implementation requirement is reaching consensus on which transactions are valid and stored in the ledger.
 This consensus must be reached quickly, reliably, and securely even in the presence of erroneous or even malicious ledger nodes.
+% actually, we simply don't care about the consensus mechanism in this paper
 We treat the consensus algorithm as a pluggable module, which can be based on blockchains with proof-of-stake consensus or Practical Byzantine Fault Tolerance algorithm~\cite{castro1999practical}.
 
 \subsubsection{Bid Storage Service}
@@ -24,17 +25,29 @@ To this end, the controller first estimates the expected load in the microgrid b
 By combining this estimate with the expected load in the remainder of the grid, the controller produces a control signal that specifies how much the microgrid load should be decreased or increased.
 Finally, based on this control signal, the controller updates the price policy for the microgrid to influence energy production and consumption.
 
+\subsubsection{Smart Meters}
+\TODO{measures energy production / consumption}
+\TODO{may record energy production / consumption on the ledger or directly report it to the DSO} 
 
 \subsection{Requirements}
 
 \subsubsection{Security}
 Prosumers (or outside attackers) should not be able to tamper with measured energy production and consumption values, with financial balances, with other prosumers' bids.
+\TODO{ensure correct billing (i.e., prosumer cannot tamper with energy production / consumption or financial balances of any prosumer)}
+\TODO{ensure that prosumers cannot back out of trades unilaterally, or tamper with other prosumers trading or bids}
+\TODO{ensure that prosumers cannot change policies that are to be set by the DSO for the microgird}
+\TODO{impact of node compromise is limited, and can be mitigated (i.e., offending node may be removed)}
 
 \subsubsection{Safety}
 A careless or malicious prosumer may destabilize the grid by promising to produce (or consume) a large amount of energy, but failing to deliver.
+\TODO{this could destabilize the microgrid, or even the main grid}
 Trades which are unlikely to be delivered and would result in a gap between actual production and demand should be prevented.
+\TODO{net amount of energy sold (or bought) by a prosumer is limited (by a constant set by the DSO), where net amount of energy sold is the difference between the amount of energy sold and bought (net amount of energy bought is defined analogously)}
+\TODO{energy bids posted by the prosumer are limited in the same way}
 
 \subsubsection{Privacy} 
 Energy trading should not compromise the privacy of prosumers.
 More specifically, prosumers' private information, including energy consumption and production values, are available only to the DSO.
+\TODO{other prosumers should not be able to tell how much energy was consumed / produced by a prosumer, or what bids the prosumer has posted (or with whom the prosumer traded}
+
 
