@@ -1,27 +1,32 @@
 \section{Preliminaries and Requirements}
 
-\subsection{Transactive Microgrid}
+\subsection{Transactive Microgrid Components}
 
-Here, we describe a basic system model of a transactive microgrid based on a distributed ledger, such as a blockchain.
+Here, we describe a basic system model of transactive microgrids.
+We discuss the following components: a distributed ledger for recording transactions, a bid storage service that facilitates finding trade partners, a microgrid controller for regulating the microgrid load, and smart meters for measuring energy production and consumption.
 
 \subsubsection{Distributed Ledger}
-% - energy trades must be stored on a ledger (to prevent malleability)
-% - distributed ledger for reliability
-The distributed ledger stores transactions that specify energy trades, change regulatory policies for the microgrid, etc.
-Since the ledger is maintained by multiple ledger nodes, a key implementation requirement is reaching consensus on which transactions are valid and stored in the ledger.
-This consensus must be reached quickly, reliably, and securely even in the presence of erroneous or even malicious ledger nodes.
-% actually, we simply don't care about the consensus mechanism in this paper
-We treat the consensus algorithm as a pluggable module, which can be based on blockchains with proof-of-stake consensus or Practical Byzantine Fault Tolerance algorithm~\cite{castro1999practical}.
+The ledger permanently stores transactions that specify energy trades, change regulatory policies for the microgrid, etc.
+For providing security and safety, it is crucial that transactions are non-malleable, that is, once a transaction has been recorded, it cannot be modified or removed from the ledger.
+However, for the sake of fault tolerance, the ledger also needs to be distributed.
+Since a distributed ledger is maintained by multiple nodes, a key implementation requirement is reaching consensus on which transactions are valid and stored in the ledger.
+Further, this consensus must be reached quickly and reliably, even in the presence of faulty or malicious (e.g., compromised) ledger nodes.
+In this paper, we assume that a distributed ledger service is available, but do not make any assumption about the implementation, such as the particulars of the consensus algorithm.
+In practice, a distributed ledger can be implemented using, for example, \emph{blockchains} with proof-of-stake consensus or Practical Byzantine Fault Tolerance algorithm~\cite{castro1999practical}.
 
 \subsubsection{Bid Storage Service}
 Although individual prosumers trade energy with each other, for the sake of scalability, we need a service that enables prosumers to find trade partners.
-By providing a storage service for buy and sell bids, we relieve prosumer nodes from communicating with all potential trade partners.
-In addition to receiving and storing bids from prosumers, the bid storage service can also find matches and notify prosumers of the opportunity to make an energy trade.
-Even though the bid storage appears to the nodes as one entity, for the sake of scalability and reliability, it can be implemented in a distributed manner, using multiple nodes.
+%A bid storage service receives energy buy and sell bids from prosumers, stores these 
+We assume that there is a bid storage service that enables prosumers to post and read energy \emph{bids} and \emph{asks}.\footnote{A \emph{bid} is an offer to buy at a certain price, while an \emph{ask} is an offer to sell at a certain price.}  
+This service relieves prosumers from communicating with a large number of potential trade partners, since they only have to communicate with the service in order to discover trade partners.
+Moreover, in addition to simply storing bids and asks, the service may also find matches in the posted bids and asks, and it may notify the posting prosumers of the trade opportunity.
+Note that
+%Even though the bid storage appears to the nodes as one entity, 
+for the sake of scalability and reliability, this service can also be implemented in a distributed manner, using multiple nodes.
 
 \subsubsection{Microgrid Controller}
 The microgrid controller is responsible for stabilizing load within the microgrid and controlling it based on the expected load in the rest of the grid.
-To this end, the controller first estimates the expected load in the microgrid based on buy and sell bids in the bid storage as well as on outstanding energy trades in the ledger.
+To this end, the controller first estimates the expected load in the microgrid based on the bids and asks in the bid storage as well as on outstanding energy trades in the ledger.
 By combining this estimate with the expected load in the remainder of the grid, the controller produces a control signal that specifies how much the microgrid load should be decreased or increased.
 Finally, based on this control signal, the controller updates the price policy for the microgrid to influence energy production and consumption.
 
