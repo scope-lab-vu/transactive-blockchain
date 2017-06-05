@@ -1,6 +1,6 @@
 \section{Solution}
 
-In section, we describe our solution for providing privacy for prosumers without compromising the safety and security of the microgrid.
+In this section, we describe our solution for providing privacy for prosumers without compromising the safety and security of the microgrid.
 Figure~\ref{fig:softwareArchitecture} shows a high-level overview of the architecture of our solution.
 
 \begin{figure}[h!]
@@ -18,8 +18,8 @@ Figure~\ref{fig:softwareArchitecture} shows a high-level overview of the archite
 \draw [nodeStyle, fill=blue!10] (0.47, 3) rectangle (0.72, 3.9) node [midway, align=center] {Bid storage};
 \draw [nodeStyle, fill=red!10 ] (0.74, 3) rectangle (1,    3.9) node [midway, align=center] {Active\\smart meter};
 
-\draw [nodeStyle, fill=blue!10] (0,    4) rectangle (0.49, 4.9) node [midway, align=center] {Prosumer trading\\algorithm};
-\draw [nodeStyle, fill=blue!10] (0.51, 4) rectangle (1,    4.9) node [midway, align=center] {DSO control\\algorithm};
+\draw [nodeStyle, fill=red!10] (0,    4) rectangle (0.49, 4.9) node [midway, align=center] {Prosumer anonymous\\trading algorithm};
+\draw [nodeStyle, fill=blue!10] (0.51, 4) rectangle (1,    4.9) node [midway, align=center] {Microgrid\\controller};
 \end{tikzpicture}
 \caption{High-level architecture of the proposed solution. Components marked red are introduced to provide privacy in a safe and secure manner. Components marked in blue are typical elements of a decentralized transactive microgrid.}
 \label{fig:softwareArchitecture}
@@ -54,8 +54,8 @@ Figure~\ref{fig:softwareArchitecture} shows a high-level overview of the archite
 %\draw[transfer] (smartmeter) -- node [asset, above left] {energy\\production asset} (prosumer1);
 %\draw[transfer] (prosumer1) -- node [asset, above] {energy\\production asset} (mixing1);
 %\draw[transfer] (mixing1) -- node [asset, above] {energy\\production asset} (prosumer2);
-%\draw[transfer, dashed] (prosumer2) -- node [asset, above] {energy production asset,\\sell bid} (bidstorage);
-%\draw[transfer, dashed] (bidstorage) -- node [asset, right] {sell\\bid} (partner);
+%\draw[transfer, dashed] (prosumer2) -- node [asset, above] {energy production asset,\\energy bid} (bidstorage);
+%\draw[transfer, dashed] (bidstorage) -- node [asset, right] {energy\\bid} (partner);
 %\draw[transfer, bend right=15] (partner) to node [asset, below] {financial asset,\\energy\\consumption asset} (prosumer3);
 %\draw[transfer, bend right=7.5] (prosumer2) to node [asset, above right] {energy\\prod. asset} (partner);
 %\draw[transfer] (prosumer3) -- node [asset, below] {financial asset,\\
@@ -66,15 +66,19 @@ Figure~\ref{fig:softwareArchitecture} shows a high-level overview of the archite
 \draw[transfer] (smartmeter) -- node [asset, above] {energy\\production asset} (prosumer1);
 \draw[transfer] (prosumer1) -- node [asset, above] {energy\\production asset} (mixing1);
 \draw[transfer] (mixing1) -- node [asset, above] {energy\\production asset} (prosumer2);
-\draw[transfer, dashed] (prosumer2) -- node [asset, above right] {energy production asset,\\sell bid} (bidstorage);
-\draw[transfer, dashed] (bidstorage) -- node [asset, below right] {sell\\bid} (partner);
+\draw[transfer, dashed] (prosumer2) -- node [asset, above right] {energy production asset,\\energy bid} (bidstorage);
+\draw[transfer, dashed] (bidstorage) -- node [asset, below right] {energy\\bid} (partner);
 \draw[transfer, bend right=30] (partner) to node [asset, below] {financial asset,\\energy consumption asset} (prosumer3);
 \draw[transfer, bend right=50] (prosumer2) to node [asset, right] {energy\\production asset} (partner);
 \draw[transfer] (prosumer3) -- node [asset, below] {financial asset,\\
 energy consumption asset} (smartmeter2);
 \end{tikzpicture}
-\caption{Simplified overview of the flow of assets from the perspective of a prosumer who sells energy production. Note that in order to prevent de-anonymization, a prosumer should use multiple addresses for mixing and multiple rounds of mixing.}
+\caption{Simplified overview of the flow of assets from the perspective of a prosumer who sells energy. Note that in order to prevent de-anonymization, a prosumer should use multiple addresses and multiple rounds of mixing.}
+\
 \end{figure*}
+
+\subsection{Overview}
+We
 
 \subsection{Timing}
 The ability to specify points or intervals in time is crucial.
