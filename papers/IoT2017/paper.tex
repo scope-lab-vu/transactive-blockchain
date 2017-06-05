@@ -207,7 +207,22 @@ Here, we present a semi-formal analysis of the proposed solution, and show that 
 
 \subsection{Security}
 
+Most of our security requirements follow readily from 
+\begin{compactitem}
+\item the non-malleability of transactions in the distributed ledger 
+\item the signature based validation of transactions
+\item tamper-resistance of smart meters.
+\end{compactitem}
+
 \subsection{Safety}
+
+First, we can easily see that the net amount of energy sold by a prosumer for each timestep is at most $\field{MAXEPA}_i$.
+The amount of energy sold by the prosumer for a timetep is less than or equal to the amount of EPA obtained for that timestep.
+The prosumer can withdraw $\field{MAXEPA}_i$ amount of EPA from its smart meter.
+However, to obtain any amount of further EPA, the prosumer has to buy energy from another prosumer, which would decrease its net energy sold by the same amount.
+Similarly, the net amount of energy sold is at most $\field{MAXECA}_i$.
+
+Second, we can see that the amount of bids posted at the same time by prosumer $i$ for timestep $t$ is at most $\field{MAXEPA}_i + \field{MAXECA}_i$.
 
 \subsection{Privacy}
 

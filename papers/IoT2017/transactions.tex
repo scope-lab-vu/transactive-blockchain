@@ -119,23 +119,23 @@ A transaction is valid if the following two conditions hold.
 
 \subsubsection{Regulatory Transactions}
 
-The DSO uses regulatory transactions to authorize or ban smart meters and to control the microgrid load through setting a price policy.
-Since these transactions provide a diverse set of functionality, they are divided into two types.
+The DSO uses regulatory transactions for two purposes: to manage authorized smart meters and to set a price policy.
+First, to change the set of smart meters that are authorized to sign transactions, the DSO authorizes or bans individual smart meters.
+Whenever a new smart meter is installed, the DSO notifies the microgrid by authorizing the device using a regulatory transaction.
+Similarly, whenever a smart meter is deactivated (e.g., because service is stopped or the device is believed to be malfunctioning or compromised), the DSO notifies the microgrid by banning the device.
+Second, to influence microgrid load, the DSO can set a price policy, which includes a price at which prosumer may buy energy from the DSO and a price at which they may sell energy to the DSO.
 
-\TODO{For brevity, combine regulatory transactions into one type.}
-
-The DSO uses these transactions to manage the set of authorized smart meters in the microgrid.
-Whenever a new smart meter is installed, the DSO notifies the members of the microgrid using a regulatory transaction.
-Similarly, whenever a smart meter is deactivated (e.g., because service is stopped or it is believed to be malfunctioning or compromised), the DSO notifies the members of the microgrid using a regulatory transaction.
-These transactions contain the following fields:
+A regulatory transactions contain the following fields:
 \begin{compactitem}
-\item \field{allow}: list of smart meters to be authorized, each of which is defined by
+\item \field{authorize}: list of smart meters to be authorized, each of which is defined by
 \begin{compactitem}
-\item \field{id}: identifier of the smart meter.
+\item \field{id}: identifier of the smart meter,
 \item \field{pubkey}: public key of the smart meter,
 \end{compactitem}
 \item \field{ban}: list of identifiers of smart meters to be banned, 
-\item \field{timestep}: timestep in which authorizations and bans should take effect,
+\item \field{priceConsumption}: price at which DSO sells energy,
+\item \field{priceProduction}: price at which DSO buys energy,
+\item \field{time}: timestep after which authorizations, bans, and price changes should take effect,
 \item \field{sig}: DSO's signature over the transaction.
 \end{compactitem}
 
@@ -146,5 +146,7 @@ A regulatory transaction of this type is valid if %the following two conditions 
 %\item 
 the DSO's signature is valid.
 %\end{compactitem}
-
+%
+The active prices for timestep $t$ are given by the last regulatory transaction recorded on the ledger whose \field{time} is less than $t$.
+Similarly, later regulatory transactions recorded on the ledger override the authorization and bans of earlier transactions.
 
