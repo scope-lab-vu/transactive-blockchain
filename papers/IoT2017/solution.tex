@@ -74,11 +74,30 @@ Figure~\ref{fig:softwareArchitecture} shows a high-level overview of the archite
 energy consumption asset} (smartmeter2);
 \end{tikzpicture}
 \caption{Simplified overview of the flow of assets from the perspective of a prosumer who sells energy. Note that in order to prevent de-anonymization, a prosumer should use multiple addresses and multiple rounds of mixing.}
-\
+\label{fig:sellFlow}
 \end{figure*}
 
 \subsection{Overview}
-We
+We begin with a semi-formal description of the energy trading process from the prosumers' perspective.
+In subsequent subsections, we will describe the assets, transactions, and services in our system in more detail.
+
+First, consider a prosumer who would like to sell energy to another prosumer (this case is illustrated in Figure~\ref{fig:sellFlow}).
+As its very first step, the prosumer obtains an \emph{energy production asset} from its smart meter.
+An energy production asset represents a permission to sell a certain amount of energy, and it is used to enforce safety requirements.
+If the prosumer has sufficient unsold production capacity, the smart meter creates and transfers a production asset to the prosumer using a \emph{smart meter transaction}, which is recorded on the distributed ledger.
+
+At this point, the production asset can still be traced back to the prosumer since the ledger is public.
+To achieve anonymity, the prosumer transfers the production asset to a \emph{mixing service} using an \emph{energy and financial transaction}, which is also recorded on the distributed ledger.
+In turn, the mixing service transfers the production asset to an \emph{anonymous address}\todo{We should probably insert a good definition here for reader who are unfamiliar with blockchain transactions.}, which is randomly generated and controlled by the prosumer.
+Since the mixing service transfers assets from multiple prosumers to multiple anonymous addresses at the same time, and the anonymous addresses were chosen at random by the prosumers, the assets cannot be traced back to the original prosumers after mixing.\footnote{Note that prosumers should divide their assets between multiple anonymous addresses; otherwise, each asset might be traced back to its prosumer based on the amount of energy that it contains.}
+
+Now, the prosumer can engage in energy trading anonymously.
+To find a trade partner, it can either post an \emph{energy bid} on the bid storage, or simply search the storage for an acceptable \emph{energy ask}.
+To post an energy bid, the prosumer first proves to the storage service -- without revealing its original identity -- that it owns a production asset stored at an anonymous address.
+It can then post the energy bid, which contains an anonymous communication address\footnote{We discuss communication anonymity later.}, a price, and a reference to the production asset.
+If another prosumer, who would like to buy energy, finds the bid acceptable, it can contact the selling prosumer at the communication address given by the bid.
+
+
 
 \subsection{Timing}
 The ability to specify points or intervals in time is crucial.
