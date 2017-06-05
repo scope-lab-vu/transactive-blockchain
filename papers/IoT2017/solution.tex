@@ -18,7 +18,7 @@ Figure~\ref{fig:softwareArchitecture} shows a high-level overview of the archite
 \draw [nodeStyle, fill=blue!10] (0.47, 3) rectangle (0.72, 3.9) node [midway, align=center] {Bid storage};
 \draw [nodeStyle, fill=red!10 ] (0.74, 3) rectangle (1,    3.9) node [midway, align=center] {Active\\smart meter};
 
-\draw [nodeStyle, fill=red!10] (0,    4) rectangle (0.49, 4.9) node [midway, align=center] {Prosumer anonymous\\trading algorithm};
+\draw [nodeStyle, fill=red!10] (0,    4) rectangle (0.49, 4.9) node [midway, align=center] {Prosumer anonymous\\trading process};
 \draw [nodeStyle, fill=blue!10] (0.51, 4) rectangle (1,    4.9) node [midway, align=center] {Microgrid\\controller};
 \end{tikzpicture}
 \caption{High-level architecture of the proposed solution. Components marked red are introduced to provide privacy in a safe and secure manner. Components marked in blue are typical elements of a decentralized transactive microgrid.}
@@ -63,14 +63,14 @@ Figure~\ref{fig:softwareArchitecture} shows a high-level overview of the archite
 %\draw[transfer] (mixing2) -- node [asset, below] {financial asset,\\energy consumption asset} (prosumer4);
 %\draw[transfer] (prosumer4) -- node [asset, below left] {financial\\asset} (smartmeter);
 
-\draw[transfer] (smartmeter) -- node [asset, above] {energy\\production asset} (prosumer1);
-\draw[transfer] (prosumer1) -- node [asset, above] {energy\\production asset} (mixing1);
-\draw[transfer] (mixing1) -- node [asset, above] {energy\\production asset} (prosumer2);
-\draw[transfer, dashed] (prosumer2) -- node [asset, above right] {energy production asset,\\energy bid} (bidstorage);
+\draw[transfer] (smartmeter) -- node [asset, above] {\circled{1} energy\\production asset} (prosumer1);
+\draw[transfer] (prosumer1) -- node [asset, above] {\circled{2} energy\\production asset} (mixing1);
+\draw[transfer] (mixing1) -- node [asset, above] {\circled{3} energy\\production asset} (prosumer2);
+\draw[transfer, dashed] (prosumer2) -- node [asset, above right] {\circled{4} energy production asset,\\energy bid} (bidstorage);
 \draw[transfer, dashed] (bidstorage) -- node [asset, below right] {energy\\bid} (partner);
-\draw[transfer, bend right=30] (partner) to node [asset, below] {financial asset,\\energy consumption asset} (prosumer3);
-\draw[transfer, bend right=50] (prosumer2) to node [asset, right] {energy\\production asset} (partner);
-\draw[transfer] (prosumer3) -- node [asset, below] {financial asset,\\
+\draw[transfer, bend right=30] (partner) to node [asset, below] {\circled{5} financial asset,\\energy consumption asset} (prosumer3);
+\draw[transfer, bend right=50] (prosumer2) to node [asset, right] {\circled{5} energy\\production asset} (partner);
+\draw[transfer] (prosumer3) -- node [asset, below] {\circled{6} financial asset,\\
 energy consumption asset} (smartmeter2);
 \end{tikzpicture}
 \caption{Simplified overview of the flow of assets from the perspective of a prosumer who sells energy. Note that in order to prevent de-anonymization, a prosumer should use multiple addresses and multiple rounds of mixing.}
@@ -84,20 +84,38 @@ In subsequent subsections, we will describe the assets, transactions, and servic
 First, consider a prosumer who would like to sell energy to another prosumer (this case is illustrated in Figure~\ref{fig:sellFlow}).
 As its very first step, the prosumer obtains an \emph{energy production asset} from its smart meter.
 An energy production asset represents a permission to sell a certain amount of energy, and it is used to enforce safety requirements.
-If the prosumer has sufficient unsold production capacity, the smart meter creates and transfers a production asset to the prosumer using a \emph{smart meter transaction}, which is recorded on the distributed ledger.
+If the prosumer has sufficient unsold production capacity, the smart meter creates and transfers a production asset to the prosumer using a \emph{smart meter transaction} \circled{1}, which is recorded on the distributed ledger.
 
 At this point, the production asset can still be traced back to the prosumer since the ledger is public.
-To achieve anonymity, the prosumer transfers the production asset to a \emph{mixing service} using an \emph{energy and financial transaction}, which is also recorded on the distributed ledger.
-In turn, the mixing service transfers the production asset to an \emph{anonymous address}\todo{We should probably insert a good definition here for reader who are unfamiliar with blockchain transactions.}, which is randomly generated and controlled by the prosumer.
+To achieve anonymity, the prosumer transfers the production asset to a \emph{mixing service} using an \emph{energy and financial transaction} \circled{2}, which is also recorded on the distributed ledger.
+In turn, the mixing service transfers the production asset to an \emph{anonymous address} \circled{3}\todo{We should probably insert a good definition here for reader who are unfamiliar with blockchain transactions.}, which is randomly generated and controlled by the prosumer.
 Since the mixing service transfers assets from multiple prosumers to multiple anonymous addresses at the same time, and the anonymous addresses were chosen at random by the prosumers, the assets cannot be traced back to the original prosumers after mixing.\footnote{Note that prosumers should divide their assets between multiple anonymous addresses; otherwise, each asset might be traced back to its prosumer based on the amount of energy that it contains.}
 
 Now, the prosumer can engage in energy trading anonymously.
 To find a trade partner, it can either post an \emph{energy bid} on the bid storage, or simply search the storage for an acceptable \emph{energy ask}.
 To post an energy bid, the prosumer first proves to the storage service -- without revealing its original identity -- that it owns a production asset stored at an anonymous address.
-It can then post the energy bid, which contains an anonymous communication address\footnote{We discuss communication anonymity later.}, a price, and a reference to the production asset.
+It can then post the energy bid \circled{4}, which contains an anonymous communication address\footnote{We discuss communication anonymity later.}, a price, and a reference to the production asset.
 If another prosumer, who would like to buy energy, finds the bid acceptable, it can contact the selling prosumer at the communication address given by the bid.
 
+The seller and buyer can execute the trade by creating an energy and financial transaction together \circled{5}, and recording it on the ledger.
+This transaction transfers the production asset from the seller to the buyer, and a \emph{financial asset} and an \emph{energy consumption asset} from the buyer to the seller.
+A financial asset represents a certain amount of money, while a consumption asset represents a permission to buy a certain amount of energy, which is used to enforce safety requirements similarly to production assets.
 
+Finally, the selling prosumer deposits the financial and consumption assets to its smart meter using an energy and financial transaction.
+To ensure that the prosumer remains anonymous, it transfers the assets to an anonymous address that is randomly generated and controlled by the smart meter \circled{6}.
+Once the smart meter has received the assets, it credits the financial amount to and deducts the energy amount from the prosumer, for billing purposes.
+Note that in order to enforce safety requirements, the prosumer must always deposit the same amount of consumption assets as the amount of production assets obtained at the beginning; otherwise, unaccounted consumption assets might be used to trade excessive amounts.
+
+Second, consider a prosumer who would like to buy energy from another prosumer.
+Since the trading process is very similar to the case of the selling prosumer, we will discuss only the differences.
+In the first step, the prosumer tries to obtain a financial asset and an energy consumption asset from its smart meter.
+If the prosumer has the consumption capacity and good financial standing, the smart meter transfers the assets to the prosumer and adds the financial amount to the prosumer's bill.
+After transferring the assets through a mixing service, the prosumer is ready to post an energy ask on the bid service.
+To do so, it first proves the ownership of both the financial asset and the consumption asset to the service, and then posts the energy ask, which includes an anonymous communication address.
+If a partner is found, the trade is executed as described before, the prosumer playing the role of the buyer.
+Finally, the prosumer deposits the purchased energy production asset to the anonymous address of its smart meter,
+which credits the energy amount to the prosumer, for billing purposes.
+Note that if the prosumer has not used up the financial asset completely, then the remainder may also be deposited back to the smart meter.
 
 \subsection{Timing}
 The ability to specify points or intervals in time is crucial.
