@@ -1,0 +1,44 @@
+\subsection{Services}
+
+Here, we describe three services that must be implemented for our solution: communication anonymity, mixing service for transaction anonymity, and anonymous bid storage for bidding anonymity.
+
+\subsubsection{Communication Anonymity}
+Firstly, we must provide an anonymous communication layer, on which we can build an anonymous trading platform.
+Without this communication layer, bids and transactions could be easily de-anonymized based on the network identifiers of the sources (e.g., IP or MAC addresses).
+
+We can employ well-known and widely used techniques for anonymous communication, such as \emph{onion routing}.
+To build an onion network, the smart meters, inverters, and other devices can act as onion routers, and the list of onion routers in a microgrid can be published on a private blockchain.
+In our first implementation, we can use the free and open-source Tor software with private Directory Authorities.
+% ritter.vg: "run your own tor network"
+% https://ritter.vg/blog-run_your_own_tor_network.html
+
+\subsubsection{Transaction Anonymity}
+We must provide prosumers with the ability to create and publish transactions anonymously.
+More specifically, prosumers should be able to purchase or sell energy without revealing their identity; however, these transaction must also be verifiable and enforceable.
+
+We may achieve this goal using multiple approaches for blockchain transaction anonymity:
+\begin{itemize}
+\item Mixing services (also known as tumblers) mix potentially identifiable assets on a blockchain with others, thereby preventing tracing individual assets back to their original source. 
+In our case, assets to be mixed include virtual balances of fiat currencies as well as energy production and consumption.
+\item Cryptographic anonymity for transactions is provided, for example, by Zerocoin~\cite{miers2013zerocoin}. Similarly to mixing service, Zerocoin can prevent tracing assets on a blockchain.
+\end{itemize}
+Using the above techniques, we can enable prosumers to trade energy anonymously (i.e., without revealing their true identities), but at the same time prevent them from altering their energy or financial balances without a valid transaction.
+
+However, we must also ensure that 1) smart meters know the amount of energy purchased or sold by their prosumer and 2) prosumers cannot purchase or sell more energy than their capacity.
+To satisfy both of these constraints, all energy trades must start with the prosumer withdrawing a certain amount of energy production or consumption from its smart meter:
+\begin{itemize}
+\item If a prosumer wishes to sell energy, it must first obtain an energy asset from its smart meter using a blockchain transaction.
+This transaction must be signed by the smart meter, which enables the smart meter to 1) keep track of the amount of energy traded by the prosumer as well as to 2) enforce safety requirements by limiting the amount of energy that can be withdrawn.
+\item If a prosumer wishes to buy energy, it must first obtain an energy consumption asset from its smart meter in a way similar to obtaining an energy production asset.
+\end{itemize}
+
+\subsubsection{Bidding Anonymity}
+Finally, we must provide prosumers with the ability to publish energy buy and sell bids anonymously.
+To this end, we create a storage for anonymous bids that is readable by all the prosumers in the microgrid.
+Any prosumer may submit a bid to this storage; however, in order to do so, they must provide a zero-knowledge proof of owning the assets that are to be traded:
+\begin{itemize}
+\item To submit an energy sell bid, the prosumer must prove that it owns an energy production asset on the chain.
+\item To submit an energy buy bid, the prosumer must prove that it own an energy consumption asset as well as financial assets on the chain.
+\end{itemize}
+
+
