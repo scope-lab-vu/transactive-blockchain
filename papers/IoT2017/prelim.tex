@@ -29,6 +29,7 @@ The microgrid controller is responsible for stabilizing load within the microgri
 To this end, the controller first estimates the expected load in the microgrid based on the bids and asks in the bid storage as well as on outstanding energy trades in the ledger.
 By combining this estimate with the expected load in the remainder of the grid, the controller produces a control signal that specifies how much the microgrid load should be decreased or increased.
 Finally, based on this control signal, the controller updates the price policy for the microgrid to influence energy production and consumption.
+\Abhishek{Mention that we assume the presence of a secondary controller that balances the voltage and frequency in the microgrid.}
 
 \subsubsection{Smart Meters}
 To measure energy production and consumption, a smart meter must be deployed at each prosumer.
@@ -36,7 +37,7 @@ Further, these smart meters must be tamper resistant to prevent prosumers from `
 Once a smart meter has measured the amount of energy produced and consumed by the prosumer, it can send this information to the DSO for billing purposes.
 
 \subsection{Requirements}
-Next, we discuss the security, safety, and privacy requirements that must be satisfied by a transactive energy system.
+Next, we discuss the security, safety, and privacy requirements that must be satisfied by a transactive energy IoT system.
 
 \subsubsection{Security}
 Security requirements primarily ensure that every prosumer is billed correctly, but they also provide necessary prerequisite properties for safety.

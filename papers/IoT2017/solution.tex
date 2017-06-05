@@ -87,8 +87,9 @@ An energy production asset represents a permission to sell a certain amount of e
 If the prosumer has sufficient unsold production capacity, the smart meter creates and transfers a production asset to the prosumer using a \emph{smart meter transaction} \circled{1}, which is recorded on the distributed ledger.
 
 At this point, the production asset can still be traced back to the prosumer since the ledger is public.
-To achieve anonymity, the prosumer transfers the production asset to a \emph{mixing service} using an \emph{energy and financial transaction} \circled{2}, which is also recorded on the distributed ledger.
-In turn, the mixing service transfers the production asset to an \emph{anonymous address} \circled{3}\todo{We should probably insert a good definition here for readers who are unfamiliar with blockchain transactions.}, which is randomly generated and controlled by the prosumer.
+To achieve anonymity, the prosumer uses a \emph{mixing service}, which in practice may be implemented as a decentralized protocol, such as CoinShuffle~\cite{ruffing2014coinshuffle} or Xim~\cite{bissias2014sybil}.
+The prosumer transfers the production asset to the mixing service using an \emph{energy and financial transaction} \circled{2}, which is also recorded on the distributed ledger.
+In turn, the mixing service transfers the production asset to an \emph{anonymous address} \circled{3}\Aron{We should probably insert a good definition here for readers who are unfamiliar with blockchain transactions.}, which is randomly generated and controlled by the prosumer.
 Since the mixing service transfers assets from multiple prosumers to multiple anonymous addresses at the same time, and the anonymous addresses were chosen at random by the prosumers, the assets cannot be traced back to the original prosumers after mixing.\footnote{Note that prosumers should divide their assets between multiple anonymous addresses; otherwise, each asset might be traced back to its prosumer based on the amount of energy that it contains.}
 
 Now, the prosumer can engage in energy trading anonymously.

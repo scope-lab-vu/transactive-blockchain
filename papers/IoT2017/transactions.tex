@@ -11,6 +11,9 @@ For example, control signals specify how the microgrid load should change at cer
 To facilitate processing signals and transactions, we divide time into fixed-length intervals, and specify points or periods in time using these discrete timesteps.
 The length of the time interval is determined based on the timing assumptions of the physical power system.
 For example, the default length of the time interval may be 4 seconds, which corresponds to how frequently the control signal of the DSO typically changes.
+\Abhishek{We need to add citation here. I will add that tomorrow.}
+\Abhishek{What about the deadline within which the transactions should finish? Do we need to say anything here?}
+\Aron{Ideally, we should discuss the timing constraints of the ledger (probably when we introduce it), but we would first need to make space for this discussion.}
 
 \subsubsection{Assets}
 
@@ -110,7 +113,7 @@ where $\field{TR}_i$ is the set of smart-meter transactions recorded for prosume
 The condition for consumption assets is similar, based on a limit $\field{MAXECA}_i$.
 For financial assets, the smart meter takes into account the amounts withdrawn and deposited, as well as the outside bill payments to the DSO.
 
-\todo{To address malfunctioning or compromised smart meters, we could also impose a limit on withdrawals.}
+\Aron{To address malfunctioning or compromised smart meters, we could also impose a limit on withdrawals.}
 A transaction is valid if the following two conditions hold.
 \begin{compactitem}
 \item The smart meter identified in the transaction has been authorized by a regulatory transaction that was previously recorded on the ledger.

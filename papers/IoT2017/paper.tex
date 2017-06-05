@@ -91,6 +91,8 @@
 % option again before submitting your final document.
 \usepackage[textsize=tiny, textwidth=1.3cm]{todonotes}
 \newcommand{\TODO}[1]{\todo[inline]{#1}}
+\newcommand{\Abhishek}[1]{\todo[color=yellow!50]{\textbf{Abhishek}: #1}}
+\newcommand{\Aron}[1]{\todo[color=green!40]{\textbf{Aron}: #1}}
 
 \newcommand{\circled}[1]{\tikz[baseline=(char.base)]{\node[shape=circle, draw, inner sep=0.5pt, solid] (char) {#1};}}
             
@@ -232,7 +234,7 @@ In case a prosumer does not wish to trade, it can anonymously deposit its assets
 Note that even if a prosumer does not wish to trade, it should always withdraw and mix assets; otherwise, the lack of withdrawal would leak information.
 
 As for the DSO, it can receive the same information from the smart meter as in a non-transactive grid (i.e., amount of energy produced and consumed).
-\todo{Also knows financial amounts, but those are necessary for billing.}
+\Aron{Also knows financial amounts, but those are necessary for billing.}
 Since trading is anonymous, it does not receive any further information.
 
 In fact, we can provide an even higher-level of privacy.

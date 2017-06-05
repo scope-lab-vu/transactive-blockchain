@@ -2,7 +2,7 @@
 
 In this subsection, we describe the services on which transactions are built and which build on transactions.
 We have already discussed distributed ledgers, which permanently store transactions.
-Now, we will introduce anonymous communication service, mixing service for transaction anonymity, anonymous bid storage, and billing.\todo{Revise list based on final organization!}
+Now, we will introduce anonymous communication service, mixing service for transaction anonymity, anonymous bid storage, and billing.\Aron{Revise list based on final organization!}
 
 \subsubsection{Communication Anonymity}
 Firstly, we must provide an anonymous communication layer, on which we can build all other services within our system.
@@ -20,6 +20,14 @@ In this case, anonymous communication addresses in bids and asks correspond to p
 \subsubsection{Transaction Anonymity}
 We must provide prosumers with the ability to create and publish transactions anonymously.
 More specifically, prosumers should be able to purchase or sell energy without revealing their identity; however, these transaction must also be verifiable and enforceable.
+
+% discuss three approaches:
+% - third-party based services: not really suitable
+% - decentralized protocols: can work
+``In this paper we propose CoinShuffle, a completely decentralized Bitcoin mixing protocol that allows users to utilize Bitcoin in a truly anonymous manner. ''~\cite{ruffing2014coinshuffle}
+``As a solution, we propose Xim, a two-party mixing protocol that is compatible with Bitcoin and related virtual currencies.''~\cite{bissias2014sybil}
+% - cryptographic anonymity (buit-in)
+% Zerocoin
 
 We may achieve this goal using multiple approaches for blockchain transaction anonymity:
 \begin{itemize}
@@ -46,7 +54,7 @@ Any prosumer may submit a bid to this storage; however, in order to do so, they 
 \item To submit an energy buy bid, the prosumer must prove that it own an energy consumption asset as well as financial assets on the chain.
 \end{itemize}
 
-\subsubsection{Billing and Microgrid Control}
+\subsubsection{Billing}
 
 The energy consumption balance $E_i^t$ of prosumer $i$ in timeslot~$t$ is
 \begin{align*}
