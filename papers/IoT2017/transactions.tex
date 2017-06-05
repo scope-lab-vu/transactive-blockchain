@@ -1,108 +1,121 @@
 \subsection{Transactions}
 
-\subsection{Timing}
+In the previous subsection, we gave an overview of how transactions are used in the trading process to transfer various assets.
+Here, we detail the format of these transactions, and the rules that they have to satisfy to be valid and recorded on the ledger.
+We also introduce and detail the format of regulatory transactions, which the DSO uses to regulate the microgrid.
+
+\subsubsection{Timing}
 
 The ability to specify points or intervals in time is crucial.
-For example, control signals specify how the load should change at certain points in time, energy trades specify when energy will be consumed or produced, etc.
+For example, control signals specify how the microgrid load should change at certain points in time, energy trades specify when energy will be consumed or produced, etc.
 To facilitate processing signals and transactions, we divide time into fixed-length intervals, and specify points or periods in time using these discrete timesteps.
-The length of the time interval is determined by mapping the timing assumptions of the power system to our platform.
-%In our implementation, 
+The length of the time interval is determined based on the timing assumptions of the physical power system.
 For example, the default length of the time interval may be 4 seconds, which corresponds to how frequently the control signal of the DSO typically changes.
 
 \subsubsection{Assets}
 
-Before we can discuss transaction types, we must first define the three assets that these transactions may transfer.
-
-An \emph{energy production asset} (EPA) is defined by
+Before we can discuss transactions, we must define the format of three assets that these transactions may transfer.
+First, an \emph{energy production asset} (EPA) is defined by
 \begin{compactitem}
-\item \field{power}: non-negative amount of power to produced (for example, measured in watts).
-\item \field{start}: first time interval in which energy is to be produced. 
+\item \field{power}: non-negative amount of power to produced (for example, measured in watts),
+\item \field{start}: first time interval in which energy is to be produced,
 \item \field{end}: last time interval in which energy is to be produced.
 \end{compactitem}
-An \emph{energy consumption asset} (ECA) is defined by the same fields; however, for this asset, the fields define consumption instead of production.
-Finally, a \emph{financial asset} (FA) is defined by a single non-negative field \field{amount}, which can be denominated in either a fiat currency (e.g., US dollars) or a cryptocurrency.
+Second, an \emph{energy consumption asset} (ECA) is defined by the same fields; however, for this asset, the fields define energy consumption instead of production.
+Finally, a \emph{financial asset} (FA) is defined by a single non-negative number \field{amount}, which can be denominated in either a fiat currency (e.g., US dollars) or a cryptocurrency.
 
 \subsubsection{Energy and Financial Transactions}
 
-Energy and financial transactions transfer energy and financial asset from one address to another.
+Energy and financial transactions transfer energy and financial assets from one address to another.
 Prosumers use these transactions for multiple purposes: to trade energy by exchanging assets with other prosumers, to prove to the bid storage that they have production or consumption capacity, to hide their identity by transferring assets to and from mixing services, and to deposit assets at their smart meter.
 %
 An energy and financial transaction contains the following fields:
 \begin{compactitem}
-\item List of EPA inputs, each of which is defined by:
-\begin{compactitem}
-\item \field{out}: EPA output from a previous transaction,
-\item \field{sig}: signature for this output.
+\item \field{EPA\_in}: list of EPA inputs, each of which is defined by
+\begin{itemize}[leftmargin=0.5em,nosep]
+\item \field{out}: reference to an EPA output of a previous transaction,
+\item \field{sig}: signature for referenced output,
+\end{itemize}
+\item \field{ECA\_in}: list of ECA inputs, each of which is defined by
+\begin{itemize}[leftmargin=0.5em,nosep]
+\item \field{out}: reference to an ECA output of a previous transaction,
+\item \field{sig}: signature for referenced output,
+\end{itemize}
+\item \field{FA\_in}: list of FA inputs, each of which is defined by
+\begin{itemize}[leftmargin=0.5em,nosep]
+\item \field{out}: reference to an FA output of a previous transaction,
+\item \field{sig}: signature for referenced output,
+\end{itemize}
+\item \field{EPA\_out}: list of EPA outputs, each of which is defined by
+\begin{itemize}[leftmargin=0.5em,nosep]
+\item \field{EPA}: an energy production asset,
+\item \field{address}: address to which EPA is transferred,
+\end{itemize}
+\item \field{ECA\_out}: list of ECA outputs, each of which is defined by
+\begin{itemize}[leftmargin=0.5em,nosep]
+\item \field{EPA}: an energy consumption asset,
+\item \field{address}: address to which ECA is transferred,
+\end{itemize}
+\item \field{FA\_out}: list of FA outputs, each of which is defined by
+\begin{itemize}[leftmargin=0.5em,nosep]
+\item \field{EPA}: a financial asset,
+\item \field{address}: address to which FA is transferred,
+\end{itemize}
 \end{compactitem}
-\item List of ECA inputs, each of which is defined by:
-\begin{compactitem}
-\item \field{out}: ECA output from a previous transaction,
-\item \field{sig}: signature for this output.
-\end{compactitem}
-\item List of FA inputs, each of which is defined by:
-\begin{compactitem}
-\item \field{out}: FA output from a previous transaction,
-\item \field{sig}: signature for this output.
-\end{compactitem}
-\item List of EPA outputs, each of which is defined by:
-\begin{compactitem}
-\item an EPA and an address to which it is transferred.
-\end{compactitem}
-\item List of ECA outputs, each of which is defined by:
-\begin{compactitem}
-\item an ECA and an address to which it is transferred.
-\end{compactitem}
-\item List of FA outputs, each of which is defined by:
-\begin{compactitem}
-\item an FA and an address to which it is transferred.
-\end{compactitem}
-\end{compactitem}
+This transaction transfers the assets specified in the input lists to the addresses specified in the output lists. 
+Note that assets may be divided or combined, as the input and output lists may differ in length.
 
-An energy and financial transaction is valid if the following three conditions hold.
+An energy and financial transaction is valid (and can be recorded on the ledger) if the following three conditions hold.
 \begin{compactitem}
 \item None of the outputs referenced by the inputs have been spent by a transaction that has been recorded on the ledger.
-\item All of the signatures are valid.
-\item For each asset type (and for each timestep), the sum of inputs and outputs is the same.
-For example, in the case of energy production assets, the condition is:
-\begin{align}
-\forall t: & \sum_{out \in \text{EPA outputs}} out.\mathtt{power} \cdot 1_{\left\{out.\mathtt{start} \leq t \leq out.\mathtt{end}\right\}} \nonumber \\
-& = \sum_{in \in \text{EPA inputs}} in.\mathtt{out}.\mathtt{power} \cdot 1_{\left\{in.\mathtt{out}.\mathtt{start} \leq t \leq in.\mathtt{out}.\mathtt{end}\right\}} ,
-\end{align}
-where $1_x$ is equal to $1$ if $x$ is true, and it is $0$ otherwise.
+\item All of the signatures are valid, which ensures that only the current owner can transfer an asset.
+\item For each asset type (and for each timestep), the sum of inputs and outputs is equal.
+For example, in the case of energy production assets, the condition is
+\begin{align*}
+& \forall t: \sum_{\substack{out \,\in\, \field{EPA\_out}:\\out.\field{EPA}.\field{start} \leq t \leq out.\field{EPA}.\field{end}}} out.\field{EPA}.\field{power} \nonumber \\
+& = \sum_{\substack{in \,\in\, \field{EPA\_in}:\\in.\field{out}.\field{EPA}.\field{start} \leq t \leq in.\field{out}.\field{EPA}.\field{end}}} in.\field{out}.\field{EPA}.\field{power}  .
+%
+%& \forall t: \sum_{out \in \field{EPA\_out}} out.\field{EPA}.\field{power} \cdot 1_{\left\{out.\field{EPA}.\field{start} \leq t \leq out.\field{EPA}.\field{end}\right\}} \nonumber \\
+%& = \sum_{in \in \field{EPA\_in}} in.\field{out}.\field{EPA}.\field{power} \cdot 1_{\left\{in.\field{out}.\field{EPA}.\field{start} \leq t \leq in.\field{out}.\field{EPA}.\field{end}\right\}} ,
+\end{align*}
+%where $1_x$ is equal to $1$ if $x$ is true, and it is $0$ otherwise.
 %\begin{equation}
 %\forall t: \sum_{out \in \left\{out' \middle| out' \in \text{ EPA outputs} \wedge out'.EPA.start \leq t \leq out'.EPA.end\right\}} out.EPA.Power = \sum_{in \in \left\{in' \middle| in' \in \text{ EPA inputs} \wedge in'.EPA.start \leq t \leq in'.EPA.end\right\}} in.EPA.Power .
 %\end{equation}
+The conditions for consumption and financial assets can be described formally in similar ways.
 \end{compactitem}
-If a transaction submitted to the ledger is valid, it will be permanently recorded.
+%If a transaction submitted to the ledger is valid, it will be permanently recorded.
 
 \subsubsection{Smart-Meter Transactions}
 
-Prosumers use smart-meter transactions to withdraw energy and financial assets from their own smart meters, before they engage in energy trading.
+Prosumers use smart-meter transactions to withdraw energy and financial assets from their own smart meters, before they engage in trading.
 %
-A smart-meter transaction contains the following fields:
+A transaction contains the following fields:
 \begin{compactitem}
-\item List of EPA outputs, each of which is defined by:
-\begin{compactitem}
-\item an EPA and an address to which it is transferred.
+\item \field{EPA\_out}: list of EPA outputs (see above),
+\item \field{ECA\_out}: list of ECA outputs (see above),
+\item \field{FA\_out}: list of FA outputs (see above),
+\item \field{id}: smart meter's identifier,
+\item \field{sig}: smart meter's signature over the transaction.
 \end{compactitem}
-\item List of ECA outputs, each of which is defined by:
-\begin{compactitem}
-\item an ECA and an address to which it is transferred.
-\end{compactitem}
-\item List of FA outputs, each of which is defined by:
-\begin{compactitem}
-\item an FA and an address to which it is transferred.
-\end{compactitem}
-\item \field{id}: Identifier of the smart meter.
-\item \field{sig}: Smart meter's signature over the transaction.
-\end{compactitem}
+This transaction creates and transfers the assets to the prosumer's addresses, which are specified in the output lists.
 
-A smart-meter transaction is valid if the following two conditions hold:
-\begin{compactitem}
-\item The smart meter identified in the transaction has been authorized by a regulatory transaction that has been recorded on the ledger.
-\item The smart meter's signature is valid.
-\end{compactitem}
+The smart meter signs the transaction only if the prosumer is allowed to withdraw these assets.
+More specifically, the amount of withdrawn assets can never exceed certain limits that are set by the DSO.
+For example, in the case of EPA, the following condition must be satisfied for prosumer $i$:
+\begin{equation}
+\forall t: \sum_{tr \,\in\, \field{TR}_i} \sum_{\substack{out \,\in\, tr.\field{EPA\_out}:\\out.\field{EPA}.\field{start} \leq t \leq out.\field{EPA}.\field{end}}} out.\field{EPA}.\field{power} < \field{MAXEPA}_i ,
+\end{equation}
+where $\field{TR}_i$ is the set of smart-meter transactions recorded for prosumer $i$ and $\field{MAXEPA}_i$ is the withdrawal limit.
+The condition for consumption assets is similar, based on a limit $\field{MAXECA}_i$.
+For financial assets, the smart meter takes into account the amounts withdrawn and deposited, as well as the outside bill payments to the DSO.
+
 \todo{To address malfunctioning or compromised smart meters, we could also impose a limit on withdrawals.}
+A transaction is valid if the following two conditions hold.
+\begin{compactitem}
+\item The smart meter identified in the transaction has been authorized by a regulatory transaction that was previously recorded on the ledger.
+\item The smart meter's signature is valid (for public key, see regulatory transactions).
+\end{compactitem}
 
 \subsubsection{Regulatory Transactions}
 
@@ -111,27 +124,27 @@ Since these transactions provide a diverse set of functionality, they are divide
 
 \TODO{For brevity, combine regulatory transactions into one type.}
 
-\paragraph{Authorize or Ban Smart Meters}
 The DSO uses these transactions to manage the set of authorized smart meters in the microgrid.
 Whenever a new smart meter is installed, the DSO notifies the members of the microgrid using a regulatory transaction.
 Similarly, whenever a smart meter is deactivated (e.g., because service is stopped or it is believed to be malfunctioning or compromised), the DSO notifies the members of the microgrid using a regulatory transaction.
 These transactions contain the following fields:
 \begin{compactitem}
-\item List of smart meters to be authorized, each of which is defined by:
+\item \field{allow}: list of smart meters to be authorized, each of which is defined by
 \begin{compactitem}
-\item \field{id}: Identifier of the smart meter.
-\item \field{pubkey}: Public key of the smart meter.
+\item \field{id}: identifier of the smart meter.
+\item \field{pubkey}: public key of the smart meter,
 \end{compactitem}
-\item List of smart meters to be banned, each of which is given using its identifier.
-\item \field{time}: Timestep in which smart meters are authorized and banned.
+\item \field{ban}: list of identifiers of smart meters to be banned, 
+\item \field{timestep}: timestep in which authorizations and bans should take effect,
 \item \field{sig}: DSO's signature over the transaction.
 \end{compactitem}
 
-A regulatory transaction of this type is valid if the following two conditions hold:
-\begin{compactitem}
-\item The timestep specified in the transaction is in the future.
-\item The DSO's signature is valid.
-\end{compactitem}
+A regulatory transaction of this type is valid if %the following two conditions hold:
+%\begin{compactitem}
+%\item 
+\field{timestep} is not in the past and % specified in the transaction is in the future.
+%\item 
+the DSO's signature is valid.
+%\end{compactitem}
 
-\paragraph{Price Policy}
 
