@@ -69,7 +69,7 @@ This transaction transfers the assets specified in the input lists to the addres
 Note that assets may be divided or combined, as the input and output lists may differ in length.
 
 An energy and financial transaction is valid (and can be recorded on the ledger) if the following three conditions hold.
-\begin{compactitem}
+\begin{itemize}[noitemsep,topsep=-\parskip]
 \item None of the outputs referenced by the inputs have been spent by a transaction that has been recorded on the ledger.
 \item All of the signatures are valid, which ensures that only the current owner can transfer an asset.
 \item For each asset type (and for each timestep), the sum of inputs and outputs is equal.
@@ -86,7 +86,7 @@ For example, in the case of energy production assets, the condition is
 %\forall t: \sum_{out \in \left\{out' \middle| out' \in \text{ EPA outputs} \wedge out'.EPA.start \leq t \leq out'.EPA.end\right\}} out.EPA.Power = \sum_{in \in \left\{in' \middle| in' \in \text{ EPA inputs} \wedge in'.EPA.start \leq t \leq in'.EPA.end\right\}} in.EPA.Power .
 %\end{equation}
 The conditions for consumption and financial assets can be described formally in similar ways.
-\end{compactitem}
+\end{itemize}
 %If a transaction submitted to the ledger is valid, it will be permanently recorded.
 
 \subsubsection{Smart-Meter Transactions}
@@ -115,10 +115,10 @@ For financial assets, the smart meter takes into account the amounts withdrawn a
 
 \Aron{To address malfunctioning or compromised smart meters, we could also impose a limit on withdrawals.}
 A transaction is valid if the following two conditions hold.
-\begin{compactitem}
+\begin{itemize}[noitemsep,topsep=-\parskip]
 \item The smart meter identified in the transaction has been authorized by a regulatory transaction that was previously recorded on the ledger.
 \item The smart meter's signature is valid (for public key, see regulatory transactions).
-\end{compactitem}
+\end{itemize}
 
 \subsubsection{Regulatory Transactions}
 
