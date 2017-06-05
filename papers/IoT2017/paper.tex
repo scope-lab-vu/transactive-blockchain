@@ -91,8 +91,8 @@
 % option again before submitting your final document.
 \usepackage[textsize=tiny, textwidth=1.3cm]{todonotes}
 \newcommand{\TODO}[1]{\todo[inline]{#1}}
-\newcommand{\Abhishek}[1]{\todo[color=yellow!50]{\textbf{Abhishek}: #1}}
-\newcommand{\Aron}[1]{\todo[color=green!40]{\textbf{Aron}: #1}}
+\newcommand{\Abhishek}[1]{\todo[color=yellow!50, linecolor=black!50]{\textbf{Abhishek}: #1}}
+\newcommand{\Aron}[1]{\todo[color=green!40, linecolor=black!50]{\textbf{Aron}: #1}}
 
 \newcommand{\circled}[1]{\tikz[baseline=(char.base)]{\node[shape=circle, draw, inner sep=0.5pt, solid] (char) {#1};}}
             
@@ -180,10 +180,10 @@
 \begin{abstract}
 Power grids are undergoing major changes due to rapid growth in renewable energy resources and improvements in battery technology.
 While these changes enhance sustainability and efficiency, they also create significant management challenges as the complexity of power systems increases.
-To tackle these challenges, decentralized solutions are emerging, which arrange local communities into microgrids.
+To tackle these challenges, decentralized IoT solutions are emerging, which may arrange local communities into transactive microgrids.
 Within a transactive microgrid, consumers with energy generation and storage capabilities may trade energy with each other, thereby smoothing the load on the main grid using local supply.
 However, providing security, safety, and privacy in a decentralized and transactive energy system is very challenging.
-On the one hand, consumers' personal information must be protected from their their trade partners and the system operator.
+On the one hand, consumers' personal information must be protected from their trade partners and \Abhishek{To what extent is this different that the information already known by the system operator? Is this more related to the ``real-time'' nature of transactive information? Rather than aggregative total information which is available at the end of billing cycle today.} \Aron{Do we need to detail this in the abstract?} the system operator.
 On the other hand, the system must be protected from careless or malicious trading, which could destabilize the entire grid. 
 In this paper, we design a secure and safe solution for transactive microgrids, which enables consumers to trade energy without sacrificing their privacy.
 Our solution builds on distributed ledgers, such as blockchains, and provides anonymity for communication, bidding, and trading.

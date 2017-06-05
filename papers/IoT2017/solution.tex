@@ -5,21 +5,33 @@ Figure~\ref{fig:softwareArchitecture} shows a high-level overview of the archite
 
 \begin{figure}[h!]
 \center
-\begin{tikzpicture}[x=8cm, y=1.2cm,
+\begin{tikzpicture}[x=8cm, y=0.8cm, font=\small,
   nodeStyle/.style={rounded corners=0.1cm, drop shadow={shadow xshift=0.05cm, shadow yshift=-0.05cm, fill=black}}
 ]
-\draw [nodeStyle, fill=white]   (0, 0) rectangle    (1, 0.9) node [midway, align=center] {Communication network\\and operating system};
+%\draw [nodeStyle, fill=white]   (0, 0) rectangle    (1, 0.9) node [midway, align=center] {Communication network\\[-0.2em]and operating system};
 
-\draw [nodeStyle, fill=red!10]  (0, 1) rectangle    (1, 1.9) node [midway, align=center] {Communication anonymity\\(e.g., onion routing)};
+%\draw [nodeStyle, fill=red!10]  (0, 1) rectangle    (1, 1.9) node [midway, align=center] {Communication anonymity\\[-0.2em](e.g., onion routing)};
 
-\draw [nodeStyle, fill=blue!10] (0, 2) rectangle    (1, 2.9) node [midway, align=center] {Distributed ledger\\(e.g., blockchain)};
+%\draw [nodeStyle, fill=blue!10] (0, 2) rectangle    (1, 2.9) node [midway, align=center] {Distributed ledger\\[-0.2em](e.g., blockchain)};
 
-\draw [nodeStyle, fill=red!10]  (0,    3) rectangle (0.45, 3.9) node [midway, align=center] {Transaction anonymity\\(mixing service)};
-\draw [nodeStyle, fill=blue!10] (0.47, 3) rectangle (0.72, 3.9) node [midway, align=center] {Bid storage};
-\draw [nodeStyle, fill=red!10 ] (0.74, 3) rectangle (1,    3.9) node [midway, align=center] {Active\\smart meter};
+%\draw [nodeStyle, fill=red!10]  (0,    3) rectangle (0.45, 3.9) node [midway, align=center] {Transaction anonymity\\[-0.2em](mixing service)};
+%\draw [nodeStyle, fill=blue!10] (0.47, 3) rectangle (0.72, 3.9) node [midway, align=center] {Bid storage};
+%\draw [nodeStyle, fill=red!10 ] (0.74, 3) rectangle (1,    3.9) node [midway, align=center] {Active\\[-0.2em]smart meter};
 
-\draw [nodeStyle, fill=red!10] (0,    4) rectangle (0.49, 4.9) node [midway, align=center] {Prosumer anonymous\\trading process};
-\draw [nodeStyle, fill=blue!10] (0.51, 4) rectangle (1,    4.9) node [midway, align=center] {Microgrid\\controller};
+%\draw [nodeStyle, fill=red!10] (0,    4) rectangle (0.49, 4.9) node [midway, align=center] {Prosumer anonymous\\[-0.2em]trading process};
+%\draw [nodeStyle, fill=blue!10] (0.51, 4) rectangle (1,    4.9) node [midway, align=center] {Microgrid\\[-0.2em]controller};
+\draw [nodeStyle, fill=white]   (0, 0.9) rectangle    (1, 1.5) node [midway, align=center] {Communication network and operating system};
+
+\draw [nodeStyle, fill=red!10]  (0, 1.65) rectangle    (1, 2.25) node [midway, align=center] {Communication anonymity (e.g., onion routing)};
+
+\draw [nodeStyle, fill=blue!10] (0, 2.4) rectangle    (1, 3.0) node [midway, align=center] {Distributed ledger (e.g., blockchain)};
+
+\draw [nodeStyle, fill=red!10]  (0, 3.15) rectangle (0.45, 4.05) node [midway, align=center] {Transaction anonymity\\[-0.2em](mixing service)};
+\draw [nodeStyle, fill=blue!10] (0.47, 3.15) rectangle (0.72, 4.05) node [midway, align=center] {Bid storage};
+\draw [nodeStyle, fill=red!10 ] (0.74, 3.15) rectangle (1, 4.05) node [midway, align=center] {Active\\[-0.2em]smart meter};
+
+\draw [nodeStyle, fill=red!10] (0, 4.2) rectangle (0.49, 5.1) node [midway, align=center] {Prosumer anonymous\\[-0.2em]trading process};
+\draw [nodeStyle, fill=blue!10] (0.51, 4.2) rectangle (1, 5.1) node [midway, align=center] {Microgrid controller};
 \end{tikzpicture}
 \caption{High-level architecture of the proposed solution. Components marked red are introduced to provide privacy in a safe and secure manner. Components marked in blue are typical elements of a decentralized transactive microgrid.}
 \label{fig:softwareArchitecture}
