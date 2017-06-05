@@ -1,4 +1,15 @@
-\subsection{Transaction Types}
+\subsection{Transactions}
+
+\subsection{Timing}
+
+The ability to specify points or intervals in time is crucial.
+For example, control signals specify how the load should change at certain points in time, energy trades specify when energy will be consumed or produced, etc.
+To facilitate processing signals and transactions, we divide time into fixed-length intervals, and specify points or periods in time using these discrete timesteps.
+The length of the time interval is determined by mapping the timing assumptions of the power system to our platform.
+%In our implementation, 
+For example, the default length of the time interval may be 4 seconds, which corresponds to how frequently the control signal of the DSO typically changes.
+
+\subsubsection{Assets}
 
 Before we can discuss transaction types, we must first define the three assets that these transactions may transfer.
 
@@ -97,6 +108,8 @@ A smart-meter transaction is valid if the following two conditions hold:
 
 The DSO uses regulatory transactions to authorize or ban smart meters and to control the microgrid load through setting a price policy.
 Since these transactions provide a diverse set of functionality, they are divided into two types.
+
+\TODO{For brevity, combine regulatory transactions into one type.}
 
 \paragraph{Authorize or Ban Smart Meters}
 The DSO uses these transactions to manage the set of authorized smart meters in the microgrid.

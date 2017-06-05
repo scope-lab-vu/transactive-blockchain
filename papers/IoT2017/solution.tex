@@ -88,7 +88,7 @@ If the prosumer has sufficient unsold production capacity, the smart meter creat
 
 At this point, the production asset can still be traced back to the prosumer since the ledger is public.
 To achieve anonymity, the prosumer transfers the production asset to a \emph{mixing service} using an \emph{energy and financial transaction} \circled{2}, which is also recorded on the distributed ledger.
-In turn, the mixing service transfers the production asset to an \emph{anonymous address} \circled{3}\todo{We should probably insert a good definition here for reader who are unfamiliar with blockchain transactions.}, which is randomly generated and controlled by the prosumer.
+In turn, the mixing service transfers the production asset to an \emph{anonymous address} \circled{3}\todo{We should probably insert a good definition here for readers who are unfamiliar with blockchain transactions.}, which is randomly generated and controlled by the prosumer.
 Since the mixing service transfers assets from multiple prosumers to multiple anonymous addresses at the same time, and the anonymous addresses were chosen at random by the prosumers, the assets cannot be traced back to the original prosumers after mixing.\footnote{Note that prosumers should divide their assets between multiple anonymous addresses; otherwise, each asset might be traced back to its prosumer based on the amount of energy that it contains.}
 
 Now, the prosumer can engage in energy trading anonymously.
@@ -116,14 +116,6 @@ If a partner is found, the trade is executed as described before, the prosumer p
 Finally, the prosumer deposits the purchased energy production asset to the anonymous address of its smart meter,
 which credits the energy amount to the prosumer, for billing purposes.
 Note that if the prosumer has not used up the financial asset completely, then the remainder may also be deposited back to the smart meter.
-
-\subsection{Timing}
-The ability to specify points or intervals in time is crucial.
-For example, control signals specify how the load should change at certain points in time, energy trades specify when energy will be consumed or produced, etc.
-To facilitate processing signals and transactions, we divide time into fixed-length intervals, and specify points or periods in time using these discrete timesteps.
-The length of the time interval is determined by mapping the timing assumptions of the power system to our platform.
-%In our implementation, 
-For example, the default length of the time interval may be 4 seconds, which corresponds to how frequently the control signal of the DSO typically changes.
 
 \input{transactions.tex}
 
