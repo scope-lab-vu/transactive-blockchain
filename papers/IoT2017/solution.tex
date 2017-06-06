@@ -107,8 +107,8 @@ Since the mixing service transfers assets from multiple prosumers to multiple an
 Now, the prosumer can engage in energy trading anonymously.
 To find a trade partner, it can either post an \emph{energy ask} on the bid storage, or simply search the storage for an acceptable \emph{energy bid}.
 To post an energy ask, the prosumer first proves to the storage service -- without revealing its original identity -- that it owns a production asset stored at an anonymous address.
-It can then post the energy ask \circled{4}, which contains an anonymous communication address\footnote{We discuss communication anonymity later.}, a price, and a reference to the production asset.
-If another prosumer, who would like to buy energy, finds the ask acceptable, it can contact the selling prosumer at the communication address given by the ask.
+It can then post the energy ask \circled{4}, which contains an anonymous communication identifier\footnote{We discuss communication anonymity later.}, a price, and a reference to the production asset.
+If another prosumer, who would like to buy energy, finds the ask acceptable, it can contact the selling prosumer at the communication identifier given by the ask.
 
 The seller and buyer can execute the trade by creating an energy and financial transaction together \circled{5}, and recording it on the ledger.
 This transaction transfers the production asset from the seller to the buyer, and a \emph{financial asset} and an \emph{energy consumption asset} from the buyer to the seller.
@@ -124,7 +124,7 @@ Since the trading process is very similar to the case of the selling prosumer, w
 In the first step, the prosumer tries to withdraw a financial asset and an energy consumption asset from its smart meter.
 If the prosumer has the consumption capacity and good financial standing, the smart meter transfers the assets to the prosumer and adds the financial amount to the prosumer's bill.
 After transferring the assets through a mixing service, the prosumer is ready to post an energy bid on the bid service.
-To do so, it first proves the ownership of both the financial asset and the consumption asset to the service, and then posts the energy bid, which includes an anonymous communication address.
+To do so, it first proves the ownership of both the financial asset and the consumption asset to the service, and then posts the energy bid, which includes an anonymous communication identifier.
 If a partner is found, the trade is executed as described before, the prosumer playing the role of the buyer.
 Finally, the prosumer deposits the purchased energy production asset to the anonymous address of its smart meter,
 which credits the energy amount to the prosumer, for billing purposes.
