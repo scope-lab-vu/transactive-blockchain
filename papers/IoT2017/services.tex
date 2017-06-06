@@ -1,14 +1,14 @@
 \subsection{Services}
 
-In this subsection, we describe the services on which transactions are built and which build on transactions.
-We have already discussed distributed ledgers, which permanently store transactions.
-Now, we will introduce anonymous communication service, mixing service for transaction anonymity, anonymous bid storage, and billing.\Aron{Revise list based on final organization!}
+In this subsection, we describe the various services that are implemented in our system. %on which transactions are built and which build on transactions.
+We have already discussed the distributed ledger, which permanently stores valid transactions.
+Now, we will introduce anonymous communication service, mixing service for transaction anonymity, anonymous bid storage, and smart-meter based billing.\Aron{Revise list based on final organization!}
 
 \subsubsection{Communication Anonymity}
-Firstly, we must provide an anonymous communication layer, on which we can build all other services within our system.
-Without this communication layer, transactions and bids could be easily de-anonymized based on the network identifiers of the sources (e.g., IP or MAC addresses).
+Firstly, we must provide an anonymous communication layer, on which we can build all the other services in our system.
+Without this communication layer, transactions and bids could be easily de-anonymized based on their sources' network identifiers (e.g., IP or MAC addresses).
 
-We can employ well-known and widely used techniques for anonymous communication, such as \emph{onion routing}.
+We can employ well-known and widely used techniques for anonymous communication, such as \emph{onion routing}~\cite{reed1998anonymous}.
 To build an onion network, the smart meters, prosumers, and other devices can act as onion routers, and the list of onion routers in a microgrid can be published on the ledger.
 In practice, this service can built on 
 %In our first implementation, we can use
@@ -18,16 +18,26 @@ In this case, anonymous communication addresses in bids and asks correspond to p
 % https://ritter.vg/blog-run_your_own_tor_network.html
 
 \subsubsection{Transaction Anonymity}
+Communication anonymity is necessary for anonymous trading, but it is not sufficient: if prosumers used their own accounts to transfer assets, trades would not be anonymous.
+Fortunately, most distributed ledgers allow users to easily generate new addresses\footnote{The usage of the term \emph{address} varies between distributed ledgers, but our system could be implemented using any popular ledger, such as Bitcoin and Ethereum. 
+Specifically, we use the term address to denote a possible destination for asset transfers. 
+Assets transferred to an address can be used only by someone who knows the private key of the address (typically, the one who generated the address).} 
+at random.
+Since these addresses are generated randomly, they are anonymous in the sense that no one can tell who generated them.
+However, if prosumers simply transferred assets to these addresses, they could be easily de-anonymized by tracing the assets back to the prosumers.
+
+To prevent this, prosumers transfer assets to their anonymous addresses through a \emph{mixing service}. 
+The mixing service prevents tracing the assets back to their original owners by mixing together multiple incoming transfers and multiple outgoing transfers, thereby hiding the connections between the prosumers and the anonymous addresses.
+In practice, a mixing service can be implemented using multiple approaches.
+The simplest one is to use a \emph{trusted third party}, called a cryptocurrency tumbler, which can receive and send assets.
+However, anonymity in this case depends on the trustworthiness and reliability of the third party, who could easily de-anonymize the addresses.
+A more secure approach is to used decentralized protocols, such as CoinShuffle~\cite{ruffing2014coinshuffle} or Xim~\cite{bissias2014sybil}.
+These protocols enable participants to mix assets with each other, thereby eliminating the need for a trusted third party, which would constitute a single point of failure.
+Some newer cryptocurrencies, such as Zerocoin~\cite{miers2013zerocoin},  provide built-in mixing services, which are often based on cryptographic principles and proofs.
+
+\begin{comment}
 We must provide prosumers with the ability to create and publish transactions anonymously.
 More specifically, prosumers should be able to purchase or sell energy without revealing their identity; however, these transaction must also be verifiable and enforceable.
-
-% discuss three approaches:
-% - third-party based services: not really suitable
-% - decentralized protocols: can work
-``In this paper we propose CoinShuffle, a completely decentralized Bitcoin mixing protocol that allows users to utilize Bitcoin in a truly anonymous manner. ''~\cite{ruffing2014coinshuffle}
-``As a solution, we propose Xim, a two-party mixing protocol that is compatible with Bitcoin and related virtual currencies.''~\cite{bissias2014sybil}
-% - cryptographic anonymity (buit-in)
-% Zerocoin
 
 We may achieve this goal using multiple approaches for blockchain transaction anonymity:
 \begin{itemize}
@@ -44,6 +54,7 @@ To satisfy both of these constraints, all energy trades must start with the pros
 This transaction must be signed by the smart meter, which enables the smart meter to 1) keep track of the amount of energy traded by the prosumer as well as to 2) enforce safety requirements by limiting the amount of energy that can be withdrawn.
 \item If a prosumer wishes to buy energy, it must first withdraw an energy consumption asset from its smart meter in a way similar to withdrawing an energy production asset.
 \end{itemize}
+\end{comment}
 
 \subsubsection{Bidding Anonymity}
 Finally, we must provide prosumers with the ability to post energy bids and asks anonymously.

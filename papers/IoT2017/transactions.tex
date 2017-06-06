@@ -122,9 +122,9 @@ A transaction is valid if the following two conditions hold.
 
 \subsubsection{Regulatory Transactions}
 
-The DSO uses regulatory transactions for two purposes: to manage authorized smart meters and to set a price policy.
-First, to change the set of smart meters that are authorized to sign transactions, the DSO authorizes or bans individual smart meters.
-Whenever a new smart meter is installed, the DSO notifies the microgrid by authorizing the device using a regulatory transaction.
+The DSO uses regulatory transactions for two purposes: to manage the set of authorized smart meters and to change the price policy.
+%First, to change the set of smart meters that are authorized to sign transactions, the DSO authorizes or bans individual smart meters.
+First, whenever a new smart meter is installed, the DSO notifies the microgrid by authorizing the device using a regulatory transaction.
 Similarly, whenever a smart meter is deactivated (e.g., because service is stopped or the device is believed to be malfunctioning or compromised), the DSO notifies the microgrid by banning the device.
 Second, to influence microgrid load, the DSO can set a price policy, which includes a price at which prosumer may buy energy from the DSO and a price at which they may sell energy to the DSO.
 
@@ -151,5 +151,5 @@ the DSO's signature is valid.
 %\end{compactitem}
 %
 The active prices for timestep $t$ are given by the last regulatory transaction recorded on the ledger whose \field{time} is less than $t$.
-Similarly, later regulatory transactions recorded on the ledger override the authorization and bans of earlier transactions.
+Similarly, regulatory transactions that are recorded on the ledger later override the authorizations and bans of earlier transactions.
 
