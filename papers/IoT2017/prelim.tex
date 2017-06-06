@@ -3,52 +3,51 @@
 \subsection{Transactive Microgrid Components}
 
 \Abhishek{This is the perfect paragraph to define transactive microgrid as a special application of IoT spread over a large area. Perhaps we can find a citation that makes this point.}
-Here, we describe a basic system model of transactive microgrids.
-We discuss the following components: a distributed ledger for recording transactions, a bid storage service that facilitates finding trade partners, a microgrid controller for regulating the microgrid load, and smart meters for measuring energy production and consumption.
+We begin by describing a basic system model of transactive microgrids.
+We discuss the following components: a distributed ledger for recording transactions, a bid storage service that facilitates finding trade partners, a microgrid controller for regulating the microgrid load, and smart meters for measuring the prosumers' energy production and consumption.
 
 \subsubsection{Distributed Ledger}
 The ledger permanently stores transactions that specify energy trades, change regulatory policies for the microgrid, etc.
 For providing security and safety, it is crucial that transactions are non-malleable, that is, once a transaction has been recorded, it cannot be modified or removed from the ledger.
 However, for the sake of fault tolerance, the ledger also needs to be distributed.
-Since a distributed ledger is maintained by multiple nodes, a key implementation requirement is reaching consensus on which transactions are valid and stored in the ledger.
+Since a distributed ledger is maintained by multiple nodes, a key implementation requirement is reaching consensus on which transactions are valid and stored on the ledger.
 Further, this consensus must be reached quickly and reliably, even in the presence of faulty or malicious (e.g., compromised) ledger nodes.
-In this paper, we assume that a distributed ledger service is available, but do not make any assumption about the implementation, such as the particulars of the consensus algorithm.
+In this paper, we assume that a distributed ledger service is available, but do not make any assumptions about the implementation, such as the particulars of the consensus algorithm.
 In practice, a distributed ledger can be implemented using, for example, \emph{blockchains} with proof-of-stake consensus or Practical Byzantine Fault Tolerance algorithm~\cite{castro1999practical}.
 
 \subsubsection{Bid Storage Service}
-Although individual prosumers trade energy with each other, for the sake of scalability, we need a service that enables prosumers to find trade partners.
+Although prosumers trade energy with each other directly (i.e., without a middleman), for the sake of scalability, we need a service that enables prosumers to find trade partners.
 %A bid storage service receives energy buy and sell bids from prosumers, stores these 
-We assume that there is a bid storage service that enables prosumers to post and read energy \emph{bids} and \emph{asks}.\footnote{A \emph{bid} is an offer to buy at a certain price, while an \emph{ask} is an offer to sell at a certain price.}  
-This service relieves prosumers from communicating with a large number of potential trade partners, since they only have to communicate with the service in order to discover trade partners.
-Moreover, in addition to simply storing bids and asks, the service may also find matches in the posted bids and asks, and it may notify the posting prosumers of the trade opportunity.
+We assume that there is a bid storage service that allows prosumers to post and read energy \emph{bids} and \emph{asks}.\footnote{A \emph{bid} is an offer to buy at a certain price, while an \emph{ask} is an offer to sell at a certain price.}  
+This service relieves prosumers from contacting a large number of potential trade partners, since they only have to communicate with the service in order to discover trade partners.
+%Moreover, in addition to simply storing bids and asks, the service may also find matches in the posted bids and asks, and it may notify the posting prosumers of the trade opportunity.
 Note that
-%Even though the bid storage appears to the nodes as one entity, 
 for the sake of scalability and reliability, this service can also be implemented in a distributed manner, using multiple nodes.
 
 \subsubsection{Microgrid Controller}
-The microgrid controller is responsible for stabilizing load within the microgrid and controlling it based on the expected load in the rest of the grid.
-To this end, the controller first estimates the expected load in the microgrid based on the bids and asks in the bid storage as well as on outstanding energy trades in the ledger.
-By combining this estimate with the expected load in the remainder of the grid, the controller produces a control signal that specifies how much the microgrid load should be decreased or increased.
-Finally, based on this control signal, the controller updates the price policy for the microgrid to influence energy production and consumption.
-\Abhishek{Mention that we assume the presence of a secondary controller that balances the voltage and frequency in the microgrid.}
+The microgrid controller is responsible for stabilizing the load within the microgrid and for influencing it based on the predicted future load within the microgrid and the rest of the grid. 
+To this end, the controller first predicts load in the microgrid based on 1) bids and asks in the bid storage and 2) outstanding energy trades in the ledger.
+By combining this  with the prediction for the rest of the grid, the controller produces a control signal that specifies how much the microgrid load should be decreased or increased.
+Finally, based on this signal, the controller updates the price policy for the microgrid to influence energy production and consumption.
+We also assume the presence of a secondary controller that balances voltage and frequency in the microgrid.
 
 \subsubsection{Smart Meters}
-To measure energy production and consumption, a smart meter must be deployed at each prosumer.
-Further, these smart meters must be tamper resistant to prevent prosumers from ``stealing electricity'' by tampering with their meters.
-Once a smart meter has measured the amount of energy produced and consumed by the prosumer, it can send this information to the DSO for billing purposes.
+To measure the prosumers' energy production and consumption, a smart meter must be deployed at each prosumer.
+In practice, these smart meters must be tamper resistant to prevent prosumers from ``stealing electricity'' by tampering with their meters.
+Once a smart meter has measured the net amount of energy consumed by the prosumer in some time interval, it can send this information to the DSO for billing purposes.
 
 \subsection{Requirements}
 Next, we discuss the security, safety, and privacy requirements that must be satisfied by a transactive energy IoT system.
 
 \subsubsection{Security}
-Security requirements primarily ensure that every prosumer is billed correctly, but they also provide necessary prerequisite properties for safety.
+Security requirements ensure primarily that prosumers are billed correctly, but they also provide necessary prerequisite properties for safety.
 %Prosumers (or outside attackers) should not be able to tamper with measured energy production and consumption values, with financial balances, with other prosumers' bids.
-More specifically, we require that 
+More specifically, they require that 
 \begin{itemize}[noitemsep,topsep=-\parskip]
-\item prosumers are billed correctly based on the energy prices set by the DSO, their energy trades, and their energy production and consumption measured by the smart meters (i.e., energy production and consumption measurements and financial balances cannot be tampered with),
+\item prosumers are billed correctly based on the energy prices set by the DSO, their energy trades, and their actual energy production and consumption measured by the smart meters, % (i.e., prosumers or outside attackers cannot tamper with energy production, consumption, and financial balances) % attackers cannot tamper with energy production and consumption balances or financial balances),
 \item prosumers or outside attackers cannot change microgrid regulatory policies that are set by the DSO,
-\item prosumers cannot back out of trades unilaterally, and they cannot tamper with other prosumers' trading and bidding,
-\item financial and physical impact of a compromised or faulty node is limited, and the node can be banned by the DSO.
+\item prosumers cannot back out of trades unilaterally, and they cannot tamper with other prosumers' trading or bidding,
+\item financial and physical impact of compromised or faulty nodes is limited, and nodes can be banned by the DSO.
 \end{itemize}
 
 \subsubsection{Safety}
