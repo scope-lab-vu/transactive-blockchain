@@ -39,7 +39,7 @@ Figure~\ref{fig:softwareArchitecture} shows a high-level overview of the archite
 
 \begin{figure*}[h]
 \center
-\begin{tikzpicture}[x=3.8cm, y=2cm, font=\small,
+\begin{tikzpicture}[x=3.8cm, y=1.6cm, font=\small,
   system/.style={draw, align=center, rounded corners=0.1cm, fill=black!5},
   entity/.style={draw, align=center, rounded corners=0.1cm},
   asset/.style={midway, align=center},
@@ -81,10 +81,11 @@ Figure~\ref{fig:softwareArchitecture} shows a high-level overview of the archite
 \draw[transfer, dashed] (prosumer2) -- node [asset, above right] {\circled{4} energy production asset,\\energy ask} (bidstorage);
 \draw[transfer, dashed] (bidstorage) -- node [asset, below right] {energy\\ask} (partner);
 \draw[transfer, bend right=30] (partner) to node [asset, below] {\circled{5} financial asset,\\energy consumption asset} (prosumer3);
-\draw[transfer, bend right=50] (prosumer2) to node [asset, right] {\circled{5} energy\\production asset} (partner);
+\draw[transfer, bend right=50] (prosumer2) to node [asset, right, yshift=0.25em] {\circled{5} energy\\production asset} (partner);
 \draw[transfer] (prosumer3) -- node [asset, below] {\circled{6} financial asset,\\
 energy consumption asset} (smartmeter2);
 \end{tikzpicture}
+\vspace{-1em}
 \caption{Simplified overview of the flow of assets from the perspective of a prosumer who sells energy. Note that in order to prevent de-anonymization, a prosumer should use multiple addresses and multiple rounds of mixing.}
 \label{fig:sellFlow}
 \end{figure*}

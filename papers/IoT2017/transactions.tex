@@ -19,11 +19,12 @@ For example, the default length of the time interval may be 4 seconds, which cor
 
 Before we can discuss transactions, we must define the format of three assets that these transactions may transfer.
 First, an \emph{energy production asset} (EPA) is defined by
-\begin{compactitem}
+\begin{itemize}[noitemsep,topsep=-\parskip]
 \item \field{power}: non-negative amount of power to produced (for example, measured in watts),
 \item \field{start}: first time interval in which energy is to be produced,
 \item \field{end}: last time interval in which energy is to be produced.
-\end{compactitem}
+\end{itemize}
+\vspace{\parskip}
 Second, an \emph{energy consumption asset} (ECA) is defined by the same fields; however, for this asset, the fields define energy consumption instead of production.
 Finally, a \emph{financial asset} (FA) is defined by a single non-negative number \field{amount}, which can be denominated in either a fiat currency (e.g., US dollars) or a cryptocurrency.
 
@@ -33,7 +34,7 @@ Energy and financial transactions transfer energy and financial assets from one 
 Prosumers use these transactions for multiple purposes: to trade energy by exchanging assets with other prosumers, to prove to the bid storage that they have production or consumption capacity, to hide their identity by transferring assets to and from mixing services, and to deposit assets at their smart meter.
 %
 An energy and financial transaction contains the following fields:
-\begin{compactitem}
+\begin{itemize}[noitemsep,topsep=-\parskip]
 \item \field{EPA\_in}: list of EPA inputs, each of which is defined by
 \begin{itemize}[leftmargin=0.5em,nosep]
 \item \field{out}: reference to an EPA output of a previous transaction,
@@ -64,7 +65,8 @@ An energy and financial transaction contains the following fields:
 \item \field{EPA}: a financial asset,
 \item \field{address}: address to which FA is transferred,
 \end{itemize}
-\end{compactitem}
+\end{itemize}
+\vspace{0.5\parskip}
 This transaction transfers the assets specified in the input lists to the addresses specified in the output lists. 
 Note that assets may be divided or combined, as the input and output lists may differ in length.
 
@@ -94,21 +96,22 @@ The conditions for consumption and financial assets can be described formally in
 Prosumers use smart-meter transactions to withdraw energy and financial assets from their own smart meters, before they engage in trading.
 %
 A transaction contains the following fields:
-\begin{compactitem}
+\begin{itemize}[noitemsep,topsep=-\parskip]
 \item \field{EPA\_out}: list of EPA outputs (see above),
 \item \field{ECA\_out}: list of ECA outputs (see above),
 \item \field{FA\_out}: list of FA outputs (see above),
 \item \field{id}: smart meter's identifier,
 \item \field{sig}: smart meter's signature over the transaction.
-\end{compactitem}
+\end{itemize}
+\vspace{0.5\parskip}
 This transaction creates and transfers the assets to the prosumer's addresses, which are specified in the output lists.
 
 The smart meter signs the transaction only if the prosumer is allowed to withdraw these assets.
 More specifically, the amount of withdrawn assets can never exceed certain limits that are set by the DSO.
 For example, in the case of EPA, the following condition must be satisfied for prosumer $i$:
-\begin{equation}
+\begin{equation*}
 \forall t: \sum_{tr \,\in\, \field{TR}_i} \sum_{\substack{out \,\in\, tr.\field{EPA\_out}:\\out.\field{EPA}.\field{start} \leq t \leq out.\field{EPA}.\field{end}}} out.\field{EPA}.\field{power} < \field{MAXEPA}_i ,
-\end{equation}
+\end{equation*}
 where $\field{TR}_i$ is the set of smart-meter transactions recorded for prosumer $i$ and $\field{MAXEPA}_i$ is the withdrawal limit.
 The condition for consumption assets is similar, based on a limit $\field{MAXECA}_i$.
 For financial assets, the smart meter takes into account the amounts withdrawn and deposited, as well as the outside bill payments to the DSO.
@@ -129,7 +132,7 @@ Similarly, whenever a smart meter is deactivated (e.g., because service is stopp
 Second, to influence microgrid load, the DSO can set a price policy, which includes a price at which prosumer may buy energy from the DSO and a price at which they may sell energy to the DSO.
 
 A regulatory transactions contain the following fields:
-\begin{compactitem}
+\begin{itemize}[noitemsep,topsep=-\parskip]
 \item \field{authorize}: list of smart meters to be authorized, each of which is defined by
 \begin{compactitem}
 \item \field{id}: identifier of the smart meter,
@@ -140,7 +143,8 @@ A regulatory transactions contain the following fields:
 \item \field{priceProduction}: price at which DSO buys energy,
 \item \field{time}: timestep after which authorizations, bans, and price changes should take effect,
 \item \field{sig}: DSO's signature over the transaction.
-\end{compactitem}
+\end{itemize}
+\vspace{\parskip}
 
 A regulatory transaction of this type is valid if %the following two conditions hold:
 %\begin{compactitem}

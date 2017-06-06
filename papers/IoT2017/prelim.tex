@@ -44,12 +44,12 @@ Next, we discuss the security, safety, and privacy requirements that must be sat
 Security requirements primarily ensure that every prosumer is billed correctly, but they also provide necessary prerequisite properties for safety.
 %Prosumers (or outside attackers) should not be able to tamper with measured energy production and consumption values, with financial balances, with other prosumers' bids.
 More specifically, we require that 
-\begin{compactitem}
+\begin{itemize}[noitemsep,topsep=-\parskip]
 \item prosumers are billed correctly based on the energy prices set by the DSO, their energy trades, and their energy production and consumption measured by the smart meters (i.e., energy production and consumption measurements and financial balances cannot be tampered with),
 \item prosumers or outside attackers cannot change microgrid regulatory policies that are set by the DSO,
 \item prosumers cannot back out of trades unilaterally, and they cannot tamper with other prosumers' trading and bidding,
 \item financial and physical impact of a compromised or faulty node is limited, and the node can be banned by the DSO.
-\end{compactitem}
+\end{itemize}
 
 \subsubsection{Safety}
 A careless or malicious prosumer may destabilize the grid by promising to produce (or consume) a large amount of energy, but failing to deliver.
@@ -57,18 +57,18 @@ A significant difference between promised and delivered energy production (or co
 Consequently, prosumers should not be able to trade large amounts of energy, which they are unlikely to deliver.
 %Trades which are unlikely to be delivered and would result in a gap between actual production and demand should be prevented.
 Specifically, we require that
-\begin{compactitem}
+\begin{itemize}[noitemsep,topsep=-\parskip]
 \item net amount of energy sold (or bought) by a prosumer is upper bounded (by an amount set by the DSO), where the net amount of energy sold is the difference between the amount of energy sold and bought by the prosumer, and the net amount of energy bought is defined analogously,
 \item energy bids and asks posted by the prosumer are limited in a similar way.
-\end{compactitem}
+\end{itemize}
 
 \subsubsection{Privacy} 
 Privacy requirements ensure that the prosumers' privacy is not compromised when they participate in energy trading.
 We use non-transactive smart metering as a baseline, and require that the transactive system does not leak any additional information compared to the baseline.
 More specifically, we require that
-\begin{compactitem}
+\begin{itemize}[noitemsep,topsep=-\parskip]
 \item only the corresponding smart meter and the DSO may gain information regarding the amount of energy produced, consumed, bought, or sold by a prosumer,\footnote{Note that this requirement is impossible to satisfy if all other prosumers may collude against one target. However, we can assume that the majority of prosumers are non-colluding.}
 \item only the prosumer may know which bids and asks it has posted, and no one can know who traded energy with whom.
-\end{compactitem}
+\end{itemize}
 
 
