@@ -8,7 +8,7 @@ We also introduce and detail the format of regulatory transactions, which the DS
 
 The ability to specify points or intervals in time is crucial.
 For example, control signals specify how the microgrid load should change at certain points in time, energy trades specify when energy will be consumed or produced, etc.
-To facilitate processing signals and transactions, we divide time into fixed-length intervals, and specify points or periods in time using these discrete timesteps.
+To facilitate representing signals and transactions, we divide time into fixed-length intervals, and specify points or periods in time using these discrete timesteps.
 The length of the time interval is determined based on the timing assumptions of the physical power system.
 For example, the default length of the time interval may be 4 seconds, which corresponds to how frequently the control signal of the DSO typically changes.
 \Abhishek{We need to add citation here. I will add that tomorrow.}
@@ -17,7 +17,7 @@ For example, the default length of the time interval may be 4 seconds, which cor
 
 \subsubsection{Assets}
 
-Before we can discuss transactions, we must define the format of three assets that these transactions may transfer.
+Before we can discuss transactions, we must define the format of the three types of assets that these transactions may transfer.
 First, an \emph{energy production asset} (EPA) is defined by
 \begin{itemize}[noitemsep,topsep=-\parskip]
 \item \field{power}: non-negative amount of power to produced (for example, measured in watts),
@@ -31,24 +31,24 @@ Finally, a \emph{financial asset} (FA) is defined by a single non-negative numbe
 \subsubsection{Energy and Financial Transactions}
 
 Energy and financial transactions transfer energy and financial assets from one address to another.
-Prosumers use these transactions for multiple purposes: to trade energy by exchanging assets with other prosumers, to prove to the bid storage that they have production or consumption capacity, to hide their identity by transferring assets to and from mixing services, and to deposit assets at their smart meter.
+Prosumers can use these transactions for multiple purposes: to trade energy by exchanging assets with other prosumers, to prove to the bid storage service that they possess an asset, to hide their identity by transferring assets to and from mixing services, and to deposit assets at their smart meter.
 %
 An energy and financial transaction contains the following fields:
 \begin{itemize}[noitemsep,topsep=-\parskip]
 \item \field{EPA\_in}: list of EPA inputs, each of which is defined by
 \begin{itemize}[leftmargin=0.5em,nosep]
 \item \field{out}: reference to an EPA output of a previous transaction,
-\item \field{sig}: signature for referenced output,
+\item \field{sig}: signature of the referenced output's address,
 \end{itemize}
 \item \field{ECA\_in}: list of ECA inputs, each of which is defined by
 \begin{itemize}[leftmargin=0.5em,nosep]
 \item \field{out}: reference to an ECA output of a previous transaction,
-\item \field{sig}: signature for referenced output,
+\item \field{sig}: signature of the referenced output's address,
 \end{itemize}
 \item \field{FA\_in}: list of FA inputs, each of which is defined by
 \begin{itemize}[leftmargin=0.5em,nosep]
 \item \field{out}: reference to an FA output of a previous transaction,
-\item \field{sig}: signature for referenced output,
+\item \field{sig}: signature of the referenced output's address,
 \end{itemize}
 \item \field{EPA\_out}: list of EPA outputs, each of which is defined by
 \begin{itemize}[leftmargin=0.5em,nosep]
@@ -63,18 +63,18 @@ An energy and financial transaction contains the following fields:
 \item \field{FA\_out}: list of FA outputs, each of which is defined by
 \begin{itemize}[leftmargin=0.5em,nosep]
 \item \field{EPA}: a financial asset,
-\item \field{address}: address to which FA is transferred,
+\item \field{address}: address to which FA is transferred.
 \end{itemize}
 \end{itemize}
 \vspace{0.5\parskip}
 This transaction transfers the assets specified in the input lists to the addresses specified in the output lists. 
-Note that assets may be divided or combined, as the input and output lists may differ in length.
+Input and output lists may differ in length, so one asset may be divided into multiple assets, and multiple assets may be combined into one.
 
 An energy and financial transaction is valid (and can be recorded on the ledger) if the following three conditions hold.
 \begin{itemize}[noitemsep,topsep=-\parskip]
 \item None of the outputs referenced by the inputs have been spent by a transaction that has been recorded on the ledger.
-\item All of the signatures are valid, which ensures that only the current owner can transfer an asset.
-\item For each asset type (and for each timestep), the sum of inputs and outputs is equal.
+\item All of the signatures are valid, which ensures that an asset can be transferred only by its current owner. % current owner can transfer an asset.
+\item For each asset type (and for each timestep), the sums of the input and output assets are equal.
 For example, in the case of energy production assets, the condition is
 \begin{align*}
 & \forall t: \sum_{\substack{out \,\in\, \field{EPA\_out}:\\out.\field{EPA}.\field{start} \leq t \leq out.\field{EPA}.\field{end}}} out.\field{EPA}.\field{power} \nonumber \\
@@ -107,20 +107,20 @@ A transaction contains the following fields:
 This transaction creates and transfers the assets to the prosumer's addresses, which are specified in the output lists.
 
 The smart meter signs the transaction only if the prosumer is allowed to withdraw these assets.
-More specifically, the amount of withdrawn assets can never exceed certain limits that are set by the DSO.
+More specifically, the amount of assets withdrawn can never exceed certain limits that are set by the DSO.
 For example, in the case of EPA, the following condition must be satisfied for prosumer $i$:
 \begin{equation*}
-\forall t: \sum_{tr \,\in\, \field{TR}_i} \sum_{\substack{out \,\in\, tr.\field{EPA\_out}:\\out.\field{EPA}.\field{start} \leq t \leq out.\field{EPA}.\field{end}}} out.\field{EPA}.\field{power} < \field{MAXEPA}_i ,
+\forall t: \sum_{tr \,\in\, \field{STR}_i} \sum_{\substack{out \,\in\, tr.\field{EPA\_out}:\\out.\field{EPA}.\field{start} \leq t \leq out.\field{EPA}.\field{end}}} \hspace{-1em} out.\field{EPA}.\field{power} < \field{MAXEPA}_i ,
 \end{equation*}
-where $\field{TR}_i$ is the set of smart-meter transactions recorded for prosumer $i$ and $\field{MAXEPA}_i$ is the withdrawal limit.
-The condition for consumption assets is similar, based on a limit $\field{MAXECA}_i$.
-For financial assets, the smart meter takes into account the amounts withdrawn and deposited, as well as the outside bill payments to the DSO.
+where $\field{STR}_i$ is the set of smart-meter transactions created for prosumer $i$, and $\field{MAXEPA}_i$ is the withdrawal limit.
+The condition for consumption assets is similar, based on a withdrawal limit $\field{MAXECA}_i$.
+For financial assets, the smart meter can take into account the amounts withdrawn and deposited, as well as the outside bill payments to the DSO.
 
 \Aron{To address malfunctioning or compromised smart meters, we could also impose a limit on withdrawals.}
 A transaction is valid if the following two conditions hold.
 \begin{itemize}[noitemsep,topsep=-\parskip]
-\item The smart meter identified in the transaction has been authorized by a regulatory transaction that was previously recorded on the ledger.
-\item The smart meter's signature is valid (for public key, see regulatory transactions).
+\item The smart meter identified in the transaction has been authorized (and not been banned) by regulatory transactions. % that was previously recorded on the ledger.
+\item The smart meter's signature is valid (for the smart meter's public key, see regulatory transactions).
 \end{itemize}
 
 \subsubsection{Regulatory Transactions}
@@ -128,7 +128,7 @@ A transaction is valid if the following two conditions hold.
 The DSO uses regulatory transactions for two purposes: to manage the set of authorized smart meters and to change the price policy.
 %First, to change the set of smart meters that are authorized to sign transactions, the DSO authorizes or bans individual smart meters.
 First, whenever a new smart meter is installed, the DSO notifies the microgrid by authorizing the device using a regulatory transaction.
-Similarly, whenever a smart meter is deactivated (e.g., because service is stopped or the device is believed to be malfunctioning or compromised), the DSO notifies the microgrid by banning the device.
+Similarly, whenever a smart meter is deactivated (e.g., because service is stopped or the device is believed to be faulty or compromised), the DSO notifies the microgrid by banning the device.
 Second, to influence microgrid load, the DSO can set a price policy, which includes a price at which prosumer may buy energy from the DSO and a price at which they may sell energy to the DSO.
 
 A regulatory transactions contain the following fields:
