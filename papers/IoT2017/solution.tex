@@ -5,7 +5,7 @@ Figure~\ref{fig:softwareArchitecture} shows a high-level overview of the archite
 
 \begin{figure}[h!]
 \center
-\begin{tikzpicture}[x=8cm, y=0.8cm, font=\small,
+\begin{tikzpicture}[x=8cm, y=1.1cm, font=\small,
   nodeStyle/.style={rounded corners=0.1cm, drop shadow={shadow xshift=0.05cm, shadow yshift=-0.05cm, fill=black}}
 ]
 %\draw [nodeStyle, fill=white]   (0, 0) rectangle    (1, 0.9) node [midway, align=center] {Communication network\\[-0.2em]and operating system};
@@ -101,7 +101,10 @@ If the prosumer has sufficient unsold production capacity, the smart meter creat
 At this point, the production asset can still be traced back to the prosumer since the ledger is public.
 To achieve anonymity, the prosumer uses a \emph{mixing service}, which in practice may be implemented as a decentralized protocol, such as CoinShuffle~\cite{ruffing2014coinshuffle} or Xim~\cite{bissias2014sybil}.
 The prosumer transfers the production asset to the mixing service using an \emph{energy and financial transaction} \circled{2}, which is also recorded on the distributed ledger.
-In turn, the mixing service transfers the production asset to an \emph{anonymous address} \circled{3}\Aron{We should probably insert a good definition here for readers who are unfamiliar with blockchain transactions.}, which is randomly generated and controlled by the prosumer.
+In turn, the mixing service transfers the production asset to an \emph{anonymous address} \circled{3}%\Aron{We should probably insert a good definition here for readers who are unfamiliar with blockchain transactions.}
+, which is randomly generated and controlled by the prosumer.\footnote{The usage of the term \emph{address} varies between distributed ledgers, but our system could be implemented using any popular blockchain, such as Bitcoin and Ethereum. 
+Specifically, we use the term address to denote a possible destination for asset transfers. 
+Assets that have been transferred to an address can be used only by someone who ``controls'' the address (typically, the one who generated it), which usually means knowing a private key that corresponds to the address.} % knows the private key of the address (typically, the one who generated the address).} 
 Since the mixing service transfers assets from multiple prosumers to multiple anonymous addresses at the same time, and the anonymous addresses were generated at random by the prosumers, the assets cannot be traced back to the original prosumers after mixing.\footnote{Note that prosumers should divide their assets between multiple anonymous addresses; otherwise, each asset might be traced back to its prosumer based on the amount of energy that it contains.}
 
 Now, the prosumer can engage in energy trading anonymously.
