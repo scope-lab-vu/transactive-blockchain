@@ -8,22 +8,27 @@
 % What is the outline of this paper
 
 Power grids are undergoing major changes due to rapid
-acceleration in renewable energy resources, such as wind and solar power \cite{EIA2014, 5430489}. For example, 
-$4,143$ megawatts of solar panels were installed in third quarter of 2016 \cite{seia}. This capacity is estimated to grow from 4\% in 2015 to 29\% in 2040 \cite{Randal}. At the same time, the battery technology costs per kWh have been dropping significantly \cite{stock2015powerful}, reaching grid parity \cite{bronski2015economics}. This massive integration of renewable energy requires detailed information and visibility into all aspects of this network, making it difficult to manage, especially in the presence of variable distributed energy resources \cite{7452738}. Therefore, a different vision for the future of power-grid operations is emerging: a decentralized system in which local communities are arranged in microgrids \cite{rahimi2012transactive}. In this vision, energy generation, transmission, distribution and even storage (e.g., electric vehicles in a community) can be strategically used to balance load and demand spikes. 
+acceleration in renewable energy resources, such as wind and solar power \cite{5430489}. % \cite{EIA2014}
+For example, 
+$4,\!143$ megawatts of solar panels were installed in the third quarter of 2016 \cite{seia}. This capacity is estimated to grow from 4\% in 2015 to 29\% in 2040 \cite{Randal}. At the same time, battery technology costs per kWh have been dropping significantly \cite{stock2015powerful}, reaching grid parity. % \cite{bronski2015economics}
+This massive integration of renewable energy requires detailed information and visibility into all aspects of the network, making it difficult to manage, especially in the presence of variable distributed energy resources \cite{7452738}. Therefore, a different vision for the future of power-grid operations is emerging: a decentralized system in which local communities are arranged in microgrids \cite{rahimi2012transactive}. In this vision, energy generation, transmission, distribution and even storage (e.g., electric vehicles in a community) can be strategically used to balance load and demand spikes. 
 
 
-Furthering the concept of microgrids, transactive energy models have been proposed to support the next distribution system evolution \cite{kok2016society,cox2013structured,melton2013gridwise}. Transactive energy is a set of market based constructs for dynamically balancing the demand and supply across the electrical infrastructure \cite{melton2013gridwise}. In this approach, customers on the same feeder (i.e. sharing a power line link) can operate in an open market, trading and exchanging generated energy locally. Distribution System Operators (DSO) can be the custodian of this market, while still meeting the net demand \cite{7462854}. For example, the Brooklyn Microgrid, which was developed by LO3 Energy as a pilot project, is a peer-to-peer energy market for locally generated renewable energy.\footnote{\url{http://brooklynmicrogrid.com/}}
+Furthering the concept of microgrids, transactive energy models have been proposed to support the next distribution system evolution \cite{kok2016society,cox2013structured,melton2013gridwise}. Transactive energy is a set of market based constructs for dynamically balancing the demand and supply across the electrical infrastructure \cite{melton2013gridwise}. In this approach, customers on the same feeder (i.e. sharing a power line link) can operate in an open market, trading and exchanging generated energy locally. Distribution System Operators (DSO) can be the custodian of this market, while still meeting the net demand \cite{7462854}. For example, the Brooklyn Microgrid, which was developed by LO3 Energy as a pilot project, is a peer-to-peer market for locally generated renewable energy.\footnote{\url{http://brooklynmicrogrid.com/}}
 
-On one hand, transactive energy is a decentralized power system controls problem \cite{7452738}, requiring strategic microgrid control to maintain the stability of the community and the utility. On the other hand, it is a distributed market problem where erroneous as well as malicious transactions can create a gap between demand and supply, eventually destabilizing the system. However, in both cases, this system requires a distributed  infrastructure comprising of smart meters, feeders, smart inverters, utility substations, the utility central offices, and the transmission system operator, which has to provide the necessary computation fabric to support the interplay between the energy control and the fiscal market challenges. With the advent of IoT-based solutions in smart grid  dynamic demand response systems, which are a precursor to transactive sytems have been made possible \cite{Haider2016166}. 
+On one hand, transactive energy is a decentralized power system controls problem \cite{7452738}, requiring strategic microgrid control to maintain the stability of the community and the utility. On the other hand, it is a distributed market problem where erroneous as well as malicious transactions can create a gap between demand and supply, eventually destabilizing the system. However, in both cases, this system requires a distributed  infrastructure comprising of smart meters, feeders, smart inverters, utility substations, the utility central offices, and the transmission system operator, which has to provide the necessary computation fabric to support the interplay between the energy control and the fiscal market challenges. 
+Recently, demand-response systems have been enabled as applications of IoT in smart grid~\cite{Haider2016166}. Transactive energy systems are the next step for smart grid.
+% With the advent of IoT-based solutions in smart-grid  dynamic demand response systems, which are a precursor to transactive sytems have been made possible. 
 
-In general the focus is now on creating a distributed  IoT infrastructure comprising of smart meters, feeders, smart inverters, utility substations, the utility central offices, and the transmission system operator, which has to provide the necessary computation fabric to support the interplay between the energy control and the fiscal market challenges, as shown by Volttron \cite{katipamula2016volttron},  OpenFMB \cite{gunthersmart}, and the Resilient Information Architecture Platform for Smart Grid (RIAPS) \cite{eisele2017riaps}\cite{Scott2017ICCPS}, which is a distributed IoT  `operating system' that provides the foundations for all algorithms, isolates the hardware details from the algorithms, and provides essential mechanisms for resource management, fault tolerance, and security. However, most of these efforts are focusing on the computation and distribution of information and do not provide the key supports required to handle the privacy challenges that arise from the required information exchange in this decentralized transactive system. 
+In general, the focus is now on creating a distributed IoT infrastructure%  comprising of smart meters, feeders, smart inverters, utility substations, the utility central offices, and the transmission system operator
+, which provides the necessary computation fabric to support the interplay between energy control and fiscal market challenges, as shown by Volttron \cite{katipamula2016volttron},  OpenFMB \cite{gunthersmart}, and the Resilient Information Architecture Platform for Smart Grid (RIAPS) \cite{eisele2017riaps,Scott2017ICCPS}. For instance, the latter is a distributed IoT  ``operating system'' that provides the foundations for all algorithms, isolates the hardware details from the algorithms, and provides essential mechanisms for resource management, fault tolerance, and security. However, most of these efforts are focusing on the computation and distribution of information and, and they do not provide the key support required to handle the privacy challenges that arise from the required information exchange in this decentralized transactive system. 
 
 
-In this paper, we assume the existence of the IoT infrastructure and specifically focus on the privacy challenges mentined below. 
-
-
+In this paper, we assume the existence of the IoT infrastructure and specifically focus on the following privacy challenges.
+%
+%
 % This is where the RIAPS and computing services discussion will be included. However, it does not solve the following challenges, which is the focus of this paper.
-
+%
 %\Abhishek{Can we merge this with last paragraph? It seems repetitive.}
 %\Aron{I'll probably just remove this.}
 %Specifically, 
@@ -32,7 +37,7 @@ In this paper, we assume the existence of the IoT infrastructure and specificall
 %electric grids need to become more decentralized.
 %However, a decentralized transactive energy system may pose a much greater threat to prosumers' privacy than existing smart metering systems.
 %\Abhishek{We can introduce these bullets by stating that the privacy challenges specifically are (the privacy challenges were mentioned at the end of the paragraph above.)}
-\begin{itemize}
+\begin{itemize}[itemsep=0.25\parskip,topsep=-0.5\parskip]
 \item Firstly, since prosumers\footnote{We refer to customers as \emph{prosumers} to emphasize that they can not only consume energy, but may also produce it.}  may purchase energy from each other in a transactive microgrid, transactions may inadvertently reveal the prosumers' detailed energy usage patterns to other prosumers within the microgrid.
 Addressing this issue in a decentralized trading system is quite challenging as it requires hiding the identities of trade partners from each other.
 In comparison, secure smart metering reveals the prosumers' energy usage patterns \Abhishek{Earlier we mentioned the challenge of privacy with respect to system operator in the abstract. I think the system operator and provider are the same.  My question and comment were included in the abstract about this.} only to the provider. 
@@ -40,14 +45,15 @@ In comparison, secure smart metering reveals the prosumers' energy usage pattern
 For example, a smart home may know that its inhabitants will go out in the evening (e.g., by looking at their calendar), and it may trade energy futures accordingly in the morning.
 Without adequate privacy measures, these trades may reveal to other prosumers in the microgrid that the inhabitants will not be at home later.
 Note that energy futures, whose delivery may happen several hours after when the transaction is made, can play a very important role in predicting and controlling microgrid load.
-In comparison, smart metering reveals only current (and past) usage.
-\item Thirdly, transactions and energy usage data in a transactive microgrid are much richer source of information than the simple energy usage data collected by smart meters.
+In comparison, smart metering reveals only current (or past) usage.
+\item Thirdly, transactions and energy usage data in a transactive microgrid are much richer sources of information than the simple energy usage data collected by smart meters.
 More specifically, the information available in a transactive microgrid is a superset of what is available from smart metering, and it may be used to infer personal information, such as risk propensity and financial standing.
 \end{itemize}
+\vspace{0.5\parskip}
 
 Before transactive energy system can be deployed in practice, we must address these privacy issues.
 However, this is a challenging task, as the system also has to satisfy security and safety requirements, which often conflict with privacy goals.
-For example, to prevent a prosumer from destabilizing the grid through careless of malicious energy trading, the system must check all of the prosumers' transactions.
+For example, to prevent a prosumer from destabilizing the grid through careless of malicious energy trading, the system must check all of the prosumer's transactions.
 In a decentralized system, this requires disseminating information, which could be used to infer the prosumer's future energy consumption.
 
 \Abhishek{Can we cite an example of such a service?}
