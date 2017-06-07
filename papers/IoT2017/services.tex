@@ -1,8 +1,8 @@
 \subsection{Services}
 
-In this subsection, we describe the various services that are implemented in our system. %on which transactions are built and which build on transactions.
+In this subsection, we describe the various services that are provided in our system. %on which transactions are built and which build on transactions.
 We have already discussed the distributed ledger, which permanently stores valid transactions.
-Now, we will introduce anonymous communication service, mixing service for transaction anonymity, anonymous bid storage, and smart-meter based billing.
+Now, we will introduce the anonymous communication service, the mixing service for transaction anonymity, the anonymous bid storage, and smart-meter based billing.
 
 \subsubsection{Communication Anonymity}
 Firstly, we must provide an anonymous communication layer, on which we can build all the other services in our system.
@@ -10,7 +10,7 @@ Without this communication layer, transactions and bids could be easily de-anony
 
 We can employ well-known and widely used techniques for anonymous communication, such as \emph{onion routing}~\cite{reed1998anonymous}.
 To build an onion network, the smart meters, prosumers, and other devices can act as onion routers, and the list of onion routers in a microgrid can be published on the ledger.
-In practice, this service can built on 
+In practice, this service can be built on 
 %In our first implementation, we can use
  the free and open-source Tor software with private Directory Authorities.
 In this case, anonymous communication identifiers in bids and asks correspond to public-keys that identify Tor hidden services.
