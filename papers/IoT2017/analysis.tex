@@ -26,7 +26,7 @@ Hence, the net amount of energy sold by prosumer $i$ cannot exceed $\field{MAXEP
 By extending the argument, we can show that the net amount of energy sold by a group of prosumers~$G$ cannot exceed $\sum_{i \in G} \field{MAXEPA}_i$.
 Similarly, we can show that the net amount of energy bought by a group of prosumers $G$ cannot exceed $\sum_{i \in G} \field{MAXECA}_i$.
 
-Second, we can show that the amount of energy bids (or asks) posted at the same time by prosumer $i$ for each timestep is at most $\field{MAXEPA}_i + \field{MAXECA}_i$.
+Second, we can show that the total amount of energy bids (or asks) posted at the same time by prosumer $i$ for each timestep is at most $\field{MAXEPA}_i + \field{MAXECA}_i$.
 Notice that the limit is higher than for net energy sold or bought, since prosumer $i$ may purchase $\field{MAXECA}_i$ amount of EPA (or $\field{MAXEPA}_i$ amount of ECA) from other prosumers, and then post an energy ask (or bid) in the amount of $\field{MAXEPA}_i + \field{MAXECA}_i$.
 
 \subsection{Privacy}
