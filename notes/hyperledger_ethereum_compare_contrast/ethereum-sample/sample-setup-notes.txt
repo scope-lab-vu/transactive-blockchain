@@ -1,0 +1,75 @@
+ethereum private accounts 
+
+# These are the steps taken to create a private etereum network: (assuming scripts exist on c&c(command&control) machine)
+
+# delete ./ethereum/ directory on all 6 eth machines.(deletes local keys(accounts))
+``` ./command-eth-1-6.sh "rm -rfv /home/ubuntu/.ethereum/" `
+
+# copy password.txt (contains 'password' as text) to each eth node.
+``` ./copy-eth-2-6.sh ./password.txt `
+
+# create new keys on each of the 6 eth machines, using ./password.txt on each machine as password
+``` ./command-eth-1-6.sh "geth account new --password ./password.txt" `
+
+
+# To generate the 'alloc(ation' section of the json run custom script on eth1: 
+# (This will get account string from eth1-6 and format json section)
+
+``` ./get-new-account-json.sh ``` 
+
+# Here is the custom gensis block we'll us. It has 'chainId' of 15 to differentiate from public chains ('1')
+# it gives each of the 6 nodes (right term?) on the network starting balances, so that they don't have to mine.
+
+genesis-data.json:
+{
+    "config": {
+        "chainId": 15,
+        "homesteadBlock": 0,
+        "eip155Block": 0,
+        "eip158Block": 0
+    },
+    "difficulty": "200000000",
+    "gasLimit": "2100000",
+    "alloc": {
+        <Data here comes from each of the node's new account info>
+    }
+}
+
+
+# make dir for genesis block to go into
+# This is ran on each node (could be done with helper scripts)
+
+``` mkdir -p ./ethereum/custom/data ```
+``` geth --datadir ethereum/custom/data/ init genesis.json ```
+
+
+# This starts geth as a node, unlocks the account we want, uses the password file, uses custom networkid '15', and opens the console
+
+``` geth --datadir="ethereum/custom/data/" --unlock "<account # here>" --password password.txt --networkid 15 console ```
+
+
+#############################################################################
+# random notes:
+#############################################################################
+
+# the simplest way to create new account on a node is(interactive for creating password):
+` geth account new ` 
+
+# This will start a miner on a single (cpu) thread.
+
+``` miner.start(1) ```
+
+#inside geth console
+
+``` admin.nodeInfo
+
+# get 'enode' encoded string for networking.
+
+``` admin.nodeInfo.enode
+
+
+
+
+
+
+

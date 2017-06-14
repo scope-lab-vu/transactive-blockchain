@@ -1,0 +1,22 @@
+
+# copy blockchain.private to your ~/.ssh directory 
+# this version is usable with ssh in linux, the .ppk version is usable via putty in windows.
+
+# add the following to ~/.ssh/config to connect to the blockchain cnc machine via 'ssh blockchain' 
+# (can name it whatever you want)
+
+host blockchain
+   Hostname 129.59.107.34
+   User ubuntu
+   IdentityFile ~/.ssh/blockchain.private
+   IdentitiesOnly yes
+   Port 22
+
+
+
+# Once connected the blockchain-cnc machine already has the ssh key to connect to every other machine
+# It also has tmux installed and a session running
+# Though feel free to kill that session if you want, since window #1 is frozen, so 0 is eth1, rest are eth# for window
+
+# great tmux cheatsheet https://gist.github.com/MohamedAlaa/2961058
+
