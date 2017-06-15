@@ -53,7 +53,8 @@ genesis-data.json:
 #############################################################################
 
 # the simplest way to create new account on a node is(interactive for creating password):
-` geth account new ` 
+
+``` geth account new ```
 
 # This will start a miner on a single (cpu) thread.
 
@@ -61,12 +62,16 @@ genesis-data.json:
 
 #inside geth console
 
-``` admin.nodeInfo
+``` admin.nodeInfo ```
 
 # get 'enode' encoded string for networking.
 
-``` admin.nodeInfo.enode
+``` admin.nodeInfo.enode ```
 
+# here is a sample call to add a peer to a node, note the long 'enode' char string then '@' <IP:port> "?discport=0" 
+# ecode I'm not 'too sure' on right now, 
+
+``` admin.addPeer("enode://37e2aa1c85593a937ac38db4f36983fac555f01c80f149e7b9970775b1368c4dd78bfc03fc170f4f511ea8657c9332b7796065f064a33f62500d758b7422095e@10.4.209.25:30303?discport=0") ```
 
 
 
