@@ -23,7 +23,7 @@ energy resources \cite{7452738}. A different vision for the future of
 power-grid operations is therefore emerging: {\em a decentralized
   system in which local communities are arranged in microgrids}
 \cite{rahimi2012transactive}. In this vision, energy generation,
-transmission, distribution, and even storage (\em{e.g.}, electric
+transmission, distribution, and even storage (\emph{e.g.}, electric
 vehicles in a community) can be strategically used to balance load and
 demand spikes.
 
@@ -33,7 +33,7 @@ been proposed to support the next distribution system evolution
 energy is a set of market-based constructs for dynamically balancing
 the demand and supply across the electrical infrastructure
 \cite{melton2013gridwise}. In this approach, customers on the same
-feeder (\em{i.e.}, those sharing a power line link) can operate in an
+feeder (\emph{i.e.}, those sharing a power line link) can operate in an
 open market, trading and exchanging generated energy
 locally. Distribution System Operators (DSOs) can be the custodian of
 this market, while still meeting the net demand \cite{7462854}. For
@@ -70,13 +70,13 @@ distributed IoT operating system that provides the foundations for all
 algorithms, isolates the hardware details from the algorithms, and
 provides essential mechanisms for resource management, fault
 tolerance, and security. Most of these efforts, however, focus on the
-computation and distribution of information, but do not provide the
+computation and distribution of information, and do not provide the
 support required to handle the privacy challenges that arise from the
 required information exchange in this decentralized transactive
 system.
 
 This paper assumes the existence of a distributed IoT infrastructure
-and specifically focus on the following privacy challenges:
+and specifically focuses on the following privacy challenges:
 %
 %
 % This is where the RIAPS and computing services discussion will be included. However, it does not solve the following challenges, which is the focus of this paper.
@@ -90,8 +90,8 @@ and specifically focus on the following privacy challenges:
 %However, a decentralized transactive energy system may pose a much greater threat to prosumers' privacy than existing smart metering systems.
 %\Abhishek{We can introduce these bullets by stating that the privacy challenges specifically are (the privacy challenges were mentioned at the end of the paragraph above.)}
 \begin{itemize}[itemsep=0.25\parskip,topsep=-0.5\parskip]
-% Abhishek, can you please add a pithy summary of this challenge?
-\item \bf{Pithy challenge summary needed.} Since prosumers\footnote{We
+\item \textbf{Pithy challenge summary needed.} \Doug{Abhishek, can you please add a pithy summary of this challenge?}
+ Since prosumers\footnote{We
   refer to customers as \emph{prosumers} to emphasize that they can
   not only consume energy, but may also produce it.} may purchase
   energy from each other in a transactive microgrid, transactions may
@@ -102,8 +102,8 @@ and specifically focus on the following privacy challenges:
   smart metering reveals the prosumers' energy usage patterns only to
   the operator.
 
-% Abhishek, can you please add a pithy summary of this challenge?
-\item \bf{Pithy challenge summary needed.} \Abhishek{Is this not
+\item \textbf{Pithy challenge summary needed.} \Doug{Abhishek, can you please add a pithy summary of this challenge?}
+ \Abhishek{Is this not
   related to the first point?  Perhaps the first point can be just
   about identity and second point can be specifically about
   consumption patterns.}\Aron{The first point is about to whom
@@ -111,18 +111,18 @@ and specifically focus on the following privacy challenges:
   of information. I'll make this more clear.}  Transactions may reveal
   the future energy usage of a prosumer, which could be used to infer
   private information.  For example, a smart home may know that its
-  inhabitants will go out in the evening (\em{e.g.}, by looking at
+  inhabitants will go out in the evening (\emph{e.g.}, by looking at
   their calendar), and it may trade energy futures accordingly in the
   morning.  Without adequate privacy measures, these trades may reveal
   to other prosumers in the microgrid that the inhabitants will not be
-  at home later, which could be a security risk.  Note that energy
+  at home later.  Note that energy
   futures, whose delivery may happen several hours after when the
-  transaction is made, can play a important role in predicting and
+  transaction is made, can play an important role in predicting and
   controlling microgrid load.  In comparison, smart metering reveals
   only current (or past) usage.
 
-% Abhishek, can you please add a pithy summary of this challenge?
-\item \bf{Pithy challenge summary needed.} Transactions and energy
+\item \textbf{Pithy challenge summary needed.} \Doug{Abhishek, can you please add a pithy summary of this challenge?}
+  Transactions and energy
   usage data in a transactive microgrid are much richer sources of
   information than the simple energy usage data collected by smart
   meters.  More specifically, the information available in a
@@ -132,9 +132,9 @@ and specifically focus on the following privacy challenges:
 \end{itemize}
 \vspace{0.5\parskip}
 
-Before transactive energy system can be deployed widely in practice,
+Before transactive energy systems can be deployed widely in practice,
 we must address the privacy issues described above.  Addressing these
-issues is hard, however, since solutions also must satisfy security
+issues is hard, however, since solutions must also satisfy security
 and safety requirements, which often conflict with privacy goals.  For
 example, to prevent a prosumer from destabilizing the grid through
 careless of malicious energy trading, the system must check all of the
@@ -152,7 +152,7 @@ safety rules.  \Aron{Since SIGCHI does not have section numbers, this
   paragraph, which describes the organization of the paper, is not
   very clear.}  We first describe the basic components of a
 transactive IoT microgrid and formulate security, safety, and privacy
-requirements.  We next introduce a decentralized system for
+requirements.  Next, we introduce a decentralized system for
 transactive microgrids based on distributed ledgers and describe the
 transactions and services used to implement this system.  We then
 discuss how the system satisfies the security, safety, and privacy

@@ -3,7 +3,7 @@
 In the previous subsection, we gave an overview of how transactions
 are used in the trading process to transfer various assets.  We now
 describe the format of these transactions, as well as the rules that
-they must satisfy to be valid and recorded on the ledger.  We also
+they have to satisfy to be valid and recorded on the ledger.  We also
 introduce and detail the format of regulatory transactions, which the
 DSO uses to regulate the microgrid.
 
@@ -26,7 +26,7 @@ the control signal of the DSO typically changes.  \Abhishek{We need to
   would first need to make space for this discussion.}
 
 \subsubsection{Assets}
-Before we discuss transactions, we'll define the format of the three
+Before we can discuss transactions, we need to define the format of the three
 types of assets that these transactions may transfer.  First, an
 \emph{energy production asset} (EPA) is defined by
 \begin{itemize}[noitemsep,topsep=-\parskip]
@@ -39,7 +39,7 @@ defined by the same fields.  For this asset, however, the fields
 define energy consumption instead of production.  Finally, a
 \emph{financial asset} (FA) is defined by a single non-negative number
 \field{amount}, which can be denominated in either a fiat currency
-(\em{e.g.}, Euros or US dollars) or a cryptocurrency (\em{e.g.},
+(\emph{e.g.}, Euros or US dollars) or a cryptocurrency (\emph{e.g.},
 Bitcoin or Ether).
 
 \subsubsection{Energy and Financial Transactions}
@@ -95,7 +95,7 @@ the ledger) if the following three conditions hold.
 \begin{itemize}[noitemsep,topsep=-\parskip]
 \item None of the outputs referenced by the inputs have been spent by
   a transaction that has been recorded on the ledger.
-\item All the signatures are valid, which ensures that an asset can be
+\item All signatures are valid, which ensures that an asset can be
   transferred only by its current owner. 
 % current owner can transfer an asset. 
 \item For each asset type (and for each timestep), the sums of the
@@ -161,9 +161,9 @@ A transaction is valid if the following two conditions hold.
 The DSO uses regulatory transactions for two purposes: (1) to manage
 the set of authorized smart meters and (2) to change the price policy.
 %First, to change the set of smart meters that are authorized to sign transactions, the DSO authorizes or bans individual smart meters.
-Whenever a new smart meter is installed, the DSO notifies the
+First, whenever a new smart meter is installed, the DSO notifies the
 microgrid by authorizing the device using a regulatory transaction.
-Likewise, whenever a smart meter is deactivated (\em{e.g.}, because
+Likewise, whenever a smart meter is deactivated (\emph{e.g.}, because
 service is stopped or the device is believed to be faulty or
 compromised), the DSO notifies the microgrid by banning the device.
 Second, to influence microgrid load, the DSO can set a price policy,
