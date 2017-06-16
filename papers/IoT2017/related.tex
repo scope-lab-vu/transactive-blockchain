@@ -12,16 +12,65 @@
 % http://www.comm.toronto.edu/~akhisti/sm.pdf
 % https://www.researchgate.net/profile/Georgios_Kalogridis/publication/224189766_Smart_Grid_Privacy_via_Anonymization_of_Smart_Metering_Data/links/541169510cf2b4da1bec4193.pdf
 % https://arxiv.org/pdf/1305.0735.pdf
-New privacy concerns arise with the continuing adoption of smart grids. In addition to both old and new security threats, such as energy theft and smart-meter malware, McDaniel and McLaughlin discuss the privacy concerns of energy usage profiling that smart grids could potentially enable~\cite{mcdaniel2009security}. Several approaches have been investigated as potential means to provide privacy protections for smart grid users.
+New privacy concerns arise with the continuing adoption of smart
+grids. In addition to old and new security threats (such as energy
+theft and smart-meter malware), McDaniel and McLaughlin discuss the
+privacy concerns of energy usage profiling that smart grids could
+potentially enable~\cite{mcdaniel2009security}. Several approaches
+have been investigated as potential means to provide privacy
+protections for smart grid users.
 
-Some approaches look to the use of protocols and/or frameworks to help protect privacy. Rajagopalan et al.\ use tools from information theory to present a framework, which abstracts both the privacy and the utility requirements of smart-meter data~\cite{rajagopalan2011smart,sankar2013smart}. Their framework leads to a novel tractable privacy-utility tradeoff problem with minimal assumptions. Efthymiou and Kalogridis describe a method for securely anonymizing frequent electrical metering data sent by a smart meter~\cite{efthymiou2010smart}. Their approach is based on the observation that frequent metering data may be required by an energy distribution network for operational reasons, but it may not necessarily need to be attributable to a specific smart meter. The authors describe a method that provides a third-party escrow mechanism for authenticated anonymous meter readings, which are difficult to associate with a particular smart meter.
+Some approaches look to the use of protocols and/or frameworks to help
+protect privacy. Rajagopalan et al.\ use tools from information theory
+to present a framework that abstracts both the privacy and the utility
+requirements of smart-meter
+data~\cite{rajagopalan2011smart,sankar2013smart}. Their framework
+leads to a novel tractable privacy-utility tradeoff problem with
+minimal assumptions. Efthymiou and Kalogridis describe a method for
+securely anonymizing frequent electrical metering data sent by a smart
+meter~\cite{efthymiou2010smart}. Their approach is based on the
+observation that frequent metering data may be required by an energy
+distribution network for operational reasons, but it may not
+necessarily need to be attributable to a specific smart meter. The
+authors describe a method that provides a third-party escrow mechanism
+for authenticated anonymous meter readings, which are hard to
+associate with a particular smart meter.
 
-Additionally, other approaches such as additional hardware components are explored for potential privacy gains. Varodayan and Khisti study using a rechargeable battery for partially protecting the privacy of information contained in a household's electrical load profile~\cite{varodayan2011smart}. They show that stochastic battery policies may leak 26\% less information than a best-effort policy, which holds the output load constant whenever possible. Tan et al.\ study privacy in a smart metering system from an information theoretic perspective in the presence of energy harvesting and storage units~\cite{tan2013increasing}. They show that energy harvesting provides increased privacy by diversifying the energy source, while a storage device can be used to increase both energy efficiency and privacy. % They show that there exists a trade-off between the information leakage rate and the wasted energy rate, and study the impact of the energy harvesting rate and the size of the storage device on this trade-off.
+Additionally, other approaches such as additional hardware components
+are explored for potential privacy gains. Varodayan and Khisti study
+using a rechargeable battery for partially protecting the privacy of
+information contained in a household's electrical load
+profile~\cite{varodayan2011smart}. They show that stochastic battery
+policies may leak 26\% less information than a best-effort policy,
+which holds the output load constant whenever possible. Tan et
+al.\ study privacy in a smart metering system from an information
+theoretic perspective in the presence of energy harvesting and storage
+units~\cite{tan2013increasing}. They show that energy harvesting
+provides increased privacy by diversifying the energy source, while a
+storage device can be used to increase both energy efficiency and
+privacy.
+% They show that there exists a trade-off between the information
+% leakage rate and the wasted energy rate, and study the impact of the
+% energy harvesting rate and the size of the storage device on this trade-off.
 
-Our solution extends earlier work by considering a decentralized IoT system for transactive energy, and addressing the novel privacy threat posed by trading. In other words, while earlier results protected the prosumers' privacy from the DSO, we protect privacy from other prosumers as well as from outside attackers. 
+Our solution extends this earlier work by considering a decentralized
+IoT system for transactive energy, and addressing the novel privacy
+threat posed by trading. In particular, while earlier results
+protected the prosumers' privacy from the DSO, we protect privacy from
+other prosumers as well as from outside attackers.  
 
-A key element of our approach is the ability to distribute information among peers. For that purpose, we rely on the use of blockchains. 
-As blockchain technology continues to develop and mature, new frameworks, services, and protocols are being developed to leverage blockchain's distributed ledger. Hyperledger Fabric is a platform for distributed ledger solutions, which was designed to support pluggable implementations of different components~\cite{hyperledger2017fabric}. Bitcoin Lightning Network is decentralized system, in which transactions are sent over a network of micropayment channels, whose transfer of value occurs off-blockchain~\cite{poon2016bitcoin}. However, this paper focuses on theoretical aspects of our implementation and as such, any one of the distributed ledgers provide the required capabilities.
+A key element of our approach is the ability to distribute information
+among peers via blockchains.  As blockchain technology develops and
+matures, new frameworks, services, and protocols are being developed
+to leverage blockchain's distributed ledger. For example, Hyperledger
+Fabric is a platform for distributed ledger solutions, which was
+designed to support pluggable implementations of different
+components~\cite{hyperledger2017fabric}. Bitcoin Lightning Network is
+decentralized system, in which transactions are sent over a network of
+micropayment channels, whose transfer of value occurs
+off-blockchain~\cite{poon2016bitcoin}. Since this paper focuses on
+theoretical foundations of our implementation, any of these
+distributed ledgers provide the required capabilities.
 
 %\Abhishek{Aron this section should end with a few sentence about how our approach fits in. Perhaps just a few sentences reworded from introduction will be sufficient}
 
