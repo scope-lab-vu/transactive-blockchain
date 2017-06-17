@@ -102,7 +102,8 @@ We now provide a semi-formal description of the energy trading process
 from the prosumers' perspective. 
 Subsequent subsections will describe the assets, transactions, and services used for trading in more detail.  
 
-First, consider a prosumer who wishes to sell energy to another
+\subsubsection{Energy Selling Process}
+Consider a prosumer who wishes to sell energy to another
 prosumer, as shown in Figure~\ref{fig:sellFlow}. 
 As its first step, the prosumer withdraws an \emph{energy production asset} from its smart meter.
 An energy production asset represents a permission to sell a certain amount of energy, and it is used to enforce safety requirements.
@@ -159,9 +160,8 @@ consumption assets as the amount of production assets withdrawn at the
 beginning; otherwise, unaccounted assets could be used to trade
 excessive amounts.
 
-\Doug{Abhishek, it seems like we might need a transition here since the previous paragraph seemed to wrap up the ``Overview of the Trading Process'' subsection above.  It's not clear how the rest of this text ties in with that discussion.  Perhaps we could use subsubsections to make these parts more distinct?}
-\Aron{It did not wrap up. We have only discussed the process from the seller's perspective.}
-Second, consider a prosumer who would like to buy energy from another prosumer.
+\subsubsection{Energy Buying Process}
+Consider a prosumer who would like to buy energy from another prosumer.
 Since the trading process is very similar to the case of the selling prosumer, we will discuss only the differences.
 In the first step, the prosumer tries to withdraw a financial asset and an energy consumption asset from its smart meter.
 If the prosumer has the consumption capacity and good financial standing, the smart meter transfers the assets to the prosumer and adds the financial amount to the prosumer's bill.
