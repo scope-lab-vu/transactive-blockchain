@@ -1,9 +1,11 @@
+%!TEX root = paper.tex
 \section{Preliminaries and Requirements}
 \Aron{Redundant, previous and following paragraphs state what we do here anyway.}
 This section describes the basic components of a transactive IoT
 microgrid and formulates security, safety, and privacy requirements.
 
 \subsection{Transactive Microgrid Components}
+\Abhishek{We need a figure here. We probably need to briefly describe a transactive energy architecture and then use that to set the requirements. The services described here will then better  fit in our section on solution }
 
 \Abhishek{This is the perfect paragraph to define transactive microgrid as a special application of IoT spread over a large area. Perhaps we can find a citation that makes this point.}
 We begin by describing a basic system model of decentralized 
@@ -50,11 +52,13 @@ trade partners.
 To enhance scalability and reliability, this service can also be
 implemented in a distributed manner, using multiple nodes.
 
-\subsubsection{Microgrid Controller}
-\Aron{Is this true?}
-The microgrid controller stabilizes the load within the microgrid
-based on the predicted future load within the microgrid and the rest
-of the grid.  The controller first predicts load in the microgrid
+\subsubsection{Microgrid Controller (Distribution System Operator)}
+\Aron{Is this true?}\Abhishek{I have editied it. We need to mention distribution system operator here.}
+We assume the existence of a controller at the Distribution System Operator level that regulates the total load that the microgrid should present to the distribution system.
+%The microgrid controller stabilizes the load within the microgrid
+%based on the predicted future load within the microgrid and the rest
+%of the grid. 
+ The controller first predicts load in the microgrid
 based on (1) bids and asks in the bid storage and (2) outstanding
 energy trades in the ledger.  By combining this information with the
 prediction for the rest of the grid, the controller produces a control

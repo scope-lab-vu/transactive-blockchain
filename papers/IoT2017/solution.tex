@@ -1,3 +1,4 @@
+%!TEX root = paper.tex
 \section{Proposed System}
 
 This section describes our solution for providing privacy to prosumers
@@ -104,7 +105,7 @@ Subsequent subsections will describe the assets, transactions, and services used
 
 \subsubsection{Energy Selling Process}
 Consider a prosumer who wishes to sell energy to another
-prosumer, as shown in Figure~\ref{fig:sellFlow}. 
+prosumer, as shown in Figure~\ref{fig:sellFlow}\Abhishek{We need to mention what is the expected deadline by which this sequence of task should finish. }. 
 As its first step, the prosumer withdraws an \emph{energy production asset} from its smart meter.
 An energy production asset represents a permission to sell a certain amount of energy, and it is used to enforce safety requirements.
 If the prosumer has sufficient unsold production capacity, the smart meter creates and transfers a production asset to the prosumer using a \emph{smart meter transaction} \circled{1}, which is recorded on the distributed ledger.
