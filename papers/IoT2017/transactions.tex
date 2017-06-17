@@ -31,7 +31,7 @@ Before we can discuss transactions, we need to define the format of the three
 types of assets that these transactions may transfer.  First, an
 \emph{energy production asset} (EPA) is defined by
 \begin{itemize}[noitemsep,topsep=-\parskip]
-\item \field{power}: non-negative amount of power to produced (for example, measured in watts),
+\item \field{power}: non-negative amount of power to be produced (for example, measured in watts),
 \item \field{start}: first time interval in which energy is to be produced,
 \item \field{end}: last time interval in which energy is to be produced.
 \end{itemize}
@@ -76,12 +76,12 @@ An energy and financial transaction contains the following fields:
 \end{itemize}
 \item \field{ECA\_out}: list of ECA outputs, each of which is defined by
 \begin{itemize}[leftmargin=0.5em,nosep]
-\item \field{EPA}: an energy consumption asset,
+\item \field{ECA}: an energy consumption asset,
 \item \field{address}: address to which ECA is transferred,
 \end{itemize}
 \item \field{FA\_out}: list of FA outputs, each of which is defined by
 \begin{itemize}[leftmargin=0.5em,nosep]
-\item \field{EPA}: a financial asset,
+\item \field{FA}: a financial asset,
 \item \field{address}: address to which FA is transferred.
 \end{itemize}
 \end{itemize}
