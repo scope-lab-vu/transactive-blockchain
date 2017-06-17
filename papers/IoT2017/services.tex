@@ -1,8 +1,7 @@
 %!TEX root = paper.tex
 \subsection{Services}
 
-We now describe the various services that are provided in our system.
-%on which transactions are built and which build on transactions.
+We now describe the various services that are provided in PETra.
 Earlier, we discussed the distributed ledger, which permanently stores
 valid transactions.  Below, we introduce the anonymous communication
 service, the mixing service for transaction anonymity, the anonymous
@@ -10,7 +9,7 @@ bid storage, and smart-meter based billing.
 
 \subsubsection{Communication Anonymity}
 The anonymous communication layer is the infrastructure upon which all
-other anonymity services in our system are built.  Without this communication
+other anonymity services in PETra are built.  Without this communication
 layer, transactions and bids could be easily de-anonymized based on
 their sources' network identifiers (\emph{e.g.}, IP or MAC addresses).
 
@@ -20,7 +19,6 @@ To build an onion network, the smart meters, prosumers, and other
 devices can act as onion routers, and the list of onion routers in a
 microgrid can be published on the ledger.  In practice, this service 
 can be built on 
-%In our first implementation, we can use
 the free and open-source Tor software with private Directory
 Authorities.  In this case, anonymous communication identifiers in
 bids and asks correspond to public-keys that identify Tor hidden
@@ -33,9 +31,6 @@ Communication anonymity is necessary, but not sufficient, for
 anonymous trading. In particular, if prosumers used their own accounts
 to transfer assets, their trades would not be anonymous.  Fortunately,
 most distributed ledgers allow users to easily generate new addresses
-%\footnote{The usage of the term \emph{address} varies between distributed ledgers, but our system could be implemented using any popular ledger, such as Bitcoin and Ethereum.
-%Specifically, we use the term address to denote a possible destination for asset transfers. 
-%Assets transferred to an address can be used only by someone who knows the private key of the address (typically, the one who generated the address).} 
 at random, which are anonymous in the sense that no one can tell who
 generated them.  However, if prosumers simply transferred assets to these
 addresses, they could be easily de-anonymized by tracing the
@@ -58,51 +53,9 @@ CoinShuffle~\cite{ruffing2014coinshuffle} or
 Xim~\cite{bissias2014sybil}.  These protocols enable participants to
 mix assets with each other, thereby eliminating the need for a trusted
 third party.
-%, which would constitute a single point of failure.
 Some newer cryptocurrencies, such as
 Zerocoin~\cite{miers2013zerocoin}, provide built-in mixing services,
 which are often based on cryptographic principles and proofs.
-
-\begin{comment}
-We must provide prosumers with the ability to create and publish
-transactions anonymously.  More specifically, prosumers should be able
-to purchase or sell energy without revealing their identity; however,
-these transaction must also be verifiable and enforceable.
-
-We may achieve this goal using multiple approaches for blockchain transaction anonymity:
-\begin{itemize}
-\item Mixing services (also known as tumblers) mix potentially
-  identifiable assets on a blockchain with others, thereby preventing
-  tracing individual assets back to their original source.  In our
-  case, assets to be mixed include virtual balances of fiat currencies
-  as well as energy production and consumption.
-\item Cryptographic anonymity for transactions is provided, for
-  example, by Zerocoin~\cite{miers2013zerocoin}. Similarly to mixing
-  service, Zerocoin can prevent tracing assets on a blockchain.
-\end{itemize}
-Using the above techniques, we can enable prosumers to trade energy
-anonymously (i.e., without revealing their true identities), but at
-the same time prevent them from altering their energy or financial
-balances without a valid transaction.
-
-However, we must also ensure that 1) smart meters know the amount of
-energy purchased or sold by their prosumer and 2) prosumers cannot
-purchase or sell more energy than their capacity.  To satisfy both of
-these constraints, all energy trades must start with the prosumer
-withdrawing a certain amount of energy production or consumption from
-its smart meter:
-\begin{itemize}
-\item If a prosumer wishes to sell energy, it must first withdraw an
-  energy asset from its smart meter using a blockchain transaction.
-  This transaction must be signed by the smart meter, which enables
-  the smart meter to 1) keep track of the amount of energy traded by
-  the prosumer as well as to 2) enforce safety requirements by
-  limiting the amount of energy that can be withdrawn.
-\item If a prosumer wishes to buy energy, it must first withdraw an
-  energy consumption asset from its smart meter in a way similar to
-  withdrawing an energy production asset.
-\end{itemize}
-\end{comment}
 
 \subsubsection{Bidding Anonymity}
 Prosumers must also be able to anonymously post energy bids and asks on the
@@ -123,14 +76,6 @@ private key of the address.  Alternatively, the prosumer may also
 prove control by transferring zero amount of assets to a random
 address that was freshly generated by the service.
 
-%Finally, we must provide prosumers with the ability to post energy bids and asks anonymously.
-%To this end, we create a storage for anonymous bids that is readable by all the prosumers in the microgrid.
-%Any prosumer may submit a bid to this storage; however, in order to do so, they must provide a zero-knowledge proof of owning the assets that are to be traded:
-%\begin{itemize}
-%\item To submit an energy sell bid, the prosumer must prove that it owns an energy production asset on the chain.
-%\item To submit an energy buy bid, the prosumer must prove that it own an energy consumption asset as well as financial assets on the chain.
-%\end{itemize}
-
 \subsubsection{Smart-Meter Based Billing}
 After a prosumer has finished trading, it deposits all of its EPA,
 ECA, and FA to the smart meter by transferring them to an anonymous
@@ -142,10 +87,9 @@ the DSO, as follows. \Abhishek{The safety argument should be strengthened here}
 
 The energy consumption balance $E_i^t$ of prosumer $i$ is
 \begin{align*}
-E_i^t = & \hphantom{+} \text{measured net energy consumption during timeslot } t \\ %\text{measured consumption} - \text{measured production} \\
+E_i^t = & \hphantom{+} \text{measured net energy consumption during timeslot } t \\ 
  & - \sum_{epa \,\in\, \{\text{EPA deposited by } i\}: ~ epa.\field{start} \,\leq\, t \,\leq\, epa.\field{end}} epa.\field{power} \\
  & + \sum_{epa \,\in\, \{\text{EPA withdrawn by } i\}: ~ epa.\field{start} \,\leq\, t \,\leq\, epa.\field{end}} epa.\field{power} .
-% & + \text{EPA deposited by $i$} - \text{EPA withdrawn by $i$} .
 \end{align*}
 Notice that consumption assets are not used directly for billing, they are only used to enforce security and safety requirements.
 

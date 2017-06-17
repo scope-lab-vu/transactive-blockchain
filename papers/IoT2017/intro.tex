@@ -15,7 +15,7 @@ third quarter of 2016 \cite{seia}. This capacity is estimated to grow
 from 4\% in 2015 to 29\% in 2040 \cite{Randal}. At the same time,
 battery technology costs per kWh have dropped significantly
 \cite{stock2015powerful}, reaching grid parity.
-%\cite{bronski2015economics}
+% \cite{bronski2015economics}
 This massive integration of renewable energy requires detailed
 information and visibility into all aspects of the network, making it
 hard to manage, especially in the presence of variable distributed
@@ -54,12 +54,9 @@ provide the necessary computation fabric to support the interplay
 between the energy control and the fiscal market challenges.
 Recently, demand-response systems have been enabled as applications of
 IoT in smart grid~\cite{Haider2016166}. Transactive grid is the next step \cite{collier2017emerging}.
-% With the advent of IoT-based solutions in smart-grid  dynamic demand response systems, which are a precursor to transactive sytems have been made possible. 
 
-\todo{Lets call this system is PETra - Privacy preserving Energy Transactions}
 In general, the focus is now on creating a distributed IoT
 infrastructure
-%  comprising of smart meters, feeders, smart inverters, utility substations, the utility central offices, and the transmission system operator
 that provides the necessary computation fabric to support the
 interplay between energy control and fiscal market challenges, as
 shown by Volttron \cite{katipamula2016volttron}, OpenFMB
@@ -77,20 +74,8 @@ system.
 
 This paper assumes the existence of a distributed IoT infrastructure
 and specifically focuses on the following privacy challenges:
-%
-%
-% This is where the RIAPS and computing services discussion will be included. However, it does not solve the following challenges, which is the focus of this paper.
-%
-%\Abhishek{Can we merge this with last paragraph? It seems repetitive.}
-%\Aron{I'll probably just remove this.}
-%Specifically, 
-%in order to take advantage of local energy production and storage capabilities, 
-%in order to take advantage of these capabilities, 
-%electric grids need to become more decentralized.
-%However, a decentralized transactive energy system may pose a much greater threat to prosumers' privacy than existing smart metering systems.
-%\Abhishek{We can introduce these bullets by stating that the privacy challenges specifically are (the privacy challenges were mentioned at the end of the paragraph above.)}
 \begin{itemize}[itemsep=0.25\parskip,topsep=-0.5\parskip]
-\item \textbf{Leakage of Energy Usage Patterns to Other Prosumenrs} \Doug{Abhishek, can you please add a pithy summary of this challenge?}
+\item \textbf{Leakage of Energy Usage Patterns to Other Prosumers} 
  Since prosumers\footnote{We
   refer to customers as \emph{prosumers} to emphasize that they can
   not only consume energy, but may also produce it.} may purchase
@@ -102,7 +87,7 @@ and specifically focuses on the following privacy challenges:
   smart metering reveals the prosumers' energy usage patterns only to
   the operator.
 
-\item \textbf{Preventing Inference of Future State of a Prosumer} \Doug{Abhishek, can you please add a pithy summary of this challenge?}
+\item \textbf{Inference of Future States of a Prosumer} 
  \Abhishek{Is this not
   related to the first point?  Perhaps the first point can be just
   about identity and second point can be specifically about
@@ -121,7 +106,7 @@ and specifically focuses on the following privacy challenges:
   controlling microgrid load.  In comparison, smart metering reveals
   only current (or past) usage.
 
-\item \textbf{Preventing Personally Identifiable Information} \Doug{Abhishek, can you please add a pithy summary of this challenge?}
+\item \textbf{Personally Identifiable Information} 
   Transactions and energy
   usage data in a transactive microgrid are much richer sources of
   information than the simple energy usage data collected by smart
@@ -142,30 +127,17 @@ prosumer's transactions.  In a decentralized system, this requires
 disseminating information, which could be used to infer the prosumer's
 future energy consumption.
 
-In this paper, we describe an overview of the transactive sequence between different components of the systems. We also describe in the detail the structure of these transactions and show how these transactions  (1) enables trading energy futures in a
+In this paper, we \change{describe an overview of the transactive sequence between different components of the systems. We also describe in the detail the structure of these transactions and show how these transactions}{propose \emph{Privacy-preserving Energy Transactions} (PETra), a distributed-ledger based solution that} (1) enables trading energy futures in a
 secure and verifiable manner, (2) preserves prosumer privacy, and (3)
 enables DSOs to regulate the trading platform and enforce certain
 safety rules. 
-
-%\Abhishek{Can we cite an example of such a service?}  \Aron{I am not
-%  sure what you mean by ``such a service.''}  \Abhishek{We should
-%  connect the paper and our work back to IoT in this paragraph.}  
-  %This
-%paper proposes a solution that (1) enables trading energy futures in a
-%secure and verifiable manner, (2) preserves prosumer privacy, and (3)
-%enables DSOs to regulate the trading platform and enforce certain
-%safety rules. 
- %\Aron{Since SIGCHI does not have section numbers, this
- % paragraph, which describes the organization of the paper, is not
-  %very clear.}  
-
-%\Abhishek{I have commented the previous because it seems redundant}
+%
+\Aron{Since SIGCHI does not have section numbers, this paragraph, which describes the organization of the paper, is not very clear.}  
 We first describe the basic components of a
 transactive IoT microgrid and formulate security, safety, and privacy
-requirements.  Next, we introduce a decentralized system for
-transactive microgrids based on distributed ledgers and describe the
-transactions and services used to implement this system.  We then
-discuss how the system satisfies the security, safety, and privacy
+requirements.  Next, we introduce PETra and describe the
+transactions and services used to implement it.  We then
+discuss how PETra satisfies the security, safety, and privacy
 requirements.  Finally, we give a brief overview of related work and
 offer concluding remarks.
 

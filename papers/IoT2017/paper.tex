@@ -95,6 +95,10 @@
 \newcommand{\Aron}[1]{\todo[color=green!40, linecolor=black!50]{\textbf{Aron}: #1}}
 \newcommand{\Doug}[1]{\todo[color=red!40, linecolor=black!50]{\textbf{Doug}: #1}}
 
+\usepackage[normalem]{ulem}
+\newcommand{\change}[2]{\textcolor{red}{\sout{#1}} \textcolor{blue}{#2}}
+%\newcommand{\change}[2]{#2} % DO NOT DISPLAY CHANGES
+
 \newcommand{\circled}[1]{\tikz[baseline=(char.base)]{\node[shape=circle, draw, inner sep=0.5pt, solid] (char) {#1};}}
             
 \newcommand{\field}[1]{\texttt{#1}}
@@ -199,9 +203,9 @@ be protected from their trade partners and \Abhishek{To what extent is
   need to detail this in the abstract?}\Abhishek{we dont have to} the
 system operator.  On the other hand, the system must be protected from
 careless or malicious trading, which could destabilize the entire
-grid.  This paper describes our secure and safe solution for
+grid.  This paper describes \change{our}{\emph{Privacy-preserving Energy Transactions} (PETra), a} secure and safe solution for
 transactive microgrids, which enables consumers to trade energy
-without sacrificing their privacy.  Our solution builds on distributed
+without sacrificing their privacy.  \change{Our solution}{PETra} builds on distributed
 ledgers, such as blockchains, and provides anonymity for
 communication, bidding, and trading.
 \end{abstract}

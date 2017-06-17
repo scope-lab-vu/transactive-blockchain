@@ -1,50 +1,9 @@
 %!TEX root = paper.tex
-\section{Proposed System}
+\section{Privacy-preserving Energy Transactions}
 
-This section describes our solution for providing privacy to prosumers
+This section describes Privacy-preserving Energy Transactions (PETra), our solution for providing privacy to prosumers
 in a transactive energy IoT system, without compromising grid safety
 and security.
-\Doug{Abhishek, could this figure appear earlier, i.e., in the previous section, as per my comment three?}
-Figure~\ref{fig:softwareArchitecture} shows the architecture of 
-\Doug{Abhishek, can we give ``our solution'' a name so that we can refer to it by name throughout the paper?}
-our solution.  In this figure, components marked red are introduced to
-provide privacy in a safe and secure manner, whereas components marked
-in blue are typical elements of a decentralized transactive microgrid.
-
-\todo{Remove the communication network and operating system}
-\begin{figure}[h!]
-\center
-\begin{tikzpicture}[x=8cm, y=1.1cm, font=\small,
-  nodeStyle/.style={rounded corners=0.1cm, drop shadow={shadow xshift=0.05cm, shadow yshift=-0.05cm, fill=black}}
-]
-%\draw [nodeStyle, fill=white]   (0, 0) rectangle    (1, 0.9) node [midway, align=center] {Communication network\\[-0.2em]and operating system};
-
-%\draw [nodeStyle, fill=red!10]  (0, 1) rectangle    (1, 1.9) node [midway, align=center] {Communication anonymity\\[-0.2em](e.g., onion routing)};
-
-%\draw [nodeStyle, fill=blue!10] (0, 2) rectangle    (1, 2.9) node [midway, align=center] {Distributed ledger\\[-0.2em](e.g., blockchain)};
-
-%\draw [nodeStyle, fill=red!10]  (0,    3) rectangle (0.45, 3.9) node [midway, align=center] {Transaction anonymity\\[-0.2em](mixing service)};
-%\draw [nodeStyle, fill=blue!10] (0.47, 3) rectangle (0.72, 3.9) node [midway, align=center] {Bid storage};
-%\draw [nodeStyle, fill=red!10 ] (0.74, 3) rectangle (1,    3.9) node [midway, align=center] {Active\\[-0.2em]smart meter};
-
-%\draw [nodeStyle, fill=red!10] (0,    4) rectangle (0.49, 4.9) node [midway, align=center] {Prosumer anonymous\\[-0.2em]trading process};
-%\draw [nodeStyle, fill=blue!10] (0.51, 4) rectangle (1,    4.9) node [midway, align=center] {Microgrid\\[-0.2em]controller};
-\draw [nodeStyle, fill=white]   (0, 0.9) rectangle    (1, 1.5) node [midway, align=center] {Communication network and operating system};
-
-\draw [nodeStyle, fill=red!10]  (0, 1.65) rectangle    (1, 2.25) node [midway, align=center] {Communication anonymity (e.g., onion routing)};
-
-\draw [nodeStyle, fill=blue!10] (0, 2.4) rectangle    (1, 3.0) node [midway, align=center] {Distributed ledger (e.g., blockchain)};
-
-\draw [nodeStyle, fill=red!10]  (0, 3.15) rectangle (0.45, 4.05) node [midway, align=center] {Transaction anonymity\\[-0.2em](mixing service)};
-\draw [nodeStyle, fill=blue!10] (0.47, 3.15) rectangle (0.72, 4.05) node [midway, align=center] {Bid storage};
-\draw [nodeStyle, fill=red!10 ] (0.74, 3.15) rectangle (1, 4.05) node [midway, align=center] {Active\\[-0.2em]smart meter};
-
-\draw [nodeStyle, fill=red!10] (0, 4.2) rectangle (0.49, 5.1) node [midway, align=center] {Anonymous trading\\[-0.2em]process for prosumers};
-\draw [nodeStyle, fill=blue!10] (0.51, 4.2) rectangle (1, 5.1) node [midway, align=center] {Microgrid controller};
-\end{tikzpicture}
-\caption{High-level architecture of our solution.}
-\label{fig:softwareArchitecture}
-\end{figure}
 
 \begin{figure*}[h]
 \center
@@ -54,15 +13,6 @@ in blue are typical elements of a decentralized transactive microgrid.
   asset/.style={midway, align=center},
   transfer/.style={->, >=stealth, shorten <=0.05cm, shorten >=0.05cm},
 ]
-%\node[entity] (smartmeter) at (0.75, 0.5) {smart\\meter};
-%\node[entity] (prosumer1) at (1.25, 1) {prosumer};
-%\node[system] (mixing1) at (2, 1) {mixing\\service};
-%\node[entity] (prosumer2) at (3, 1) {prosumer\\(alternative address)};
-%\node[system] (bidstorage) at (4, 1) {bid\\storage};
-%\node[entity] (partner) at (4, 0) {other prosumer};
-%\node[entity] (prosumer3) at (3, 0) {prosumer\\(alternative address)};
-%\node[system] (mixing2) at (2, 0) {mixing\\service};
-%\node[entity] (prosumer4) at (1.25, 0) {prosumer};
 \node[entity] (smartmeter) at (0, 1) {smart meter};
 \node[entity] (prosumer1) at (1, 1) {prosumer};
 \node[system] (mixing1) at (1.9, 1) {mixing\\service};
@@ -71,18 +21,6 @@ in blue are typical elements of a decentralized transactive microgrid.
 \node[entity] (partner) at (3, 0) {other prosumer};
 \node[entity] (prosumer3) at (1.5, 0) {prosumer\\(anonymous address)};
 \node[entity] (smartmeter2) at (0, 0) {smart meter\\(anonymous address)};
-
-%\draw[transfer] (smartmeter) -- node [asset, above left] {energy\\production asset} (prosumer1);
-%\draw[transfer] (prosumer1) -- node [asset, above] {energy\\production asset} (mixing1);
-%\draw[transfer] (mixing1) -- node [asset, above] {energy\\production asset} (prosumer2);
-%\draw[transfer, dashed] (prosumer2) -- node [asset, above] {energy production asset,\\energy bid} (bidstorage);
-%\draw[transfer, dashed] (bidstorage) -- node [asset, right] {energy\\bid} (partner);
-%\draw[transfer, bend right=15] (partner) to node [asset, below] {financial asset,\\energy\\consumption asset} (prosumer3);
-%\draw[transfer, bend right=7.5] (prosumer2) to node [asset, above right] {energy\\prod. asset} (partner);
-%\draw[transfer] (prosumer3) -- node [asset, below] {financial asset,\\
-%energy consumption asset} (mixing2);
-%\draw[transfer] (mixing2) -- node [asset, below] {financial asset,\\energy consumption asset} (prosumer4);
-%\draw[transfer] (prosumer4) -- node [asset, below left] {financial\\asset} (smartmeter);
 
 \draw[transfer] (smartmeter) -- node [asset, above] {\circled{1} energy\\production asset} (prosumer1);
 \draw[transfer] (prosumer1) -- node [asset, above] {\circled{2} energy\\production asset} (mixing1);
@@ -99,12 +37,12 @@ Note that to prevent de-anonymization, a prosumer should use multiple addresses 
 \label{fig:sellFlow}
 \end{figure*}
 
-\subsection{Overview of the Trading Process}
-We now provide a semi-formal description of the energy trading process
+\subsection{Overview of the Trading Workflow}
+We now provide a semi-formal description of the energy trading workflow
 from the prosumers' perspective. 
 Subsequent subsections will describe the assets, transactions, and services used for trading in more detail.  
 
-\subsubsection{Energy Selling Process}
+\subsubsection{Energy Selling Workflow}
 Consider a prosumer who wishes to sell energy to another
 prosumer, as shown in Figure~\ref{fig:sellFlow}\Abhishek{We need to mention what is the expected deadline by which this sequence of task should finish. }. 
 As its first step, the prosumer withdraws an \emph{energy production asset} from its smart meter.
@@ -116,11 +54,10 @@ To achieve anonymity, the prosumer uses a \emph{mixing service}, which could be 
 The prosumer transfers the production asset to the mixing service using an \emph{energy and financial transaction} \circled{2}, which is also recorded on the distributed ledger.
 In turn, the mixing service
 transfers the production asset to an \emph{anonymous address} \circled{3},
-%\Aron{We should probably insert a good definition here for readers who are unfamiliar with blockchain transactions.}
 which is randomly generated and controlled by the
-prosumer.\footnote{The concept of \emph{address} varies between distributed ledgers, but our system could be implemented using any popular blockchain, such as Bitcoin and Ethereum. 
+prosumer.\footnote{The concept of \emph{address} varies between distributed ledgers, but PETra could be implemented using any popular blockchain, such as Bitcoin and Ethereum. 
 Specifically, we use the term address to denote a possible destination for asset transfers. 
-Assets that have been transferred to an address can be used only by someone who ``controls'' the address (typically, the one who generated it), which usually means knowing a private key that corresponds to the address.} % knows the private key of the address (typically, the one who generated the address).}
+Assets that have been transferred to an address can be used only by someone who ``controls'' the address (typically, the one who generated it), which usually means knowing a private key that corresponds to the address.} 
 Since the mixing service transfers assets from multiple prosumers to
 multiple anonymous addresses at the same time, and the anonymous
 addresses were generated at random by the prosumers, the assets
@@ -162,9 +99,9 @@ consumption assets as the amount of production assets withdrawn at the
 beginning; otherwise, unaccounted assets could be used to trade
 excessive amounts.
 
-\subsubsection{Energy Buying Process}
+\subsubsection{Energy Buying Workflow}
 Consider a prosumer who would like to buy energy from another prosumer.
-Since the trading process is very similar to the case of the selling prosumer, we will discuss only the differences.
+Since the trading workflow is very similar to the case of the selling prosumer, we will discuss only the differences.
 In the first step, the prosumer tries to withdraw a financial asset and an energy consumption asset from its smart meter.
 If the prosumer has the consumption capacity and good financial standing, the smart meter transfers the assets to the prosumer and adds the financial amount to the prosumer's bill.
 

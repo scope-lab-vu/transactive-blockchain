@@ -1,12 +1,10 @@
 %!TEX root = paper.tex
-\section{Preliminaries and Requirements}
+\section{System Model and Requirements}
 \Aron{Redundant, previous and following paragraphs state what we do here anyway.}
-This section describes the basic components of a transactive IoT
-microgrid and formulates security, safety, and privacy requirements.
+This section describes a basic system model of transactive IoT
+microgrids and formulates security, safety, and privacy requirements.
 
-\subsection{Transactive Microgrid Components}
-\Abhishek{We need a figure here. We probably need to briefly describe a transactive energy architecture and then use that to set the requirements. The services described here will then better  fit in our section on solution }
-
+\subsection{Transactive Microgrid System Model}
 \Abhishek{This is the perfect paragraph to define transactive microgrid as a special application of IoT spread over a large area. Perhaps we can find a citation that makes this point.}
 We begin by describing a basic system model of decentralized 
 \Doug{Abhishek, if there's room can we add a diagram showing how all these components relate to each other?} 
@@ -15,6 +13,32 @@ distributed ledger for recording transactions, a bid storage service
 that facilitates finding trade partners, a microgrid controller for
 regulating the microgrid load, and smart meters for measuring the
 prosumers' energy production and consumption.
+Figure~\ref{fig:softwareArchitecture} shows the high-level architecture of 
+\change{our solution.  In this figure, components marked red are introduced to
+provide privacy in a safe and secure manner, whereas components marked
+in blue are typical elements of a decentralized transactive microgrid.}{a decentralized transactive microgrid with PETra. 
+Components marked in blue are basic elements of the decentralized transactive microgrid,
+while components marked in red are added (or extended) by PETra.}
+
+\begin{figure}[h!]
+\center
+\begin{tikzpicture}[x=8cm, y=0.9cm, font=\small,
+  nodeStyle/.style={rounded corners=0.1cm, drop shadow={shadow xshift=0.05cm, shadow yshift=-0.05cm, fill=black}}
+]
+\draw [nodeStyle, fill=red!10]  (0, 1.65) rectangle    (1, 2.25) node [midway, align=center] {Communication anonymity (e.g., onion routing)};
+
+\draw [nodeStyle, fill=blue!10] (0, 2.4) rectangle    (1, 3.0) node [midway, align=center] {Distributed ledger (e.g., blockchain)};
+
+\draw [nodeStyle, fill=red!10]  (0, 3.15) rectangle (0.45, 4.05) node [midway, align=center] {Transaction anonymity\\[-0.2em](mixing service)};
+\draw [nodeStyle, left color=blue!10, right color=red!10] (0.47, 3.15) rectangle (0.72, 4.05) node [midway, align=center] {Bid storage};
+\draw [nodeStyle, left color=blue!10, right color=red!10] (0.74, 3.15) rectangle (1, 4.05) node [midway, align=center] {Active\\[-0.2em]smart meter};
+
+\draw [nodeStyle, fill=red!10] (0, 4.2) rectangle (0.49, 5.1) node [midway, align=center] {Anonymous trading\\[-0.2em]workflow for prosumers};
+\draw [nodeStyle, fill=blue!10] (0.51, 4.2) rectangle (1, 5.1) node [midway, align=center] {Microgrid controller};
+\end{tikzpicture}
+\caption{High-level architecture of a decentralized transactive microgrid with PETra.}
+\label{fig:softwareArchitecture}
+\end{figure}
 
 \subsubsection{Distributed Ledger}
 This ledger permanently stores transactions that specify energy
@@ -40,7 +64,6 @@ algorithm~\cite{castro1999practical}.
 Although prosumers trade energy with each other directly (\emph{i.e.},
 without a middleman), for the sake of scalability, we need a service
 that enables prosumers to find trade partners.
-%A bid storage service receives energy buy and sell bids from prosumers, stores these 
 We assume that there is a bid storage service that allows prosumers to
 post and read energy \emph{bids} and \emph{asks}.\footnote{A
   \emph{bid} is an offer to buy at a certain price, while an
@@ -48,16 +71,11 @@ post and read energy \emph{bids} and \emph{asks}.\footnote{A
 relieves prosumers from contacting a large number of potential trade
 partners since they only communicate with the service to discover
 trade partners.
-%Moreover, in addition to simply storing bids and asks, the service may also find matches in the posted bids and asks, and it may notify the posting prosumers of the trade opportunity.
 To enhance scalability and reliability, this service can also be
 implemented in a distributed manner, using multiple nodes.
 
 \subsubsection{Microgrid Controller (Distribution System Operator)}
-\Aron{Is this true?}\Abhishek{I have editied it. We need to mention distribution system operator here.}
 We assume the existence of a controller at the Distribution System Operator level that regulates the total load that the microgrid should present to the distribution system.
-%The microgrid controller stabilizes the load within the microgrid
-%based on the predicted future load within the microgrid and the rest
-%of the grid. 
  The controller first predicts load in the microgrid
 based on (1) bids and asks in the bid storage and (2) outstanding
 energy trades in the ledger.  By combining this information with the
@@ -85,13 +103,11 @@ must be satisfied by a transactive energy IoT system.
 Security requirements ensure primarily that prosumers are billed
 correctly, but they also provide necessary prerequisite properties for
 safety.
-%Prosumers (or outside attackers) should not be able to tamper with measured energy production and consumption values, with financial balances, with other prosumers' bids.
 More specifically, they require that
 \begin{itemize}[noitemsep,topsep=-\parskip]
 \item prosumers are billed correctly based on the energy prices set by
   the DSO, their energy trades, and their actual energy production and
   consumption measured by the smart meters,
-% (i.e., prosumers or outside attackers cannot tamper with energy production, consumption, and financial balances) % attackers cannot tamper with energy production and consumption balances or financial balances),
 \item prosumers or outside attackers cannot change microgrid
   regulatory policies that are set by the DSO, 
 \item prosumers cannot back out of trades unilaterally, and they
@@ -109,16 +125,14 @@ between the aggregate production and consumption of the microgrid.
 A large gap threatens the stability of not only the microgrid but also the main
 power grid.  Therefore, prosumers should not be able to trade large
 amounts of energy that they are unlikely to deliver.
-%Trades which are unlikely to be delivered and would result in a gap between actual production and demand should be prevented.
 Specifically, we require that 
 \begin{itemize}[noitemsep,topsep=-\parskip]
 \item the net amount of energy sold (or bought) by a prosumer is upper
   bounded (by an amount set by the DSO), where the net amount of
   energy sold is the difference between the amount of energy sold and
   bought by the prosumer, and the net amount of energy bought is
-  defined analogously,
-\item the energy bids and asks posted by a prosumer are limited in a
-  similar way.
+  defined analogously. %,
+%\item the energy bids and asks posted by a prosumer are limited in a similar way.
 \end{itemize}
 
 \subsubsection{Privacy} 
