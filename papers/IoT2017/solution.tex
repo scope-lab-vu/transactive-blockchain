@@ -6,7 +6,7 @@ in a transactive energy IoT system, without compromising grid safety
 and security.
 
 \begin{figure*}[h]
-\center
+\centering
 \begin{tikzpicture}[x=3.8cm, y=1.6cm, font=\small,
   system/.style={draw, align=center, rounded corners=0.1cm, fill=black!5},
   entity/.style={draw, align=center, rounded corners=0.1cm},
@@ -29,7 +29,7 @@ and security.
 \draw[transfer, dashed] (bidstorage) -- node [asset, below right] {energy\\ask} (partner);
 \draw[transfer, bend right=30] (partner) to node [asset, below] {\circled{5} financial asset,\\energy consumption asset} (prosumer3);
 \draw[transfer, bend right=50] (prosumer2) to node [asset, right, yshift=0.25em] {\circled{5} energy\\production asset} (partner);
-\draw[transfer] (prosumer3) -- node [asset, below] {\circled{6} financial asset,\\
+\draw[transfer] (prosumer3) -- node [asset, above] {\circled{6} financial asset,\\
 energy consumption asset} (smartmeter2);
 \end{tikzpicture}
 \caption{Simplified overview of the flow of assets from the perspective of a prosumer who sells energy.
