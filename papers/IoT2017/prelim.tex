@@ -1,5 +1,6 @@
 %!TEX root = paper.tex
 \section{System Model and Requirements}
+
 \change{This section describes a basic system model of transactive IoT
 microgrids and formulates security, safety, and privacy requirements.}{A microgrid is a collection of prosumers (residential nodes) that are arranged within the same distribution feeder which supports exchange of power between them. A prosumer node typically includes a smart inverter and a smart meter, which control the flow of power into and out of the prosumer. Additionally, the microgrid contains a set of 
 protection nodes that are  responsible for isolating faults on the feeder. Finally, a set of switching nodes, which are operated by the Distribution System Operator (DSO), control the connection of the microgrid to the rest of the distribution system. The DSO is responsible for regulating the net electric power into and out of the microgrid. Starting from this model, we next introduce the transactive microgrid model.}
@@ -7,7 +8,7 @@ protection nodes that are  responsible for isolating faults on the feeder. Final
 
 \subsection{Transactive Microgrid System Model}
 \Abhishek{This is the perfect paragraph to define transactive microgrid as a special application of IoT spread over a large area. Perhaps we can find a citation that makes this point.}
-We now describe a basic system model of decentralized 
+We describe a basic system model of decentralized 
 \Doug{Abhishek, if there's room can we add a diagram showing how all these components relate to each other?} 
 transactive IoT microgrids.  We discuss the following components: a
 distributed ledger for recording transactions, a bid storage service
@@ -23,7 +24,7 @@ while components marked in red are added (or extended) by PETra.}
 
 \begin{figure}[h!]
 \center
-\begin{tikzpicture}[x=8cm, y=0.9cm, font=\small,
+\begin{tikzpicture}[x=8cm, y=0.7cm, font=\small,
   nodeStyle/.style={rounded corners=0.1cm, drop shadow={shadow xshift=0.05cm, shadow yshift=-0.05cm, fill=black}}
 ]
 \draw [nodeStyle, fill=red!10]  (0, 1.65) rectangle    (1, 2.25) node [midway, align=center] {Communication anonymity (e.g., onion routing)};
@@ -76,7 +77,7 @@ To enhance scalability and reliability, this service can also be
 implemented in a distributed manner, using multiple nodes.
 
 \subsubsection{Microgrid Controller (Distribution System Operator)}
-We assume the existence of a controller at the Distribution System Operator level that regulates the total load that the microgrid should present to the distribution system.
+We assume the existence of a controller at the DSO level that regulates the total load that the microgrid should present to the distribution system.
  The controller first predicts load in the microgrid
 based on (1) bids and asks in the bid storage and (2) outstanding
 energy trades in the ledger.  By combining this information with the
@@ -129,13 +130,14 @@ amounts of energy that they are unlikely to deliver.
 Specifically, we require that 
 \begin{itemize}[noitemsep,topsep=-\parskip]
 \item the net amount of energy sold (or bought) by a prosumer is upper
-  bounded (by an amount set by the DSO), where the net amount of
+  bounded (by a limit set by the DSO), where the net amount of
   energy sold is the difference between the amount of energy sold and
   bought by the prosumer, and the net amount of energy bought is
   defined analogously. %,
 \Aron{If we have space, add back the safety requirement on the bid storage (and also add back the relevant parts of the description of the trading workflow and the ``analysis.''}
 %\item the energy bids and asks posted by a prosumer are limited in a similar way.
 \end{itemize}
+In practice, the DSO can set the limits based on the prosumers' production and consumption capacities.
 
 \subsubsection{Privacy} 
 Privacy requirements ensure that the prosumers' privacy is not

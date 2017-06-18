@@ -1201,7 +1201,7 @@
   \fi
   \par\nobreak
   \vskip -6pt  % [jdf] less space between section as in the Word template
-  \@xsect{#3}\parskip=6pt} % [jdf] paragraph skip shorter
+  \@xsect{#3}\parskip=5pt} % [jdf] paragraph skip shorter
 
 
 \def\@sect#1#2#3#4#5#6[#7]#8{%
@@ -1262,7 +1262,7 @@
             }%
         }%
     \fi
-    \@xsect{#5}\parskip=6pt% [jdf] shorter
+    \@xsect{#5}\parskip=5pt% [jdf] shorter
 }
 \def\@xsect#1{%
     \@tempskipa #1\relax
