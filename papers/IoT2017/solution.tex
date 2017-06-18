@@ -71,7 +71,10 @@ trade partner, it can either post an \emph{energy ask} on the bid
 storage, or simply search the storage for an acceptable \emph{energy
   bid}.  To post an energy ask, the prosumer first proves to the
 storage service---without revealing its original identity---that it
-owns a production asset stored at an anonymous address.  It can then
+owns a production asset stored at an anonymous address. 
+\Aron{This sentence was added because we removed the relevant safety requirement.}
+Proving ownership prevents the prosumer from ``spamming'' the storage service with bogus asks.
+The prosumer can then
 post the energy ask \circled{4}, which contains an anonymous
 communication identifier\footnote{We discuss communication anonymity later.}, a price, and a reference
 to the production asset.  If another prosumer, who is seeking to buy energy,
