@@ -1,27 +1,38 @@
 %!TEX root = paper.tex
 \section{System Model and Requirements}
 
-\change{This section describes a basic system model of transactive IoT
-microgrids and formulates security, safety, and privacy requirements.}{A microgrid is a collection of prosumers (residential nodes) that are arranged within the same distribution feeder which supports exchange of power between them. A prosumer node typically includes a smart inverter and a smart meter, which control the flow of power into and out of the prosumer. Additionally, the microgrid contains a set of 
-protection nodes that are  responsible for isolating faults on the feeder. Finally, a set of switching nodes, which are operated by the Distribution System Operator (DSO), control the connection of the microgrid to the rest of the distribution system. The DSO is responsible for regulating the net electric power into and out of the microgrid. Starting from this model, we next introduce the transactive microgrid model.}
+This section describes a basic system model of transactive IoT
+microgrids and formulates security, safety, and privacy requirements.
+A microgrid is a collection of prosumers (residential nodes) that are
+arranged within the same distribution feeder and support exchange of
+power between them. A prosumer node typically includes a smart
+inverter and a smart meter, which control the flow of power into and
+out of the prosumer. 
 
+A microgrid also typically contains a set of protection nodes that are
+responsible for isolating faults on the feeder.  The
+\emph{Distribution System Operator} (DSO) operations a set of
+switching nodes to control the connection of the microgrid to the rest
+of the distribution system. The DSO is responsible for regulating the
+net electric power into and out of the microgrid. Starting from this
+model, we next introduce the transactive microgrid model.
 
 \subsection{Transactive Microgrid System Model}
-\Abhishek{This is the perfect paragraph to define transactive microgrid as a special application of IoT spread over a large area. Perhaps we can find a citation that makes this point.}
-We describe a basic system model of decentralized 
-\Doug{Abhishek, if there's room can we add a diagram showing how all these components relate to each other?} 
-transactive IoT microgrids.  We discuss the following components: a
-distributed ledger for recording transactions, a bid storage service
-that facilitates finding trade partners, a microgrid controller for
-regulating the microgrid load, and smart meters for measuring the
-prosumers' energy production and consumption.
-Figure~\ref{fig:softwareArchitecture} shows the high-level architecture of 
-\change{our solution.  In this figure, components marked red are introduced to
-provide privacy in a safe and secure manner, whereas components marked
-in blue are typical elements of a decentralized transactive microgrid.}{a decentralized transactive microgrid with PETra. 
-Components marked in blue are basic elements of the decentralized transactive microgrid,
-while components marked in red are added (or extended) by PETra.}
+\Abhishek{This is the perfect paragraph to define transactive
+  microgrid as a special application of IoT spread over a large
+  area. Perhaps we can find a citation that makes this point.}  We
+describe a basic system model of decentralized transactive IoT
+microgrids.  We discuss the following components: a distributed ledger
+for recording transactions, a bid storage service that facilitates
+finding trade partners, a microgrid controller for regulating the
+microgrid load, and smart meters for measuring the prosumers' energy
+production and consumption.
 
+Figure~\ref{fig:softwareArchitecture} shows the a decentralized
+transactive microgrid with PETra.  In this figure, components marked
+red are introduced to provide privacy in a safe and secure manner,
+whereas components marked in blue are typical elements of a
+decentralized transactive microgrid.
 \begin{figure}[h!]
 \center
 \begin{tikzpicture}[x=8cm, y=0.7cm, font=\small,
@@ -38,14 +49,14 @@ while components marked in red are added (or extended) by PETra.}
 \draw [nodeStyle, fill=red!10] (0, 4.2) rectangle (0.49, 5.1) node [midway, align=center] {Anonymous trading\\[-0.2em]workflow for prosumers};
 \draw [nodeStyle, fill=blue!10] (0.51, 4.2) rectangle (1, 5.1) node [midway, align=center] {Microgrid controller};
 \end{tikzpicture}
-\caption{High-level architecture of a decentralized transactive microgrid with PETra.}
+\caption{The Architecture of a Decentralized Transactive Microgrid with PETra.}
 \label{fig:softwareArchitecture}
 \end{figure}
 
 \subsubsection{Distributed Ledger}
 This ledger permanently stores transactions that specify energy
 trades, change regulatory policies for the microgrid, etc.  For
-providing security and safety, it is crucial that transactions are
+providing security and safety, it is crucial that transactions be
 immutable, \emph{i.e.}, after a transaction has been recorded, it
 cannot be modified or removed from the ledger.  To enhance fault
 tolerance, however, the ledger should also be distributed.
@@ -65,28 +76,29 @@ algorithm~\cite{castro1999practical}.
 \subsubsection{Bid Storage Service}
 Although prosumers trade energy with each other directly (\emph{i.e.},
 without a middleman), for the sake of scalability, we need a service
-that enables prosumers to find trade partners.
-We assume that there is a bid storage service that allows prosumers to
-post and read energy \emph{bids} and \emph{asks}.\footnote{A
-  \emph{bid} is an offer to buy at a certain price, while an
-  \emph{ask} is an offer to sell at a certain price.}  This service
-relieves prosumers from contacting a large number of potential trade
-partners since they only communicate with the service to discover
-trade partners.
-To enhance scalability and reliability, this service can also be
-implemented in a distributed manner, using multiple nodes.
+that enables prosumers to find trade partners.  We assume that there
+is a bid storage service that allows prosumers to post and read energy
+\emph{bids} and \emph{asks}.\footnote{A \emph{bid} is an offer to buy
+  at a certain price, while an \emph{ask} is an offer to sell at a
+  certain price.}  This service relieves prosumers from contacting a
+large number of potential trade partners since they only communicate
+with the service to discover trade partners.  To enhance scalability
+and reliability, this service can also be implemented in a distributed
+manner, using multiple nodes.
 
 \subsubsection{Microgrid Controller (Distribution System Operator)}
-We assume the existence of a controller at the DSO level that regulates the total load that the microgrid should present to the distribution system.
- The controller first predicts load in the microgrid
-based on (1) bids and asks in the bid storage and (2) outstanding
-energy trades in the ledger.  By combining this information with the
-prediction for the rest of the grid, the controller produces a control
-signal that specifies how much the microgrid load should be decreased
-or increased.  Based on this signal, the controller then updates the
-price policy for the microgrid to influence energy production and
-consumption.  We also assume the presence of a secondary controller
-that balances voltage and frequency in the microgrid.
+We assume the existence of a controller at the DSO level that
+regulates the total load that the microgrid should present to the
+distribution system.  The controller first predicts load in the
+microgrid based on (1) bids and asks in the bid storage and (2)
+outstanding energy trades in the ledger.  By combining this
+information with the prediction for the rest of the grid, the
+controller produces a control signal that specifies how much the
+microgrid load should be decreased or increased.  Based on this
+signal, the controller then updates the price policy for the microgrid
+to influence energy production and consumption.  We also assume the
+presence of a secondary controller that balances voltage and frequency
+in the microgrid.
 
 \subsubsection{Smart Meters}
 To measure the prosumers' energy production and consumption, a smart
@@ -148,10 +160,10 @@ compared to this baseline.  More specifically, we require that
 \begin{itemize}[noitemsep,topsep=-\parskip]
 \item only the corresponding smart meter and the DSO may gain
   information regarding the amount of energy produced, consumed,
-  bought, or sold by a prosumer,\footnote{Note that this requirement
-    is impossible to satisfy if all other prosumers may collude
-    against one target. However, we can assume that the majority of
-    prosumers are non-colluding.}
+  bought, or sold by a prosumer,\footnote{Although this requirement is
+    impossible to satisfy if all other prosumers may collude against
+    one target, we can assume that the majority of prosumers are
+    non-colluding.}
 \item only the prosumer may know which bids and asks it has posted,
   and no one can know who traded energy with whom.
 \end{itemize}
