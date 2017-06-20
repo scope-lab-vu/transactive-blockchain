@@ -1,12 +1,12 @@
 %!TEX root = paper.tex
 \subsection{Transactions}
 
-In the previous subsection, we gave an overview of how transactions
-are used in the trading workflow to transfer various assets.  We now
-describe the format of these transactions, as well as the rules that
-they have to satisfy to be valid and recorded on the ledger.  We also
-introduce and detail regulatory transactions, which the
-DSO uses to regulate the microgrid.
+The previous subsection gave an overview of how PETRa uses
+transactions in the trading workflow to transfer various assets.  We
+now describe the format of these transactions, as well as the rules
+that they have to satisfy to be valid and recorded on the ledger.  We
+also introduce and detail regulatory transactions, which the DSO uses
+to regulate the microgrid.
 
 \subsubsection{Timing}
 The ability to specify points or intervals in time is crucial.  For
@@ -26,9 +26,9 @@ the control signal of the DSO typically changes.  \Abhishek{We need to
   would first need to make space for this discussion.}
 
 \subsubsection{Assets}
-Before we can discuss transactions, we need to define the format of the three
-types of assets that these transactions may transfer.  First, an
-\emph{energy production asset} (EPA) is defined by
+Before we can discuss transactions, we need to define the format of
+the three types of assets that these transactions may transfer.
+First, an \emph{energy production asset} (EPA) is defined by
 \begin{itemize}[noitemsep,topsep=-\parskip]
 \item \field{power}: non-negative amount of power to be produced (for example, measured in watts),
 \item \field{start}: first time interval in which energy is to be produced,
@@ -175,12 +175,10 @@ A regulatory transaction contains the following fields:
 \end{itemize}
 \vspace{\parskip}
 
-A regulatory transaction of this type is valid if 
-\field{timestep} is not in the past and 
-the DSO's signature is valid.
-The active prices for timestep $t$ are given by the last regulatory
-transaction recorded on the ledger whose \field{time} is less than
-$t$.  Likewise, regulatory transactions that are recorded on the
-ledger later override the authorizations and bans of earlier
-transactions.
+A regulatory transaction of this type is valid if \field{timestep} is
+not in the past and the DSO's signature is valid.  The active prices
+for timestep $t$ are given by the last regulatory transaction recorded
+on the ledger whose \field{time} is less than $t$.  Likewise,
+regulatory transactions that are recorded on the ledger later override
+the authorizations and bans of earlier transactions.
 
