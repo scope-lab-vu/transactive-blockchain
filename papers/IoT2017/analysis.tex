@@ -1,3 +1,4 @@
+%!TEX root = paper.tex
 \section{Discussion}
 \label{sec:discussion}
 
@@ -24,7 +25,7 @@ We now demonstrate that faulty or malicious prosumers cannot trade
 excessive amounts of energy if normal prosumers follow the rules of
 the trading workflow.  First, we can show that the net amount of
 energy sold by prosumer $i$ for each timestep is at most
-$\field{MAXEPA}_i$.  By definition, the amount of energy sold is less
+$\field{MAXEPA}_i$.  By definition, \textcolor{blue}{we assume that the smart meters enforce a constraint, which ensures that} the amount of energy sold is less
 than or equal to the amount of EPA obtained by prosumer $i$.
 
 A prosumer can obtain EPA either by withdrawing from its smart meter
@@ -36,7 +37,8 @@ same amount.  Hence, the net amount of energy sold by prosumer $i$
 cannot exceed $\field{MAXEPA}_i$.  By extending the argument, we can
 show that the net amount of energy sold by a group of prosumers~$G$
 cannot exceed $\sum_{i \in G} \field{MAXEPA}_i$.  Similarly, %we can
-show that the net amount of energy bought by a group of prosumers $G$
+%show that
+ the net amount of energy bought by a group of prosumers $G$
 cannot exceed $\sum_{i \in G} \field{MAXECA}_i$.
 
 %Using a similar argument, we can also show that the total amount of energy bids (or asks) posted at

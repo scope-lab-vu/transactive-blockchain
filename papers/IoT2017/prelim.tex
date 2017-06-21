@@ -1,4 +1,5 @@
 %!TEX root = paper.tex
+%\vspace{-0.15in}
 \section{System Model and Requirements}
 
 This section describes a basic system model of transactive IoT
@@ -11,7 +12,7 @@ out of the prosumer.
 
 A microgrid also typically contains a set of protection nodes that are
 responsible for isolating faults on the feeder.  The
-\emph{Distribution System Operator} (DSO) operations a set of
+\emph{Distribution System Operator} (DSO) operates %a set of
 switching nodes to control the connection of the microgrid to the rest
 of the distribution system. The DSO is responsible for regulating the
 net electric power into and out of the microgrid. Starting from this
@@ -28,12 +29,12 @@ finding trade partners, a microgrid controller for regulating the
 microgrid load, and smart meters for measuring the prosumers' energy
 production and consumption.
 
-Figure~\ref{fig:softwareArchitecture} shows the a decentralized
+Figure~\ref{fig:softwareArchitecture} shows a decentralized
 transactive microgrid with PETra.  In this figure, components marked
 red are introduced to provide privacy in a safe and secure manner,
 whereas components marked in blue are typical elements of a
 decentralized transactive microgrid.
-\begin{figure}[t]
+\begin{figure}[h!]
 \center
 \begin{tikzpicture}[x=8cm, y=0.7cm, font=\small,
   nodeStyle/.style={rounded corners=0.1cm, drop shadow={shadow xshift=0.05cm, shadow yshift=-0.05cm, fill=black}}
