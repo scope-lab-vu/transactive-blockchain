@@ -275,6 +275,26 @@ compared to this baseline.  More specifically, we require that
 \end{itemize}
 
 
+\section{Distributed Edge Processing for Multimodal Routing}
+
+Urban spaces are expanding at impressive rates and an efficient transportation system is a key component to any well-functioning city. Yet, as cities expand, existing infrastructures are being stressed to their limits. To make the problem worse,  building new infrastructures is costly, time consuming, and disruptive. Consequently, a number of transit agencies and cities \cite{} are turning towards multimodal  solutions combining transporation operated by both cities and private users. However, given the large number of choices and available options this often leads to a dynamic programming problem that must be solved online considering serveral state variables, such as traffic congenstion, mode capacity and the personal preferences. 
+
+Many commercially available Internet of Things (IoT) solutions for multimodal
+transit focus on what is best for the individual from their local perspective. For example, Google Maps is able to chose between multiple options like busing, driving and biking for an individual user. But as the number of these locally optimal solution grows, too grows the misalignment between objectives of individual users and the overall system. This gap often results in a tragedy of the commons, where public goods such as roads become congested although no individual user has an incentive to use other modes of transportation. At the same time, an information bottleneck is also forming. Large scale data is being collected both by municipalities and users, but neither has the resources on their own to develop real-time analytics and controls necessary for a smart transportation system. Currently, very little has been done to provide an overarching solution that balances the needs of multiple parties including commercial companies, municipal service providers, and individuals.
+
+\subsection{The privacy problem}
+A solution to this problem requires a social computing and information sharing platform that overcomes the incentive gap between individuals and municipalities. This platform must offer mixed-mode routing suggestions and general system information to travelers and in turn provides service providers with high-fidelity information about how users are consuming different transportation resources. At the same time, this system must consider the investment required by the cities in the computing infrastructure required to solve the problem at scale. Alternatively, a novel proof-of-concept that utilizes the various edge computing resources available in the city, including the mobile devices of the commuters can be employed by municipalities to improve efficiency within their cities with little investment.
+
+However, this precisely leads to the problem of secure and trustworthy computing.  Privacy of individuals is an important aspect of this solution; use of smart devices of individuals as both a data source and a computational resource  could have the effect of exposing the end-user to risk of a privacy breach. Seemingl innocuous data such as transit mode or route choice can lead to inferences of
+private information such as real-time tracking of an individual's position~\cite{koufogiannis:2015aa}, likelihood of affairs~\cite{mueffelmann:2015aa}, forecasting trip destinations~\cite{dewri:2013aa}, etc.
+
+\subsection{The Integrity Problem}
+- the platform must be auditable
+- all incentives must be tracked (new incentives will be recorded as transactions)
+- The algorithms must be easy to manage and deploy. They must be validated for resource and power consumption. The incentives must track that.
+
+
+
 \clearpage
 \bibliographystyle{plain}
 \bibliography{../IoT2017/references.bib}
