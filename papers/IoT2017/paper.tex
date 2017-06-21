@@ -226,7 +226,17 @@ anonymity for communication, bidding, and trading.
 
 % BALANCE COLUMNS
 %\balance{}
-\setlength{\bibsep}{0pt plus 0ex}
+%\setlength{\bibsep}{0pt plus 0ex}
+\let\oldthebibliography\thebibliography
+\let\endoldthebibliography\endthebibliography
+\renewenvironment{thebibliography}[1]{
+  \begin{oldthebibliography}{#1}
+    \setlength{\itemsep}{0.1em}
+    \setlength{\parskip}{0em}
+}
+{
+  \end{oldthebibliography}
+}
 
 % REFERENCES FORMAT
 % References must be the same font size as other body text.
