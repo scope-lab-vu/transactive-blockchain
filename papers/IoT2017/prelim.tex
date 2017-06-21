@@ -29,11 +29,7 @@ finding trade partners, a microgrid controller for regulating the
 microgrid load, and smart meters for measuring the prosumers' energy
 production and consumption.
 
-Figure~\ref{fig:softwareArchitecture} shows a decentralized
-transactive microgrid with PETra.  In this figure, components marked
-red are introduced to provide privacy in a safe and secure manner,
-whereas components marked in blue are typical elements of a
-decentralized transactive microgrid.
+
 \begin{figure}[h!]
 \center
 \begin{tikzpicture}[x=8cm, y=0.7cm, font=\small,
@@ -50,9 +46,14 @@ decentralized transactive microgrid.
 \draw [nodeStyle, fill=red!10] (0, 4.2) rectangle (0.49, 5.1) node [midway, align=center] {Anonymous trading\\[-0.2em]workflow for prosumers};
 \draw [nodeStyle, fill=blue!10] (0.51, 4.2) rectangle (1, 5.1) node [midway, align=center] {Microgrid controller};
 \end{tikzpicture}
-\caption{Architecture of a Decentralized Transactive Microgrid with PETra.}
+\caption{Architecture of a decentralized transactive microgrid with \mbox{PETra}.}
 \label{fig:softwareArchitecture}
 \end{figure}
+
+Figure~\ref{fig:softwareArchitecture} shows a decentralized
+transactive microgrid with PETra.  
+In this figure, components marked in blue are basic elements of the decentralized transactive microgrid,
+while components marked in red are added (or extended) by PETra.
 
 \subsubsection{Distributed Ledger}
 This ledger permanently stores transactions that specify energy

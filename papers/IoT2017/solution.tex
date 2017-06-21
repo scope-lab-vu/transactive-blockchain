@@ -5,6 +5,7 @@ This section describes \emph{Privacy-preserving Energy Transactions}
 (PETra), which is our solution for providing privacy to prosumers in a
 transactive energy IoT system, without compromising grid safety and
 security.
+
 \begin{figure*}[h]
 \centering
 \begin{tikzpicture}[x=3.8cm, y=1.6cm, font=\small,
@@ -32,7 +33,8 @@ security.
 \draw[transfer] (prosumer3) -- node [asset, above] {\circled{6} financial asset,\\
 energy consumption asset} (smartmeter2);
 \end{tikzpicture}
-\caption{Simplified Overview of the Flow of Assets from the Perspective of a Prosumer Who Sells Energy.}
+\caption{Simplified overview of the flow of assets from the perspective of a prosumer who sells energy.
+Note that to prevent de-anonymization, a prosumer should use multiple addresses and multiple rounds of mixing, which we have omitted from the figure for clarity of presentation.}
 \label{fig:sellFlow}
 %\vspace{-0.1in}
 \end{figure*}
@@ -45,10 +47,7 @@ more detail.
 
 \subsubsection{Energy Selling Workflow}
 Consider a prosumer who wishes to sell energy to another prosumer, as
-shown in Figure~\ref{fig:sellFlow}\footnote{To prevent
-  de-anonymization, a prosumer should use multiple addresses and
-  multiple rounds of mixing, which we have omitted from the figure for
-  clarity of presentation.}  \Abhishek{We need to mention what is the
+shown in Figure~\ref{fig:sellFlow}.  \Abhishek{We need to mention what is the
   expected deadline by which this sequence of task should finish.}  As
 its first step, the prosumer withdraws an \emph{energy production
   asset} from its smart meter.  An energy production asset represents
@@ -90,8 +89,9 @@ trade partner, it can either post an \emph{energy ask} on the bid
 storage, or simply search the storage for an acceptable \emph{energy
   bid}.  To post an energy ask, the prosumer first proves to the
 storage service---without revealing its original identity---that it
-owns a production asset stored at an anonymous address.  Proving
-ownership prevents the prosumer from ``spamming'' the storage service
+owns a production asset stored at an anonymous address.  
+\Aron{This sentence was added because we removed the relevant safety requirement.}
+Proving ownership prevents the prosumer from ``spamming'' the storage service
 with bogus asks.  The prosumer can then post the energy ask
 \circled{4}, which contains an anonymous communication
 identifier\footnote{We discuss communication anonymity later.}, a
