@@ -6,7 +6,12 @@
 
 \usepackage{enumitem}
 
-\usepackage{hyperref}
+\usepackage[textsize=scriptsize]{todonotes}
+\newcommand{\Abhishek}[1]{\todo[color=yellow!50, linecolor=black!50]{\textbf{Abhishek}: #1}}
+\newcommand{\Aron}[1]{\todo[color=green!40, linecolor=black!50]{\textbf{Aron}: #1}}
+\setlength{\marginparwidth}{0.85in}
+
+\usepackage[breaklinks,hidelinks]{hyperref}
 
 \title{SDC: Social Dispersed Computing}
 \date{}
@@ -32,14 +37,14 @@ time) is significantly improved.  This is the concept behind `Social Dispersed C
 %
 %
 %Our proposal is about building the technology and tools to create and execute Dispersed
-%Computing applications on Network Computation Points (NCP-s): nodes in the network
+%Computing applications on Network Computation Points (NCPs): nodes in the network
 %that can serve a computers, storage devices, or network routers. The proposed work will focus
 %on: (1) developing a technology to model complex software applications (so that they can
-%be eectively assigned to NCP-s), (2) designing techniques and tools to continuously monitor
-%the resources available at and among the NCP-s, (3) developing ecient distributed algorithms
+%be eectively assigned to NCPs), (2) designing techniques and tools to continuously monitor
+%the resources available at and among the NCPs, (3) developing ecient distributed algorithms
 %to search for resources on the network that can potentially satisfy the requirements
 %of the applications (expressed in their models), (4) developing an approach to fault-tolerance
-%so that the applications continue functioning even if the NCP-s or the communication links
+%so that the applications continue functioning even if the NCPs or the communication links
 %between them fail, (5) designing and implementing adaptation strategies so that the running
 %application(s) can be dynamically re-allocated to the available resources if those resources
 %change over time. The work includes research and development of prototypes, as well as
@@ -69,19 +74,19 @@ time) is significantly improved.  This is the concept behind `Social Dispersed C
 
 \clearpage
 \section{Description}
-The existing Internet architecture was envisioned more than 30 years ago. This architecture relies on separate computing and communication resources: computing hosts on the edge communicate via a network whose task is to route and deliver network packets as efficiently as possible. This strict separation of computation from communication has its drawbacks: for instance computations that reduce large data sets (arriving from another hosts) to smaller ones (that are needed by another group of hosts) are going to be inefficient, due the limits of network communication. However, often it would be more efficient to move the computation `closer' to the source hosts and then just send the results to the target hosts. A specific example is that of sensor processing: target recognition in sensor streams should be done as close to the source as possible, because doing it somewhere else would incur performance penalties.  Arguably, this is possible today but on an ad-hoc basis. Careful management and deployment of application software components over a network `owned' nodes can be done with a great deal of manual and error-prone operations. These solutions are brittle, labor intensive, and not responsive enough to the rapid changes in the network or the utilization of the computing hosts. 
+The existing Internet architecture was envisioned more than 30 years ago. This architecture relies on separate computing and communication resources: computing hosts on the edge communicate via a network whose task is to route and deliver network packets as efficiently as possible. This strict separation of computation from communication has its drawbacks: for instance, computations that reduce large datasets (arriving from other hosts) to smaller ones (that are needed by another group of hosts) are going to be inefficient, due to the limits of network communication. However, it would often be more efficient to move the computation `closer' to the source hosts and then just send the results to the target hosts. A specific example is that of sensor processing: target recognition in sensor streams should be done as close to the source as possible, because doing it somewhere else would incur performance penalties.  Arguably, this is possible today but on an ad-hoc basis. Careful management and deployment of application software components over a network of `owned' nodes can be done with a great deal of manual and error-prone operations. These solutions are brittle, labor intensive, and not responsive enough to rapid changes in the network or the utilization of computing hosts. 
 
-\subsection{The Social Dispersed Computing Architecture}
+\subsection{Social Dispersed Computing Architecture}
 
-The social dispersed computing architecture consists of a number of network computation points (NCP) \footnote{for example,\url{https://routerboard.com/RB2011UiAS-2HnD-IN}}, which posses the capability to provide both networking and computation resources. They can serve as network routers, computing hosts, data storage hosts, sensors,or actuators - in any combination, possibly simultaneously. A typical NCP has router/computer/storage functions, an NCP for cyber-physical applications adds sensor/actuator interfaces to these. A network-connected conventional computing host can serve as an specialized NCP that is connected to the system but it is not capable of routing. These modern networking devices are result of the innovation of software defined networking and the progress made with investments in the Internet of Things technology. Additionally, the architecture consists of smart phones, network links, as well as conventional computing and data storage hosts and as well as network routers. We expect the  NCP-s run a specialized distributed `meta-operating system'  that facilitates the Dispersed Computing functions by providing a sophisticated \textit{distributed application platform} that is able to effectively deploy and executed distributed (dispersed) applications.  Finally, the system is highly dynamic: nodes (NCP-s, computing and data hosts, routers, links) can come (join the system) and go (leave the system) at any time, connectivity and corresponding link parameters: bandwidth, latency, packet drop rate, etc. are changing continuously, and computational and communication demand generated by applications are varying over time. 
+The \emph{social dispersed computing architecture} consists of a number of network computation points (NCP) \footnote{For example, see \url{https://routerboard.com/RB2011UiAS-2HnD-IN}.}, which possess the capability to provide both networking and computation resources. They can serve as network routers, computing hosts, data storage hosts, sensors, or actuators -- in any combination, possibly simultaneously. A typical NCP has router/computer/storage functions, and an NCP for cyber-physical applications adds sensor/actuator interfaces to these. A network-connected conventional computing host can serve as a specialized NCP that is connected to the system but is not capable of routing. These modern networking devices are the result of the innovation of software-defined networking and the progress made with investments in Internet of Things technology. Additionally, the architecture consists of smartphones, network links, conventional computing and data storage hosts, as well as network routers. We expect the NCPs to run a specialized distributed `meta-operating system'  that facilitates the Dispersed Computing functions by providing a sophisticated \textit{distributed application platform} that is able to effectively deploy and execute distributed (dispersed) applications.  Finally, the system is highly dynamic: nodes (NCPs, computing and data hosts, routers, and links) can come (join the system) and go (leave the system) at any time, connectivity and corresponding link parameters (bandwidth, latency, packet drop rate, etc.) are changing continuously, and computational and communication demand generated by applications vary over time. 
 
-With this architecture, computational tasks, described as  a directed graph, where the directed edges represent network flows\footnote{The directed graph can represent both synchronous and asynchronous data flow(s), control flow(s), or a mixture of the two}, can be deployed on these ad-hoc and shared resources. he system is \textit{homogeneous} meaning that any NCP can serve as an entry point to submit an application for deployment into the system. The operating system on the entry point NCP will then execute a time- and depth-bounded search on the system to find a feasible \textit{deployment solution} for the application. A deployment solution is map of the application tasks to NCP-s and the application flows onto network paths. The deployment solution is then implemented: the application tasks are deployed on the selected NCP-s. This search is done via a form of flooding protocol which allows the discovery of necessary resources across several paths at once.  The system is \textit{adaptive} in that even after deployment the deployed configuration may change over time. As the NCP-s continuously monitor themselves and their neighbors, the estimates of the utilization of the resources that was used when the deployment configuration was computed may not be valid forever, it may be imperative to recompute the deployment solution. Additionally, the application itself may evolve and its resource usage may change over time. This necessitates monitoring the application's resource usage over time and updating its model dynamically. If a significant discrepancy between the original state of the system and the resource usage of applications and the current situation is detected, a recomputation of the deployment is initiated.  
+With this architecture, computational tasks, described as  a directed graph in which edges represent network flows\footnote{The directed graph can represent both synchronous and asynchronous data flow(s), control flow(s), or a mixture of the two.}, can be deployed on these ad-hoc and shared resources. The system is \textit{homogeneous}, which means that any NCP can serve as an entry point to submit an application for deployment into the system. The operating system on the entry point NCP will then execute a time- and depth-bounded search on the system to find a feasible \textit{deployment solution} for the application. A deployment solution is a mapping of the application tasks to NCPs and the application flows to network paths. The deployment solution is then implemented: the application tasks are deployed on the selected NCPs. This search is done via a form of flooding protocol, which allows the discovery of necessary resources across several paths at once.  The system is \textit{adaptive} in the sense that even after deployment, the deployed configuration may change over time. As the NCPs continuously monitor themselves and their neighbors, the estimates of resource utilization that were used for computing the initial deployment configuration may become invalid, which necessitates recomputing the deployment solution. Additionally, the application itself may evolve and its resource usage may change over time. This necessitates monitoring the resource usage of the application over time and updating its model dynamically. If a significant discrepancy between the original state of the system and the resource usage of applications and the current situation is detected, a recomputation of the deployment is initiated.  
 
 The effective deployment of these complex assemblies on a network of computing nodes is a non-trivial task and requires significant manual labor today. The proposed framework will provide the foundation for this new software paradigm: applications deployed on a network of computing and communicating devices, where they can be the most effective, given computational and communication resource constraints. This deployment configuration computed during operations, based on the current state of the system. The deployment is also adaptive: computation and data can move in the system, as the changing conditions necessitate it. This is much more flexible and very different from the existing, typically static deployments. 
 
-There are a number of distributed software frameworks, e.g. Erlang/OTP, Akka, etc. that support the development of distributed applications. However, the distribution is completely in the hand of the developer, and it is mainly an error-prone and complex manual task. Our approach, through the application modeling, enables the automation of this process. Although the application models still need to be supplied, the determination of the deployment and the execution of the necessary operations will be completely automated. 
+There are a number of distributed software frameworks, e.g., Erlang/OTP and Akka, that support the development of distributed applications. However, the distribution is completely in the hands of the developer, and it is mainly an error-prone and complex manual task. Our approach, through application modeling, enables the automation of this process. Although the application models still need to be supplied, the determination of the deployment and the execution of the necessary operations will be completely automated. 
 
-Fault tolerance and adaptivity to changing resources are important requirements for many systems. Our approach, through the underlying framework provides a solution so that complex applications can operate autonomously and efficiently, even under adversary conditions. Both fault tolerance and adaptivity require cooperation from the developers - i.e. the application framework cannot solve the problem, but the framework will provide services to help achieve the required system level fault-tolerance and adaptivity.  However, there are additional challenges, which we will describe using two case studies. The first one looks at the transactive energy paradigm, the other looks at multi-modal transportation analytics and optimization, a critical concept that is required to solve the large transportation challenges that we are facing. 
+Fault tolerance and adaptivity to changing resources are important requirements for many systems. Our approach, through the underlying framework, provides a solution so that complex applications can operate autonomously and efficiently, even under adversarial conditions. Both fault tolerance and adaptivity require cooperation from the developers -- i.e., the application framework cannot solve the problem, but the framework will provide services to help achieving the required system-level fault-tolerance and adaptivity.  However, there are additional challenges, which we will describe using two case studies. The first one looks at the transactive energy paradigm, while the other looks at multi-modal transportation analytics and optimization, a critical concept that is required for solving the large transportation challenges that we are facing. 
 
 \subsection{Transactive Grid Example}
 
@@ -91,7 +96,7 @@ been proposed to support the next distribution system evolution
 energy is a set of market-based constructs for dynamically balancing
 the demand and supply across the electrical infrastructure
 \cite{melton2013gridwise}. In this approach, customers on the same
-feeder (\emph{i.e.}, those sharing a power line link) can operate in an
+feeder (i.e., those sharing a power line link) can operate in an
 open market, trading and exchanging generated energy
 locally. Distribution System Operators (DSOs) can be the custodians of
 this market, while still meeting the net demand \cite{7462854}. For
@@ -99,14 +104,19 @@ example, the Brooklyn Microgrid, which was developed by LO3 Energy as
 a pilot project, is a peer-to-peer market for locally generated
 renewable energy.\footnote{\url{http://brooklynmicrogrid.com/}}.
 
+\Aron{I am not sure what this sentence was supposed to say.}
 These systems are effectively an example of social dispersed computing (Volttron \cite{katipamula2016volttron}, OpenFMB
 \cite{gunthersmart}, and the Resilient Information Architecture
 Platform for Smart Grid (RIAPS)
-\cite{eisele2017riaps,Scott2017ICCPS}) where consumer power storage and private energy sources as solar panels, achieving grid stability will be challenging.  With social dispersed computing in transactive grid energy consumers, producers, storage solutions will be discovered automatically, continuously monitored and the system status is updated in case devices appear to be offline. However, the computing structure in these systems do not focus on the  privacy challenges that arise from the
+\cite{eisele2017riaps,Scott2017ICCPS}) where consumer power storage and private energy sources as solar panels, achieving grid stability will be challenging.  With social dispersed computing, energy consumers, producers, and storage solutions in a transactive grid will be discovered automatically and monitored continuously, and system status will be updated in case devices appear to be offline. 
+
+\subsubsection{Privacy Problem}
+
+However, the computing structure in these systems does not focus on the privacy challenges that arise from the
 required information exchange in this decentralized transactive
 system: 
-\begin{itemize}[itemsep=0.1\parskip,topsep=-0.75\parskip]
-\item \textbf{Leakage of Energy Usage Patterns to Other Prosumers} 
+\begin{itemize}
+\item \textbf{Leakage of Energy Usage Patterns to Other Prosumers:} 
  Since prosumers\footnote{We
   refer to customers as \emph{prosumers} to emphasize that they can
   not only consume energy, but may also produce it.} may purchase
@@ -114,25 +124,25 @@ system:
   inadvertently reveal the prosumers' detailed energy usage patterns
   to other prosumers within the microgrid.  Addressing this issue in a
   decentralized trading system is hard as it requires hiding the
-  identities of trade partners from each other. In comparison, secure
-  smart metering reveals the prosumers' energy usage patterns only to
-  the operator.
+  identities of trade partners from each other. %In comparison, secure
+%  smart metering reveals the prosumers' energy usage patterns only to
+%  the operator.
 
-\item \textbf{Inference of Future States of a Prosumer} 
+\item \textbf{Inference of Future States of a Prosumer:} 
   Transactions may reveal
   the future energy usage of a prosumer, which could be used to infer
   private information.  For example, a smart home may know that its
-  inhabitants will go out in the evening (\emph{e.g.}, by looking at
-  their calendar), and it may trade energy futures accordingly in the
+  inhabitants will go out in the evening (e.g., by looking at
+  their calendars), and it may trade energy futures accordingly in the
   morning.  Without adequate privacy measures, these trades may reveal
   to other prosumers in the microgrid that the inhabitants will not be
   at home later.  Note that energy
   futures, whose delivery may happen several hours after when the
   transaction is made, can play an important role in predicting and
-  controlling microgrid load.  In comparison, smart metering reveals
-  only current (or past) usage.
+  controlling microgrid load.  %In comparison, smart metering reveals
+%  only current (or past) usage.
 
-\item \textbf{Personally Identifiable Information} 
+\item \textbf{Personally Identifiable Information:} 
   Transactions and energy
   usage data in a transactive microgrid are much richer sources of
   information than the simple usage data collected by smart
@@ -141,28 +151,27 @@ system:
   metering, and it may be used to infer personal information, such as
   risk propensity and financial standing.
 \end{itemize}
-\vspace{0.5\parskip}
 
 Before transactive energy systems can be deployed widely in practice,
-we must address the privacy issues described above. However, addressing these
-issues is hard since solutions must also satisfy security
+the privacy issues described above must be addressed. However, addressing these
+issues is hard since solutions must also satisfy stringent security
 and safety requirements, which often conflict with privacy goals.  For
 example, to prevent a prosumer from destabilizing the grid through
 careless of malicious energy trading, the system must check all of the
 prosumer's transactions.  
 
-\subsection{Distributed Processing for Multimodal Routing}
+\subsection{Distributed Processing for Multimodal Routing Example}
 
-Urban spaces are expanding at impressive rates and an efficient transportation system is a key component to any well-functioning city. Yet, as cities expand, existing infrastructures are being stressed to their limits. To make the problem worse,  building new infrastructures is costly, time consuming, and disruptive. Consequently, a number of transit agencies and cities are turning towards multimodal  solutions combining transportation operated by both cities and private users. However, given the large number of choices and available options this often leads to a dynamic programming problem that must be solved online considering several state variables, such as traffic congestion, mode capacity and the personal preferences. 
+Since urban spaces are expanding at impressive rates, an efficient transportation system is a key component to any well-functioning city. Yet, as cities expand, existing infrastructures are stressed to their limits. To make the problem worse,  building new infrastructures is expensive, time consuming, and disruptive. Consequently, a number of transit agencies and cities are turning towards multimodal  solutions combining transportation operated by both cities and private users. However, given the large number of choices and available options, this often leads to a \Aron{Does this alway boil down to a dynamic programming problem in the algorithmic sense?} dynamic programming problem that must be solved online, considering several state variables, such as traffic congestion, mode capacity, and personal preferences. 
 
 Many commercially available Internet of Things (IoT) solutions for multimodal
-transit focus on what is best for the individual from their local perspective. For example, Google Maps is able to chose between multiple options like busing, driving and biking for an individual user. But as the number of these locally optimal solution grows, too grows the misalignment between objectives of individual users and the overall system. This gap often results in a tragedy of the commons, where public goods such as roads become congested although no individual user has an incentive to use other modes of transportation. At the same time, an information bottleneck is also forming. Large scale data is being collected both by municipalities and users, but neither has the resources on their own to develop real-time analytics and controls necessary for a smart transportation system. Currently, very little has been done to provide an overarching solution that balances the needs of multiple parties including commercial companies, municipal service providers, and individuals.
+transit focus on what is best for the individual from their local perspective. For example, Google Maps is able to chose between multiple options for an individual user, such as taking the bus, driving, or biking. But as the number of these locally optimal solution grows, so does the misalignment between objectives of individual users and the overall system. This gap often results in a tragedy of the commons, where public goods such as roads become congested although no individual user has an incentive to use other modes of transportation. At the same time, an information bottleneck is also forming. Large-scale data is being collected both by municipalities and users, but neither has the resources on their own to develop real-time analytics and controls necessary for a smart transportation system. Currently, very little has been done to provide an overarching solution that balances the needs of multiple parties, including commercial companies, municipal service providers, and individuals.
 
-\subsection{The privacy problem}
-A solution to this problem requires a social computing and information sharing platform that overcomes the incentive gap between individuals and municipalities. This platform must offer mixed-mode routing suggestions and general system information to travelers and in turn provides service providers with high-fidelity information about how users are consuming different transportation resources. At the same time, this system must consider the investment required by the cities in the computing infrastructure required to solve the problem at scale. Alternatively, a novel proof-of-concept that utilizes the various edge computing resources available in the city, including the mobile devices of the commuters can be employed by municipalities to improve efficiency within their cities with little investment.
+\subsubsection{Privacy Problem}
+A solution to this problem requires a social computing and information sharing platform that overcomes the incentive gap between individuals and municipalities. This platform must offer mixed-mode routing suggestions and general system information to travelers and---in turn---supply service providers with high-fidelity information about how users are consuming different transportation resources. At the same time, this system must also consider the investment required by the cities in the computing infrastructure required to solve the problem at scale. Alternatively, a novel proof-of-concept that utilizes the various edge computing resources available in the city, including the mobile devices of the commuters, can be employed by municipalities to improve efficiency within their cities with little investment.
 
-However, this precisely leads to the problem of secure and trustworthy computing.  Privacy of individuals is an important aspect of this solution; use of smart devices of individuals as both a data source and a computational resource  could have the effect of exposing the end-user to risk of a privacy breach. Seemingly innocuous data such as transit mode or route choice can lead to inferences of
-private information such as real-time tracking of an individual's position~\cite{koufogiannis:2015aa}, likelihood of affairs~\cite{mueffelmann:2015aa}, forecasting trip destinations~\cite{dewri:2013aa}, etc.
+However, this precisely leads to the problem of secure and trustworthy computing.  Privacy of individuals is an important aspect of this solution; the usage of individuals' smart devices as both data sources and computational resources  could expose the end-users to a risk of privacy breach. Seemingly innocuous data, such as transit mode or route choice, can lead to inferences of
+private information, such as real-time tracking of an individual's position~\cite{koufogiannis:2015aa}, likelihood of affairs~\cite{mueffelmann:2015aa}, and forecasting trip destinations~\cite{dewri:2013aa}.
 
 
 \clearpage
