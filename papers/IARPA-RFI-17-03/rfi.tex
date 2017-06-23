@@ -103,18 +103,17 @@ this market, while still meeting the net demand \cite{7462854}. For
 example, the Brooklyn Microgrid, which was developed by LO3 Energy as
 a pilot project, is a peer-to-peer market for locally generated
 renewable energy.\footnote{\url{http://brooklynmicrogrid.com/}}.
-
-\Aron{I am not sure what this sentence was supposed to say.}
-These systems are effectively an example of social dispersed computing (Volttron \cite{katipamula2016volttron}, OpenFMB
-\cite{gunthersmart}, and the Resilient Information Architecture
-Platform for Smart Grid (RIAPS)
-\cite{eisele2017riaps,Scott2017ICCPS}) where consumer power storage and private energy sources as solar panels, achieving grid stability will be challenging.  With social dispersed computing, energy consumers, producers, and storage solutions in a transactive grid will be discovered automatically and monitored continuously, and system status will be updated in case devices appear to be offline. 
+%\Aron{I am not sure what this sentence was supposed to say.}
+%These systems are effectively an example of social dispersed computing (Volttron \cite{katipamula2016volttron}, OpenFMB
+%\cite{gunthersmart}, and the Resilient Information Architecture
+%Platform for Smart Grid (RIAPS)
+%\cite{eisele2017riaps,Scott2017ICCPS}) where consumer power storage and private energy sources as solar panels, achieving grid stability will be challenging.  
+With social dispersed computing, energy consumers, producers, and storage solutions in a transactive grid will be discovered automatically and monitored continuously, and system status will be updated in case devices appear to be offline. 
 
 \subsubsection{Privacy Problem}
 
-However, the computing structure in these systems does not focus on the privacy challenges that arise from the
-required information exchange in this decentralized transactive
-system: 
+The computing structure in these systems does not focus on the privacy challenges that arise from the
+required information exchange:
 \begin{itemize}
 \item \textbf{Leakage of Energy Usage Patterns to Other Prosumers:} 
  Since prosumers\footnote{We
@@ -162,13 +161,14 @@ prosumer's transactions.
 
 \subsection{Distributed Processing for Multimodal Routing Example}
 
-Since urban spaces are expanding at impressive rates, an efficient transportation system is a key component to any well-functioning city. Yet, as cities expand, existing infrastructures are stressed to their limits. To make the problem worse,  building new infrastructures is expensive, time consuming, and disruptive. Consequently, a number of transit agencies and cities are turning towards multimodal  solutions combining transportation operated by both cities and private users. However, given the large number of choices and available options, this often leads to a \Aron{Does this alway boil down to a dynamic programming problem in the algorithmic sense?} dynamic programming problem that must be solved online, considering several state variables, such as traffic congestion, mode capacity, and personal preferences. 
+Since urban spaces are expanding at impressive rates, an efficient transportation system is a key component to any well-functioning city. Yet, as cities expand, existing infrastructures are stressed to their limits. To make the problem worse,  building new infrastructures is expensive, time consuming, and disruptive. Consequently, a number of transit agencies and cities are turning towards multimodal  solutions combining transportation operated by both cities and private users. However, given the large number of choices and available options, this can lead to a %\Aron{Does this alway boil down to a dynamic programming problem in the algorithmic sense?} 
+dynamic programming problem that must be solved online, considering several state variables, such as traffic congestion, mode capacity, and personal preferences. 
 
 Many commercially available Internet of Things (IoT) solutions for multimodal
-transit focus on what is best for the individual from their local perspective. For example, Google Maps is able to chose between multiple options for an individual user, such as taking the bus, driving, or biking. But as the number of these locally optimal solution grows, so does the misalignment between objectives of individual users and the overall system. This gap often results in a tragedy of the commons, where public goods such as roads become congested although no individual user has an incentive to use other modes of transportation. At the same time, an information bottleneck is also forming. Large-scale data is being collected both by municipalities and users, but neither has the resources on their own to develop real-time analytics and controls necessary for a smart transportation system. Currently, very little has been done to provide an overarching solution that balances the needs of multiple parties, including commercial companies, municipal service providers, and individuals.
+transit focus on what is best for the individual from their local perspective. For example, Google Maps is able to chose between multiple options for an individual user, such as taking the bus, driving, or biking. But as the number of these locally optimal solution grows, so does the misalignment between objectives of individual users and the overall system. This gap often results in a tragedy of the commons, where public goods such as roads become congested although no individual user has an incentive to use other modes of transportation. At the same time, an information bottleneck is also forming. Large-scale data is being collected both by municipalities and users, but neither has the resources on their own to develop real-time analytics and controls necessary for a smart transportation system. Currently, very little has been done to provide an overarching solution that balances the needs of multiple parties, including commercial companies, municipal service providers, and individuals. 
 
 \subsubsection{Privacy Problem}
-A solution to this problem requires a social computing and information sharing platform that overcomes the incentive gap between individuals and municipalities. This platform must offer mixed-mode routing suggestions and general system information to travelers and---in turn---supply service providers with high-fidelity information about how users are consuming different transportation resources. At the same time, this system must also consider the investment required by the cities in the computing infrastructure required to solve the problem at scale. Alternatively, a novel proof-of-concept that utilizes the various edge computing resources available in the city, including the mobile devices of the commuters, can be employed by municipalities to improve efficiency within their cities with little investment.
+A solution to this problem requires a social computing and information sharing platform that overcomes the incentive gap between individuals and municipalities. This platform must offer mixed-mode routing suggestions and general system information to travelers and---in turn---supply service providers with high-fidelity information about how users are consuming different transportation resources. At the same time, this system must also consider the investment required by the cities in the computing infrastructure required to solve the problem at scale. Alternatively, a social dispersed computing approach that utilizes the various edge computing resources available in the city, including the mobile devices of the commuters, can be employed by municipalities to improve efficiency within their cities with little investment.
 
 However, this precisely leads to the problem of secure and trustworthy computing.  Privacy of individuals is an important aspect of this solution; the usage of individuals' smart devices as both data sources and computational resources  could expose the end-users to a risk of privacy breach. Seemingly innocuous data, such as transit mode or route choice, can lead to inferences of
 private information, such as real-time tracking of an individual's position~\cite{koufogiannis:2015aa}, likelihood of affairs~\cite{mueffelmann:2015aa}, and forecasting trip destinations~\cite{dewri:2013aa}.
