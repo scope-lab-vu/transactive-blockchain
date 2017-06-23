@@ -173,6 +173,37 @@ A solution to this problem requires a social computing and information sharing p
 However, this precisely leads to the problem of secure and trustworthy computing.  Privacy of individuals is an important aspect of this solution; the usage of individuals' smart devices as both data sources and computational resources  could expose the end-users to a risk of privacy breach. Seemingly innocuous data, such as transit mode or route choice, can lead to inferences of
 private information, such as real-time tracking of an individual's position~\cite{koufogiannis:2015aa}, likelihood of affairs~\cite{mueffelmann:2015aa}, and forecasting trip destinations~\cite{dewri:2013aa}.
 
+\subsection{Blockchains for SDC: Opportunities and Challenges}
+
+One of the key challenges in social dispersed computing is ensuring that NCPs that are operated by multiple parties, who may have limited trust in each other, can work together.
+For example, in transactive energy, devices belonging to individual prosumers, industrial consumers/producers, and DSOs have to coordinate and share information with each other.
+Since these parties have different goals, privacy concerns, and security practices, it is hard to establish a common application platform.
+Moreover, the transactive systems also has to satisfy the stringent security and safety requirements of power grids, which imposes further constraints on coordination.  
+Likewise, in multimodal routing, computational components belonging to the government, private companies, and individual users have to work together, despite having limited trust in each other.
+
+Blockchain based computational platforms may act as a key enabling technology for social dispersed computing, by solving the above coordination problem.
+Using blockchain technology, the NCPs can reach consensus on any state variable in the system, without relying on a trusted third party or trusting each other.
+For example, NCPs within a transactive energy system can reach consensus on energy prices, which is crucial for the stability of the grid.
+Further, distributed consensus not only solves the trust issue, but also provides fault-tolerance since consensus is always reached on the correct state as long as the number of faulty NCPs is below a threshold.
+
+In a blockchain based platform, transitions between system states are recorded as transactions in a ledger.
+To reach system-wide consensus, NCPs must share transactions with all other participants in a system.
+Ironically, the public nature of the ledger is a double-edged sword, which poses severe threats to privacy.
+As every state change must be published as a transaction, it is impossible to keep certain state variables confidential.
+This is clearly unacceptable for most social dispersed computing applications, which handle sensitive personal information, such as individual users' locations or real-time energy usage data of individual households.
+
+The current solution to this privacy problem is to publish certain state variables in an encrypted form (e.g., encrypted energy usage data), which can be decrypted only by authorized entities.
+However, this solution has fundamental limitations.
+Since NCPs must reach consensus on the state of the system, any state update that is based on the values of encrypted variables requires that a majority of NCPs be able to decrypt the variables, which would clearly violate the privacy of the encrypted variables.
+As a consequence, privacy-preserving systems cannot perform computations based on private values.
+
+To enable the next step in the evolution of decentralized computing, blockchain platforms must be extended with functionality that allows them to perform computations on encrypted variables.
+In this direction, homomorphic encryption can act as an enabling technology.
+Using homomorphic encryption, NCPs can perform computation on private state variables without learning their values.
+For example, in a transactive energy system, individual households' real-time energy consumption may be encrypted with a homomorphic encryption scheme and published on the distributed ledger.
+Then, every NCP in the system is able to compute the encrypted aggregate energy consumption by adding together the encrypted individual consumption values.
+This allows the NCPs to reach consensus on state variables without learning their values.
+
 
 \clearpage
 \bibliographystyle{plain}
