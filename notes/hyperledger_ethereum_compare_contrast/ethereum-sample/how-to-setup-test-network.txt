@@ -1,0 +1,40 @@
+##############################################################################
+#
+# How to setup a test network for etherium
+# 
+# @Author Michael A. Walker
+# @Date 2017-06-26
+#
+##############################################################################
+
+
+Important Files: 
+
+~/python/fab/fabfile.py			Fabric file that contains python methods 
+					that can be targetted to specific hosts 
+
+~/python/fab/network-config.json	Configuration JSON for network to setup
+
+~/python/fab/config-clients.py		Script to read in config file and to 
+					send the proper 'configuration' to each
+					host (for 'peers' and 'miners' right now)
+
+Edit network-config.json to have the desired configuration you want.
+
+several assumptions built into the config right now, Such as:
+
+1. only 1 DSO node
+2. only 1 Miner node
+3. host-names are in [ ~/.ssh/config ] with appropriate private SSH keys/IPs/etc.
+4. bootstrap-node data isn't yet used. This needs to be fixed.
+
+When finished the command [ ./config-clients.py ] will setup the network with 
+the appropriate settings from the json config file.
+
+######
+
+How to setup a contract: Any node in the network is (should) be able to to create a new
+contract and be able to 'deploy' it to the network. Note: No 'update' to contracts exists.
+Therefore contracts would need to be deleted and then a new one deployed.
+
+https://github.com/ethereum/go-ethereum/wiki/Contract-Tutorial
