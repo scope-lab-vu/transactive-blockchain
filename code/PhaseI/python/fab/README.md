@@ -16,78 +16,46 @@ Note: Additional files exist currently, but they will be cleaned up after
 intgration of code into proper heirarchy of CLI App.
 
 
-│
+```bash
 
+│
 ├── fabfile.py              -- Fabric Config File.
-
 │
-
 ├── network-config.json     -- sample network configuration file.
-
 │
-
 ├── network-manager.py      -- CLI App to manage the test network.
-
 │
-
 ├── blockchain/
-
 │        │
-
 │        ├── __init__.py    -- module init file.
-
 │        │
-
 │        └── blockchain.py  -- blockchain specific command files.
-
 │        
-
 ├── bootnodes/
-
 │        │
-
 │        ├── __init__.py    -- module init file.
-
 │        │
-
 │        └── bootnodes.py   -- bootnodes specific command files.
-
-│        
-
+│       
 ├── clients/
-
 │        │
-
 │        ├── __init__.py    -- module init file.
-
 │        │
-
 │        └── clients.py     -- clients specific command files.
-
 │        
-
 ├── config/
-
-│        │
-
+│        │        
 │        ├── __init__.py    -- module init file.
-
 │        │
-
 │        └── config         -- appliciation configuration realted files.
-
 │        
-
 └── miners/
-
          │
-
          ├── __init__.py    -- module init file.
-
          │
-
          └── config         -- miners specific realted files.
-         
+
+```         
 
 ## Help on running network-manager.py
 
