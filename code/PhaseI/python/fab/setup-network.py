@@ -14,7 +14,6 @@
 import json
 from subprocess import call,check_output
 
-# TODO make a class?
 #class setup-network:
 
 # read in the configuration JSON file

@@ -29,6 +29,7 @@ def readFile(configFile='/home/ubuntu/python/fab/network-config.json'):
 	global minerHostCount
 	global startProsumerRpcPort
 	global prosumerHostAllocation
+	global minerCount
 
 	prosumerCount = data["prosumerCount"]
 	prosumerHosts = data["prosumerHosts"]
