@@ -177,14 +177,38 @@ def blockchainGroup():
 # simple method to 'group' 'Blockchain' commands together
     pass
 
+
+@blockchainGroup.command(name='make',
+                    help='Make Genesis Block config file.')
+@click.option('--file',
+              default='./network-config.json',
+              help='Network Configuration JSON file location.')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def blockchainMake(file,verbose):
+# Create new Genesis block.
+    blockchains.logic.makeGenesisBlockchainConfigFile(file,verbose)
+
+
+
 @blockchainGroup.command(name='create',
                     help='Create a new Genesis Block')
 @click.option('--file',
               default='./network-config.json',
               help='Network Configuration JSON file location.')
-def blockchainCreate(file):
+@click.option('--datadir',
+              default='./ethereum/blockchian/',
+              help='data directory to create blockchain at.')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def blockchainCreate(file,datadir,verbose):
 # Create new Genesis block.
-    blockchains.logic.createBlockchains(file)
+    blockchains.logic.createGenesisBlockchain(file,datadir,verbose)
+
 
 @blockchainGroup.command(name='delete',
                     help='Delete the blockchain from all clients')

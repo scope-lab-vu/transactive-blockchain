@@ -1,0 +1,47 @@
+{
+    "configurationName":"test network 001",
+    "configurationVersion":"1",
+    "chainId": 15,
+    "difficulty": 300000000,
+    "gasLimit": 2000000,
+    "balance": 400000,
+    "genesisBlockOutFile": "genesis-data.json",
+    "clients": {
+        "startPort": 9000,
+        "prosumer": {
+            "count": 20,
+            "protocol": "ws",
+            "hosts": [
+                "eth1",
+                "eth2",
+                "eth3",
+                "eth4",
+                "eth5"
+            ]
+        },
+        "dso": {
+            "count": 1,
+            "protocol": "ws",
+            "hosts": [
+                "eth1",
+                "eth5"
+            ]
+        },
+        "miner": {
+            "count": 1,
+            "protocol": "ws",
+            "hosts": [
+                "eth6"
+            ]
+        }
+
+    },
+    "bootstrap" : {
+        "count": 1,
+        "hosts": [
+            "eth6"
+        ],
+        "startPort": 30303,
+        "protocol": "udp"
+    }
+}
