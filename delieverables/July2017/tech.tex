@@ -1,0 +1,95 @@
+\documentclass[]{article}
+
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{standalone}
+
+% Used in arch layers diagram
+\usepackage{tikz}
+\usetikzlibrary{chains}
+
+% Used in sequence-diagram.
+\usepackage{pgf-umlsd}
+
+\lstset{breaklines=true, tabsize=3,keywordstyle=\color{blue},language=idl,}
+
+%opening
+\title{Technical Specifications of\\ Ethereum Network Testing Framework}
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+Building a test network for Ethereum is a highly complex process with a number of steps involved that are tedious and error prone. We have developed a framework that allows for deployment and management of ethereum clients on a private test network. This allows for testing of not only ethereum client configurations, but also for testing of complex smart contract interactions and related software.
+
+\end{abstract}
+
+\section{Design Goals}
+
+\section{System Architecture}
+
+\subsection{Blockchain}
+
+\subsection{RIAPS}
+
+\subsection{Distributed File Storage}
+Include description of a dist. file system that we are going to incorporate 
+
+\section{Network Manager}
+
+We have developed a python command line interface program for managing the test network. This 'Network Manager' (manager.py) is stateless, has built in help documentation for manual command line interactions, and each and every command and sub-command in the program has a --verbose flag associated with it. It was designed this way so as to promote easily integration into any existing network administration tool-chain(s). 
+
+These commands are designed to allow for interaction with the entire test-network designed in <network-config.json> at once. If interactions with a specific host or client on a host is desired, then the python Fabric tool suite is provided. Run `fab -l` in the root directory of the Network Manager to be listed all Fabric methods given for interaction with individual hosts or clients.
+
+
+\input{bootnodes-commands}
+
+\input{miners-commands}
+
+\input{clients-commands}
+
+\input{blockchains-commands}
+
+
+\subsection{IDL for Actors}
+
+\lstinputlisting[language=JAVA]{miner.aidl}
+
+\lstinputlisting[language=JAVA]{dataStore.aidl}
+
+\lstinputlisting[language=JAVA]{dso.aidl}
+
+\lstinputlisting[language=JAVA]{prosumer.aidl}
+
+\lstinputlisting[language=JAVA]{consumer.aidl}
+
+\begin{figure}
+	\includestandalone[width=\textwidth]{test-network-setup-seq-diag}%     without .tex extension
+	% or use \input{mytikz}
+	\caption{Sequence Diagram of Full Test Network Operation Cycle}
+	\label{fig:seqdiag:testnetworksetup}
+\end{figure}
+
+
+\section{Test Network Architecture}
+
+\subsection{Host Software}
+
+\subsubsection{Blockchain Client}
+
+\subsubsection{RIAPS}
+
+\subsubsection{Distributed File Storage}
+
+\subsection{Management Software}
+
+command line python application leveraging Fabric for individual host control.
+
+
+
+\end{document}
+

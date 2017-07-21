@@ -1,0 +1,31 @@
+\subsection{Miners}
+
+Miners are the only nodes on the network allowed to do mining. These are required for the operation of the network because new blocks need to be generated so as to store transactions. Also they need to have a predictable frequency (which means adjusting difficulty of the required computations to create a new block) so as to provide timing constraints.
+
+\subsubsection{Create}
+
+The following command allows you to create the miners specified in <network-config.json> on the test network. This command evaluates the number of hosts given, the number of miners specified, the starting port for all clients, and the protocol to use for communication with the client once it has started.
+\begin{lstlisting}[language=bash]
+$ ./manager miners create file=network-config.json
+\end{lstlisting}
+
+\subsubsection{Start}
+
+The following command allows you to start all the Blockchain clients on the test network declared in the provided <network-config.json> file.
+\begin{lstlisting}[language=bash]
+$ ./manager miners create file=network-config.json
+\end{lstlisting}
+
+
+\subsubsection{Stop}
+The following command allows you to stop all the Blockchain clients on the test network declared in the provided <network-config.json> file.
+\begin{lstlisting}[language=bash]
+$ ./manager miners create file=network-config.json
+\end{lstlisting}
+
+
+\subsubsection{Delete}
+The following command allows you to remove all of the Blockchain clients' data on the test network declared in the provided <network-config.json> file.
+\begin{lstlisting}[language=bash]
+$ ./manager miners create file=network-config.json
+\end{lstlisting}

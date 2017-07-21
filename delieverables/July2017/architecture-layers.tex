@@ -1,0 +1,80 @@
+% The Purdue Enterprise Reference Architecture (PERA) model.
+% Author: Erno Pentzin (2013)
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{chains}
+\begin{document}
+
+\newcommand{\halfwidth}{3.5cm}
+\newcommand{\halfxshift}{2.25cm}
+
+\begin{tikzpicture}[
+	scale=0.75,
+	start chain=1 going below, 
+	start chain=2 going right,
+	start chain=3 going right,
+	node distance=1mm,
+	desc/.style={
+		scale=0.75,
+		on chain=3,
+		rectangle,
+		rounded corners,
+		draw=black, 
+		very thick,
+		text centered,
+		text width=8cm,
+		minimum height=12mm,
+		fill=blue!30
+		},
+	it/.style={
+		fill=blue!10
+	},
+	half/.style={
+        text width=\halfwidth,
+	},
+	level/.style={
+		scale=0.75,
+		on chain=1,
+		minimum height=12mm,
+		text width=2cm,
+		text centered
+	},
+	every node/.style={font=\sffamily}
+]
+
+
+
+% Levels
+\node [level] (Level 5) {Level 5};
+\node [level] (Level 4) {Level 4};
+\node [level] (Level 3) {Level 3};
+\node [level] (Level 2) {Level 2};
+\node [level] (Level 1.5) { };
+\node [level] (Level 1) {Level 1};
+\node [level] (Level 0) {Level 0};
+
+
+
+
+\newcommand{\secondhalfxshift}{2.25cm}
+\newcommand{\shiftbackafterhalf}{2.25cm}
+
+
+% Descriptions
+\chainin (Level 5); % Start right of Level 5
+% IT levels
+\node [desc, it] (Archives) {Archives/File Servers};
+\node [desc, it, continue chain=going below] (ERP) {ERP/Finance/Messaging};
+% ICS levels
+\node [desc] (Operations) {Operations Management/Historians};
+\node [desc] (Supervisory) {Supervisory Controls};
+\node [desc] (OnionRouting) {Communication anonymity (e.g., onion routing)};
+
+\node [desc, half, xshift=\halfxshift] (PLC) {PLC/RTU IP Communication};
+\node [desc, half, xshift=-2*\halfxshift] (SIS) {Safety Instrumented Systems};
+
+\node [desc, xshift=\halfxshift] (IO) {Communication network and operating system}; % this is shifted to shift 'back' to starting place.
+
+\end{tikzpicture}
+
+\end{document}

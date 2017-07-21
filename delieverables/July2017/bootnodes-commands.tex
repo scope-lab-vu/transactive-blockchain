@@ -1,0 +1,27 @@
+\subsection{Bootnodes}
+
+Bootnodes are the discovery mechanism in Ethereum. These nodes do not have a copy of the blockchain(s) on the network(s). Instead they provide a central location for peer discovery. 
+
+\subsubsection{Create}
+The following command allows you to create the bootnodes (Ethereum discovery service mechanism) specified in <network-config.json> on the test network. This command evaluates the number of hosts given, the number of bootnodes specified, and the starting port for all clients. 
+\begin{lstlisting}[language=bash]
+$ ./manager bootnodes create file=network-config.json
+\end{lstlisting}
+
+\subsubsection{Start}
+The following command allows you to start all the bootnodes clients on the test network declared in the provided <network-config.json> file.
+\begin{lstlisting}[language=bash]
+$ ./manager bootnodes start file=network-config.json
+\end{lstlisting}
+
+\subsubsection{Stop}
+The following command allows you to stop all the bootnodes clients on the test network declared in the provided <network-config.json> file
+\begin{lstlisting}[language=bash]
+$ ./manager bootnodes stop file=network-config.json
+\end{lstlisting}
+
+\subsubsection{Delete}
+The following command allows you to delete all the bootnodes clients' data on the test network declared in the provided <network-config.json> file
+\begin{lstlisting}[language=bash]
+$ ./manager bootnodes delete file=network-config.json
+\end{lstlisting}

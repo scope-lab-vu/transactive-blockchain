@@ -1,0 +1,33 @@
+\subsection{Clients}
+
+Clients are the nodes in the test network that have the potential to interact with the Blockchain that are NOT miners. Note: Mining is a separate process that we dedicate nodes to, so that IoT devices (Smart Meters, etc.) do not need to run intensive computation calculations.  
+
+\subsubsection{Create}
+The following command allows you to create the clients specified in <network-config.json> on the test network. This command evaluates the number of hosts given, the number of client types specified, the number of clients per type, and the starting port for all clients.
+\begin{lstlisting}[language=bash]
+$ ./manager clients create file=network-config.json
+\end{lstlisting}
+
+\subsubsection{Distribute}
+The following command allows you to distribute the <static-nodes.json> that contains the bootnode(s) connection information to all Clients. Note: This includes all types declared within the 'clients' section of the <network-config.json> file, such as: Prosumer, Miners, etc.
+\begin{lstlisting}[language=bash]
+$ ./manager clients create file=network-config.json nodes=static-nodes.json
+\end{lstlisting}
+
+\subsubsection{Start}
+The following command allows you to start all the clients on the test network declared in the provided <network-config.json> file.
+\begin{lstlisting}[language=bash]
+$ ./manager clients create file=network-config.json
+\end{lstlisting}
+
+\subsubsection{Stop}
+The following command allows you to stop all the clients on the test network declared in the provided <network-config.json> file.
+\begin{lstlisting}[language=bash]
+$ ./manager clients create file=network-config.json
+\end{lstlisting}
+
+\subsubsection{Delete}
+The following command allows you to delete all the clients' data on the test network declared in the provided <network-config.json> file.
+\begin{lstlisting}[language=bash]
+$ ./manager clients create file=network-config.json
+\end{lstlisting}

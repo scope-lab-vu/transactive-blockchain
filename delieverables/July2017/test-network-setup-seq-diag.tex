@@ -1,0 +1,66 @@
+\documentclass{standalone}
+
+\usepackage{pgf-umlsd}
+\usepackage{adjustbox}
+
+\begin{document}
+	\trimbox{0cm -.5cm -0.75cm -0.5cm}{
+	
+	\begin {sequencediagram}
+%	\newinst{name}{:Instance}
+	\newthread {a}{: Manager Install}
+%	\newinst {b }{: Manager}
+	\newinst [1]{d}{: Bootnodes }
+%	\newinst [1]{ch}{: Client Hosts }
+	\newinst [2]{c}{: Clients }
+%	\newinst [3]{mh}{: Miner Hosts }
+	\newinst [3]{m}{: Miners }
+
+%	\newinst [5]{dh}{: Discovery Hosts }
+\begin{sdblock}{Creation}{Creating all Ethereum related processes}
+	\begin{call}{a}{create node(s)}{d}{KEY:IP:PORT (s)}
+	\end{call}
+
+	\begin{call}{a}{create miner(s)}{m}{KEY:IP:PORT (s)}
+	\end{call}
+	\begin{call}{a}{create client(s)}{c}{KEY:IP:PORT (s)}
+	\end{call}
+	\begin{call}{a}{create Genesis Block, with default credits}{a}{Genesis Block}
+	\end{call}
+
+	\begin{call}{a}{copy Genesis Block \& bootnode info}{m}{}
+	\end{call}
+	\begin{call}{a}{copy Genesis Block \& bootnode info}{c}{}
+	\end{call}
+\end{sdblock}
+
+\begin{sdblock}{Starting}{Starting all Ethereum related processes}
+	\begin{call}{a}{start node(s)}{d}{}
+	\end{call}
+	\begin{call}{a}{start Miner(s)}{m}{}
+	\end{call}
+	\begin{call}{a}{Start Client(s)}{c}{}
+	\end{call}
+\end{sdblock}
+
+\begin{sdblock}{Stopping}{Stopping all Ethereum related processes}
+	\begin{call}{a}{stop Client(s)}{c}{}
+	\end{call}
+	\begin{call}{a}{stop Miner(s)}{m}{}
+	\end{call}
+	\begin{call}{a}{stop node(s)}{d}{}
+	\end{call}
+\end{sdblock}
+
+\begin{sdblock}{Removal}{Removing all Ethereum related processes}
+	\begin{call}{a}{remove Client(s)}{c}{}
+	\end{call}
+	\begin{call}{a}{remove Miner(s)}{m}{}
+	\end{call}
+	\begin{call}{a}{remove node(s)}{d}{}
+	\end{call}
+\end{sdblock}
+
+	\end {sequencediagram}
+}
+\end{document}

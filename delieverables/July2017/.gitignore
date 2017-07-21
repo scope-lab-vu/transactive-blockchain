@@ -1,0 +1,5 @@
+*.aux
+*.log
+*.gz
+*.pdf
+*.tex.[a-z|a-Z|_|0-9]*
