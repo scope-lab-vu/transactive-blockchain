@@ -1,0 +1,16 @@
+\subsection{Blockchains}
+
+Blockchains are the Distributed Ledger of the network infrastructure that we are setting up. In particular, we have to create a Genesis Block when creating any new test network. For simplicity sake, we also pre-allocate all clients (Consumers, Presumers, etc.) on the test network with a starting amount of currency. This allows all clients to begin translations upon creation of the network without requiring each client to mine in an attempt to gain some currency. 
+
+\subsubsection{Make}
+
+The following command allows you to create the <genesis-block.json> configuration file from the input <network-config.json>. This <genesis-block.json> defines the parameters required for creation of a new Blockchain.
+\begin{lstlisting}[language=bash]
+$ ./network-manager blockchains make file=network-config.json
+\end{lstlisting}
+
+\subsubsection{Create}
+The following command allows you to create the actual blockchain defined in the <genesis-block.json> configuration file(Created with 'blockchains make' command).
+\begin{lstlisting}[language=bash]
+$ ./network-manager blockchains create file=network-config.json
+\end{lstlisting}
