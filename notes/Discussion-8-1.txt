@@ -1,0 +1,28 @@
+Geth Clients
+============
+
+- DSO (acts as the mixing services)
+- Prosumer (petra)
+   - generates the anonymous address by itself. they have to generate a number of addresses at different times.
+   - Requests from the DSO (Request/Reply with a timeout - High). This can be done any time. No urgency at anytime.
+   - DSO must validate the prosumer. (out of band- riaps)/ keys will be setup during. (ZeroMQ based setup)
+   - DSO will transfer ether.
+   - Prosumer will listen for the broadcast event.
+Describe how prosumer can hide from the DSO if it wants? 
+- why we don't need mixing service. But generate keys enough.
+- we need to keep track of ether to address the computation workload imbalances.
+- There has to be a cost for posting and rescinding offers.
+- We should have the ability accept partial power offers.
+- We should say that we have though about the inconsistency of power distribution.
+- Miner (at least 1)
+
+
+Rdiscovery
+============
+
+- Discovers and connects the geth clients to all the peers.
+
+
+Smart Meter
+================
+Measures consumption and productions and communicates with the DSO (out of band - not with blockchain)
