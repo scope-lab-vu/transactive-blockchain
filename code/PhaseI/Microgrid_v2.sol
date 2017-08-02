@@ -7,6 +7,22 @@ contract TradingService {
         DSO = msg.sender;
     }
     
+    function test() public {
+        addFinancialBalance(msg.sender, 1000);
+        depositFinancial(msg.sender, 500);
+        addFinancialBalance(msg.sender, 2000);
+        depositFinancial(msg.sender, 1000);
+        
+        uint64 assetProd = createEnergyAsset(msg.sender, 100, 8, 10);
+        uint64 assetCons = createEnergyAsset(msg.sender, -200, 9, 11);
+        uint64 offer1 = postOffer(assetProd, 10);
+        rescindOffer(offer1);
+        uint64 offer2 = postOffer(assetProd, 5);
+        acceptOffer(offer2, assetCons);
+        depositEnergyAsset(assetProd);
+        depositEnergyAsset(assetCons);
+    }
+    
     // Financial Assets
     
     mapping(address => uint64) private financialBalance;
@@ -22,7 +38,7 @@ contract TradingService {
     
     function depositFinancial(address prosumer, uint64 amount) public {
         require(financialBalance[msg.sender] >= amount);
-        financialBalance[prosumer] += amount;
+        financialBalance[prosumer] -= amount;
         FinancialDeposited(prosumer, amount);
     }
     
@@ -41,31 +57,29 @@ contract TradingService {
     mapping(uint64 => EnergyAsset) private energyAssets;
     uint64 private nextEnergyAssetID = 0;
     
-    event AssetWithdrawn(address prosumer, uint64 assetID, uint64 power, uint64 start, uint64 end);
+    event AssetWithdrawn(address prosumer, uint64 assetID, int64 power, uint64 start, uint64 end);
     event AssetDeposited(address prosumer, uint64 assetID, int64 power, uint64 start, uint64 end);
+    event AssetCreated(address prosumer, uint64 assetID);
 
     function createEnergyAsset(address prosumer, int64 power, uint64 start, uint64 end) public returns(uint64 assetID) {
         require(msg.sender == DSO);
-        uint64 absPower = power > 0 ? uint64(power) : uint64(-power);
         energyAssets[nextEnergyAssetID] = EnergyAsset({
             assetType: power > 0 ? AssetType.Production : AssetType.Consumption,
-            power: absPower,
+            power: power > 0 ? uint64(power) : uint64(-power),
             start: start, 
             end: end, 
             owner: prosumer});
-        AssetWithdrawn(prosumer, nextEnergyAssetID, absPower, start, end);
+        AssetWithdrawn(prosumer, nextEnergyAssetID, power, start, end);
         return nextEnergyAssetID++;
     }
     
     function depositEnergyAsset(uint64 assetID) public {
         EnergyAsset storage asset = energyAssets[assetID];
         require(msg.sender == asset.owner);
-        asset.owner == DSO;
+        asset.owner = address(this);
         int64 power = asset.assetType == AssetType.Production ? int64(asset.power) : int64(-asset.power);
         AssetDeposited(msg.sender, assetID, power, asset.start, asset.end);
     }
-    
-    event AssetCreated(uint64 assetID, address owner);
     
     function splitAssetByStart(uint64 assetID, uint64 newStart) internal {
         EnergyAsset storage asset = energyAssets[assetID];
@@ -78,7 +92,7 @@ contract TradingService {
                 end: newStart - 1, 
                 owner: asset.owner});
             asset.start = newStart;
-            AssetCreated(newAssetID, asset.owner);
+            AssetCreated(asset.owner, newAssetID);
         }
     }
     
@@ -93,7 +107,7 @@ contract TradingService {
                 end: asset.end, 
                 owner: asset.owner});
             asset.end = newEnd;
-            AssetCreated(newAssetID, asset.owner);
+            AssetCreated(asset.owner, newAssetID);
         }
     }
     
@@ -108,7 +122,7 @@ contract TradingService {
                 end: asset.end, 
                 owner: asset.owner});
             asset.power = newPower;
-            AssetCreated(newAssetID, asset.owner);
+            AssetCreated(asset.owner, newAssetID);
         }
     }
     
@@ -128,9 +142,9 @@ contract TradingService {
     mapping (uint64 => Offer) offers;
     uint64 nextOfferID = 0;
     
-    event OfferPosted(uint64 offerID, int64 power, uint64 start, uint64 end);
+    event OfferPosted(uint64 offerID, int64 power, uint64 start, uint64 end, uint64 price);
     event OfferRescinded(uint64 offerID);
-    event OfferAccepted(uint64 offerID, uint64 transPower, uint64 transStart, uint64 transEnd, uint64 cost);
+    event OfferAccepted(uint64 offerID, uint64 transPower, uint64 transStart, uint64 transEnd, uint64 price);
     
     function postOffer(uint64 assetID, uint64 price) public returns (uint64 offerID) {
         EnergyAsset storage asset = energyAssets[assetID];
@@ -156,7 +170,7 @@ contract TradingService {
             state: OfferState.Open
         });
         int64 power = asset.assetType == AssetType.Production ? int64(asset.power) : -int64(asset.power);
-        OfferPosted(nextOfferID, power, asset.start, asset.end);
+        OfferPosted(nextOfferID, power, asset.start, asset.end, price);
         return nextOfferID++;
     }
     
@@ -187,13 +201,14 @@ contract TradingService {
         require(providedAsset.owner == msg.sender);
         require(!(offeredAsset.end < providedAsset.start && offeredAsset.start > providedAsset.end)); // assets overlap
         if (offer.offerType == OfferType.Ask) {
-            require(offeredAsset.assetType == AssetType.Consumption);
+            require(providedAsset.assetType == AssetType.Consumption);
             require(financialBalance[msg.sender] >= cost);
         }
         else
             require(offeredAsset.assetType == AssetType.Production);
         // Effects
         // split assets
+        offeredAsset.owner = offer.poster;  // assets inherit ownership
         splitAssetByStart(offer.assetID, transStart);
         splitAssetByStart(assetID, transStart);
         splitAssetByEnd(offer.assetID, transEnd);
@@ -210,7 +225,7 @@ contract TradingService {
         providedAsset.owner = offer.poster;
         offeredAsset.owner = msg.sender;
         offer.state = OfferState.Closed;
-        OfferAccepted(offerID, transPower, transStart, transEnd, cost);
+        OfferAccepted(offerID, transPower, transStart, transEnd, offer.price);
     }
 }
 
