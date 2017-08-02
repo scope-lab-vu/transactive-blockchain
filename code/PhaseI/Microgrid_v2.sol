@@ -9,9 +9,9 @@ contract TradingService {
     
     function test() public {
         addFinancialBalance(msg.sender, 1000);
-        depositFinancial(msg.sender, 500);
+        depositFinancial(500);
         addFinancialBalance(msg.sender, 2000);
-        depositFinancial(msg.sender, 1000);
+        depositFinancial(1000);
         
         uint64 assetProd = createEnergyAsset(msg.sender, 100, 8, 10);
         uint64 assetCons = createEnergyAsset(msg.sender, -200, 9, 11);
@@ -36,10 +36,10 @@ contract TradingService {
         FinancialWithdrawn(prosumer, amount);
     }
     
-    function depositFinancial(address prosumer, uint64 amount) public {
+    function depositFinancial(uint64 amount) public {
         require(financialBalance[msg.sender] >= amount);
-        financialBalance[prosumer] -= amount;
-        FinancialDeposited(prosumer, amount);
+        financialBalance[msg.sender] -= amount;
+        FinancialDeposited(msg.sender, amount);
     }
     
     // Energy Assets
