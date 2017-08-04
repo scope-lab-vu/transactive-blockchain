@@ -1,0 +1,36 @@
+test network 
+
+~/.ssh/config file
+
+host eth1
+   Hostname 10.4.209.25
+   User ubuntu
+   IdentityFile ~/.ssh/blockchain.private
+   IdentitiesOnly yes
+   Port 22
+host eth2
+   Hostname 10.4.209.28
+   User ubuntu
+   IdentityFile ~/.ssh/blockchain.private
+   IdentitiesOnly yes
+   Port 22
+host eth3
+   Hostname 10.4.209.26
+   User ubuntu
+   IdentityFile ~/.ssh/blockchain.private
+   IdentitiesOnly yes
+   Port 22
+host eth4
+   Hostname 10.4.209.29
+   User ubuntu
+   IdentityFile ~/.ssh/blockchain.private
+   IdentitiesOnly yes
+   Port 22
+host eth5
+   Hostname 10.4.209.27
+   User ubuntu
+   IdentityFile ~/.ssh/blockchain.private
+   IdentitiesOnly yes
+   Port 22
+host eth6
+   Hostname 10.4.209.30
