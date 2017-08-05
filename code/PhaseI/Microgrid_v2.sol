@@ -7,52 +7,123 @@ contract TradingService {
         DSO = msg.sender;
     }
     
+    function test() public {
+        addFinancialBalance(msg.sender, 1000);
+        depositFinancial(500);
+        addFinancialBalance(msg.sender, 2000);
+        depositFinancial(1000);
+        
+        uint64 assetProd = createEnergyAsset(msg.sender, 100, 8, 10);
+        uint64 assetCons = createEnergyAsset(msg.sender, -200, 9, 11);
+        uint64 offer1 = postOffer(assetProd, 10);
+        rescindOffer(offer1);
+        uint64 offer2 = postOffer(assetProd, 5);
+        acceptOffer(offer2, assetCons);
+        depositEnergyAsset(assetProd);
+        depositEnergyAsset(assetCons);
+    }
+    
+    // Financial Assets
+    
     mapping(address => uint64) private financialBalance;
     
-    function addBalance(uint64 amount, address prosumer) {
+    event FinancialWithdrawn(address prosumer, uint64 amount);
+    event FinancialDeposited(address prosumer, uint64 amount);
+    
+    function addFinancialBalance(address prosumer, uint64 amount) public {
         require(msg.sender == DSO);
         financialBalance[prosumer] += amount;
+        FinancialWithdrawn(prosumer, amount);
+    }
+    
+    function depositFinancial(uint64 amount) public {
+        require(financialBalance[msg.sender] >= amount);
+        financialBalance[msg.sender] -= amount;
+        FinancialDeposited(msg.sender, amount);
     }
     
     // Energy Assets
     
+    enum AssetType { Production, Consumption }
+    
     struct EnergyAsset {
-        int64 power; // amount of power to be produced or consumed (positive for production asset, negative for consumption asset)
+        address owner;
+        AssetType assetType;
+        uint64 power; // amount of power to be produced or consumed 
         uint64 start; // first time interval in which energy is to be produced
         uint64 end;   // last time interval in which energy is to be produced
-        address owner;
     }
     
     mapping(uint64 => EnergyAsset) private energyAssets;
     uint64 private nextEnergyAssetID = 0;
     
-    function createEnergyAsset(int64 power, uint64 start, uint64 end, address prosumer) returns (uint64 assetID) {
+    event AssetWithdrawn(address prosumer, uint64 assetID, int64 power, uint64 start, uint64 end);
+    event AssetDeposited(address prosumer, uint64 assetID, int64 power, uint64 start, uint64 end);
+    event AssetCreated(address prosumer, uint64 assetID);
+
+    function createEnergyAsset(address prosumer, int64 power, uint64 start, uint64 end) public returns(uint64 assetID) {
         require(msg.sender == DSO);
-        energyAssets[nextEnergyAssetID] = EnergyAsset({power: power, start: start, end: end, owner: prosumer});
+        energyAssets[nextEnergyAssetID] = EnergyAsset({
+            assetType: power > 0 ? AssetType.Production : AssetType.Consumption,
+            power: power > 0 ? uint64(power) : uint64(-power),
+            start: start, 
+            end: end, 
+            owner: prosumer});
+        AssetWithdrawn(prosumer, nextEnergyAssetID, power, start, end);
         return nextEnergyAssetID++;
     }
     
-    event AssetsWithdrawn(uint64 assetID, uint64 balance, address prosumer);
-    
-    function createAssets(int64 power, uint64 start, uint64 end, uint64 balance, address prosumer) returns (uint64 _assetID) {
-        addBalance(balance, prosumer);
-        uint64 assetID = createEnergyAsset(power, start, end, prosumer);
-        AssetsWithdrawn(assetID, balance, prosumer);
-        return assetID;
-    }
-    
-    function depositEnergyAsset(uint64 assetID) {
+    function depositEnergyAsset(uint64 assetID) public {
         EnergyAsset storage asset = energyAssets[assetID];
         require(msg.sender == asset.owner);
-        asset.owner == DSO;
+        asset.owner = address(this);
+        int64 power = asset.assetType == AssetType.Production ? int64(asset.power) : int64(-asset.power);
+        AssetDeposited(msg.sender, assetID, power, asset.start, asset.end);
     }
     
-    event AssetsDeposited(uint64 assetID, uint64 balance, address prosumer);
+    function splitAssetByStart(uint64 assetID, uint64 newStart) internal {
+        EnergyAsset storage asset = energyAssets[assetID];
+        if (asset.start < newStart && asset.end >= newStart) {
+            uint64 newAssetID = nextEnergyAssetID++;
+            energyAssets[newAssetID] = EnergyAsset({
+                assetType: asset.assetType,
+                power: asset.power, 
+                start: asset.start, 
+                end: newStart - 1, 
+                owner: asset.owner});
+            asset.start = newStart;
+            AssetCreated(asset.owner, newAssetID);
+        }
+    }
     
-    function depositAssets(uint64 assetID, uint64 balance) {
-        depositEnergyAsset(assetID);
-        financialBalance[msg.sender] -= balance;
-        AssetsDeposited(assetID, balance, msg.sender);
+    function splitAssetByEnd(uint64 assetID, uint64 newEnd) internal {
+        EnergyAsset storage asset = energyAssets[assetID];
+        if (asset.start <= newEnd && asset.end > newEnd) {
+            uint64 newAssetID = nextEnergyAssetID++;
+            energyAssets[newAssetID] = EnergyAsset({
+                assetType: asset.assetType,
+                power: asset.power, 
+                start: newEnd + 1, 
+                end: asset.end, 
+                owner: asset.owner});
+            asset.end = newEnd;
+            AssetCreated(asset.owner, newAssetID);
+        }
+    }
+    
+    function splitAssetByPower(uint64 assetID, uint64 newPower) internal {
+        EnergyAsset storage asset = energyAssets[assetID];
+        if (asset.power > newPower) {
+            uint64 newAssetID = nextEnergyAssetID++;
+            energyAssets[newAssetID] = EnergyAsset({
+                assetType: asset.assetType,
+                power: asset.power - newPower, 
+                start: asset.start, 
+                end: asset.end, 
+                owner: asset.owner});
+            asset.power = newPower;
+            AssetCreated(asset.owner, newAssetID);
+        }
     }
     
     // Energy Ask and Bid Offers
@@ -71,18 +142,21 @@ contract TradingService {
     mapping (uint64 => Offer) offers;
     uint64 nextOfferID = 0;
     
-    event OfferPosted(uint64 offerID, uint64 price, uint64 assetID);
+    event OfferPosted(uint64 offerID, int64 power, uint64 start, uint64 end, uint64 price);
+    event OfferRescinded(uint64 offerID);
+    event OfferAccepted(uint64 offerID, uint64 transPower, uint64 transStart, uint64 transEnd, uint64 price);
     
-    function postOffer(uint64 assetID, uint64 price) returns (uint64 offerID) {
+    function postOffer(uint64 assetID, uint64 price) public returns (uint64 offerID) {
         EnergyAsset storage asset = energyAssets[assetID];
+        uint64 cost = price * asset.power * (asset.end + 1 - asset.start);
         // Checks
         require(asset.owner == msg.sender);
-        if (asset.power < 0) 
-            require(financialBalance[msg.sender] >= price);
+        if (asset.assetType == AssetType.Consumption) 
+            require(financialBalance[msg.sender] >= cost);
         // Effects
         asset.owner = address(this);
-        if (asset.power < 0) {
-            financialBalance[msg.sender] -= price;
+        if (asset.assetType == AssetType.Consumption) {
+            financialBalance[msg.sender] -= cost;
             OfferType offerType = OfferType.Bid;
         }
         else {
@@ -95,48 +169,63 @@ contract TradingService {
             price: price,
             state: OfferState.Open
         });
-        OfferPosted(nextOfferID, price, assetID);
+        int64 power = asset.assetType == AssetType.Production ? int64(asset.power) : -int64(asset.power);
+        OfferPosted(nextOfferID, power, asset.start, asset.end, price);
         return nextOfferID++;
     }
     
-    function rescindOffer(uint64 offerID) {
+    function rescindOffer(uint64 offerID) public {
         Offer storage offer = offers[offerID];
+        EnergyAsset storage asset = energyAssets[offer.assetID];
         // Checks
         require(offer.poster == msg.sender);
         require(offer.state == OfferState.Open);
         // Effects
         offer.state = OfferState.Rescinded;
-        energyAssets[offer.assetID].owner = msg.sender;
+        asset.owner = msg.sender;
         if (offer.offerType == OfferType.Bid)
-          financialBalance[msg.sender] += offer.price;
+          financialBalance[msg.sender] += offer.price * asset.power * (asset.end + 1 - asset.start);
+        OfferRescinded(offerID);
     }
     
-    event OfferAccepted(uint64 offerID);
-    
-    function acceptOffer(uint64 offerID, uint64 assetID) {
+    function acceptOffer(uint64 offerID, uint64 assetID) public {
         Offer storage offer = offers[offerID];
         EnergyAsset storage offeredAsset = energyAssets[offer.assetID];
         EnergyAsset storage providedAsset = energyAssets[assetID];
-        // Checks
+        uint64 transStart = offeredAsset.start > providedAsset.start ? offeredAsset.start : providedAsset.start;
+        uint64 transEnd = offeredAsset.end < providedAsset.end ? offeredAsset.end : providedAsset.end;
+        uint64 transPower = offeredAsset.power < providedAsset.power ? offeredAsset.power : providedAsset.power;
+        uint64 cost = offer.price * transPower * (transEnd + 1 - transStart);
+        // Checks 
         require(offer.state == OfferState.Open);
         require(providedAsset.owner == msg.sender);
-        if (offer.offerType == OfferType.Ask) 
-            require(financialBalance[msg.sender] >= offer.price);
-        require(offeredAsset.power == -providedAsset.power);
-        require(offeredAsset.start == providedAsset.start);
-        require(offeredAsset.end == providedAsset.end);
-        // Effects
+        require(!(offeredAsset.end < providedAsset.start && offeredAsset.start > providedAsset.end)); // assets overlap
         if (offer.offerType == OfferType.Ask) {
-            financialBalance[msg.sender] -= offer.price;
-            financialBalance[offer.poster] += offer.price;
+            require(providedAsset.assetType == AssetType.Consumption);
+            require(financialBalance[msg.sender] >= cost);
         }
-        else {
-            financialBalance[msg.sender] += offer.price;
+        else
+            require(offeredAsset.assetType == AssetType.Production);
+        // Effects
+        // split assets
+        offeredAsset.owner = offer.poster;  // assets inherit ownership
+        splitAssetByStart(offer.assetID, transStart);
+        splitAssetByStart(assetID, transStart);
+        splitAssetByEnd(offer.assetID, transEnd);
+        splitAssetByEnd(assetID, transEnd);
+        splitAssetByPower(offer.assetID, transPower);
+        splitAssetByPower(assetID, transPower);
+        // transfer assets
+        if (offer.offerType == OfferType.Ask) {
+            financialBalance[msg.sender] -= cost;
+            financialBalance[offer.poster] += cost;
         }
+        else
+            financialBalance[msg.sender] += cost;
         providedAsset.owner = offer.poster;
         offeredAsset.owner = msg.sender;
         offer.state = OfferState.Closed;
-        OfferAccepted(offerID);
+        OfferAccepted(offerID, transPower, transStart, transEnd, offer.price);
     }
 }
 
