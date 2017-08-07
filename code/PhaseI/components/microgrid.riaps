@@ -4,7 +4,7 @@ app WeatherMonitor {
   message Withdrawal; 
      
 	// DSO component
-	component DSO {
+  component DSO {
     rep withdrawAssets : Withdrawal;	
   }
     
