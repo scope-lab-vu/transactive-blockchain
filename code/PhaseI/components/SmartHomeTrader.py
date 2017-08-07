@@ -26,36 +26,36 @@ class SmartHomeTrader: #(Component):
       self.accounts[account.address] = Account()
     # predict net production and request assets for trading 
     for timestep in range(PREDICTION_HORIZON):
-      self.request_assets(timestep)
+      self.manage_assets(timestep)
     self.next_timestep = PREDICTION_HORIZON
       
   def predict_net_production(self, timestep):
     # TODO: use data (based on name and timestep)
     return int((CONSUMPTION_LIMIT + PRODUCTION_LIMIT) * self.random.random() - PRODUCTION_LIMIT)
     
-  def request_assets(self, timestep):
+  def manage_assets(self, timestep):
     # choose random address for trading
     address = self.random.choice(list(self.accounts.keys()))
     # request based on predicted net production
     asset = EnergyAsset(self.predict_net_production(timestep), timestep, timestep) 
-    self.withdrawAssets(address, asset, 100)
+    self.withdraw_assets(address, asset, 100)
     # TODO: verify success and retry on failure
     
   def add_asset(self, address, assetID, asset):
     # check if asset belongs to the prosumer
     if address not in self.accounts:
       return
-    # production or consumption    
+    # production or consumption 
     if asset.power > 0:
       # offer production asset for trade
-      self.postOffer(assetID, BASE_PRICE)
+      self.postOffer(address, assetID, BASE_PRICE)
     else:
       # track consumption asset
-      self.cons_assets[assetID] = (self.accounts[address], asset)      
+      self.cons_assets[assetID] = (self.accounts[address], asset)  
       # check if there is an open offer
       for offerID, (offered_asset, price) in self.offers.items():
         if offered_asset.tradeable(asset):
-          self.acceptOffer(offerID, assetID)
+          self.acceptOffer(address, offerID, assetID)
       
   def offer_posted(self, offerID, offered_asset, price):
     # pass on offers that are overpriced
@@ -64,7 +64,7 @@ class SmartHomeTrader: #(Component):
     # check if prosumer has tradeable asset
     for assetID, (account, asset) in self.cons_assets.items():
       if asset.tradeable(offered_asset):
-        self.acceptOffer(offerID, assetID)
+        self.acceptOffer(account.address, offerID, assetID)
         return
     # remember offer
     self.offers[offerID] = (offered_asset, price)
@@ -84,12 +84,12 @@ class SmartHomeTrader: #(Component):
   def on_clock(self):
     msg = self.clock.recv_pyobj()
     # predict net production for one more timestep and withdraw assets
-    self.request_assets(self.next_timestep)
+    self.manage_assets(self.next_timestep)
     self.next_timestep += 1
 
   # RIAPS message sender
   
-  def withdrawAssets(self, address, asset, financial):
+  def withdraw_assets(self, address, asset, financial):
     # TODO: provide auth
     msg = { 
       'prosumer': self.name, 
@@ -98,18 +98,22 @@ class SmartHomeTrader: #(Component):
       'address': address, 
       'financial': financial 
     }
-    #self.withdrawAssets.send_pyobj(msg)
+    # TODO: remove testing code
+    if "withdrawAssets" in dir(self):
+      self.withdrawAssets.send_pyobj(msg)
+    else:
+      print("withdrawAssets", address, asset, financial)
 
   # Ethereum function calls
   
-  def postOffer(self, assetID, price):
+  def postOffer(self, address, assetID, price):
     # TODO: implement calling the function of TradingService contract
-    print("postOffer", assetID, price)
+    print("postOffer", address, assetID, price)
     pass    
   
-  def acceptOffer(self, offerID, assetID):
+  def acceptOffer(self, address, offerID, assetID):
     # TODO: implement calling the function of TradingService contract
-    print("acceptOffer", offerID, assetID)
+    print("acceptOffer", address, offerID, assetID)
     pass
 
   # Ethereum event handlers  
@@ -120,9 +124,10 @@ class SmartHomeTrader: #(Component):
         
   def OfferPosted(self, offerID, power, start, end, price):
     # TODO: connect Ethereum listener
-    self.offer_posted(offerID, EnergyAsset(power, start, end))
+    self.offer_posted(offerID, EnergyAsset(power, start, end), price)
     
   def OfferRescinded(offerID):
+    # TODO: connect Ethereum listener
     self.offer_rescinded(offerID)
     
   def OfferAccepted(self, offerID, assetID, transPower, transStart, transEnd, price):
@@ -131,6 +136,11 @@ class SmartHomeTrader: #(Component):
 
 if __name__ == "__main__":
   trader = SmartHomeTrader("home1")
-  print(trader.accounts)
+  addresses = list(trader.accounts.keys())
+  trader.AssetAdded(addresses[0], 0, 15, 0, 10)
+  trader.AssetAdded(addresses[1], 1, -30, 0, 10)
+  trader.OfferPosted(0, 10, 5, 15, 1)
+  trader.OfferPosted(1, 10, 20, 25, 1)
+  trader.AssetAdded(addresses[3], 2, -10, 20, 30)
     
   
