@@ -29,7 +29,7 @@ class SmartHomeTrader:
       
   def net_production_predictor(self, timestep):
     # TODO: use data (based on name and timestep)
-    return int((CONSUMPTION_LIMIT + PRODUCTION_LIMIT) * self.random.random() - PRODUCTION_LIMIT)
+    return int((CONSUMPTION_LIMIT + PRODUCTION_LIMIT) * self.random.random() - CONSUMPTION_LIMIT)
     
   def predict(self):
     # choose random address for trading
