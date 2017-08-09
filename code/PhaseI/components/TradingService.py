@@ -7,29 +7,13 @@ class TradingService:
     self.nextEnergyAssetID = 0
     self.offers = {}
     self.nextOfferID = 0
-  
-  def test(self):
-    address = 0
-    self.addFinancialBalance(address, 1000)
-    self.depositFinancial(500)
-    self.addFinancialBalance(address, 2000)
-    self.depositFinancial(1000)
-    
-    assetProd = self.addEnergyAsset(address, 100, 8, 10)
-    assetCons = self.addEnergyAsset(address, -200, 9, 11)
-    offer1 = postOffer(assetProd, 10)
-    self.rescindOffer(offer1)
-    offer2 = postOffer(assetProd, 5)
-    self.acceptOffer(offer2, assetCons)
-    self.depositEnergyAsset(assetProd)
-    self.depositEnergyAsset(assetCons)
     
   # Financial Assets
   
-  def FinancialAdded(self, prosumer, amount):
-    print("FinancialAdded", prosumer, amount)
-  def FinancialDeposited(self, prosumer, amount):
-    print("FinancialAdded", prosumer, amount)
+  def FinancialAdded(self, address, amount):
+    self.event("FinancialAdded", {'address': address, 'amount': amount})
+  def FinancialDeposited(self, address, amount):
+    self.event("FinancialDeposited", {'address': address, 'amount': amount})
   
   def addFinancialBalance(self, sender, amount):
     if sender in self.financialBalance:
@@ -58,49 +42,50 @@ class TradingService:
       self.end = end
     
   def AssetAdded(self, address, assetID, power, start, end):
-    print("FinancialAdded", address, assetID, power, start, end)
+    self.event("AssetAdded", {'address': address, 'assetID': assetID, 'power': power, 'start': start, 'end': end})
     
   def AssetDeposited(self, address, assetID, power, start, end):
-    print("FinancialAdded", address, assetID, power, start, end)
+    self.event("AssetDeposited", {'address': address, 'assetID': assetID, 'power': power, 'start': start, 'end': end})
 
   def depositEnergyAsset(self, sender, assetID):
-    assert(assetID < nextEnergyAssetID)
+    assert(assetID < self.nextEnergyAssetID)
     asset = self.energyAssets[assetID]
     assert(sender == asset.owner)
     asset.owner = None
-    power = asset.power if asset.assetType == AssetType.Production else -asset.power
+    power = asset.power if asset.assetType == self.AssetType.Production else -asset.power
     self.AssetDeposited(sender, assetID, power, asset.start, asset.end)
 
-  def createEnergyAsset(self, prosumer, assetType, power, start, end):
-    self.energyAssets[self.nextEnergyAssetID] = EnergyAsset(
-      assetType: assetType,
-      power: power,
-      start: start, 
-      end: end, 
-      owner: prosumer)
-    if (assetType == AssetType.Production):
-      self.AssetAdded(prosumer, nextEnergyAssetID, power, start, end)
+  def createEnergyAsset(self, address, assetType, power, start, end):
+    self.energyAssets[self.nextEnergyAssetID] = self.EnergyAsset(
+      assetType=assetType,
+      power=power,
+      start=start, 
+      end=end, 
+      owner=address)
+    if (assetType == self.AssetType.Production):
+      self.AssetAdded(address, self.nextEnergyAssetID, power, start, end)
     else:
-      self.AssetAdded(prosumer, nextEnergyAssetID, -power, start, end)
-    return self.nextEnergyAssetID++
+      self.AssetAdded(address, self.nextEnergyAssetID, -power, start, end)
+    self.nextEnergyAssetID += 1
+    return self.nextEnergyAssetID - 1
 
-  def addEnergyAsset(self, prosumer, power, start, end):
+  def addEnergyAsset(self, address, power, start, end):
     return self.createEnergyAsset(
-      prosumer, 
-      (AssetType.Production if power > 0 else AssetType.Consumption), 
+      address, 
+      (self.AssetType.Production if power > 0 else self.AssetType.Consumption), 
       (power if power > 0 else -power), 
       start, 
       end)
   
   def splitAssetByStart(self, assetID, newStart):
     asset = self.energyAssets[assetID]
-    if (asset.start < newStart && asset.end >= newStart):
+    if (asset.start < newStart) and (asset.end >= newStart):
       self.createEnergyAsset(asset.owner, asset.assetType, asset.power, asset.start, newStart - 1)
       asset.start = newStart
   
   def splitAssetByEnd(self, assetID, newEnd):
     asset = self.energyAssets[assetID]
-    if (asset.start <= newEnd && asset.end > newEnd):
+    if (asset.start <= newEnd) and (asset.end > newEnd):
       self.createEnergyAsset(asset.owner, asset.assetType, asset.power, newEnd + 1, asset.end)
       asset.end = newEnd
 
@@ -127,106 +112,123 @@ class TradingService:
       self.offerType = offerType
       self.assetID = assetID
       self.price = price
-      self.stat = state
+      self.state = state
   
-  def OfferPosted(offerID, assetID, power, start, end, price):
-    print("OfferPosted", offerID, assetID, power, start, end, price)
+  def OfferPosted(self, offerID, assetID, power, start, end, price):
+    self.event("OfferPosted", {'offerID': offerID, 'assetID': assetID, 'power': power, 'start': start, 'end': end, 'price': price})
 
-  def OfferRescinded(offerID):
-    print("OfferRescinded", offerID)
+  def OfferRescinded(self, offerID):
+    self.event("OfferRescinded", {'offerID': offerID})
 
-  def OfferAccepted(offerID, assetID, transPower, transStart, transEnd, price):
-    print("OfferAccepted", offerID, assetID, transPower, transStart, transEnd, price)
+  def OfferAccepted(self, offerID, assetID, transPower, transStart, transEnd, price):
+    self.event("OfferAccepted", {'offerID': offerID, 'assetID': assetID, 'transPower': transPower, 'transStart': transStart, 'transEnd': transEnd, 'price': price})
   
-  def postOffer(self, sender, assetID, price) returns (offerID):
-    asset = energyAssets[assetID]
+  def postOffer(self, sender, assetID, price):
+    asset = self.energyAssets[assetID]
     cost = price * asset.power * (asset.end + 1 - asset.start)
     # Checks
-    assert(assetID < nextEnergyAssetID)
+    assert(assetID < self.nextEnergyAssetID)
     assert(asset.owner == sender)
-    if (asset.assetType == AssetType.Consumption) 
-      assert(financialBalance[sender] >= cost)
+    if (asset.assetType == self.AssetType.Consumption):
+      assert(self.financialBalance[sender] >= cost)
     # Effects
-    asset.owner = address(this)
-    if (asset.assetType == AssetType.Consumption):
-      financialBalance[sender] -= cost
-      OfferType offerType = OfferType.Bid
-
+    asset.owner = None
+    if (asset.assetType == self.AssetType.Consumption):
+      self.financialBalance[sender] -= cost
+      offerType = self.OfferType.Bid
     else:
-      offerType = OfferType.Ask
+      offerType = self.OfferType.Ask
 
-    offers[nextOfferID] = Offer({
-      poster: sender, 
-      offerType: offerType,
-      assetID: assetID, 
-      price: price,
-      state: OfferState.Open)
+    self.offers[self.nextOfferID] = self.Offer(
+      poster=sender, 
+      offerType=offerType,
+      assetID=assetID, 
+      price=price,
+      state=self.OfferState.Open)
       
-    power = asset.assetType == AssetType.Production ?(asset.power) : -int64(asset.power)
-    OfferPosted(nextOfferID, assetID, power, asset.start, asset.end, price)
-    return nextOfferID++
-
+    power = asset.power if asset.assetType == self.AssetType.Production else asset.power
+    self.OfferPosted(self.nextOfferID, assetID, power, asset.start, asset.end, price)
+    self.nextOfferID += 1
+    return self.nextOfferID - 1
   
   def rescindOffer(self, sender, offerID):
-    offer = offers[offerID]
-    asset = energyAssets[offer.assetID]
+    offer = self.offers[offerID]
+    asset = self.energyAssets[offer.assetID]
     # Checks
-    assert(offerID < nextOfferID)
+    assert(offerID < self.nextOfferID)
     assert(offer.poster == sender)
-    assert(offer.state == OfferState.Open)
+    assert(offer.state == self.OfferState.Open)
     # Effects
-    offer.state = OfferState.Rescinded
+    offer.state = self.OfferState.Rescinded
     asset.owner = sender
-    if (offer.offerType == OfferType.Bid)
-      financialBalance[sender] += offer.price * asset.power * (asset.end + 1 - asset.start)
-    OfferRescinded(offerID)
-
+    if (offer.offerType == self.OfferType.Bid):
+      self.financialBalance[sender] += offer.price * asset.power * (asset.end + 1 - asset.start)
+    self.OfferRescinded(offerID)
   
   def acceptOffer(self, sender, offerID, assetID):
-    offer = offers[offerID]
-    offeredAsset = energyAssets[offer.assetID]
-    providedAsset = energyAssets[assetID]
-    transStart = offeredAsset.start > providedAsset.start ? offeredAsset.start : providedAsset.start
-    transEnd = offeredAsset.end < providedAsset.end ? offeredAsset.end : providedAsset.end
-    transPower = offeredAsset.power < providedAsset.power ? offeredAsset.power : providedAsset.power
+    offer = self.offers[offerID]
+    offeredAsset = self.energyAssets[offer.assetID]
+    providedAsset = self.energyAssets[assetID]
+    transStart = offeredAsset.start if offeredAsset.start > providedAsset.start else providedAsset.start
+    transEnd = offeredAsset.end if offeredAsset.end < providedAsset.end else providedAsset.end
+    transPower = offeredAsset.power if offeredAsset.power < providedAsset.power else providedAsset.power
     cost = offer.price * transPower * (transEnd + 1 - transStart)
     # Checks 
-    assert(offerID < nextOfferID)
-    assert(assetID < nextEnergyAssetID)
-    assert(offer.state == OfferState.Open)
+    assert(offerID < self.nextOfferID)
+    assert(assetID < self.nextEnergyAssetID)
+    assert(offer.state == self.OfferState.Open)
     assert(providedAsset.owner == sender)
-    assert(!(offeredAsset.end < providedAsset.start && offeredAsset.start > providedAsset.end)) # assets overlap
-    if (offer.offerType == OfferType.Ask):
-      assert(providedAsset.assetType == AssetType.Consumption)
-      assert(financialBalance[sender] >= cost)
-
+    assert(not ((offeredAsset.end < providedAsset.start) and (offeredAsset.start > providedAsset.end))) # assets overlap
+    if (offer.offerType == self.OfferType.Ask):
+      assert(providedAsset.assetType == self.AssetType.Consumption)
+      assert(self.financialBalance[sender] >= cost)
     else:
-      assert(offeredAsset.assetType == AssetType.Production)
+      assert(offeredAsset.assetType == self.AssetType.Production)
     # Effects
     # split assets
     offeredAsset.owner = offer.poster  # assets inherit ownership
-    splitAssetByStart(offer.assetID, transStart)
-    splitAssetByStart(assetID, transStart)
-    splitAssetByEnd(offer.assetID, transEnd)
-    splitAssetByEnd(assetID, transEnd)
-    splitAssetByPower(offer.assetID, transPower)
-    splitAssetByPower(assetID, transPower)
+    self.splitAssetByStart(offer.assetID, transStart)
+    self.splitAssetByStart(assetID, transStart)
+    self.splitAssetByEnd(offer.assetID, transEnd)
+    self.splitAssetByEnd(assetID, transEnd)
+    self.splitAssetByPower(offer.assetID, transPower)
+    self.splitAssetByPower(assetID, transPower)
     # transfer assets
-    if (offer.offerType == OfferType.Ask):
-      financialBalance[sender] -= cost
-      financialBalance[offer.poster] += cost
-
+    if (offer.offerType == self.OfferType.Ask):
+      self.financialBalance[sender] -= cost
+      self.financialBalance[offer.poster] += cost
     else:
-      financialBalance[sender] += cost
+      self.financialBalance[sender] += cost
     providedAsset.owner = offer.poster
     offeredAsset.owner = sender
-    offer.state = OfferState.Closed
-    OfferAccepted(
+    offer.state = self.OfferState.Closed
+    self.OfferAccepted(
       offerID, 
       assetID,
-      offeredAsset.assetType == AssetType.Production ?(transPower) : -int64(transPower), 
+      (transPower if offeredAsset.assetType == self.AssetType.Production else -transPower), 
       transStart, 
       transEnd, 
       offer.price)
 
+  # for testing
+  def event(self, name, params):
+    print(name, params)
+    
+# tests
+if __name__ == "__main__":
+  address = 0
+  service = TradingService()
+  service.addFinancialBalance(address, 1000)
+  service.depositFinancial(address, 500)
+  service.addFinancialBalance(address, 2000)
+  service.depositFinancial(address, 1000)
+    
+  assetProd = service.addEnergyAsset(address, 100, 8, 10)
+  assetCons = service.addEnergyAsset(address, -200, 9, 11)
+  offer1 = service.postOffer(address, assetProd, 10)
+  service.rescindOffer(address, offer1)
+  offer2 = service.postOffer(address, assetProd, 5)
+  service.acceptOffer(address, offer2, assetCons)
+  service.depositEnergyAsset(address, assetProd)
+  service.depositEnergyAsset(address, assetCons)
 

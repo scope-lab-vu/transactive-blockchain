@@ -91,6 +91,8 @@ class SmartHomeTrader:
   # contract event handlers for testing     
   def AssetAdded(self, address, assetID, power, start, end):
     self.asset_added(address, assetID, EnergyAsset(power, start, end))        
+  def FinancialAdded(self, address, amount):
+    pass      
   def OfferPosted(self, offerID, power, start, end, price):
     self.offer_posted(offerID, EnergyAsset(power, start, end), price)    
   def OfferRescinded(offerID):
