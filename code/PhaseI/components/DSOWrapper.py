@@ -6,8 +6,7 @@ from DSO import DSO
   
 class DSOWrapper(DSO): 
   def __init__(self):
-    self.ledger = zmq.Context().socket(zmq.REQ)
-    self.ledger.connect(LEDGER_ADDRESS)
+    self.contractAddress = CONTRACT_ADDRESS
     super(DSOWrapper, self).__init__()
     
   def run(self):
@@ -23,45 +22,22 @@ class DSOWrapper(DSO):
       logging.info(result)
       trader.send_pyobj(result)
             
-  # contract function calls 
   def sendEther(self, address):
-    msg = { 
-      'function': 'sendEther',
-      'params': {
-        'address': address,
-        'amount': 1,
-      }
-    }
-    logging.info(msg)
-    self.ledger.send_pyobj(msg)
-    response = self.ledger.recv_pyobj()
-    logging.info(response)   
+    # TODO: check this, especially the amount of Ether
+    result = gethRPC("eth_sendTransaction", params=[{'to': address, 'value': "0xffffff"}])
+    logging.info(result)
+
+  # contract function calls 
+
   def addFinancialBalance(self, address, amount):
-    msg = { 
-      'function': 'addFinancialBalance',
-      'params': {
-        'address': address,
-        'amount': amount
-      }
-    }
-    logging.info(msg)
-    self.ledger.send_pyobj(msg)
-    response = self.ledger.recv_pyobj()
-    logging.info(response)
+    data = "0x3b719dc0" + encode_uint(address) + encode_uint(amount)
+    result = gethRPC("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress}])
+    logging.info(result)
+
   def addEnergyAsset(self, address, power, start, end):
-    msg = { 
-      'function': 'addEnergyAsset',
-      'params': {
-        'address': address,
-        'power': power,
-        'start': start,
-        'end': end
-      }
-    }
-    logging.info(msg)
-    self.ledger.send_pyobj(msg)
-    response = self.ledger.recv_pyobj()
-    logging.info(response)
+    data = "0x23b87507" + encode_uint(address) + encode_int(power) + encode_uint(start) + encode_uint(end)
+    result = gethRPC("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress}])
+    logging.info(result)
     
 if __name__ == "__main__":
   logging.basicConfig(level=logging.INFO)
