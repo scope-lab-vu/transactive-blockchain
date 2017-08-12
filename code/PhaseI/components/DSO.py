@@ -53,7 +53,7 @@ if __name__ == "__main__":
   dso = DSO()
   from EnergyAsset import EnergyAsset
   from Account import Account
-  address = Account().address
+  address = "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
   dso.withdraw_assets("home1", "password", EnergyAsset(PRODUCTION_LIMIT/2, 0, 10), 10, address) 
   dso.withdraw_assets("home1", "password", EnergyAsset(-(CONSUMPTION_LIMIT/2), 0, 10), 10, address) 
   dso.withdraw_assets("home1", "password", EnergyAsset(PRODUCTION_LIMIT, 5, 15), 10, address) 

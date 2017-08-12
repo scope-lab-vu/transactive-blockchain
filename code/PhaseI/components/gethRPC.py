@@ -56,3 +56,6 @@ def gethRPC(method,params=[],ip='localhost',port='9012',id=1,jsonrpc="2.0",verbo
         else:
             return {"error":"Unknown Error: possible method/parameter(s) were wrong and/or networking issue."}
 
+def get_addresses():
+  return gethRPC("eth_accounts")
+

@@ -1,15 +1,15 @@
+import numpy
+import binascii
 from random import Random
 
 from const import *
-from Account import Account
 from EnergyAsset import EnergyAsset
 
 BASE_PRICE = 1
-NUM_ACCOUNTS = 1
 PREDICTION_HORIZON = 1
 
 class SmartHomeTrader: 
-  def __init__(self, name):
+  def __init__(self, name, num_addresses=1):
     super(SmartHomeTrader, self).__init__()
     self.name = name
     self.random = Random(name)
@@ -18,14 +18,17 @@ class SmartHomeTrader:
     # track all offers
     self.offers = {}
     # create anonymous accounts
-    self.accounts = {}
-    for _ in range(NUM_ACCOUNTS):
-      account = Account()
-      self.accounts[account.address] = Account()
+    self.addresses = self.get_addresses(num_addresses)
     # predict net production and request assets for trading 
     self.next_interval = 0
     for timestep in range(PREDICTION_HORIZON):
       self.predict()
+      
+  def get_addresses(self, num_addresses):
+    addresses = []
+    for i in range(num_addresses):
+      addresses.append(str(binascii.hexlify(numpy.random.bytes(20))))
+    return addresses
       
   def net_production_predictor(self, timestep):
     # TODO: use data (based on name and timestep)
@@ -33,7 +36,7 @@ class SmartHomeTrader:
     
   def predict(self):
     # choose random address for trading
-    address = self.random.choice(list(self.accounts.keys()))
+    address = self.random.choice(self.addresses)
     # request based on predicted net production
     asset = EnergyAsset(self.net_production_predictor(self.next_interval), self.next_interval, self.next_interval) 
     self.next_interval += 1
@@ -42,7 +45,8 @@ class SmartHomeTrader:
     
   def asset_added(self, address, assetID, asset):
     # check if asset belongs to the prosumer
-    if address not in self.accounts:
+    # TODO: does this test actually work?
+    if address not in addresses:
       return
     # production or consumption 
     if asset.power > 0:
@@ -50,7 +54,7 @@ class SmartHomeTrader:
       self.postOffer(address, assetID, BASE_PRICE)
     else:
       # track consumption asset
-      self.cons_assets[assetID] = (self.accounts[address], asset)  
+      self.cons_assets[assetID] = (address, asset)  
       # check if there is an open offer
       for offerID, (offered_asset, price) in self.offers.items():
         if offered_asset.tradeable(asset):
@@ -61,9 +65,9 @@ class SmartHomeTrader:
     if price > BASE_PRICE:
       return
     # check if prosumer has tradeable asset
-    for assetID, (account, asset) in self.cons_assets.items():
+    for assetID, (address, asset) in self.cons_assets.items():
       if asset.tradeable(offered_asset):
-        self.acceptOffer(account.address, offerID, assetID)
+        self.acceptOffer(address, offerID, assetID)
         return
     # remember offer
     self.offers[offerID] = (offered_asset, price)
@@ -102,9 +106,8 @@ class SmartHomeTrader:
 
 # tests
 if __name__ == "__main__":
-  NUM_ACCOUNTS = 3
-  trader = SmartHomeTrader("home1")
-  addresses = list(trader.accounts.keys())
+  trader = SmartHomeTrader("home1", num_addresses=3)
+  addresses = trader.addresses
   trader.AssetAdded(addresses[0], 0, 15, 0, 10)
   trader.AssetAdded(addresses[1], 1, -30, 0, 10)
   trader.OfferPosted(0, 10, 5, 15, 1)

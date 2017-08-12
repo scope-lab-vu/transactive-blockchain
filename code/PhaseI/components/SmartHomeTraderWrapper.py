@@ -6,7 +6,7 @@ from random import randint
 from config import *
 from const import *
 from SmartHomeTrader import SmartHomeTrader
-from gethRPC import gethRPC, encode_uint, encode_int
+from gethRPC import gethRPC, encode_uint, encode_int, get_addresses
 
 POLLING_INTERVAL = 0.5
 
@@ -14,7 +14,6 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
   def __init__(self, name):
     self.dso = zmq.Context().socket(zmq.REQ)
     self.dso.connect(DSO_ADDRESS)
-    # TODO: get address of contract from DSO
     self.contractAddress = CONTRACT_ADDRESS
     super(SmartHomeTraderWrapper, self).__init__(name)
     
@@ -30,6 +29,9 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
         next_polling = current_time + POLLING_INTERVAL
         self.poll_events()
       sleep(min(next_prediction - current_time, next_polling - current_time))
+      
+  def get_addresses(self, num_addresses):
+    return get_addresses()
       
   def poll_events(self):
     # TODO: implement
@@ -52,15 +54,13 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
     
   # contract function calls
   def postOffer(self, address, assetID, price):
-    # TODO: use address in from field once addresses are correctly managed by the wrapper
     data = "0xed7272e2" + encode_uint(assetID) + encode_uint(price)
-    result = gethRPC("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress}])
+    result = gethRPC("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress}])
     logging.info(result)
 
   def acceptOffer(self, address, offerID, assetID):
-    # TODO: use address in from field once addresses are correctly managed by the wrapper
     data = "0xf1edd7e2" + encode_uint(offerID) + encode_uint(assetID)
-    result = gethRPC("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress}])
+    result = gethRPC("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress}])
     logging.info(result)
 
 if __name__ == "__main__":
