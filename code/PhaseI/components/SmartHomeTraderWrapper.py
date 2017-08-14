@@ -6,6 +6,7 @@ from random import randint
 from config import *
 from const import *
 from SmartHomeTrader import SmartHomeTrader
+from Filter import Filter
 from gethRPC import gethRPC, encode_uint, encode_int, get_addresses
 
 POLLING_INTERVAL = 0.5
@@ -15,6 +16,7 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
     self.dso = zmq.Context().socket(zmq.REQ)
     self.dso.connect(DSO_ADDRESS)
     self.contractAddress = CONTRACT_ADDRESS
+    self.filter = Filter()
     super(SmartHomeTraderWrapper, self).__init__(name)
     
   def run(self):
@@ -34,8 +36,19 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
     return get_addresses()
       
   def poll_events(self):
-    # TODO: implement
-    pass
+    for event in filter.poll_events():
+      params = event['params']
+      name = event['name']
+      if name == "FinancialAdded":
+        self.FinancialAdded(params['address'], param['amount'])
+      elif name == "AssetAdded":
+        self.AssetAdded(params['address'], params['assetID'], params['power'], params['start'], params['end'])
+      elif name == "OfferPosted":
+        self.OfferPosted(params['offerID'], params['power'], params['start'], params['end'], params['price'])
+      elif name == "OfferRescinded":
+        self.OfferRescinded(params['offerID'])
+      elif name == "OfferAccepted":
+        self.OfferAccepted(params['offerID'], params['assetID'], params['transPower'], params['transStart'], params['transEnd'], params['price'])
      
   # DSO message sender 
   def withdraw_assets(self, address, asset, financial):

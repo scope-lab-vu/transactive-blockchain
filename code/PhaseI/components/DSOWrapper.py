@@ -3,7 +3,8 @@ import logging
 
 from config import *
 from DSO import DSO
-  
+from gethRPC import gethRPC, encode_uint, encode_int
+
 class DSOWrapper(DSO): 
   def __init__(self):
     self.contractAddress = CONTRACT_ADDRESS
