@@ -7,36 +7,44 @@ from config import *
 from const import *
 from SmartHomeTrader import SmartHomeTrader
 from Filter import Filter
-from gethRPC import gethRPC, encode_uint, encode_int, get_addresses
+from gethRPC import gethRPC, encode_address, encode_uint, encode_int, get_addresses
 
-POLLING_INTERVAL = 0.5
+POLLING_INTERVAL = 5
 
 class SmartHomeTraderWrapper(SmartHomeTrader):
   def __init__(self, name):
+    logging.info("Connecting to DSO...")
     self.dso = zmq.Context().socket(zmq.REQ)
+    logging.info("DSO connected ({}).".format(self.dso))
     self.dso.connect(DSO_ADDRESS)
     self.contractAddress = CONTRACT_ADDRESS
+    logging.info("Creating event filter...")
     self.filter = Filter()
     super(SmartHomeTraderWrapper, self).__init__(name)
     
   def run(self):
+    logging.info("Entering main loop...")
     next_prediction = time() + TIME_INTERVAL
     next_polling = time() + POLLING_INTERVAL
     while True:
       current_time = time()
       if current_time > next_prediction:
+        logging.info("Predicting net production for next time interval...")
         next_prediction = current_time + TIME_INTERVAL
         self.predict()
       if current_time > next_polling:
+        logging.info("Polling events...")
         next_polling = current_time + POLLING_INTERVAL
         self.poll_events()
       sleep(min(next_prediction - current_time, next_polling - current_time))
       
   def get_addresses(self, num_addresses):
+    logging.info("Querying own addresses...")
     return get_addresses()
       
   def poll_events(self):
-    for event in filter.poll_events():
+    for event in self.filter.poll_events():
+      self.info("Event: " + str(event))
       params = event['params']
       name = event['name']
       if name == "FinancialAdded":
@@ -78,7 +86,7 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.INFO)
-  trader = SmartHomeTraderWrapper("home" + str(randint(0,100)))
+  trader = SmartHomeTraderWrapper("home1") # + str(randint(0,100)))
   trader.run()
 
     

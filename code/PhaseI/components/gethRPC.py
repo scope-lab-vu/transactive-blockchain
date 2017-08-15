@@ -2,13 +2,14 @@ import pycurl
 import json
 from io import BytesIO
 
+def encode_address(address):
+  return "000000000000000000000000" + address[2:]
 def encode_uint(value):
   return format(value, "064x")
-
 def encode_int(value):
-  return format(value & 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, "64x")
+  return format(value & 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, "064x")
 
-def gethRPC(method,params=[],ip='localhost',port='9012',id=1,jsonrpc="2.0",verbose=False):
+def gethRPC(method,params=[], port=9008, ip="10.4.209.25", id=1, jsonrpc="2.0", verbose=False):
     # the <ip:port> to connect to
     ipPort = str(ip) + ":" + str(port)
     # buffer to capture output

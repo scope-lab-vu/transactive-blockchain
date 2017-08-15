@@ -1,3 +1,6 @@
+import logging
+
+from config import *
 from gethRPC import gethRPC
 
 TOPICS = {
@@ -12,10 +15,13 @@ TOPICS = {
 
 class Filter:
   def __init__(self):
-    self.filterID = rpcCommand("eth_newFilter", params=[{"fromBlock": "0x1"}]) 
+    self.filterID = gethRPC("eth_newFilter", params=[{"fromBlock": "0x1"}]) 
+    logging.info("Created filter (ID = {}).".format(self.filterID))
     
   def poll_events(self):
-    log = rpcCommand("eth_getFilterChanges", params=[self.filterID])
+    logging.info("Block number = " + str(gethRPC("eth_blockNumber", params=[])))
+    log = gethRPC("eth_getFilterChanges", params=[self.filterID])
+    logging.info("Raw log: " + str(log))
     for log_item in log:
       yield decode_log(log_item)
 
@@ -82,7 +88,7 @@ def decode_log(log):
 # generate topics from event signatures
   
 def keccak256(string):
-  print("'{}': '{}'".format(rpcCommand("web3_sha3", params=["0x" + bytes(string, 'ascii').hex()], port=9006, ip="10.4.209.25"), string))
+  print("'{}': '{}'".format(gethRPC("web3_sha3", params=["0x" + bytes(string, 'ascii').hex()], port=9006, ip="10.4.209.25"), string))
 
 def generate_topics():
   events = [
