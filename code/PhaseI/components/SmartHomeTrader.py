@@ -76,7 +76,7 @@ class SmartHomeTrader:
     if offerID in self.offers:
       del self.offers[offerID]
         
-  def offer_accepted(self, offerID, assetID, price):
+  def offer_accepted(self, offerID, assetID, transPower, transStart, transEnd, price):
     if offerID in self.offers:
       del self.offers[offerID]
     if assetID in self.cons_assets:
@@ -102,7 +102,7 @@ class SmartHomeTrader:
   def OfferRescinded(offerID):
     self.offer_rescinded(offerID)    
   def OfferAccepted(self, offerID, assetID, transPower, transStart, transEnd, price):
-    self.offer_accepted(offerID, assetID, price)
+    self.offer_accepted(offerID, assetID, transPower, transStart, transEnd, price)
 
 # tests
 if __name__ == "__main__":
