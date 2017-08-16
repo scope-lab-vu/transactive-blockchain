@@ -12,7 +12,7 @@ class Geth:
   def encode_int(value):
     return format(value & 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, "064x")
 
-  def __init__(self, port=9006, ip="10.4.209.25"):
+  def __init__(self, port=9010, ip="10.4.209.25"):
     self.ip = ip
     self.port = port
 

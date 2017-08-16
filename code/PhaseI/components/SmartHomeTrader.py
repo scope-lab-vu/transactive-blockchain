@@ -6,6 +6,7 @@ from const import *
 from EnergyAsset import EnergyAsset
 
 BASE_PRICE = 1
+START_INTERVAL = 40
 PREDICTION_HORIZON = 1
 
 class SmartHomeTrader: 
@@ -20,7 +21,7 @@ class SmartHomeTrader:
     # create anonymous accounts
     self.addresses = self.get_addresses(num_addresses)
     # predict net production and request assets for trading 
-    self.next_interval = 0
+    self.next_interval = START_INTERVAL
     for timestep in range(PREDICTION_HORIZON):
       self.predict()
       
@@ -42,7 +43,7 @@ class SmartHomeTrader:
   def asset_added(self, address, assetID, asset):
     # check if asset belongs to the prosumer
     # TODO: does this test actually work?
-    if address not in addresses:
+    if address not in self.addresses:
       return
     # production or consumption 
     if asset.power > 0:

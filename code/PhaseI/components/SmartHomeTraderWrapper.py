@@ -17,13 +17,13 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
     self.geth = Geth()
     logging.info("Connecting to DSO...")
     self.dso = zmq.Context().socket(zmq.REQ)
-    logging.info("DSO connected ({}).".format(self.dso))
     self.dso.connect(DSO_ADDRESS)
-    self.contractAddress = CONTRACT_ADDRESS
+    logging.info("DSO connected ({}).".format(self.dso))
+    self.query_contract_address()
     logging.info("Creating event filter...")
     self.filter = Filter()
     super(SmartHomeTraderWrapper, self).__init__(name)
-    
+  
   def run(self):
     logging.info("Entering main loop...")
     next_prediction = time() + TIME_INTERVAL
@@ -53,7 +53,7 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
       params = event['params']
       name = event['name']
       if name == "FinancialAdded":
-        self.FinancialAdded(params['address'], param['amount'])
+        self.FinancialAdded(params['address'], params['amount'])
       elif name == "AssetAdded":
         self.AssetAdded(params['address'], params['assetID'], params['power'], params['start'], params['end'])
       elif name == "OfferPosted":
@@ -64,31 +64,45 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
         self.OfferAccepted(params['offerID'], params['assetID'], params['transPower'], params['transStart'], params['transEnd'], params['price'])
      
   # DSO message sender 
+  
   def withdraw_assets(self, address, asset, financial):
     # TODO: provide auth
     msg = { 
-      'prosumer': self.name, 
-      'auth': "password", 
-      'asset': asset, 
-      'address': address, 
-      'financial': financial 
+      'request': "withdraw_assets", 
+      'params': {
+        'prosumer': self.name, 
+        'auth': "password", 
+        'asset': asset, 
+        'address': address, 
+        'financial': financial 
+      }
     }
     logging.info(msg)
     self.dso.send_pyobj(msg)    
     response = self.dso.recv_pyobj()
     logging.info(response)
-    
+
+  def query_contract_address(self):
+    msg = {
+      'request': "query_contract_address"
+    }
+    logging.info(msg)
+    self.dso.send_pyobj(msg)
+    self.contractAddress = self.dso.recv_pyobj()
+    logging.info("Contract address: " + self.contractAddress)
+        
   # contract function calls
+  
   def postOffer(self, address, assetID, price):
-    logging.info("{}.postOffer({}, {})".format(address, assetID, price))
+    logging.info("postOffer({}, {}) from address {}".format(assetID, price, address))
     data = "0xed7272e2" + Geth.encode_uint(assetID) + Geth.encode_uint(price)
-    result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress}])
+    result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress, 'gas': "0x4300000"}])
     logging.info("Result: " + result)
 
   def acceptOffer(self, address, offerID, assetID):
     logging.info("{}.acceptOffer({}, {})".format(address, offerID, assetID))
     data = "0xf1edd7e2" + Geth.encode_uint(offerID) + Geth.encode_uint(assetID)
-    result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress}])
+    result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress, 'gas': "0x4300000"}])
     logging.info("Result: " + result)
 
 def read_data(prosumer_id):

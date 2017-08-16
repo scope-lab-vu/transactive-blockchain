@@ -2,6 +2,7 @@ from time import sleep
 
 from config import *
 from Geth import Geth
+from Filter import decode_log
 
 geth = Geth()
 filterID = geth.command("eth_newFilter", params=[{"fromBlock": "0x1"}]) 
@@ -14,11 +15,15 @@ receipt = None
 while receipt is None:
   sleep(5)
   receipt = geth.command("eth_getTransactionReceipt", params=[receiptID])
-  print("receipt = ", receipt)
   print("block = ", geth.command("eth_blockNumber"))
+  print("receipt = ", receipt)
 contract = receipt['contractAddress']
 print("test transaction = ", geth.command("eth_sendTransaction", params=[{"to": contract, "data": '0xf8a8fd6d', "gas": '0x4300000', "from": account}]))
 while True:
   sleep(5)
-  print("log = ", geth.command("eth_getFilterChanges", params=[filterID]))
+  print("block = ", geth.command("eth_blockNumber"))
+  log = geth.command("eth_getFilterChanges", params=[filterID])
+  print("log = ", log)
+  for log_item in log:
+    print(decode_log(log_item))
 

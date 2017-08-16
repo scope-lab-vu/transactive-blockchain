@@ -20,9 +20,9 @@ class Filter:
     logging.info("Created filter (ID = {}).".format(self.filterID))
     
   def poll_events(self):
-    logging.info("Block number: " + str(self.geth.command("eth_blockNumber", params=[])))
+    block = self.geth.command("eth_blockNumber", params=[])
     log = self.geth.command("eth_getFilterChanges", params=[self.filterID])
-    logging.info("Raw log: " + str(log))
+    logging.info("Log: {} items (block number: {})".format(len(log), block))
     for log_item in log:
       yield decode_log(log_item)
 
