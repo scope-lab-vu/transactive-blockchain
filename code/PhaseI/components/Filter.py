@@ -1,7 +1,7 @@
 import logging
 
 from config import *
-from gethRPC import gethRPC
+from Geth import Geth
 
 TOPICS = {
   '0x4a4bcdba1fdd3486b8dad947841b692814e16275e05e493465222f13287e779a': "FinancialAdded",
@@ -15,12 +15,13 @@ TOPICS = {
 
 class Filter:
   def __init__(self):
-    self.filterID = gethRPC("eth_newFilter", params=[{"fromBlock": "0x1"}]) 
+    self.geth = Geth()
+    self.filterID = self.geth.command("eth_newFilter", params=[{"fromBlock": "0x1"}]) 
     logging.info("Created filter (ID = {}).".format(self.filterID))
     
   def poll_events(self):
-    logging.info("Block number = " + str(gethRPC("eth_blockNumber", params=[])))
-    log = gethRPC("eth_getFilterChanges", params=[self.filterID])
+    logging.info("Block number = " + str(self.geth.command("eth_blockNumber", params=[])))
+    log = self.geth.command("eth_getFilterChanges", params=[self.filterID])
     logging.info("Raw log: " + str(log))
     for log_item in log:
       yield decode_log(log_item)
@@ -88,7 +89,8 @@ def decode_log(log):
 # generate topics from event signatures
   
 def keccak256(string):
-  print("'{}': '{}'".format(gethRPC("web3_sha3", params=["0x" + bytes(string, 'ascii').hex()], port=9006, ip="10.4.209.25"), string))
+  geth = Geth()
+  print("'{}': '{}'".format(geth.command("web3_sha3", params=["0x" + bytes(string, 'ascii').hex()], port=9006, ip="10.4.209.25"), string))
 
 def generate_topics():
   events = [

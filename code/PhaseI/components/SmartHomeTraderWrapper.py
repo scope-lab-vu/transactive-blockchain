@@ -7,12 +7,13 @@ from config import *
 from const import *
 from SmartHomeTrader import SmartHomeTrader
 from Filter import Filter
-from gethRPC import gethRPC, encode_address, encode_uint, encode_int, get_addresses
+from Geth import Geth
 
 POLLING_INTERVAL = 5
 
 class SmartHomeTraderWrapper(SmartHomeTrader):
   def __init__(self, name):
+    self.geth = Geth()
     logging.info("Connecting to DSO...")
     self.dso = zmq.Context().socket(zmq.REQ)
     logging.info("DSO connected ({}).".format(self.dso))
@@ -40,7 +41,7 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
       
   def get_addresses(self, num_addresses):
     logging.info("Querying own addresses...")
-    return get_addresses()
+    return self.geth.get_addresses()
       
   def poll_events(self):
     for event in self.filter.poll_events():
@@ -75,13 +76,13 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
     
   # contract function calls
   def postOffer(self, address, assetID, price):
-    data = "0xed7272e2" + encode_uint(assetID) + encode_uint(price)
-    result = gethRPC("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress}])
+    data = "0xed7272e2" + Geth.encode_uint(assetID) + Geth.encode_uint(price)
+    result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress}])
     logging.info(result)
 
   def acceptOffer(self, address, offerID, assetID):
-    data = "0xf1edd7e2" + encode_uint(offerID) + encode_uint(assetID)
-    result = gethRPC("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress}])
+    data = "0xf1edd7e2" + Geth.encode_uint(offerID) + Geth.encode_uint(assetID)
+    result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress}])
     logging.info(result)
 
 if __name__ == "__main__":

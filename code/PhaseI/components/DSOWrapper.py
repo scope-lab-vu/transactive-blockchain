@@ -3,14 +3,15 @@ import logging
 
 from config import *
 from DSO import DSO
-from gethRPC import gethRPC, encode_address, encode_uint, encode_int, get_addresses
+from Geth import Geth
 
 class DSOWrapper(DSO): 
   def __init__(self):
+    self.geth = Geth()
     self.contractAddress = CONTRACT_ADDRESS
-    self.account = get_addresses()[0]
+    self.account = self.geth.get_addresses()[0]
     super(DSOWrapper, self).__init__()
-    logging.info("Test result: " + str(gethRPC("eth_sendTransaction", params=[{'data': "0xf8a8fd6d", 'to': self.contractAddress, 'from': self.account}])))
+    logging.info("Test result: " + str(self.geth.command("eth_sendTransaction", params=[{'data': "0xf8a8fd6d", 'to': self.contractAddress, 'from': self.account}])))
     
   def run(self):
     logging.info("Entering main function...")
@@ -30,21 +31,21 @@ class DSOWrapper(DSO):
             
   def sendEther(self, address):
     # TODO: check this, especially the amount of Ether
-    result = gethRPC("eth_sendTransaction", params=[{'to': address, 'value': "0xffffff", 'from': self.account}])
+    result = self.geth.command("eth_sendTransaction", params=[{'to': address, 'value': "0xffffff", 'from': self.account}])
     logging.info(result)
 
   # contract function calls 
 
   def addFinancialBalance(self, address, amount):
     logging.info("addFinancialBalance({}, {})".format(address, amount))
-    data = "0x3b719dc0" + encode_address(address) + encode_uint(amount)
-    result = gethRPC("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress, 'from': self.account}])
+    data = "0x3b719dc0" + Geth.encode_address(address) + Geth.encode_uint(amount)
+    result = self.geth.command("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress, 'from': self.account}])
     logging.info("Result: " + result)
 
   def addEnergyAsset(self, address, power, start, end):
     logging.info("addEnergyAsset({}, {})".format(address, power, start, end))
-    data = "0x23b87507" + encode_address(address) + encode_int(power) + encode_uint(start) + encode_uint(end)
-    result = gethRPC("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress, 'from': self.account}])
+    data = "0x23b87507" + Geth.encode_address(address) + Geth.encode_int(power) + Geth.encode_uint(start) + Geth.encode_uint(end)
+    result = self.geth.command("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress, 'from': self.account}])
     logging.info("Result: " + result)
     
 if __name__ == "__main__":
