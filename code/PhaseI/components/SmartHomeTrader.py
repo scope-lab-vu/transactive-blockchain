@@ -29,11 +29,7 @@ class SmartHomeTrader:
     for i in range(num_addresses):
       addresses.append(str(binascii.hexlify(numpy.random.bytes(20))))
     return addresses
-      
-  def net_production_predictor(self, timestep):
-    # TODO: use data (based on name and timestep)
-    return int((CONSUMPTION_LIMIT + PRODUCTION_LIMIT) * self.random.random() - CONSUMPTION_LIMIT)
-    
+          
   def predict(self):
     # choose random address for trading
     address = self.random.choice(self.addresses)
@@ -81,6 +77,10 @@ class SmartHomeTrader:
       del self.offers[offerID]
     if assetID in self.cons_assets:
       del self.cons_assets[assetID]           
+
+  def net_production_predictor(self, timestep):
+    # random predictor for testing
+    return int((CONSUMPTION_LIMIT + PRODUCTION_LIMIT) * self.random.random() - CONSUMPTION_LIMIT)
 
   # DSO message sender for testing
   def withdraw_assets(self, address, asset, financial):

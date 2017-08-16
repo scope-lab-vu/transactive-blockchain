@@ -1,7 +1,6 @@
 import zmq
 import logging
 from time import time, sleep
-from random import randint
 
 from config import *
 from const import *
@@ -9,10 +8,11 @@ from SmartHomeTrader import SmartHomeTrader
 from Filter import Filter
 from Geth import Geth
 
-POLLING_INTERVAL = 5
+POLLING_INTERVAL = 10
 
 class SmartHomeTraderWrapper(SmartHomeTrader):
-  def __init__(self, name):
+  def __init__(self, name, net_production):
+    self.net_production = net_production
     self.geth = Geth()
     logging.info("Connecting to DSO...")
     self.dso = zmq.Context().socket(zmq.REQ)
@@ -38,6 +38,9 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
         next_polling = current_time + POLLING_INTERVAL
         self.poll_events()
       sleep(min(next_prediction - current_time, next_polling - current_time))
+
+  def net_production_predictor(self, timestep):
+    return self.net_production[timestep % len(timestep)]
       
   def get_addresses(self, num_addresses):
     logging.info("Querying own addresses...")
@@ -76,18 +79,38 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
     
   # contract function calls
   def postOffer(self, address, assetID, price):
+    logging.info("{}.postOffer({}, {})".format(address, assetID, price))
     data = "0xed7272e2" + Geth.encode_uint(assetID) + Geth.encode_uint(price)
     result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress}])
-    logging.info(result)
+    logging.info("Result: " + result)
 
   def acceptOffer(self, address, offerID, assetID):
+    logging.info("{}.acceptOffer({}, {})".format(address, offerID, assetID))
     data = "0xf1edd7e2" + Geth.encode_uint(offerID) + Geth.encode_uint(assetID)
     result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress}])
-    logging.info(result)
+    logging.info("Result: " + result)
+
+def read_data(prosumer_id):
+  logging.info("Reading net production values...")
+  with open(DATA_PATH + "day_power_profile.csv", "rt") as fin:
+    lines = fin.readlines()
+    if lines[3].split(',')[prosumer_id] == "": # if peak production value is missing, prosumer is consumer
+      mult = -1
+    else: # otherwise, prosumer is producer
+      mult = 1
+    data = [int(mult * float(line.split(',')[prosumer_id])) for line in lines[5:]]
+    logging.info("Read {} values.".format(len(data)))
+    return data
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.INFO)
-  trader = SmartHomeTraderWrapper("home1") # + str(randint(0,100)))
+  if len(sys.argv) > 1:
+    prosumer_id = int(sys.argv[1])
+    if prosumer_id < 1: 
+      print("Prosumer ID must be greater than zero!")
+  else:
+    prosumer_id = 1
+  trader = SmartHomeTraderWrapper("prosumer_" + str(prosumerID), read_data(prosumer_id)) 
   trader.run()
 
     

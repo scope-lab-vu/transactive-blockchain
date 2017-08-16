@@ -11,6 +11,7 @@ class DSOWrapper(DSO):
     self.contractAddress = CONTRACT_ADDRESS
     self.account = self.geth.get_addresses()[0]
     super(DSOWrapper, self).__init__()
+    # TODO: remove testing code once event filtering works reliably
     logging.info("Test result: " + str(self.geth.command("eth_sendTransaction", params=[{'data': "0xf8a8fd6d", 'to': self.contractAddress, 'from': self.account}])))
     
   def run(self):
@@ -31,8 +32,9 @@ class DSOWrapper(DSO):
             
   def sendEther(self, address):
     # TODO: check this, especially the amount of Ether
+    logging.info("sendEther()")
     result = self.geth.command("eth_sendTransaction", params=[{'to': address, 'value': "0xffffff", 'from': self.account}])
-    logging.info(result)
+    logging.info("Result: " + result)
 
   # contract function calls 
 

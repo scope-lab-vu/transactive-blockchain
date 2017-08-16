@@ -19,7 +19,7 @@ class Geth:
   def command(self, method, params=[], id=1, jsonrpc="2.0", verbose=False):
     """ Method to abstract away 'curl' usage to interact with RPC of geth clients. """
     # the <ip:port> to connect to
-    ipPort = str(ip) + ":" + str(port)
+    ipPort = str(self.ip) + ":" + str(self.port)
     # buffer to capture output
     buffer = BytesIO()
     # start building curl command to process
@@ -51,7 +51,6 @@ class Geth:
             raise Exception('rpc_communication_error', 'Error No: ' + errno + ", message: " + message)
         return {'error':'rpc_comm_error','desc':message,'error_num':errno}
 
-
     # decode result
     results = str(buffer.getvalue().decode('iso-8859-1'))
     if verbose:
@@ -72,7 +71,7 @@ class Geth:
                 raise Exception('rpc_communication_error', "Unknown Error: possible method/parameter(s) were wrong and/or networking issue.")
             return {"error":"Unknown Error: possible method/parameter(s) were wrong and/or networking issue."}
 
-  def get_addresses():
+  def get_addresses(self):
     return self.command("eth_accounts")
 
 
