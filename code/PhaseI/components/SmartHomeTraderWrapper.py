@@ -1,5 +1,6 @@
 import zmq
 import logging
+import sys
 from time import time, sleep
 
 from config import *
@@ -8,7 +9,7 @@ from SmartHomeTrader import SmartHomeTrader
 from Filter import Filter
 from Geth import Geth
 
-POLLING_INTERVAL = 10
+POLLING_INTERVAL = 5 # seconds
 
 class SmartHomeTraderWrapper(SmartHomeTrader):
   def __init__(self, name, net_production):
@@ -40,7 +41,7 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
       sleep(min(next_prediction - current_time, next_polling - current_time))
 
   def net_production_predictor(self, timestep):
-    return self.net_production[timestep % len(timestep)]
+    return self.net_production[timestep % len(self.net_production)]
       
   def get_addresses(self, num_addresses):
     logging.info("Querying own addresses...")
@@ -48,7 +49,7 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
       
   def poll_events(self):
     for event in self.filter.poll_events():
-      self.info("Event: " + str(event))
+      logging.info("Event: " + str(event))
       params = event['params']
       name = event['name']
       if name == "FinancialAdded":
@@ -103,14 +104,14 @@ def read_data(prosumer_id):
     return data
 
 if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
+  logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
   if len(sys.argv) > 1:
     prosumer_id = int(sys.argv[1])
     if prosumer_id < 1: 
       print("Prosumer ID must be greater than zero!")
   else:
     prosumer_id = 1
-  trader = SmartHomeTraderWrapper("prosumer_" + str(prosumerID), read_data(prosumer_id)) 
+  trader = SmartHomeTraderWrapper("prosumer_" + str(prosumer_id), read_data(prosumer_id)) 
   trader.run()
 
     
