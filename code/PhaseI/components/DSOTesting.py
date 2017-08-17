@@ -54,7 +54,7 @@ class DSOTesting(DSOWrapper):
     logging.info(response)
     
 if __name__ == "__main__":
-  logging.basicConfig(level=logging.INFO)
+  logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
   dso = DSOTesting()
   dso.run()
 

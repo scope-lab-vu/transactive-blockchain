@@ -6,6 +6,7 @@ from const import *
 from EnergyAsset import EnergyAsset
 
 BASE_PRICE = 1
+START_INTERVAL = 26
 PREDICTION_HORIZON = 1
 
 class SmartHomeTrader: 
@@ -20,7 +21,7 @@ class SmartHomeTrader:
     # create anonymous accounts
     self.addresses = self.get_addresses(num_addresses)
     # predict net production and request assets for trading 
-    self.next_interval = 0
+    self.next_interval = START_INTERVAL
     for timestep in range(PREDICTION_HORIZON):
       self.predict()
       
@@ -29,11 +30,7 @@ class SmartHomeTrader:
     for i in range(num_addresses):
       addresses.append(str(binascii.hexlify(numpy.random.bytes(20))))
     return addresses
-      
-  def net_production_predictor(self, timestep):
-    # TODO: use data (based on name and timestep)
-    return int((CONSUMPTION_LIMIT + PRODUCTION_LIMIT) * self.random.random() - CONSUMPTION_LIMIT)
-    
+          
   def predict(self):
     # choose random address for trading
     address = self.random.choice(self.addresses)
@@ -46,7 +43,7 @@ class SmartHomeTrader:
   def asset_added(self, address, assetID, asset):
     # check if asset belongs to the prosumer
     # TODO: does this test actually work?
-    if address not in addresses:
+    if address not in self.addresses:
       return
     # production or consumption 
     if asset.power > 0:
@@ -81,6 +78,10 @@ class SmartHomeTrader:
       del self.offers[offerID]
     if assetID in self.cons_assets:
       del self.cons_assets[assetID]           
+
+  def net_production_predictor(self, timestep):
+    # random predictor for testing
+    return int((CONSUMPTION_LIMIT + PRODUCTION_LIMIT) * self.random.random() - CONSUMPTION_LIMIT)
 
   # DSO message sender for testing
   def withdraw_assets(self, address, asset, financial):
