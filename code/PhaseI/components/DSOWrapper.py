@@ -1,5 +1,6 @@
 import zmq
 import logging
+import sys
 from time import sleep
 
 from config import *
@@ -7,8 +8,8 @@ from DSO import DSO
 from Geth import Geth
 
 class DSOWrapper(DSO): 
-  def __init__(self):
-    self.geth = Geth()    
+  def __init__(self, ip, port):
+    self.geth = Geth(ip=ip, port=port)    
     self.account = self.geth.get_addresses()[0]
     self.deploy_contract()
     super(DSOWrapper, self).__init__()
@@ -81,6 +82,12 @@ class DSOWrapper(DSO):
     
 if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
-  dso = DSOWrapper()
+  ip = None
+  port = None
+  if len(sys.argv) > 1:
+    ip = sys.argv[1]
+  if len(sys.argv) > 2:
+    port = sys.argv[2]
+  dso = DSOWrapper(ip, port)
   dso.run()
 

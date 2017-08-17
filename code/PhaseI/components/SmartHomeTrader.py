@@ -6,7 +6,7 @@ from const import *
 from EnergyAsset import EnergyAsset
 
 BASE_PRICE = 1
-START_INTERVAL = 40
+START_INTERVAL = 26
 PREDICTION_HORIZON = 1
 
 class SmartHomeTrader: 
