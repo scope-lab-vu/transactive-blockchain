@@ -9,12 +9,15 @@ from SmartHomeTrader import SmartHomeTrader
 from Filter import Filter
 from Geth import Geth
 
-POLLING_INTERVAL = 5 # seconds
+POLLING_INTERVAL = 1 # seconds
 
 class SmartHomeTraderWrapper(SmartHomeTrader):
-  def __init__(self, name, net_production):
+  def __init__(self, name, net_production, port):
     self.net_production = net_production
-    self.geth = Geth()
+    if port is None:
+      self.geth = Geth()
+    else:
+      self.geth = Geth(port=port)
     logging.info("Connecting to DSO...")
     self.dso = zmq.Context().socket(zmq.REQ)
     self.dso.connect(DSO_ADDRESS)
@@ -35,7 +38,7 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
         next_prediction = current_time + TIME_INTERVAL
         self.predict()
       if current_time > next_polling:
-        logging.info("Polling events...")
+        logging.debug("Polling events...")
         next_polling = current_time + POLLING_INTERVAL
         self.poll_events()
       sleep(min(next_prediction - current_time, next_polling - current_time))
@@ -94,25 +97,25 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
   # contract function calls
   
   def postOffer(self, address, assetID, price):
-    logging.info("postOffer({}, {}) from address {}".format(assetID, price, address))
+    logging.info("postOffer({}, {}) using address {}".format(assetID, price, address))
     data = "0xed7272e2" + Geth.encode_uint(assetID) + Geth.encode_uint(price)
-    result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress, 'gas': "0x4300000"}])
-    logging.info("Result: " + result)
+    result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress, 'gas': TRANSACTION_GAS}])
+    logging.debug("Result: " + result)
 
   def acceptOffer(self, address, offerID, assetID):
-    logging.info("{}.acceptOffer({}, {})".format(address, offerID, assetID))
+    logging.info("acceptOffer({}, {}) using address {}".format(offerID, assetID, address))
     data = "0xf1edd7e2" + Geth.encode_uint(offerID) + Geth.encode_uint(assetID)
-    result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress, 'gas': "0x4300000"}])
-    logging.info("Result: " + result)
+    result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress, 'gas': TRANSACTION_GAS}])
+    logging.debug("Result: " + result)
 
 def read_data(prosumer_id):
   logging.info("Reading net production values...")
   with open(DATA_PATH + "day_power_profile.csv", "rt") as fin:
     lines = fin.readlines()
     if lines[3].split(',')[prosumer_id] == "": # if peak production value is missing, prosumer is consumer
-      mult = -1
+      mult = -10
     else: # otherwise, prosumer is producer
-      mult = 1
+      mult = 10
     data = [int(mult * float(line.split(',')[prosumer_id])) for line in lines[5:]]
     logging.info("Read {} values.".format(len(data)))
     return data
@@ -125,7 +128,11 @@ if __name__ == "__main__":
       print("Prosumer ID must be greater than zero!")
   else:
     prosumer_id = 1
-  trader = SmartHomeTraderWrapper("prosumer_" + str(prosumer_id), read_data(prosumer_id)) 
+  if len(sys.argv) > 2:
+    port = sys.argv[2]
+  else:
+    port = None
+  trader = SmartHomeTraderWrapper("prosumer_" + str(prosumer_id), read_data(prosumer_id), port) 
   trader.run()
 
     

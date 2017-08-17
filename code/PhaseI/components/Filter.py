@@ -22,7 +22,7 @@ class Filter:
   def poll_events(self):
     block = self.geth.command("eth_blockNumber", params=[])
     log = self.geth.command("eth_getFilterChanges", params=[self.filterID])
-    logging.info("Log: {} items (block number: {})".format(len(log), block))
+    logging.debug("Log: {} items (block number: {})".format(len(log), block))
     for log_item in log:
       yield decode_log(log_item)
 

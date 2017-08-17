@@ -12,8 +12,6 @@ class DSOWrapper(DSO):
     self.account = self.geth.get_addresses()[0]
     self.deploy_contract()
     super(DSOWrapper, self).__init__()
-    # TODO: remove testing code once event filtering works reliably
-    #logging.info("Test result: " + str(self.geth.command("eth_sendTransaction", params=[{'data': "0xf8a8fd6d", 'to': self.contractAddress, 'from': self.account}])))
     
   def run(self):
     logging.info("Entering main function...")
@@ -41,11 +39,11 @@ class DSOWrapper(DSO):
       
   def deploy_contract(self):
     logging.info("Deploying contract...")
-    receiptID = self.geth.command("eth_sendTransaction", params=[{"data": BYTECODE, "gas": '0x4300000', "from": self.account}])
+    receiptID = self.geth.command("eth_sendTransaction", params=[{'data': BYTECODE, 'from': self.account, 'gas': TRANSACTION_GAS}])
     logging.info("Transaction receipt: " + receiptID)
     while True:
       sleep(5)
-      logging.info("Block number: " + self.geth.command("eth_blockNumber", params=[]))
+      logging.info("Waiting for contract to be mined... (block number: {})".format(self.geth.command("eth_blockNumber", params=[])))
       receipt = self.geth.command("eth_getTransactionReceipt", params=[receiptID])
       if receipt is not None:
         self.contractAddress = receipt['contractAddress']
@@ -56,7 +54,7 @@ class DSOWrapper(DSO):
     # TODO: check this, especially the amount of Ether
     logging.info("sendEther()")
     result = self.geth.command("eth_sendTransaction", params=[{'to': address, 'value': "0xffffff", 'from': self.account}])
-    logging.info("Result: " + result)
+    logging.debug("Result: " + result)
 
   # contract function calls 
   
@@ -72,14 +70,14 @@ class DSOWrapper(DSO):
   def addFinancialBalance(self, address, amount):
     logging.info("addFinancialBalance({}, {})".format(address, amount))
     data = "0x3b719dc0" + Geth.encode_address(address) + Geth.encode_uint(amount)
-    result = self.geth.command("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress, 'from': self.account, 'gas': "0x4300000"}])
-    logging.info("Result: " + result)
+    result = self.geth.command("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress, 'from': self.account, 'gas': TRANSACTION_GAS}])
+    logging.debug("Result: " + result)
 
   def addEnergyAsset(self, address, power, start, end):
     logging.info("addEnergyAsset({}, {}, {}, {})".format(address, power, start, end))
     data = "0x23b87507" + Geth.encode_address(address) + Geth.encode_int(power) + Geth.encode_uint(start) + Geth.encode_uint(end)
-    result = self.geth.command("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress, 'from': self.account, 'gas': "0x4300000"}])
-    logging.info("Result: " + result)
+    result = self.geth.command("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress, 'from': self.account, 'gas': TRANSACTION_GAS}])
+    logging.debug("Result: " + result)
     
 if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
