@@ -17,27 +17,30 @@ class DSO:
     if address in self.addresses and self.addresses[address] != prosumer:
       return "Address already taken!"
     self.addresses[address] = prosumer
-    # check if withdrawal would violate safety constraints
-    for t in range(asset.start, asset.end + 1):
-      if asset.power > 0:
-        if (prosumer, t) in self.prod_withdrawn and self.prod_withdrawn[(prosumer, t)] + asset.power > PRODUCTION_LIMIT:
-          return "Withdrawal would violate safety constraints!"    
-      elif (prosumer, t) in self.cons_withdrawn and self.cons_withdrawn[(prosumer, t)] - asset.power > CONSUMPTION_LIMIT:
-        return "Withdrawal would violate safety constraints!"
-    # update amount of assets withdrawn
-    for t in range (asset.start, asset.end + 1):
-      if asset.power > 0:
-        if (prosumer, t) not in self.prod_withdrawn:
-          self.prod_withdrawn[(prosumer, t)] = 0
-        self.prod_withdrawn[(prosumer, t)] = self.prod_withdrawn[(prosumer, t)] + asset.power
-      else:
-        if (prosumer, t) not in self.cons_withdrawn:
-          self.cons_withdrawn[(prosumer, t)] = 0
-        self.cons_withdrawn[(prosumer, t)] = self.cons_withdrawn[(prosumer, t)] - asset.power
-    # create and transfer assets to address      
-    self.addFinancialBalance(address, financial)
-    self.addEnergyAsset(address, asset.power, asset.start, asset.end)
-    self.sendEther(address)
+    if asset is not None:
+      # check if withdrawal would violate safety constraints
+      for t in range(asset.start, asset.end + 1):
+        if asset.power > 0:
+          if (prosumer, t) in self.prod_withdrawn and self.prod_withdrawn[(prosumer, t)] + asset.power > PRODUCTION_LIMIT:
+            return "Withdrawal would violate safety constraints!"    
+        elif (prosumer, t) in self.cons_withdrawn and self.cons_withdrawn[(prosumer, t)] - asset.power > CONSUMPTION_LIMIT:
+          return "Withdrawal would violate safety constraints!"
+      # update amount of assets withdrawn
+      for t in range (asset.start, asset.end + 1):
+        if asset.power > 0:
+          if (prosumer, t) not in self.prod_withdrawn:
+            self.prod_withdrawn[(prosumer, t)] = 0
+          self.prod_withdrawn[(prosumer, t)] = self.prod_withdrawn[(prosumer, t)] + asset.power
+        else:
+          if (prosumer, t) not in self.cons_withdrawn:
+            self.cons_withdrawn[(prosumer, t)] = 0
+          self.cons_withdrawn[(prosumer, t)] = self.cons_withdrawn[(prosumer, t)] - asset.power
+      # create and transfer assets to address 
+      self.addEnergyAsset(address, asset.power, asset.start, asset.end)
+    if financial > 0:     
+      # send Ether and add financial balance
+      self.addFinancialBalance(address, financial)
+      self.sendEther(address)
     return "Success."
 
   # contract function calls for testing
