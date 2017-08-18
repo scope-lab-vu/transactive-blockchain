@@ -1,0 +1,548 @@
+17:15:43, FinancialAdded, address,0x65a7d6545128aadabeb21242f675903d45d73064, amount,100
+17:15:43, AssetAdded, end,57, power,-88, address,0x65a7d6545128aadabeb21242f675903d45d73064, assetID,0, start,57
+17:15:43, FinancialAdded, address,0x94e10cf70431c5585df7669f74c887e46b63113d, amount,100
+17:15:43, AssetAdded, end,57, power,-60, address,0x94e10cf70431c5585df7669f74c887e46b63113d, assetID,1, start,57
+17:15:43, FinancialAdded, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, amount,100
+17:15:43, AssetAdded, end,57, power,-68, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, assetID,2, start,57
+17:15:43, FinancialAdded, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, amount,100
+17:15:43, AssetAdded, end,57, power,-86, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, assetID,3, start,57
+17:15:44, FinancialAdded, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, amount,100
+17:15:44, AssetAdded, end,57, power,-74, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, assetID,4, start,57
+17:15:44, FinancialAdded, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, amount,100
+17:15:44, AssetAdded, end,57, power,-65, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, assetID,5, start,57
+17:15:44, FinancialAdded, address,0x5004409ac83cae962cceb49cf7365325d1710584, amount,100
+17:15:44, AssetAdded, end,57, power,-85, address,0x5004409ac83cae962cceb49cf7365325d1710584, assetID,6, start,57
+17:15:44, FinancialAdded, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, amount,100
+17:15:44, AssetAdded, end,57, power,301, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,7, start,57
+17:15:44, FinancialAdded, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, amount,100
+17:15:44, AssetAdded, end,57, power,795, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,8, start,57
+17:16:09, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,795, start,57, end,57, price,1, offerID,0, assetID,8
+17:16:09, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,301, start,57, end,57, price,1, offerID,1, assetID,7
+17:16:13, AssetAdded, end,57, power,727, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,9, start,57
+17:16:13, OfferAccepted,,,,,,,,,,,,,,,, transPower,68, transStart,57, transEnd,57, offerID,0, assetID,2, price,1
+17:16:13, AssetAdded, end,57, power,241, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,10, start,57
+17:16:13, OfferAccepted,,,,,,,,,,,,,,,, transPower,60, transStart,57, transEnd,57, offerID,1, assetID,1, price,1
+17:16:17, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,241, start,57, end,57, price,1, offerID,2, assetID,10
+17:16:17, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,727, start,57, end,57, price,1, offerID,3, assetID,9
+17:16:33, AssetAdded, end,57, power,155, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,11, start,57
+17:16:33, OfferAccepted,,,,,,,,,,,,,,,, transPower,86, transStart,57, transEnd,57, offerID,2, assetID,3, price,1
+17:16:33, AssetAdded, end,57, power,639, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,12, start,57
+17:16:33, OfferAccepted,,,,,,,,,,,,,,,, transPower,88, transStart,57, transEnd,57, offerID,3, assetID,0, price,1
+17:16:43, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,155, start,57, end,57, price,1, offerID,4, assetID,11
+17:16:43, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,639, start,57, end,57, price,1, offerID,5, assetID,12
+17:16:59, AssetAdded, end,57, power,90, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,13, start,57
+17:16:59, OfferAccepted,,,,,,,,,,,,,,,, transPower,65, transStart,57, transEnd,57, offerID,4, assetID,5, price,1
+17:16:59, AssetAdded, end,57, power,565, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,14, start,57
+17:16:59, OfferAccepted,,,,,,,,,,,,,,,, transPower,74, transStart,57, transEnd,57, offerID,5, assetID,4, price,1
+17:17:11, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,565, start,57, end,57, price,1, offerID,6, assetID,14
+17:17:11, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,90, start,57, end,57, price,1, offerID,7, assetID,13
+17:17:14, FinancialAdded, address,0x65a7d6545128aadabeb21242f675903d45d73064, amount,100
+17:17:14, AssetAdded, end,58, power,-89, address,0x65a7d6545128aadabeb21242f675903d45d73064, assetID,15, start,58
+17:17:14, FinancialAdded, address,0x94e10cf70431c5585df7669f74c887e46b63113d, amount,100
+17:17:14, AssetAdded, end,58, power,-61, address,0x94e10cf70431c5585df7669f74c887e46b63113d, assetID,16, start,58
+17:17:14, FinancialAdded, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, amount,100
+17:17:14, AssetAdded, end,58, power,-69, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, assetID,17, start,58
+17:17:14, FinancialAdded, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, amount,100
+17:17:14, AssetAdded, end,58, power,-87, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, assetID,18, start,58
+17:17:14, FinancialAdded, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, amount,100
+17:17:14, AssetAdded, end,58, power,-74, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, assetID,19, start,58
+17:17:14, FinancialAdded, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, amount,100
+17:17:14, AssetAdded, end,58, power,-66, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, assetID,20, start,58
+17:17:14, FinancialAdded, address,0x5004409ac83cae962cceb49cf7365325d1710584, amount,100
+17:17:14, AssetAdded, end,58, power,-86, address,0x5004409ac83cae962cceb49cf7365325d1710584, assetID,21, start,58
+17:17:14, FinancialAdded, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, amount,100
+17:17:14, AssetAdded, end,58, power,299, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,22, start,58
+17:17:14, FinancialAdded, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, amount,100
+17:17:14, AssetAdded, end,58, power,789, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,23, start,58
+17:17:14, AssetAdded, end,57, power,480, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,24, start,57
+17:17:14, OfferAccepted,,,,,,,,,,,,,,,, transPower,85, transStart,57, transEnd,57, offerID,6, assetID,6, price,1
+17:17:19, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,299, start,58, end,58, price,1, offerID,8, assetID,22
+17:17:19, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,789, start,58, end,58, price,1, offerID,9, assetID,23
+17:17:19, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,480, start,57, end,57, price,1, offerID,10, assetID,24
+17:17:42, AssetAdded, end,58, power,212, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,25, start,58
+17:17:42, OfferAccepted,,,,,,,,,,,,,,,, transPower,87, transStart,58, transEnd,58, offerID,8, assetID,18, price,1
+17:17:42, AssetAdded, end,58, power,720, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,26, start,58
+17:17:42, OfferAccepted,,,,,,,,,,,,,,,, transPower,69, transStart,58, transEnd,58, offerID,9, assetID,17, price,1
+17:17:52, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,212, start,58, end,58, price,1, offerID,11, assetID,25
+17:17:52, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,720, start,58, end,58, price,1, offerID,12, assetID,26
+17:18:06, AssetAdded, end,58, power,123, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,27, start,58
+17:18:06, OfferAccepted,,,,,,,,,,,,,,,, transPower,89, transStart,58, transEnd,58, offerID,11, assetID,15, price,1
+17:18:06, AssetAdded, end,58, power,659, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,28, start,58
+17:18:06, OfferAccepted,,,,,,,,,,,,,,,, transPower,61, transStart,58, transEnd,58, offerID,12, assetID,16, price,1
+17:18:19, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,123, start,58, end,58, price,1, offerID,13, assetID,27
+17:18:19, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,659, start,58, end,58, price,1, offerID,14, assetID,28
+17:18:44, AssetAdded, end,58, power,57, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,29, start,58
+17:18:44, OfferAccepted,,,,,,,,,,,,,,,, transPower,66, transStart,58, transEnd,58, offerID,13, assetID,20, price,1
+17:18:44, AssetAdded, end,58, power,573, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,30, start,58
+17:18:44, OfferAccepted,,,,,,,,,,,,,,,, transPower,86, transStart,58, transEnd,58, offerID,14, assetID,21, price,1
+17:18:45, FinancialAdded, address,0x65a7d6545128aadabeb21242f675903d45d73064, amount,100
+17:18:45, AssetAdded, end,59, power,-91, address,0x65a7d6545128aadabeb21242f675903d45d73064, assetID,31, start,59
+17:18:45, FinancialAdded, address,0x94e10cf70431c5585df7669f74c887e46b63113d, amount,100
+17:18:45, AssetAdded, end,59, power,-62, address,0x94e10cf70431c5585df7669f74c887e46b63113d, assetID,32, start,59
+17:18:45, FinancialAdded, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, amount,100
+17:18:45, AssetAdded, end,59, power,-70, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, assetID,33, start,59
+17:18:45, FinancialAdded, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, amount,100
+17:18:45, AssetAdded, end,59, power,-89, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, assetID,34, start,59
+17:18:45, FinancialAdded, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, amount,100
+17:18:45, AssetAdded, end,59, power,-76, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, assetID,35, start,59
+17:18:45, FinancialAdded, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, amount,100
+17:18:45, AssetAdded, end,59, power,-67, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, assetID,36, start,59
+17:18:45, FinancialAdded, address,0x5004409ac83cae962cceb49cf7365325d1710584, amount,100
+17:18:45, AssetAdded, end,59, power,-88, address,0x5004409ac83cae962cceb49cf7365325d1710584, assetID,37, start,59
+17:18:45, FinancialAdded, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, amount,100
+17:18:45, AssetAdded, end,59, power,295, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,38, start,59
+17:18:45, FinancialAdded, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, amount,100
+17:18:45, AssetAdded, end,59, power,779, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,39, start,59
+17:18:50, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,57, start,58, end,58, price,1, offerID,15, assetID,29
+17:18:50, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,295, start,59, end,59, price,1, offerID,16, assetID,38
+17:18:50, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,573, start,58, end,58, price,1, offerID,17, assetID,30
+17:18:50, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,779, start,59, end,59, price,1, offerID,18, assetID,39
+17:18:59, AssetAdded, end,59, power,207, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,40, start,59
+17:18:59, OfferAccepted,,,,,,,,,,,,,,,, transPower,88, transStart,59, transEnd,59, offerID,16, assetID,37, price,1
+17:18:59, AssetAdded, end,58, power,-17, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, assetID,41, start,58
+17:18:59, OfferAccepted,,,,,,,,,,,,,,,, transPower,57, transStart,58, transEnd,58, offerID,15, assetID,19, price,1
+17:18:59, AssetAdded, end,59, power,703, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,42, start,59
+17:18:59, OfferAccepted,,,,,,,,,,,,,,,, transPower,76, transStart,59, transEnd,59, offerID,18, assetID,35, price,1
+17:19:10, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,207, start,59, end,59, price,1, offerID,19, assetID,40
+17:19:10, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,703, start,59, end,59, price,1, offerID,20, assetID,42
+17:19:17, AssetAdded, end,59, power,116, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,43, start,59
+17:19:17, OfferAccepted,,,,,,,,,,,,,,,, transPower,91, transStart,59, transEnd,59, offerID,19, assetID,31, price,1
+17:19:17, AssetAdded, end,59, power,614, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,44, start,59
+17:19:17, OfferAccepted,,,,,,,,,,,,,,,, transPower,89, transStart,59, transEnd,59, offerID,20, assetID,34, price,1
+17:19:20, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,614, start,59, end,59, price,1, offerID,21, assetID,44
+17:19:21, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,116, start,59, end,59, price,1, offerID,22, assetID,43
+17:19:27, AssetAdded, end,59, power,552, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,45, start,59
+17:19:27, OfferAccepted,,,,,,,,,,,,,,,, transPower,62, transStart,59, transEnd,59, offerID,21, assetID,32, price,1
+17:19:27, AssetAdded, end,59, power,49, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,46, start,59
+17:19:27, OfferAccepted,,,,,,,,,,,,,,,, transPower,67, transStart,59, transEnd,59, offerID,22, assetID,36, price,1
+17:19:43, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,49, start,59, end,59, price,1, offerID,23, assetID,46
+17:19:43, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,552, start,59, end,59, price,1, offerID,24, assetID,45
+17:19:50, AssetAdded, end,59, power,-21, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, assetID,47, start,59
+17:19:50, OfferAccepted,,,,,,,,,,,,,,,, transPower,49, transStart,59, transEnd,59, offerID,23, assetID,33, price,1
+17:20:24, FinancialAdded, address,0x65a7d6545128aadabeb21242f675903d45d73064, amount,100
+17:20:24, AssetAdded, end,60, power,-93, address,0x65a7d6545128aadabeb21242f675903d45d73064, assetID,48, start,60
+17:20:24, FinancialAdded, address,0x94e10cf70431c5585df7669f74c887e46b63113d, amount,100
+17:20:24, AssetAdded, end,60, power,-63, address,0x94e10cf70431c5585df7669f74c887e46b63113d, assetID,49, start,60
+17:20:24, FinancialAdded, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, amount,100
+17:20:24, AssetAdded, end,60, power,-71, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, assetID,50, start,60
+17:20:24, FinancialAdded, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, amount,100
+17:20:24, AssetAdded, end,60, power,-91, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, assetID,51, start,60
+17:20:24, FinancialAdded, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, amount,100
+17:20:24, AssetAdded, end,60, power,-77, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, assetID,52, start,60
+17:20:24, FinancialAdded, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, amount,100
+17:20:24, AssetAdded, end,60, power,-68, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, assetID,53, start,60
+17:20:24, FinancialAdded, address,0x5004409ac83cae962cceb49cf7365325d1710584, amount,100
+17:20:24, AssetAdded, end,60, power,-90, address,0x5004409ac83cae962cceb49cf7365325d1710584, assetID,54, start,60
+17:20:24, FinancialAdded, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, amount,100
+17:20:24, AssetAdded, end,60, power,290, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,55, start,60
+17:20:24, FinancialAdded, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, amount,100
+17:20:24, AssetAdded, end,60, power,765, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,56, start,60
+17:20:27, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,290, start,60, end,60, price,1, offerID,25, assetID,55
+17:20:27, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,765, start,60, end,60, price,1, offerID,26, assetID,56
+17:20:39, AssetAdded, end,60, power,227, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,57, start,60
+17:20:39, OfferAccepted,,,,,,,,,,,,,,,, transPower,63, transStart,60, transEnd,60, offerID,25, assetID,49, price,1
+17:20:39, AssetAdded, end,60, power,688, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,58, start,60
+17:20:39, OfferAccepted,,,,,,,,,,,,,,,, transPower,77, transStart,60, transEnd,60, offerID,26, assetID,52, price,1
+17:20:47, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,227, start,60, end,60, price,1, offerID,27, assetID,57
+17:20:47, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,688, start,60, end,60, price,1, offerID,28, assetID,58
+17:20:57, AssetAdded, end,60, power,159, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,59, start,60
+17:20:58, OfferAccepted,,,,,,,,,,,,,,,, transPower,68, transStart,60, transEnd,60, offerID,27, assetID,53, price,1
+17:20:58, AssetAdded, end,60, power,598, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,60, start,60
+17:20:58, OfferAccepted,,,,,,,,,,,,,,,, transPower,90, transStart,60, transEnd,60, offerID,28, assetID,54, price,1
+17:21:01, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,598, start,60, end,60, price,1, offerID,29, assetID,60
+17:21:01, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,159, start,60, end,60, price,1, offerID,30, assetID,59
+17:21:08, AssetAdded, end,60, power,507, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,61, start,60
+17:21:08, OfferAccepted,,,,,,,,,,,,,,,, transPower,91, transStart,60, transEnd,60, offerID,29, assetID,51, price,1
+17:21:08, AssetAdded, end,60, power,66, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,62, start,60
+17:21:08, OfferAccepted,,,,,,,,,,,,,,,, transPower,93, transStart,60, transEnd,60, offerID,30, assetID,48, price,1
+17:21:20, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,66, start,60, end,60, price,1, offerID,31, assetID,62
+17:21:20, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,507, start,60, end,60, price,1, offerID,32, assetID,61
+17:21:43, AssetAdded, end,60, power,-5, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, assetID,63, start,60
+17:21:43, OfferAccepted,,,,,,,,,,,,,,,, transPower,66, transStart,60, transEnd,60, offerID,31, assetID,50, price,1
+17:21:45, FinancialAdded, address,0x65a7d6545128aadabeb21242f675903d45d73064, amount,100
+17:21:45, AssetAdded, end,61, power,-94, address,0x65a7d6545128aadabeb21242f675903d45d73064, assetID,64, start,61
+17:21:45, FinancialAdded, address,0x94e10cf70431c5585df7669f74c887e46b63113d, amount,100
+17:21:45, AssetAdded, end,61, power,-64, address,0x94e10cf70431c5585df7669f74c887e46b63113d, assetID,65, start,61
+17:21:45, FinancialAdded, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, amount,100
+17:21:45, AssetAdded, end,61, power,-72, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, assetID,66, start,61
+17:21:45, FinancialAdded, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, amount,100
+17:21:45, AssetAdded, end,61, power,-92, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, assetID,67, start,61
+17:21:45, FinancialAdded, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, amount,100
+17:21:45, AssetAdded, end,61, power,-79, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, assetID,68, start,61
+17:21:45, FinancialAdded, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, amount,100
+17:21:45, AssetAdded, end,61, power,-69, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, assetID,69, start,61
+17:21:45, FinancialAdded, address,0x5004409ac83cae962cceb49cf7365325d1710584, amount,100
+17:21:45, AssetAdded, end,61, power,-91, address,0x5004409ac83cae962cceb49cf7365325d1710584, assetID,70, start,61
+17:21:45, FinancialAdded, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, amount,100
+17:21:45, AssetAdded, end,61, power,284, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,71, start,61
+17:21:45, FinancialAdded, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, amount,100
+17:21:45, AssetAdded, end,61, power,748, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,72, start,61
+17:21:49, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,284, start,61, end,61, price,1, offerID,33, assetID,71
+17:21:49, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,748, start,61, end,61, price,1, offerID,34, assetID,72
+17:22:15, AssetAdded, end,61, power,193, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,73, start,61
+17:22:15, OfferAccepted,,,,,,,,,,,,,,,, transPower,91, transStart,61, transEnd,61, offerID,33, assetID,70, price,1
+17:22:15, AssetAdded, end,61, power,669, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,74, start,61
+17:22:15, OfferAccepted,,,,,,,,,,,,,,,, transPower,79, transStart,61, transEnd,61, offerID,34, assetID,68, price,1
+17:22:35, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,193, start,61, end,61, price,1, offerID,35, assetID,73
+17:22:35, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,669, start,61, end,61, price,1, offerID,36, assetID,74
+17:22:41, AssetAdded, end,61, power,129, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,75, start,61
+17:22:41, OfferAccepted,,,,,,,,,,,,,,,, transPower,64, transStart,61, transEnd,61, offerID,35, assetID,65, price,1
+17:22:41, AssetAdded, end,61, power,600, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,76, start,61
+17:22:41, OfferAccepted,,,,,,,,,,,,,,,, transPower,69, transStart,61, transEnd,61, offerID,36, assetID,69, price,1
+17:22:51, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,129, start,61, end,61, price,1, offerID,37, assetID,75
+17:22:51, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,600, start,61, end,61, price,1, offerID,38, assetID,76
+17:23:01, AssetAdded, end,61, power,57, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,77, start,61
+17:23:01, OfferAccepted,,,,,,,,,,,,,,,, transPower,72, transStart,61, transEnd,61, offerID,37, assetID,66, price,1
+17:23:01, AssetAdded, end,61, power,508, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,78, start,61
+17:23:01, OfferAccepted,,,,,,,,,,,,,,,, transPower,92, transStart,61, transEnd,61, offerID,38, assetID,67, price,1
+17:23:10, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,57, start,61, end,61, price,1, offerID,39, assetID,77
+17:23:10, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,508, start,61, end,61, price,1, offerID,40, assetID,78
+17:23:39, FinancialAdded, address,0x65a7d6545128aadabeb21242f675903d45d73064, amount,100
+17:23:39, AssetAdded, end,62, power,-96, address,0x65a7d6545128aadabeb21242f675903d45d73064, assetID,79, start,62
+17:23:39, FinancialAdded, address,0x94e10cf70431c5585df7669f74c887e46b63113d, amount,100
+17:23:39, AssetAdded, end,62, power,-65, address,0x94e10cf70431c5585df7669f74c887e46b63113d, assetID,80, start,62
+17:23:39, FinancialAdded, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, amount,100
+17:23:39, AssetAdded, end,62, power,-73, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, assetID,81, start,62
+17:23:39, FinancialAdded, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, amount,100
+17:23:40, AssetAdded, end,62, power,-94, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, assetID,82, start,62
+17:23:40, FinancialAdded, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, amount,100
+17:23:40, AssetAdded, end,62, power,-80, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, assetID,83, start,62
+17:23:40, FinancialAdded, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, amount,100
+17:23:40, AssetAdded, end,62, power,-70, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, assetID,84, start,62
+17:23:40, FinancialAdded, address,0x5004409ac83cae962cceb49cf7365325d1710584, amount,100
+17:23:40, AssetAdded, end,62, power,-93, address,0x5004409ac83cae962cceb49cf7365325d1710584, assetID,85, start,62
+17:23:40, FinancialAdded, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, amount,100
+17:23:40, AssetAdded, end,62, power,276, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,86, start,62
+17:23:40, FinancialAdded, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, amount,100
+17:23:40, AssetAdded, end,62, power,727, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,87, start,62
+17:23:40, AssetAdded, end,61, power,-37, address,0x65a7d6545128aadabeb21242f675903d45d73064, assetID,88, start,61
+17:23:40, OfferAccepted,,,,,,,,,,,,,,,, transPower,57, transStart,61, transEnd,61, offerID,39, assetID,64, price,1
+17:23:48, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,276, start,62, end,62, price,1, offerID,41, assetID,86
+17:23:48, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,727, start,62, end,62, price,1, offerID,42, assetID,87
+17:23:59, AssetAdded, end,62, power,183, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,89, start,62
+17:23:59, OfferAccepted,,,,,,,,,,,,,,,, transPower,93, transStart,62, transEnd,62, offerID,41, assetID,85, price,1
+17:23:59, AssetAdded, end,62, power,633, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,90, start,62
+17:23:59, OfferAccepted,,,,,,,,,,,,,,,, transPower,94, transStart,62, transEnd,62, offerID,42, assetID,82, price,1
+17:24:05, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,183, start,62, end,62, price,1, offerID,43, assetID,89
+17:24:05, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,633, start,62, end,62, price,1, offerID,44, assetID,90
+17:24:17, AssetAdded, end,62, power,103, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,91, start,62
+17:24:17, OfferAccepted,,,,,,,,,,,,,,,, transPower,80, transStart,62, transEnd,62, offerID,43, assetID,83, price,1
+17:24:17, AssetAdded, end,62, power,563, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,92, start,62
+17:24:17, OfferAccepted,,,,,,,,,,,,,,,, transPower,70, transStart,62, transEnd,62, offerID,44, assetID,84, price,1
+17:24:25, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,563, start,62, end,62, price,1, offerID,45, assetID,92
+17:24:25, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,103, start,62, end,62, price,1, offerID,46, assetID,91
+17:24:36, AssetAdded, end,62, power,498, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,93, start,62
+17:24:36, OfferAccepted,,,,,,,,,,,,,,,, transPower,65, transStart,62, transEnd,62, offerID,45, assetID,80, price,1
+17:24:36, AssetAdded, end,62, power,7, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,94, start,62
+17:24:36, OfferAccepted,,,,,,,,,,,,,,,, transPower,96, transStart,62, transEnd,62, offerID,46, assetID,79, price,1
+17:24:40, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,7, start,62, end,62, price,1, offerID,47, assetID,94
+17:24:40, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,498, start,62, end,62, price,1, offerID,48, assetID,93
+17:24:57, FinancialAdded, address,0x65a7d6545128aadabeb21242f675903d45d73064, amount,100
+17:24:57, AssetAdded, end,63, power,-96, address,0x65a7d6545128aadabeb21242f675903d45d73064, assetID,95, start,63
+17:24:58, FinancialAdded, address,0x94e10cf70431c5585df7669f74c887e46b63113d, amount,100
+17:24:58, AssetAdded, end,63, power,-66, address,0x94e10cf70431c5585df7669f74c887e46b63113d, assetID,96, start,63
+17:24:58, FinancialAdded, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, amount,100
+17:24:58, AssetAdded, end,63, power,-74, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, assetID,97, start,63
+17:24:58, FinancialAdded, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, amount,100
+17:24:58, AssetAdded, end,63, power,-94, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, assetID,98, start,63
+17:24:58, FinancialAdded, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, amount,100
+17:24:58, AssetAdded, end,63, power,-80, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, assetID,99, start,63
+17:24:58, FinancialAdded, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, amount,100
+17:24:58, AssetAdded, end,63, power,-71, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, assetID,100, start,63
+17:24:58, FinancialAdded, address,0x5004409ac83cae962cceb49cf7365325d1710584, amount,100
+17:24:58, AssetAdded, end,63, power,-93, address,0x5004409ac83cae962cceb49cf7365325d1710584, assetID,101, start,63
+17:24:58, FinancialAdded, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, amount,100
+17:24:58, AssetAdded, end,63, power,267, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,102, start,63
+17:24:58, FinancialAdded, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, amount,100
+17:24:58, AssetAdded, end,63, power,704, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,103, start,63
+17:24:58, AssetAdded, end,62, power,-66, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, assetID,104, start,62
+17:24:58, OfferAccepted,,,,,,,,,,,,,,,, transPower,7, transStart,62, transEnd,62, offerID,47, assetID,81, price,1
+17:25:04, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,704, start,63, end,63, price,1, offerID,49, assetID,103
+17:25:04, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,267, start,63, end,63, price,1, offerID,50, assetID,102
+17:25:11, AssetAdded, end,63, power,611, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,105, start,63
+17:25:11, OfferAccepted,,,,,,,,,,,,,,,, transPower,93, transStart,63, transEnd,63, offerID,49, assetID,101, price,1
+17:25:11, AssetAdded, end,63, power,187, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,106, start,63
+17:25:11, OfferAccepted,,,,,,,,,,,,,,,, transPower,80, transStart,63, transEnd,63, offerID,50, assetID,99, price,1
+17:25:15, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,187, start,63, end,63, price,1, offerID,51, assetID,106
+17:25:15, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,611, start,63, end,63, price,1, offerID,52, assetID,105
+17:25:24, AssetAdded, end,63, power,113, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,107, start,63
+17:25:24, OfferAccepted,,,,,,,,,,,,,,,, transPower,74, transStart,63, transEnd,63, offerID,51, assetID,97, price,1
+17:25:24, AssetAdded, end,63, power,545, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,108, start,63
+17:25:24, OfferAccepted,,,,,,,,,,,,,,,, transPower,66, transStart,63, transEnd,63, offerID,52, assetID,96, price,1
+17:25:32, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,113, start,63, end,63, price,1, offerID,53, assetID,107
+17:25:32, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,545, start,63, end,63, price,1, offerID,54, assetID,108
+17:25:43, AssetAdded, end,63, power,42, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,109, start,63
+17:25:43, OfferAccepted,,,,,,,,,,,,,,,, transPower,71, transStart,63, transEnd,63, offerID,53, assetID,100, price,1
+17:25:43, AssetAdded, end,63, power,451, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,110, start,63
+17:25:43, OfferAccepted,,,,,,,,,,,,,,,, transPower,94, transStart,63, transEnd,63, offerID,54, assetID,98, price,1
+17:26:03, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,42, start,63, end,63, price,1, offerID,55, assetID,109
+17:26:03, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,451, start,63, end,63, price,1, offerID,56, assetID,110
+17:26:14, AssetAdded, end,63, power,-54, address,0x65a7d6545128aadabeb21242f675903d45d73064, assetID,111, start,63
+17:26:14, OfferAccepted,,,,,,,,,,,,,,,, transPower,42, transStart,63, transEnd,63, offerID,55, assetID,95, price,1
+17:26:14, FinancialAdded, address,0x65a7d6545128aadabeb21242f675903d45d73064, amount,100
+17:26:15, AssetAdded, end,64, power,-96, address,0x65a7d6545128aadabeb21242f675903d45d73064, assetID,112, start,64
+17:26:15, FinancialAdded, address,0x94e10cf70431c5585df7669f74c887e46b63113d, amount,100
+17:26:15, AssetAdded, end,64, power,-66, address,0x94e10cf70431c5585df7669f74c887e46b63113d, assetID,113, start,64
+17:26:15, FinancialAdded, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, amount,100
+17:26:15, AssetAdded, end,64, power,-74, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, assetID,114, start,64
+17:26:15, FinancialAdded, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, amount,100
+17:26:15, AssetAdded, end,64, power,-94, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, assetID,115, start,64
+17:26:15, FinancialAdded, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, amount,100
+17:26:15, AssetAdded, end,64, power,-80, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, assetID,116, start,64
+17:26:15, FinancialAdded, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, amount,100
+17:26:15, AssetAdded, end,64, power,-71, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, assetID,117, start,64
+17:26:15, FinancialAdded, address,0x5004409ac83cae962cceb49cf7365325d1710584, amount,100
+17:26:15, AssetAdded, end,64, power,-93, address,0x5004409ac83cae962cceb49cf7365325d1710584, assetID,118, start,64
+17:26:15, FinancialAdded, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, amount,100
+17:26:15, AssetAdded, end,64, power,257, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,119, start,64
+17:26:15, FinancialAdded, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, amount,100
+17:26:15, AssetAdded, end,64, power,677, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,120, start,64
+17:26:20, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,257, start,64, end,64, price,1, offerID,57, assetID,119
+17:26:20, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,677, start,64, end,64, price,1, offerID,58, assetID,120
+17:26:33, AssetAdded, end,64, power,164, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,121, start,64
+17:26:33, OfferAccepted,,,,,,,,,,,,,,,, transPower,93, transStart,64, transEnd,64, offerID,57, assetID,118, price,1
+17:26:33, AssetAdded, end,64, power,597, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,122, start,64
+17:26:33, OfferAccepted,,,,,,,,,,,,,,,, transPower,80, transStart,64, transEnd,64, offerID,58, assetID,116, price,1
+17:26:40, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,164, start,64, end,64, price,1, offerID,59, assetID,121
+17:26:40, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,597, start,64, end,64, price,1, offerID,60, assetID,122
+17:26:47, AssetAdded, end,64, power,93, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,123, start,64
+17:26:47, OfferAccepted,,,,,,,,,,,,,,,, transPower,71, transStart,64, transEnd,64, offerID,59, assetID,117, price,1
+17:26:47, AssetAdded, end,64, power,503, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,124, start,64
+17:26:47, OfferAccepted,,,,,,,,,,,,,,,, transPower,94, transStart,64, transEnd,64, offerID,60, assetID,115, price,1
+17:26:48, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,93, start,64, end,64, price,1, offerID,61, assetID,123
+17:26:48, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,503, start,64, end,64, price,1, offerID,62, assetID,124
+17:27:08, AssetAdded, end,64, power,-3, address,0x65a7d6545128aadabeb21242f675903d45d73064, assetID,125, start,64
+17:27:08, OfferAccepted,,,,,,,,,,,,,,,, transPower,93, transStart,64, transEnd,64, offerID,61, assetID,112, price,1
+17:27:08, AssetAdded, end,64, power,429, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,126, start,64
+17:27:08, OfferAccepted,,,,,,,,,,,,,,,, transPower,74, transStart,64, transEnd,64, offerID,62, assetID,114, price,1
+17:27:14, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,429, start,64, end,64, price,1, offerID,63, assetID,126
+17:27:19, AssetAdded, end,64, power,363, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,127, start,64
+17:27:19, OfferAccepted,,,,,,,,,,,,,,,, transPower,66, transStart,64, transEnd,64, offerID,63, assetID,113, price,1
+17:27:24, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,363, start,64, end,64, price,1, offerID,64, assetID,127
+17:27:37, AssetAdded, end,64, power,360, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,128, start,64
+17:27:37, OfferAccepted,,,,,,,,,,,,,,,, transPower,3, transStart,64, transEnd,64, offerID,64, assetID,125, price,1
+17:27:52, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,360, start,64, end,64, price,1, offerID,65, assetID,128
+17:27:52, FinancialAdded, address,0x65a7d6545128aadabeb21242f675903d45d73064, amount,100
+17:27:52, AssetAdded, end,65, power,-96, address,0x65a7d6545128aadabeb21242f675903d45d73064, assetID,129, start,65
+17:27:52, FinancialAdded, address,0x94e10cf70431c5585df7669f74c887e46b63113d, amount,100
+17:27:52, AssetAdded, end,65, power,-65, address,0x94e10cf70431c5585df7669f74c887e46b63113d, assetID,130, start,65
+17:27:52, FinancialAdded, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, amount,100
+17:27:53, AssetAdded, end,65, power,-73, address,0xd8dbf4187fbd5fb960eb89782a6ef8bc0ac3afaf, assetID,131, start,65
+17:27:53, FinancialAdded, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, amount,100
+17:27:53, AssetAdded, end,65, power,-93, address,0xdcb00d44db5fdd64779acf99c362a4125bb78292, assetID,132, start,65
+17:27:53, FinancialAdded, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, amount,100
+17:27:53, AssetAdded, end,65, power,-79, address,0x823e84804b0f5b9e1a0f1ef474d3cb1a6578d4b4, assetID,133, start,65
+17:27:53, FinancialAdded, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, amount,100
+17:27:53, AssetAdded, end,65, power,-70, address,0x30112d0e2cb5503c43686a4ffb5b67c92d4dcc1f, assetID,134, start,65
+17:27:53, FinancialAdded, address,0x5004409ac83cae962cceb49cf7365325d1710584, amount,100
+17:27:53, AssetAdded, end,65, power,-92, address,0x5004409ac83cae962cceb49cf7365325d1710584, assetID,135, start,65
+17:27:53, FinancialAdded, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, amount,100
+17:27:53, AssetAdded, end,65, power,245, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,136, start,65
+17:27:53, FinancialAdded, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, amount,100
+17:27:53, AssetAdded, end,65, power,647, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,137, start,65
+17:28:02, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,245, start,65, end,65, price,1, offerID,66, assetID,136
+17:28:02, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,647, start,65, end,65, price,1, offerID,67, assetID,137
+17:28:20, AssetAdded, end,65, power,149, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,138, start,65
+17:28:20, OfferAccepted,,,,,,,,,,,,,,,, transPower,96, transStart,65, transEnd,65, offerID,66, assetID,129, price,1
+17:28:20, AssetAdded, end,65, power,574, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,139, start,65
+17:28:20, OfferAccepted,,,,,,,,,,,,,,,, transPower,73, transStart,65, transEnd,65, offerID,67, assetID,131, price,1
+17:28:30, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,149, start,65, end,65, price,1, offerID,68, assetID,138
+17:28:30, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,574, start,65, end,65, price,1, offerID,69, assetID,139
+17:28:35, AssetAdded, end,65, power,84, address,0xc493ed4928de34469406de6aeee6489fec4c3bd4, assetID,140, start,65
+17:28:35, OfferAccepted,,,,,,,,,,,,,,,, transPower,65, transStart,65, transEnd,65, offerID,68, assetID,130, price,1
+17:28:35, AssetAdded, end,65, power,504, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,141, start,65
+17:28:35, OfferAccepted,,,,,,,,,,,,,,,, transPower,70, transStart,65, transEnd,65, offerID,69, assetID,134, price,1
+17:28:56, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,84, start,65, end,65, price,1, offerID,70, assetID,140
+17:28:56, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,504, start,65, end,65, price,1, offerID,71, assetID,141
+17:29:00, AssetAdded, end,65, power,-8, address,0x5004409ac83cae962cceb49cf7365325d1710584, assetID,142, start,65
+17:29:00, OfferAccepted,,,,,,,,,,,,,,,, transPower,84, transStart,65, transEnd,65, offerID,70, assetID,135, price,1
+17:29:00, AssetAdded, end,65, power,425, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,143, start,65
+17:29:00, OfferAccepted,,,,,,,,,,,,,,,, transPower,79, transStart,65, transEnd,65, offerID,71, assetID,133, price,1
+17:29:16, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,425, start,65, end,65, price,1, offerID,72, assetID,143
+17:29:16, FinancialAdded, address,0x65a7d6545128aadabeb21242f675903d45d73064, amount,100
+17:29:28, AssetAdded, end,65, power,417, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,148, start,65
+17:29:28, OfferAccepted,,,,,,,,,,,,,,,, transPower,8, transStart,65, transEnd,65, offerID,72, assetID,142, price,1
+17:29:34, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,417, start,65, end,65, price,1, offerID,73, assetID,148
+17:29:43, AssetAdded, end,65, power,324, address,0xbe204032c85eca5fa322d1fe81b3d9668dd61c8f, assetID,149, start,65
+17:29:43, OfferAccepted,,,,,,,,,,,,,,,, transPower,93, transStart,65, transEnd,65, offerID,73, assetID,132, price,1
+17:29:50, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, power,324, start,65, end,65, price,1, offerID,74, assetID,149
+
+20:52:02, FinancialAdded, address,0x98f87310288dd24dc2db6e9b12af54fdf4a844f8, amount,10000
+20:52:02, AssetAdded, start,66, address,0x98f87310288dd24dc2db6e9b12af54fdf4a844f8, power,-95, assetID,0, end,66
+20:52:02, FinancialAdded, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, amount,10000
+20:52:02, FinancialAdded, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, amount,10000
+20:52:02, AssetAdded, start,66, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,615, assetID,1, end,66
+20:52:02, AssetAdded, start,66, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,233, assetID,2, end,66
+20:52:02, FinancialAdded, address,0x760e95d827a9a10db45b9a9f5a99c4189a67417b, amount,10000
+20:52:02, AssetAdded, start,66, address,0x760e95d827a9a10db45b9a9f5a99c4189a67417b, power,-92, assetID,3, end,66
+20:52:02, FinancialAdded, address,0xc6e946f5504ed44590e7a3d1491b10288282c1a5, amount,10000
+20:52:02, AssetAdded, start,66, address,0xc6e946f5504ed44590e7a3d1491b10288282c1a5, power,-91, assetID,4, end,66
+20:52:02, FinancialAdded, address,0xa286345051e067bac7eccc708adaf7f3330710ae, amount,10000
+20:52:03, AssetAdded, start,66, address,0xa286345051e067bac7eccc708adaf7f3330710ae, power,-79, assetID,5, end,66
+20:52:03, FinancialAdded, address,0xa4a9fdd3263ac011f5a1e91b213be36bb9f00b58, amount,10000
+20:52:03, FinancialAdded, address,0x9f69179769f50ee9b4b84b8daeb22a3d2120ee13, amount,10000
+20:52:03, AssetAdded, start,66, address,0xa4a9fdd3263ac011f5a1e91b213be36bb9f00b58, power,-69, assetID,6, end,66
+20:52:03, AssetAdded, start,66, address,0x9f69179769f50ee9b4b84b8daeb22a3d2120ee13, power,-65, assetID,7, end,66
+20:52:03, FinancialAdded, address,0x95b8a273c28d9c8e263152f790d540a7f7444888, amount,10000
+20:52:03, AssetAdded, start,66, address,0x95b8a273c28d9c8e263152f790d540a7f7444888, power,-73, assetID,8, end,66
+20:52:09, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,2, power,233, start,66, offerID,0, price,1, end,66
+20:52:09, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,1, power,615, start,66, offerID,1, price,1, end,66
+20:52:35, AssetAdded, start,66, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,141, assetID,9, end,66
+20:52:35, OfferAccepted,,,,,,,,,,,,,,,, transEnd,66, assetID,3, transStart,66, offerID,0, price,1, transPower,92
+20:52:35, AssetAdded, start,66, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,520, assetID,10, end,66
+20:52:35, OfferAccepted,,,,,,,,,,,,,,,, transEnd,66, assetID,0, transStart,66, offerID,1, price,1, transPower,95
+20:52:38, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,10, power,520, start,66, offerID,2, price,1, end,66
+20:52:38, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,9, power,141, start,66, offerID,3, price,1, end,66
+20:52:45, AssetAdded, start,66, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,447, assetID,11, end,66
+20:52:45, OfferAccepted,,,,,,,,,,,,,,,, transEnd,66, assetID,8, transStart,66, offerID,2, price,1, transPower,73
+20:52:45, AssetAdded, start,66, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,76, assetID,12, end,66
+20:52:46, OfferAccepted,,,,,,,,,,,,,,,, transEnd,66, assetID,7, transStart,66, offerID,3, price,1, transPower,65
+20:52:55, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,12, power,76, start,66, offerID,4, price,1, end,66
+20:52:55, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,11, power,447, start,66, offerID,5, price,1, end,66
+20:53:00, AssetAdded, start,66, address,0xa286345051e067bac7eccc708adaf7f3330710ae, power,-3, assetID,13, end,66
+20:53:00, OfferAccepted,,,,,,,,,,,,,,,, transEnd,66, assetID,5, transStart,66, offerID,4, price,1, transPower,76
+20:53:00, AssetAdded, start,66, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,356, assetID,14, end,66
+20:53:00, OfferAccepted,,,,,,,,,,,,,,,, transEnd,66, assetID,4, transStart,66, offerID,5, price,1, transPower,91
+20:53:09, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,14, power,356, start,66, offerID,6, price,1, end,66
+20:53:25, AssetAdded, start,66, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,353, assetID,15, end,66
+20:53:25, OfferAccepted,,,,,,,,,,,,,,,, transEnd,66, assetID,13, transStart,66, offerID,6, price,1, transPower,3
+20:53:29, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,15, power,353, start,66, offerID,7, price,1, end,66
+20:53:30, AssetAdded, start,67, address,0x98f87310288dd24dc2db6e9b12af54fdf4a844f8, power,-94, assetID,16, end,67
+20:53:30, AssetAdded, start,67, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,581, assetID,17, end,67
+20:53:30, AssetAdded, start,67, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,220, assetID,18, end,67
+20:53:30, AssetAdded, start,67, address,0x760e95d827a9a10db45b9a9f5a99c4189a67417b, power,-92, assetID,19, end,67
+20:53:30, AssetAdded, start,67, address,0xc6e946f5504ed44590e7a3d1491b10288282c1a5, power,-91, assetID,20, end,67
+20:53:30, AssetAdded, start,67, address,0xa286345051e067bac7eccc708adaf7f3330710ae, power,-78, assetID,21, end,67
+20:53:30, AssetAdded, start,67, address,0xa4a9fdd3263ac011f5a1e91b213be36bb9f00b58, power,-69, assetID,22, end,67
+20:53:30, AssetAdded, start,67, address,0x9f69179769f50ee9b4b84b8daeb22a3d2120ee13, power,-64, assetID,23, end,67
+20:53:30, AssetAdded, start,67, address,0x95b8a273c28d9c8e263152f790d540a7f7444888, power,-72, assetID,24, end,67
+20:53:43, AssetAdded, start,66, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,284, assetID,25, end,66
+20:53:43, OfferAccepted,,,,,,,,,,,,,,,, transEnd,66, assetID,6, transStart,66, offerID,7, price,1, transPower,69
+20:53:47, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,18, power,220, start,67, offerID,8, price,1, end,67
+20:53:47, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,17, power,581, start,67, offerID,9, price,1, end,67
+20:54:03, AssetAdded, start,67, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,126, assetID,26, end,67
+20:54:03, OfferAccepted,,,,,,,,,,,,,,,, transEnd,67, assetID,16, transStart,67, offerID,8, price,1, transPower,94
+20:54:03, AssetAdded, start,67, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,509, assetID,27, end,67
+20:54:03, OfferAccepted,,,,,,,,,,,,,,,, transEnd,67, assetID,24, transStart,67, offerID,9, price,1, transPower,72
+20:54:16, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,26, power,126, start,67, offerID,10, price,1, end,67
+20:54:16, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,27, power,509, start,67, offerID,11, price,1, end,67
+20:54:30, AssetAdded, start,67, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,34, assetID,28, end,67
+20:54:30, OfferAccepted,,,,,,,,,,,,,,,, transEnd,67, assetID,19, transStart,67, offerID,10, price,1, transPower,92
+20:54:30, AssetAdded, start,67, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,445, assetID,29, end,67
+20:54:30, OfferAccepted,,,,,,,,,,,,,,,, transEnd,67, assetID,23, transStart,67, offerID,11, price,1, transPower,64
+20:54:44, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,29, power,445, start,67, offerID,12, price,1, end,67
+20:54:44, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,28, power,34, start,67, offerID,13, price,1, end,67
+20:54:51, AssetAdded, start,67, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,354, assetID,30, end,67
+20:54:51, OfferAccepted,,,,,,,,,,,,,,,, transEnd,67, assetID,20, transStart,67, offerID,12, price,1, transPower,91
+20:54:51, AssetAdded, start,67, address,0xa4a9fdd3263ac011f5a1e91b213be36bb9f00b58, power,-35, assetID,31, end,67
+20:54:51, OfferAccepted,,,,,,,,,,,,,,,, transEnd,67, assetID,22, transStart,67, offerID,13, price,1, transPower,34
+20:55:00, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,30, power,354, start,67, offerID,14, price,1, end,67
+20:55:00, AssetAdded, start,68, address,0x98f87310288dd24dc2db6e9b12af54fdf4a844f8, power,-94, assetID,32, end,68
+20:55:00, AssetAdded, start,68, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,545, assetID,33, end,68
+20:55:00, AssetAdded, start,68, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,207, assetID,34, end,68
+20:55:00, AssetAdded, start,68, address,0x760e95d827a9a10db45b9a9f5a99c4189a67417b, power,-91, assetID,35, end,68
+20:55:00, AssetAdded, start,68, address,0xc6e946f5504ed44590e7a3d1491b10288282c1a5, power,-90, assetID,36, end,68
+20:55:00, AssetAdded, start,68, address,0xa286345051e067bac7eccc708adaf7f3330710ae, power,-78, assetID,37, end,68
+20:55:00, AssetAdded, start,68, address,0xa4a9fdd3263ac011f5a1e91b213be36bb9f00b58, power,-69, assetID,38, end,68
+20:55:00, AssetAdded, start,68, address,0x9f69179769f50ee9b4b84b8daeb22a3d2120ee13, power,-64, assetID,39, end,68
+20:55:00, AssetAdded, start,68, address,0x95b8a273c28d9c8e263152f790d540a7f7444888, power,-72, assetID,40, end,68
+20:55:15, AssetAdded, start,67, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,319, assetID,41, end,67
+20:55:15, OfferAccepted,,,,,,,,,,,,,,,, transEnd,67, assetID,31, transStart,67, offerID,14, price,1, transPower,35
+20:55:15, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,34, power,207, start,68, offerID,15, price,1, end,68
+20:55:15, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,33, power,545, start,68, offerID,16, price,1, end,68
+20:55:20, AssetAdded, start,68, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,129, assetID,42, end,68
+20:55:20, OfferAccepted,,,,,,,,,,,,,,,, transEnd,68, assetID,37, transStart,68, offerID,15, price,1, transPower,78
+20:55:20, AssetAdded, start,68, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,455, assetID,43, end,68
+20:55:20, OfferAccepted,,,,,,,,,,,,,,,, transEnd,68, assetID,36, transStart,68, offerID,16, price,1, transPower,90
+20:55:20, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,41, power,319, start,67, offerID,17, price,1, end,67
+20:55:25, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,42, power,129, start,68, offerID,18, price,1, end,68
+20:55:25, AssetAdded, start,67, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,241, assetID,44, end,67
+20:55:25, OfferAccepted,,,,,,,,,,,,,,,, transEnd,67, assetID,21, transStart,67, offerID,17, price,1, transPower,78
+20:55:25, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,43, power,455, start,68, offerID,19, price,1, end,68
+20:55:38, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,44, power,241, start,67, offerID,20, price,1, end,67
+20:55:38, AssetAdded, start,68, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,38, assetID,45, end,68
+20:55:38, OfferAccepted,,,,,,,,,,,,,,,, transEnd,68, assetID,35, transStart,68, offerID,18, price,1, transPower,91
+20:55:38, AssetAdded, start,68, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,361, assetID,46, end,68
+20:55:38, OfferAccepted,,,,,,,,,,,,,,,, transEnd,68, assetID,32, transStart,68, offerID,19, price,1, transPower,94
+20:55:46, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,45, power,38, start,68, offerID,21, price,1, end,68
+20:55:46, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,46, power,361, start,68, offerID,22, price,1, end,68
+20:56:01, AssetAdded, start,68, address,0x95b8a273c28d9c8e263152f790d540a7f7444888, power,-34, assetID,47, end,68
+20:56:01, OfferAccepted,,,,,,,,,,,,,,,, transEnd,68, assetID,40, transStart,68, offerID,21, price,1, transPower,38
+20:56:01, AssetAdded, start,68, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,292, assetID,48, end,68
+20:56:01, OfferAccepted,,,,,,,,,,,,,,,, transEnd,68, assetID,38, transStart,68, offerID,22, price,1, transPower,69
+20:56:08, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,48, power,292, start,68, offerID,23, price,1, end,68
+20:56:46, AssetAdded, start,68, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,228, assetID,49, end,68
+20:56:46, OfferAccepted,,,,,,,,,,,,,,,, transEnd,68, assetID,39, transStart,68, offerID,23, price,1, transPower,64
+20:56:46, AssetAdded, start,69, address,0x98f87310288dd24dc2db6e9b12af54fdf4a844f8, power,-93, assetID,50, end,69
+20:56:46, AssetAdded, start,69, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,508, assetID,51, end,69
+20:56:46, AssetAdded, start,69, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,193, assetID,52, end,69
+20:56:46, AssetAdded, start,69, address,0x760e95d827a9a10db45b9a9f5a99c4189a67417b, power,-91, assetID,53, end,69
+20:56:47, AssetAdded, start,69, address,0xc6e946f5504ed44590e7a3d1491b10288282c1a5, power,-90, assetID,54, end,69
+20:56:47, AssetAdded, start,69, address,0xa286345051e067bac7eccc708adaf7f3330710ae, power,-78, assetID,55, end,69
+20:56:47, AssetAdded, start,69, address,0xa4a9fdd3263ac011f5a1e91b213be36bb9f00b58, power,-68, assetID,56, end,69
+20:56:47, AssetAdded, start,69, address,0x9f69179769f50ee9b4b84b8daeb22a3d2120ee13, power,-64, assetID,57, end,69
+20:56:47, AssetAdded, start,69, address,0x95b8a273c28d9c8e263152f790d540a7f7444888, power,-71, assetID,58, end,69
+20:56:59, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,49, power,228, start,68, offerID,24, price,1, end,68
+20:56:59, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,51, power,508, start,69, offerID,25, price,1, end,69
+20:56:59, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,52, power,193, start,69, offerID,26, price,1, end,69
+20:57:12, AssetAdded, start,69, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,418, assetID,59, end,69
+20:57:12, OfferAccepted,,,,,,,,,,,,,,,, transEnd,69, assetID,54, transStart,69, offerID,25, price,1, transPower,90
+20:57:12, AssetAdded, start,69, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,102, assetID,60, end,69
+20:57:12, OfferAccepted,,,,,,,,,,,,,,,, transEnd,69, assetID,53, transStart,69, offerID,26, price,1, transPower,91
+20:57:12, AssetAdded, start,68, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,194, assetID,61, end,68
+20:57:12, OfferAccepted,,,,,,,,,,,,,,,, transEnd,68, assetID,47, transStart,68, offerID,24, price,1, transPower,34
+20:57:22, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,59, power,418, start,69, offerID,27, price,1, end,69
+20:57:22, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,61, power,194, start,68, offerID,28, price,1, end,68
+20:57:22, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,60, power,102, start,69, offerID,29, price,1, end,69
+20:57:28, AssetAdded, start,69, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,325, assetID,62, end,69
+20:57:28, OfferAccepted,,,,,,,,,,,,,,,, transEnd,69, assetID,50, transStart,69, offerID,27, price,1, transPower,93
+20:57:28, AssetAdded, start,69, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,38, assetID,63, end,69
+20:57:28, OfferAccepted,,,,,,,,,,,,,,,, transEnd,69, assetID,57, transStart,69, offerID,29, price,1, transPower,64
+20:57:36, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,63, power,38, start,69, offerID,30, price,1, end,69
+20:57:36, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,62, power,325, start,69, offerID,31, price,1, end,69
+20:57:47, AssetAdded, start,69, address,0x95b8a273c28d9c8e263152f790d540a7f7444888, power,-33, assetID,64, end,69
+20:57:47, OfferAccepted,,,,,,,,,,,,,,,, transEnd,69, assetID,58, transStart,69, offerID,30, price,1, transPower,38
+20:57:47, AssetAdded, start,69, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,257, assetID,65, end,69
+20:57:47, OfferAccepted,,,,,,,,,,,,,,,, transEnd,69, assetID,56, transStart,69, offerID,31, price,1, transPower,68
+20:57:55, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,65, power,257, start,69, offerID,32, price,1, end,69
+20:58:01, AssetAdded, start,69, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,179, assetID,66, end,69
+20:58:01, OfferAccepted,,,,,,,,,,,,,,,, transEnd,69, assetID,55, transStart,69, offerID,32, price,1, transPower,78
+20:58:01, AssetAdded, start,70, address,0x98f87310288dd24dc2db6e9b12af54fdf4a844f8, power,-92, assetID,67, end,70
+20:58:01, AssetAdded, start,70, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,469, assetID,68, end,70
+20:58:01, AssetAdded, start,70, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,178, assetID,69, end,70
+20:58:01, AssetAdded, start,70, address,0x760e95d827a9a10db45b9a9f5a99c4189a67417b, power,-90, assetID,70, end,70
+20:58:01, AssetAdded, start,70, address,0xc6e946f5504ed44590e7a3d1491b10288282c1a5, power,-89, assetID,71, end,70
+20:58:01, AssetAdded, start,70, address,0xa286345051e067bac7eccc708adaf7f3330710ae, power,-77, assetID,72, end,70
+20:58:01, AssetAdded, start,70, address,0xa4a9fdd3263ac011f5a1e91b213be36bb9f00b58, power,-67, assetID,73, end,70
+20:58:01, AssetAdded, start,70, address,0x9f69179769f50ee9b4b84b8daeb22a3d2120ee13, power,-63, assetID,74, end,70
+20:58:01, AssetAdded, start,70, address,0x95b8a273c28d9c8e263152f790d540a7f7444888, power,-71, assetID,75, end,70
+20:58:15, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,69, power,178, start,70, offerID,33, price,1, end,70
+20:58:15, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,66, power,179, start,69, offerID,34, price,1, end,69
+20:58:15, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,68, power,469, start,70, offerID,35, price,1, end,70
+20:58:21, AssetAdded, start,70, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,107, assetID,76, end,70
+20:58:21, OfferAccepted,,,,,,,,,,,,,,,, transEnd,70, assetID,75, transStart,70, offerID,33, price,1, transPower,71
+20:58:21, AssetAdded, start,69, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,146, assetID,77, end,69
+20:58:21, OfferAccepted,,,,,,,,,,,,,,,, transEnd,69, assetID,64, transStart,69, offerID,34, price,1, transPower,33
+20:58:22, AssetAdded, start,70, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,379, assetID,78, end,70
+20:58:22, OfferAccepted,,,,,,,,,,,,,,,, transEnd,70, assetID,70, transStart,70, offerID,35, price,1, transPower,90
+20:58:46, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,76, power,107, start,70, offerID,36, price,1, end,70
+20:58:46, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,77, power,146, start,69, offerID,37, price,1, end,69
+20:58:46, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,78, power,379, start,70, offerID,38, price,1, end,70
+20:58:54, AssetAdded, start,70, address,0x5708ed7420a3e6916877d889612a85f39cf99ccf, power,30, assetID,79, end,70
+20:58:54, OfferAccepted,,,,,,,,,,,,,,,, transEnd,70, assetID,72, transStart,70, offerID,36, price,1, transPower,77
+20:58:54, AssetAdded, start,70, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,290, assetID,80, end,70
+20:58:54, OfferAccepted,,,,,,,,,,,,,,,, transEnd,70, assetID,71, transStart,70, offerID,38, price,1, transPower,89
+20:59:03, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,79, power,30, start,70, offerID,39, price,1, end,70
+20:59:03, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,80, power,290, start,70, offerID,40, price,1, end,70
+20:59:11, AssetAdded, start,70, address,0xa4a9fdd3263ac011f5a1e91b213be36bb9f00b58, power,-37, assetID,81, end,70
+20:59:11, OfferAccepted,,,,,,,,,,,,,,,, transEnd,70, assetID,73, transStart,70, offerID,39, price,1, transPower,30
+20:59:11, AssetAdded, start,70, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,227, assetID,82, end,70
+20:59:11, OfferAccepted,,,,,,,,,,,,,,,, transEnd,70, assetID,74, transStart,70, offerID,40, price,1, transPower,63
+20:59:17, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,82, power,227, start,70, offerID,41, price,1, end,70
+20:59:22, AssetAdded, start,70, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,190, assetID,83, end,70
+20:59:22, OfferAccepted,,,,,,,,,,,,,,,, transEnd,70, assetID,81, transStart,70, offerID,41, price,1, transPower,37
+20:59:32, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,83, power,190, start,70, offerID,42, price,1, end,70
+20:59:41, AssetAdded, start,70, address,0x526d9da3d105b09de3d55c4c624db99153a77fb2, power,98, assetID,87, end,70
+20:59:41, OfferAccepted,,,,,,,,,,,,,,,, transEnd,70, assetID,67, transStart,70, offerID,42, price,1, transPower,92
+20:59:50, OfferPosted,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, assetID,87, power,98, start,70, offerID,45, price,1, end,70
+
