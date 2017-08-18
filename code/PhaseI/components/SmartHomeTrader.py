@@ -6,7 +6,7 @@ from const import *
 from EnergyAsset import EnergyAsset
 
 BASE_PRICE = 1
-START_INTERVAL = 26
+START_INTERVAL = 66
 PREDICTION_HORIZON = 1
 
 class SmartHomeTrader: 
@@ -18,8 +18,10 @@ class SmartHomeTrader:
     self.cons_assets = {}
     # track all offers
     self.offers = {}
-    # create anonymous accounts
+    # get anonymous accounts
     self.addresses = self.get_addresses(num_addresses)
+    for address in self.addresses:
+      self.withdraw_assets(address, None, 10000)
     # predict net production and request assets for trading 
     self.next_interval = START_INTERVAL
     for timestep in range(PREDICTION_HORIZON):
@@ -37,7 +39,7 @@ class SmartHomeTrader:
     # request based on predicted net production
     asset = EnergyAsset(self.net_production_predictor(self.next_interval), self.next_interval, self.next_interval) 
     self.next_interval += 1
-    self.withdraw_assets(address, asset, 100)
+    self.withdraw_assets(address, asset, 0)
     # TODO: verify success and retry on failure
     
   def asset_added(self, address, assetID, asset):
