@@ -1,0 +1,263 @@
+% Middleware 2017 Industry Track
+
+
+\documentclass[sigplan]{acmart}
+
+\usepackage{booktabs} % For formal tables
+
+\usepackage{tikz}
+\usetikzlibrary{shadows}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.10}
+
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{colortbl}
+\definecolor{Gray}{gray}{0.90}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+
+% Copyright
+%\setcopyright{none}
+\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+% \setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+% DOI
+% \acmDOI{10.475/123_4}
+
+% ISBN
+% \acmISBN{123-4567-24-567/08/06}
+
+%Conference
+\acmConference[Middleware'17]{ACM/IFIP/USENIX Middleware conference}
+              {December 2017}{Las Vegas, Nevada USA} 
+\acmYear{2017}
+\copyrightyear{2017}
+
+\usepackage[textsize=tiny, textwidth=1.3cm]{todonotes}
+\newcommand{\TODO}[1]{\todo[inline]{#1}}
+\newcommand{\Abhishek}[1]{\todo[color=yellow!50, linecolor=black!50]{\textbf{Abhishek}: #1}}
+\newcommand{\Karla}[1]{\todo[color=green!50, linecolor=black!50]{\textbf{Karla}: #1}}
+% \acmPrice{15.00}
+
+% \acmBadgeL[http://ctuning.org/ae/ppopp2016.html]{ae-logo}
+% \acmBadgeR[http://ctuning.org/ae/ppopp2016.html]{ae-logo}
+
+\begin{document}
+%\title{Middleware Perspectives on IoT-Based Transactive Energy Systems using Distributed Ledgers
+%}
+\title{Privacy-Preserving Platform for Transactive Energy Systems}
+
+
+\author{Karla Kvaternik}
+\affiliation{\institution{Siemens Corporate Technology}}
+\email{karla.kvaternik@siemens.com}
+
+\author{Monika Sturm}
+\affiliation{\institution{Siemens Corporate Technology}}
+\email{monika.sturm@siemens.com}
+
+
+\author{Martin Lehofer}
+\affiliation{\institution{Siemens Corporate Technology}}
+\email{martin.lehofer@siemens.com}
+
+\author{Aron Laszka}
+\affiliation{\institution{Vanderbilt University}}
+\email{aron.laszka@vanderbilt.edu}
+
+\author{Michael Walker}
+\affiliation{\institution{Vanderbilt University}}
+\email{michael.a.walker.1@vanderbilt.edu}
+
+\author{Abhishek Dubey}
+\affiliation{\institution{Vanderbilt University}}
+\email{abhishek.dubey@vanderbilt.edu}
+
+% \author{Gabor Karsai}
+% \affiliation{\institution{Vanderbilt University}}
+% \email{gabor.karsai@vanderbilt.edu}
+
+
+
+
+% The default list of authors is too long for headers}
+\renewcommand{\shortauthors}{K. Kvaternik et al.}
+
+
+
+
+
+\begin{abstract}
+Transactive energy systems (TES) are emerging as a transformative solution for the problems faced by distribution system operators due to an increase in the use of distributed energy resources and a rapid acceleration in renewable energy generation. These, on one hand, pose a decentralized power system controls problem, requiring strategic microgrid control to maintain stability for the community and for the utility. On the other hand, they require robust financial markets operating on distributed software platforms that preserve privacy. In this paper, we describe the implementation of a novel blockchain-based transactive energy system. We outline the key requirements and motivation of this platform as well as outline the lessons learned and provide a description of key architectural components of this system.
+\end{abstract}
+
+
+\keywords{Transactive energy platforms, blockchain, privacy, security, safety, smart contracts}
+
+\maketitle
+
+\section{Introduction}
+%\Abhishek{We need to reduce the introduction to one page + 1 paragraph}
+%\Karla{Okay, will do. We can edit the intro once more of the paper gets written - i.e. we'll gear it more to the actual content}
+%It is widely accepted that the electricity industry is undergoing an inevitable paradigm shift away from centralized, monolithic business models characterized by bulk generation and one-way delivery, toward a decentralized model in which end users play a more active role in both production and consumption \cite{NIST_TE}. 
+
+Transactive energy systems (TES) have emerged as an anticipated outcome of the shift in electricity industry, away from centralized, monolithic business models characterized by bulk generation and one-way delivery, toward a decentralized model in which end users play a more active role in both production and consumption \cite{NIST_TE}. %There are a number of well-documented factors contributing to this shift, including the increasing deterioration and fragility of the current grid, the regulatory and public mandate for environmental awareness, and general social trends toward the democratization of services as exemplified by the "sharing economy" \cite{TheGrid}.
+
+The GridWise Architecture Council defines TES as ``a system of economic and control mechanisms that allows the dynamic balance of supply and demand across the entire electrical infrastructure using value as a key operational parameter'' \cite{Gridwise}. The vision is to realize a user-centric system that allows residential consumers and prosumers (consumers that also produce energy) to trade energy futures directly in a local, open, peer-to-peer (P2P) market at the distribution level. 
+
+A key component of any TES is a transaction management platform (TMP) that handles all market clearing functions in a way that balances supply and demand in the local market. We consider the problem of designing and implementing a TMP that provides the technical ingredients essential to the realization of a TES. The proposed TMP will implement market mechanisms as smart contracts on a blockchain system \cite{MasteringBlockchain}. We focus on the design of middleware that enables secure, reliable and timely communication between various TMP modules, sensors and the blockchain system. We highlight the architectural and protocol specifications of our middleware that ensure \emph{privacy} and \emph{security} for participants in the TES, as well as \emph{safety} for the TES. 
+
+
+
+
+
+\subsection{Problem Setting}
+
+We consider settings involving grid-connected microgrids, or multi-feeder distribution systems comprised primarily of residential loads. The main actors are the consumers, prosumers, and a distribution system operator (DSO). The physical elements of our system include all of the basic components typically found in a microgrid, as described, for example, in Section 3 of \cite{LBNLReport}. The microgrid network contains a number of prosumer-operated distributed energy resources (DERs) such as rooftop solar, batteries or flexible loads capable of demand/response.
+%These DERs are assumed to be equipped with standard inverters and primary controllers that regulate their voltage and frequency outputs. 
+
+
+
+We assume that the microgrid is equipped with an advanced metering infrastructure consisting of TE-enabled smart meters. In addition to the standard functionalities of smart meters i.e. the ability to measure line voltages, power consumption and production, and communicate these to the distribution system operator (DSO), TE-enabled smart meters are capable of communicating with other smart meters, have substantial on-board computational resources, and are capable of accessing the Internet and cloud computing services as needed. 
+
+
+
+
+
+
+
+The assumed capabilities of these TE-enabled meters allow them to form a blockchain (BC) system executing a market mechanism as a smart contract \cite{Szabo97}. Examples of BC systems capable of executing smart contracts include Ethereum \cite{Buterin2013} and Hyperledger Fabric \cite{HyperledgerFabric16}.
+%In essence, a blockchain is a decentralized (i.e. P2P) database whose state is replicated at each node participating in the BC system. The nodes (i.e. smart meters) execute an interaction protocol that includes elements such as a consensus mechanism, a transaction validation incentivisation mechanism and a cryptographic encryption and authentication subsystem \cite{MasteringBlockchain}. 
+
+
+There are several examples of communities where this problem setting applies, and the equipment described is already deployed. These include the well-known Brookly Microgrid Project \cite{BrooklynMicrogrid} and the Sterling Ranch learning community currently under development \cite{SterlingRanch}. 
+
+
+\subsection{Blockchain in TES}
+\Karla{We can shorten the first paragraph significantly if needed}
+There are a number of appealing properties of BC systems that motivate their use in a TMP. Firstly, BC technology enables the digital representation of energy and financial assets and their secure transfer from one set of parties to another. By design, the security of this value transfer is guaranteed by the interaction protocol itself, and obviates the need for trusted transaction intermediaries. Secondly, the execution of smart contracts -- i.e. code that captures the market logic and participant roles -- is automated and guaranteed. A TE-enabled smart meter participating in the blockchain network can make automated trades on behalf of the consumer or prosumer whose assets it represents. The combination of these properties is expected to reduce the complexity and cost of market clearing, settlement and billing, and thus to facilitate the high throughput of microtransactions that is anticipated in local distribution markets. Thirdly, the blockchain constitutes an immutable, complete, and fully auditable record of all transactions that have ever occurred in the BC system. These properties ensure market transparency, as well as the availability of detailed market, load profile and grid utilization data. In combination with cloud and edge computing technologies, this data can enable fine-grained analytics and optimization of grid operations, as well as accurate pricing of marginal losses. Finally, the decentralized maintenance of the blockchain ensures robustness by eliminating singular points of failure. 
+
+Several private initiatives have already considered the implementation of blockchain-based TMPs \cite{PowerLedger}, \cite{Lo3Patent}, \cite{TenneT}. However, most of these initiatives do not consider the impact of the electricity market on the controller responsible for the stability of the system, due to the expectation that the bulk grid will maintain system stability. Furthermore, although these solutions present interesting case studies, they provide only a subset of services, which do not affect the overall power flow on the grid in a significant way. For example, they do not address the security, stability and privacy requirements, which we describe in next section.
+
+
+
+\subsection{Contributions}
+The specific contribution of this paper are (a) proposal of a set of TES requirements extracted from our experience, (b) architectural and protocol specification and implementation of a new blockchain-based middleware called PETra, first introduced in  \cite{Laszka17}.  In particular, the high volumes of microtransactions in the envisioned TES pose challenges related to real-time communication of sensor data, request-reply messaging between TMP modules, and other signaling that occurs outside of the blockchain. We will refer to these as ``out of band communications,'' and show how their secure, timely handling is essential to meeting many of the proposed TES requirements.  
+
+The outline of this paper is as follows. Section \ref{sec:requirements} describe the requirements for the transactive energy systems...
+
+
+
+
+
+
+
+%In this work we propose a set of TES requirements and we focus on the design of middleware that allows TEP implementations to meet these requirements in the typical IoT context of TES. Building on the work in \cite{Laszka17}, we detail the implementation of the architectural components of the TEP conceptualized therein.
+
+
+
+% TODO:
+% -- high volumes of microtransactions pose challenges related to real-time communication and data handling
+% -- what would need computational resource allocation? in this application? i,e. in BC, users are self-interested, can we even assign to individual nodes computation of parts of the smart contract? Multicast management modules for sharing of data?? 
+
+\section{TES Trading Scenario and Requirements}
+\label{sec:requirements}
+
+We envision a market that allows local prosumers  to trade with each other as well as to bid for resources located on the transmission system (from the DSO), supporting imperfect matches of the bids and asks, while ensuring complete privacy from each other. Such a system is  above and beyond anything that has been proposed to date, and as a result, the information technology backbone required to allow such trades needs to be developed \cite{7747895,7725894}.
+%rigorously address system requirements such as security, stability and privacy. 
+
+
+In this market, a prosumer bids to consume energy in set time intervals for a number of consecutive intervals. The bids could be positive or negative -- a positive bid implies that the prosumer has excess energy to offer to the market, while a negative bid implies that the prosumer wants to consume energy. Initially, the prosumer determines her power requirement based on historical power usage data. These bids are aggregated along the residential feeder and at the microgrid level, if available; that is, all prosumers that are located downstream from a protection device would have their bids aggregated together. Note that this has to be done in a way that preserves privacy, and prevents the submission of unrealistic power profiles. Any local trade settlement can occur in the next few intervals, leaving the aggregated bids to be used by the Distribution System Operator (DSO) as planned-ahead bids. At this time, the DSO bids with the bulk producers of energy that have well-defined convex, cost functions \cite{wood2012power}. Next, an algorithm such as the distributed incremental consensus described in \cite{zhang2012convergence} can be used to determine the optimal dispatch of each generator.  Once the algorithm converges, the DSO can set the price for the next intervals in the market. This setup is advantageous for the distribution system operator as they can plan ahead with a stable predicted net-demand. However, these transactions can  affect the feeder power flow and power quality, and therefore, the transactions must be more closely scrutinized to ensure stable system operation. Based on this description, we consider a number of TES requirements, and describe how our proposed architecture addresses them. \Abhishek{Please add a few sentences about the real-world deployment like sterling ranch and LO3}
+%\Abhishek{we can just describe how we are meeting the essential requirements and not describe the general requirements}
+
+
+\paragraph{Operational Safety}
+The platform should include components that ensure the stability and resiliency of the physical system operation. In the context of grid-connected microgrids, system stability refers to real-time balancing -- i.e. the system's ability to dynamically match supply and demand as closely as possible, and a tendency to drive the difference between supply and demand to zero under small perturbations. Resiliency refers to the system's ability to react to contingencies and recover from faults. 
+
+\paragraph{Market and Transactional Security}
+The TMP should include components that ensure the protection of consumer interests, as well as those of the DSO. Consumer interests include being billed correctly based on energy prices set by the DSO and the measurements made by the smart meters, and being billed fairly by the DSO. The platform shall include provisions for limiting the financial impact of compromised or faulty nodes on both the DSO and the participant. The DSO shall be allowed to exercise access control that may ban malicious or negligent trading activity that can destabilize the microgrid. Negligent trading may include producers who commit to a certain production level and fail to deliver. Conversely, prosumers shall be protected from unjust access control and market manipulation. Transactional security is assured by the TMP's ability to guarantee the execution of contractual obligations.
+\Karla{Perhaps there should be a reputation system}
+
+\paragraph{Cyber-Physical Security}
+The TMP should have provisions for preventing or detecting negligent or malicious interference with smart meters - i.e. the adversarial or natural attacks against the interface between the physical world and the blockchain; data logged shall be securely communicated to the DSO and requests made by the meter on behalf of the prosumer shall be accurately recorded on the blockchain. 
+
+\paragraph{Privacy}
+Information such as the amount of energy produced, consumed, bought or sold by any prosumer should be available only to the DSO and the essential market functions of the TMP. All bids and asks, and the matching thereof should remain anonymous. A participant's energy usage patterns and personal information such as financial standing shall not be inferable from the participant's trading activity\footnote{Inference of energy usage patterns can be exploited by inferring the presence or absence of a person in their home, for example.}.
+
+
+
+
+
+
+
+%\Karla{Removed the section on general requirements}
+
+% \section{Industrial Case Study}
+% To illustrate the implementation of our platform, we consider a simplified test case involving four smart homes. Each home is assumed to be equipped with a TE-enabled smart meter 
+
+
+% - Describe the problem in context of a real deployment
+
+% - Describe the 4 household use case
+
+% - describe the constraints (nodal-pricing) and pricing fluctuations and their affect on system stability.
+
+\section{Analysis of State of the Art}
+%\Abhishek{This section has to describe why state of the art mechanisms are not enough - I can write this.}
+The TMP system requires peer-to-peer messaging, enabling the stakeholder to receive all the required `bid' messages, concerning a specific ask within a given deadline. The stakeholder can choose to inform the bidders about the current reserves or the best bid so that the bids can be reset. Thereafter, the stakeholder can choose to accept a bid and inform the bidding peer about the acceptance.  This last step can either be evaluated in a centralized manner or using a decentralized voting mechanism. Once the bid has been accepted, both parties must record the transaction into a distributed ledger in a way that allows everyone in the community to agree that the transaction took place. Once  consensus has been established, the transaction is deemed successful, and we  say that the market has cleared. In the context of this workflow, we next describe the state of the art across the two dimensions of Application and Communication platforms in smart grid and distributed transaction management platform for smart grid.
+
+\paragraph{Application Platforms for Smart Grid} As power applications move from centralized to distributed processing paradigms, there seems to be two approaches to dividing up the workload. One approach is to consider each remote computing entity (or node) as an \textit{agent} \cite{underfreq-2015} or \textit{actor} \cite{agha1985actors} \cite{LeeNiddodiSrivastavaBakken2016} that communicates via messages with other agents or actors and focuses on specific grid issues, such as state estimation, remedial action schemes, and load shedding. The other approach utilizes each remote computing entity as an open application platform that can host multiple applications managing varied aspects of the local grid  \cite{freedmSysArch2014}. Both approaches utilize messaging between nodes and leverage a common set of services on each node to handle distributed coordination concerns. \cite{LeeNiddodiSrivastavaBakken2016} calls for group membership, leader election, voting, group consensus or agreement on data values, mutual exclusion on access to shared resources, and multicast communication with same order and atomic properties. Both \cite{underfreq-2015} and \cite{LeeNiddodiSrivastavaBakken2016} prototype their approaches using MATLAB toolkits with \cite{LeeNiddodiSrivastavaBakken2016} utilizing the Akka Java toolkit to model actors. \cite{Meng2010} developed simulations using the SimPowerSystem software in the Simulink environment. Our application platform called Resilient Information Architecture Platform for Smart Grid (RIAPS)\footnote{\url{https://riaps.isis.vanderbilt.edu/}} \cite{riaps1} provides actor and component based abstraction and provides support for deploying algorithms on devices across the network\footnote{RIAPS uses zeroMQ \cite{hintjens2010zeromq} and captnproto \cite{varda2015cap} to manage the communication layer} and solve problems collaboratively, by providing micro-second level time synchronization \cite{riaps2}, failure based reconfiguration \cite{dubey2017resilience} and group creation and coordination services (still under active development) in addition to the services described in \cite{LeeNiddodiSrivastavaBakken2016} . It is capable of handling different communication and running implemented algorithms in real-time.
+
+
+
+\paragraph{Transaction Management Platforms for Smart grid} 
+Transaction management systems require communication as well as trading mechanisms that provide the capability to match the bids and asks. Additionally, they must provide fairness and integrity assurances.  Blockchain based solutions have the potential to enable large-scale energy trading based on distributed consensus systems. However, popular blockchain solutions, such as Bitcoin \cite{NakamotoBitcoin} and Ethereum \cite{buterin2013ethereum} suffer from design limitations that prevent their direct application to validating energy trades. In particular, their transaction-confirmation time is relatively slow and variable, primarily caused due to the proof of work algorithm and dependence on ``on-the block-chain communication''.  For example, Aitzhan and Svetinovic implemented a proof-of-concept for decentralized smart grid energy trading using blockchains, but their system is based on proof-of-work consensus and they do not consider grid control and stability, or scalability~\cite{aitzhan2016security}. Additionally, there is the problem of privacy - all transactions in these systems are  public \cite{kosba2016hawk}. 
+
+Most works in this area have focused on the privacy issue from the context of smart meters. McDaniel and McLaughlin discuss the
+privacy concerns of energy usage profiling that smart grids could
+potentially enable~\cite{mcdaniel2009security}. Efthymiou and Kalogridis describe a method for securely anonymizing frequent electrical metering data sent by a smart
+meter~\cite{efthymiou2010smart} by using a third party escrow mechanism. Tan et
+al.\ study privacy in a smart metering system from an information
+theoretic perspective in the presence of energy harvesting and storage
+units~\cite{tan2013increasing}. They show that energy harvesting
+provides increased privacy by diversifying the energy source, while a
+storage device can be used to increase both energy efficiency and
+privacy. However, the transaction data provides more fine-grained information than the smart meter usage patterns \cite{Privacy2017}. 
+
+PETra extends these works by (1) leveraging a decentralized computation fabric provided by the smart homes in the community\footnote{we demonstrate the execution on a network of virtual machines in this paper}(2) addressing the privacy
+threat posed by trading using a novel trading sequence implementation, (3) showing how partial trades can be fulfilled and (4) using off-blockchain communication primitives provided by the distributed application management platform RIAPS. While the conceptual design of PETra was presented in \cite{Laszka17}, this paper describes the revised protocol, and the trading algorithm in detail and presents the implementation results. 
+%This work is closely related to \cite{kosba2016hawk} .... \Abhishek{Todo:Write about Hawk}
+
+\section{Our Solution - PETra}
+
+
+\input{PETra.tex}
+
+%\Abhishek{We should provide proof of why the system will be safe and privacy-preserving}
+
+%\section{Results and Discussions}
+
+
+
+\section{Case Study}
+\input{casestudy.tex}
+
+
+\section{Conclusions and Future Work}
+
+
+
+
+
+
+ \bibliographystyle{ACM-Reference-Format}
+\bibliography{references} 
+
+\end{document}
