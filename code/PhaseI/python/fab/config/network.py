@@ -5,6 +5,8 @@
 # Configure how to properly setup a network topology for testing blockchain
 #    This reads in custom schema JSON and calls associated 'fab' file.
 #
+# NOTE: This file is not currently used. processing is localized in each file.
+#
 # @Author Michael A. Walker
 # @Date   2017-06-21
 #

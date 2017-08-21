@@ -2,46 +2,45 @@
     "configurationName":"test network 001",
     "configurationVersion":"1",
     "chainId": 15,
-    "difficulty": 300000000,
-    "gasLimit": 2000000,
-    "balance": 400000,
+    "difficulty": 30,
+    "gasLimit": 200000000000000000,
+    "balance": 40000000000000000000000000,
     "genesisBlockOutFile": "genesis-data.json",
     "clients": {
         "startPort": 9000,
         "prosumer": {
-            "count": 20,
-            "protocol": "ws",
+            "count": 15,
+            "protocol": "rpc",
             "hosts": [
-                "eth1",
-                "eth2",
-                "eth3",
-                "eth4",
-                "eth5"
+                "10.4.209.25",
+                "10.4.209.28",
+                "10.4.209.26",
+                "10.4.209.29",
+                "10.4.209.27"
             ]
         },
         "dso": {
             "count": 1,
-            "protocol": "ws",
+            "protocol": "rpc",
             "hosts": [
-                "eth1",
-                "eth5"
+                "10.4.209.30"
             ]
         },
         "miner": {
             "count": 1,
-            "protocol": "ws",
+            "protocol": "rpc",
             "hosts": [
-                "eth6"
+                "10.4.209.30"
             ]
         }
 
     },
-    "bootstrap" : {
+    "bootnodes" : {
         "count": 1,
         "hosts": [
-            "eth6"
+            "10.4.209.30"
         ],
-        "startPort": 30303,
-        "protocol": "udp"
+        "startPort": 30301,
+        "protocol": "rpc"
     }
 }

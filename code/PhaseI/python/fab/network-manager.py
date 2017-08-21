@@ -2,9 +2,13 @@
 
 ##############################################################################
 #
-# CLI tool to manage Ethereum Test Network.
+# CLI tool to manage Distributed Ledger Test Networks.
 #
 #   This class handles CLI parsing and distrutes workload to submodules.
+#
+#   Current iteration is focused on Ethereum, but is generalized so that
+#   Adoption of other distributed ledger frameworks, such as Hyperledger
+#   should be easy to adopt/manage.
 #
 #	Manages:
 #		Clients
@@ -20,7 +24,7 @@
 ##############################################################################
 # Notes:
 #	-Auto-complete of commands is a feature when script is 'installed', but
-#		is not available when ran as python script.
+#		is not available when ran as purely CLI script.
 ##############################################################################
 
 ##############################################################################
@@ -63,6 +67,7 @@ def clientsGroup():
 # simple method to 'group' 'Clients' commands together
     pass
 
+
 @clientsGroup.command(name='create',
                  help='create all clients based of config file.')
 @click.option('--file',
@@ -71,23 +76,31 @@ def clientsGroup():
 @click.option('--type',
               default='all',
 			  help='Type of clients to create: [ prosumers, dso, all(default) ]')
-def clientsCreate(file,type='all'):
+@click.option('--out',
+              default='',
+			  help='JSON output file of newly created Accounts, If empty, don\'t save a file.')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def clientsCreate(file,verbose,type='all',out=''):
 # Create all new clients based off config JSON file.
     # switch on what type
     if str(type) == 'all':
-        clients.logic.createProsumerClients(file)
-        clients.logic.createDsoClients(file)
+        clients.logic.createClients(file,outFile=out,verbose=verbose,type="prosumer")
+        clients.logic.createClients(file,outFile=out,verbose=verbose,type="dso")
         return
     if str(type) == 'prosumers':
-        clients.logic.createProsumerClients(file)
+        clients.logic.createClients(file,outFile=out,verbose=verbose,type="prosumer")
         return
     if str(type) == 'dso':
-        clients.logic.createDsoClients(file)
+        clients.logic.createClients(file,outFile=out,verbose=verbose,type="dso")
         return
     # if option was given and isn't valid, then error & quit.
     print 'ERROR: provided non-valid \'type\' valid: [ prosumers, dso, all ]'
     print 'Program exiting.'
-    sys.exit()
+    sys.exit(2)
+
 
 @clientsGroup.command(name='start',
                  help='start all clients based of config file.')
@@ -97,18 +110,22 @@ def clientsCreate(file,type='all'):
 @click.option('--type',
               default='all',
 			  help='Type of clients to create: [ prosumers, dso, all(default) ]')
-def clientsStart(file,type='all'):
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def clientsStart(file,type='all',verbose=False):
 # Create all new clients based off config JSON file.
     # switch on what type
     if str(type) == 'all':
-        clients.logic.startProsumerClients(file)
-        clients.logic.startDsoClients(file)
+        clients.logic.startProsumerClients(file,verbose,type="prosumer")
+        clients.logic.startProsumerClients(file,verbose,type="dso")
         return
     if str(type) == 'prosumers':
-        clients.logic.startProsumerClients(file)
+        clients.logic.startProsumerClients(file,verbose,type="prosumer")
         return
     if str(type) == 'dso':
-        clients.logic.startDsoClients(file)
+        clients.logic.startProsumerClients(file,verbose,type="dso")
         return
     # if option was given and isn't valid, then error & quit.
     print 'ERROR: provided non-valid \'type\' valid: [ prosumers, dso, all ]'
@@ -123,18 +140,22 @@ def clientsStart(file,type='all'):
 @click.option('--type',
               default='all',
 			  help='Type of clients to create: [ prosumers, dso, all(default) ]')
-def clientsStop(file,type='all'):
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def clientsStop(file,type='all',verbose=False):
 # Create all new clients based off config JSON file.
     # switch on what type
     if str(type) == 'all':
-        clients.logic.stopProsumerClients(file)
-        clients.logic.stopDsoClients(file)
+        clients.logic.stopProsumerClients(file,verbose,type="prosumer")
+        clients.logic.stopProsumerClients(file,verbose,type="dso")
         return
     if str(type) == 'prosumers':
-        clients.logic.stopProsumerClients(file)
+        clients.logic.stopProsumerClients(file,verbose,type="prosumer")
         return
     if str(type) == 'dso':
-        clients.logic.stopDsoClients(file)
+        clients.logic.stopProsumerClients(file,verbose,type="dso")
         return
     # if option was given and isn't valid, then error & quit.
     print 'ERROR: provided non-valid \'type\' valid: [ prosumers, dso, all ]'
@@ -149,23 +170,65 @@ def clientsStop(file,type='all'):
 @click.option('--type',
               default='all',
 			  help='Type of clients to create: [ prosumers, dso, all(default) ]')
-def clientsDelete(file,type='all'):
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def clientsDelete(file,type='all',verbose=False):
 # Delete all clients.
     # switch on what type
     if str(type) == 'all':
-        clients.logic.deleteProsumerClients(file)
-        clients.logic.deleteDsoClients(file)
+        clients.logic.deleteProsumerClients(file,verbose,type="prosumer")
+        clients.logic.deleteProsumerClients(file,verbose,type="dso")
         return
     if str(type) == 'prosumers':
-        clients.logic.deleteProsumerClients(file)
+        clients.logic.deleteProsumerClients(file,verbose,type="prosumer")
         return
     if str(type) == 'dso':
-        clients.logic.deleteDsoClients(file)
+        clients.logic.deleteProsumerClients(file,verbose,type="dso")
         return
     # if option was given and isn't valid, then error & quit.
     print 'ERROR: provided non-valid \'type\' valid: [ prosumers, dso, all ]'
     print 'Program exiting.'
     sys.exit()
+
+
+@clientsGroup.command(name='distribute',
+                 help='distribute a directory to each client.')
+@click.option('--file',
+              default='./network-config.json',
+			  help='Network Configuration JSON file location.')
+@click.option('--local',
+			  help='File or Directory to copy to each client (Dir with trailing \'/\' will copy contents, without will copy directory itself ).')
+@click.option('--subdir',
+              default='',
+			  help='Subdirectory of each Client(if any) to copy the directory to. (Optional)')
+@click.option('--type',
+              default='all',
+			  help='Type of clients to create: [ prosumers, dso, all(default) ]')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def clientsDistributeFiles(file,local,subdir,type='all',verbose=False):
+# Delete all clients.
+    # switch on what type
+    if str(type) == 'all':
+        clients.logic.distributeFilesToClients(jsonFile=file, inputDir=local, clientType='prosumer', subDirectory=subdir, verbose=False)
+        clients.logic.distributeFilesToClients(jsonFile=file, inputDir=local, clientType='dso', subDirectory=subdir, verbose=False)
+        return
+    if str(type) == 'prosumers':
+        clients.logic.distributeFilesToClients(jsonFile=file, inputDir=local, clientType='prosumer', subDirectory=subdir, verbose=False)
+        clients.logic.distributeFilesToClients(jsonFile=file, inputDir=local, clientType='dso', subDirectory=subdir, verbose=False)
+        return
+    if str(type) == 'dso':
+        clients.logic.distributeFilesToClients(jsonFile=file, inputDir=local, clientType='dso', subDirectory=subdir, verbose=False)
+        return
+    # if option was given and isn't valid, then error & quit.
+    print 'ERROR: provided non-valid \'type\' valid: [ prosumers, dso, all ]'
+    print 'Program exiting.'
+    sys.exit()
+
 
 ##############################################################################
 # 'Blockchains' group of commands
@@ -183,21 +246,23 @@ def blockchainGroup():
 @click.option('--file',
               default='./network-config.json',
               help='Network Configuration JSON file location.')
+@click.option('--clients',
+              default='',
+              help='JSON file listing clients that are freshly created.')
 @click.option('--verbose',
               is_flag=True,
               default=False,
               help='Verbose Output.')
-def blockchainMake(file,verbose):
-# Create new Genesis block.
-    blockchains.logic.makeGenesisBlockchainConfigFile(file,verbose)
-
+def blockchainMake(file,verbose,clients):
+# Make a new Genesis block config file.
+    blockchains.logic.makeGenesisBlockchainConfigFile(file,clients,verbose)
 
 
 @blockchainGroup.command(name='create',
                     help='Create a new Genesis Block')
 @click.option('--file',
-              default='./network-config.json',
-              help='Network Configuration JSON file location.')
+              default='./genesis-data.json',
+              help='Genesis Data formatted JSON file location.')
 @click.option('--datadir',
               default='./ethereum/blockchian/',
               help='data directory to create blockchain at.')
@@ -205,29 +270,26 @@ def blockchainMake(file,verbose):
               is_flag=True,
               default=False,
               help='Verbose Output.')
-def blockchainCreate(file,datadir,verbose):
+def blockchainCreate(file,datadir,verbose=False):
 # Create new Genesis block.
-    blockchains.logic.createGenesisBlockchain(file,datadir,verbose)
+    blockchains.logic.createEthereumBlockchain(file,datadir,verbose)
 
-
-@blockchainGroup.command(name='delete',
-                    help='Delete the blockchain from all clients')
-@click.option('--file',
-              default='./network-config.json',
-              help='Network Configuration JSON file location.')
-def blockchainDelete(file):
-# Delete the blockchain from all clients.
-    blockchains.logic.deleteBlockchains(file)
 
 @blockchainGroup.command(name='distribute',
-                    help='Distribute new Genesis Block to all peers.')
+                    help='Distribute new Genesis Block to all clients.')
 @click.option('--file',
               default='./network-config.json',
               help='Network Configuration JSON file location.')
-def blockchainDistribute(file):
+@click.option('--datadir',
+              default='./ethereum/blockchian/',
+              help='data directory to create blockchain at.')
+@click.option('--verbose',
+               is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def blockchainDistribute(file,datadir,verbose):
 # Distribute the new Genesis block to all clients.
-    blockchains.logic.distributeBlockchains(file)
-
+    blockchains.logic.distributeBlockchain(jsonFile=file, blockchainPath=datadir, verbose=False)
 
 ##############################################################################
 # 'bootnodes' group of commands
@@ -241,37 +303,76 @@ def bootnodeGroup():
 
 @bootnodeGroup.command(name='create',
                    help='Create bootnodes.')
+@click.option('--out',
+              default='static-nodes.json',
+			  help='JSON output file of newly created bootnodes and their enode addressses.')
 @click.option('--file',
               default='./network-config.json',
-              help='Network Configuration JSON file location.')
-def bootnodesCreate(file):
+               help='Network Configuration JSON file location.')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def bootnodesCreate(file,out='static-nodes.json',verbose=False):
 # Create new bootnodes.
-    bootnodes.logic.createBootnodes(file)
+    bootnodes.logic.createBootnodeKeys(file,out,verbose)
 
+# bootnodes distribute
+@bootnodeGroup.command(name='distribute',
+                   help='Create bootnodes.')
+@click.option('--file',
+              default='',
+              help='Network Configuration JSON file location.')
+@click.option('--nodes',
+              default='created-bootnodes.json',
+              help='JSON output file of newly created bootnodes to inform every client of.')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def bootnodesDistribute(file,nodes='created-bootnodes.json',verbose=False):
+# Create new bootnodes.
+    bootnodes.logic.distributeStaticNodesJson(file,nodes,verbose=False)
+
+# bootnodes start
 @bootnodeGroup.command(name='start',
                    help='Start bootnodes.')
 @click.option('--file',
               default='./network-config.json',
               help='Network Configuration JSON file location.')
-def bootnodesStart(file):
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def bootnodesStart(file,verbose=False):
 # Create new bootnodes.
-    bootnodes.logic.startBootnodes(file)
+    bootnodes.logic.startBootnodes(file,verbose)
 
+# bootnodes stop
 @bootnodeGroup.command(name='stop',
                    help='Stop bootnodes.')
 @click.option('--file',
               default='./network-config.json',
               help='Network Configuration JSON file location.')
-def bootnodesStop(file):
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def bootnodesStop(file,verbose=False):
 # Create new bootnodes.
-    bootnodes.logic.stopBootnodes(file)
+    bootnodes.logic.stopBootnodes(file,verbose)
 
+# bootnodes delete
 @bootnodeGroup.command(name='delete',
                    help='Delete all bootnodes.')
 @click.option('--file',
               default='./network-config.json',
               help='Network Configuration JSON file location.')
-def bootnodesDelete(file):
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def bootnodesDelete(file,verbose):
 # Delete the bootnodes.
     bootnodes.logic.deleteBootnodes(file)
 
@@ -285,41 +386,179 @@ def minerGroup():
 # simple method to 'group' 'Miner' commands together
     pass
 
+# miners create
 @minerGroup.command(name='create',
                 help='Create new Miners')
 @click.option('--file',
               default='./network-config.json',
               help='Network Configuration JSON file location.')
-def minersCreate(file):
+@click.option('--out',
+              default='',
+			  help='JSON output file of newly created Accounts, If empty, don\'t save a file.')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def minersCreate(file,out='',verbose=False,clientType="miners"):
 # Create new Miners
-    miners.logic.createMiners(file)
+    miners.logic.createMinerClients(file,clientType,out,verbose)
 
+# miners start
 @minerGroup.command(name='start',
                 help='Start Miners')
 @click.option('--file',
               default='./network-config.json',
               help='Network Configuration JSON file location.')
-def minersStart(file):
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def minersStart(file,verbose=False):
 # Create new Miners
-    miners.logic.startMiners(file)
+    miners.logic.startMinerClients(file,verbose)
 
+# miners stop
 @minerGroup.command(name='stop',
                 help='Stop Miners')
 @click.option('--file',
               default='./network-config.json',
               help='Network Configuration JSON file location.')
-def minersStop(file):
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def minersStop(file,verbose=False):
 # Create new Miners
-    miners.logic.stopMiners(file)
+    miners.logic.stopMinerClients(file,verbose)
 
+# miners delete
 @minerGroup.command(name='delete',
                 help='Delete all Miners.')
 @click.option('--file',
               default='./network-config.json',
               help='Network Configuration JSON file location.')
-def minersDelete(file):
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def minersDelete(file,verbose=False):
 # Delete all Miners.
-    miners.logic.deleteMiners(file)
+    miners.logic.deleteMinerClients(file,verbose)
+
+
+
+@minerGroup.command(name='distribute',
+                 help='distribute a directory to each client.')
+@click.option('--file',
+              default='./network-config.json',
+			  help='Network Configuration JSON file location.')
+@click.option('--local',
+			  help='File or Directory to copy to each client (Dir with trailing \'/\' will copy contents, without will copy directory itself ).')
+@click.option('--subdir',
+              default='',
+			  help='Subdirectory of each Client(if any) to copy the directory to. (Optional)')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def minerssDistributeFiles(file,local,subdir,verbose):
+# Distribute file(s) to each miner.
+    miners.logic.distributeFilesToClients(jsonFile=file, inputDir=local, clientType='miners', subDirectory=subdir, verbose=False)
+
+
+@minerGroup.command(name='connect',
+                 help='connect each client(dso/prosumer) to each miner.')
+@click.option('--file',
+              default='./network-config.json',
+			  help='Network Configuration JSON file location.')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+def minersConnect(file,verbose=False):
+# Distribute file(s) to each miner.
+    miners.logic.connectMinerClients(jsonFile=file, verbose=verbose)
+
+
+
+@cli.group(name='network',
+           help='Manage an entire network at once.')
+def networkGroup():
+# simple method to 'group' 'bootnodes' commands together
+    pass
+
+# network create
+@networkGroup.command(name='create',
+                   help='Create a network from a config file.')
+@click.option('--file',
+              default='./network-config.json',
+              help='Network Configuration JSON file location.')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+@click.pass_context
+def networkCreate(ctx, file, verbose=False):
+# Create new network.
+#    ctx.forward(clientsStop)
+#    ctx.invoke(clientsStop, file=file, verbose=True)
+    ctx.invoke(bootnodesCreate, file=file, verbose=verbose)
+    ctx.invoke(minersCreate, file=file, verbose=verbose)
+    ctx.invoke(clientsCreate, file=file, verbose=verbose,type='all')
+
+# network start
+@networkGroup.command(name='start',
+                   help='Start an entire Network.')
+@click.option('--file',
+              default='',
+              help='Network Configuration JSON file location.')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+@click.pass_context
+def networkStop(ctx, file, verbose=False):
+    ctx.invoke(bootnodesStart, file=file, verbose=verbose)
+    ctx.invoke(minersStart, file=file, verbose=verbose)
+    ctx.invoke(clientsStart, file=file, verbose=verbose,type='all')
+
+# network stop
+@networkGroup.command(name='stop',
+                   help='Stop an entire Network.')
+@click.option('--file',
+              default='',
+              help='Network Configuration JSON file location.')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+@click.pass_context
+def networkStop(ctx, file, verbose=False):
+    ctx.invoke(clientsStop, file=file, verbose=verbose,type='all')
+    ctx.invoke(minersStop, file=file, verbose=verbose)
+    ctx.invoke(bootnodesStop, file=file, verbose=verbose)
+
+
+# network delete
+@networkGroup.command(name='delete',
+                help='Delete everything related to a network.')
+@click.option('--file',
+              default='./network-config.json',
+              help='Network Configuration JSON file location.')
+@click.option('--verbose',
+              is_flag=True,
+              default=False,
+              help='Verbose Output.')
+@click.pass_context
+def networkDelete(ctx, file, verbose=False):
+# Delete all Clients, Miners, & Bootnodes.
+# Todo: delete folder with network name/ver. # too.
+    ctx.forward(clientsDelete)
+    ctx.forward(minersDelete)
+    ctx.forward(bootnodesDelete)
+
+
+
 
 ##############################################################################
 # 'main' entrypoint of script

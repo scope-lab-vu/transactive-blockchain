@@ -52,6 +52,7 @@ def readJsonFile(jsonFile, verbose=False):
     return data
 
 def makeGenesisBlockchainConfigFile(jsonFile='./network-config.json',
+                            clientsFile='',
                             verbose=False
                            ):
 
@@ -106,11 +107,16 @@ def makeGenesisBlockchainConfigFile(jsonFile='./network-config.json',
         print ("Please Try again...")
         sys.exit(3)
 
+    clientsData = []
+    if clientsFile <> '':
+        clientsJson = readJsonFile(clientsFile, verbose)
+        clientsData = clientsJson["clients"],
+
     createEthereumGenesisBlockConfigFile( chainId,
                                 difficulty,
                                 gasLimit,
-                                clients = [],
-                                balance = 400000,
+                                clients = clientsData,
+                                balance = balance,
                                 homesteadBlock = 0,
                                 eip155Block = 0,
                                 eip158Block = 0,
@@ -119,29 +125,27 @@ def makeGenesisBlockchainConfigFile(jsonFile='./network-config.json',
                               )
 
 
-#    print "Blockchain created at: " + str(datadir)
 
 
+def createEthereumBlockchain(jsonFile='./genesis-data.json',datadir='./ethereum/custom/data',verbose=False):
 
-def createEthereumBlockchain(jsonFile='genesis.json',datadir='./ethereum/custom/data',verbose=False):
-# create genesis blockchain
 #    fh = StringIO();
-    verbose_results = ''
-    results = ''
-    mkdir_command = "mkdir -p " + datadir
-    results = check_output( ["mkdir",  "-p" , str(datadir) ] )
 
-    verbose_results += results + '\n'
-    gethCommand = "geth  --datadir " + str(datadir) + " init " + str(jsonFile)
-    print gethCommand
-#    call([gethCommand])
-#    results = check_output( [ gethCommand ] )
-    results = check_output([ "geth", " --datadir ", datadir , " init ", jsonFile ])
-    verbose_results += results + '\n'
-    print results
+    mkdir_command = "mkdir -p " + str(datadir)
+    call( ["mkdir",  "-p" , str(datadir) ] )
+
+    if os.path.isfile(jsonFile) <> True:
+        print "Operand provided to be the genesis block config file was not a file."
+        sys.exit(2)
+        return
+
+    results = check_output([ "geth", "--datadir", datadir , "init", jsonFile ])
+
+
     if verbose:
         print "** Verbose Output: **"
-        print verbose_results
+        print results
+#    return results
 
 
 
@@ -169,6 +173,7 @@ def createEthereumGenesisBlockConfigFile ( chainId,
                               ):
 # Create a json config file for an Ethereum Genesis Block.
 
+    print clients
     data = {
         "config": {
             "chainId": int(chainId),
@@ -182,9 +187,13 @@ def createEthereumGenesisBlockConfigFile ( chainId,
         }
     }
 
+
     if clients <> []:
+        #print " length of clients = " + str(len(clients))
         for x in clients:
-            data['alloc'][str(x)] = {u'balance': str(balance)}
+            for y in x:
+                #print " \nX: " + str(y) + "\n\n"
+                data['alloc'][str(y)] = {u'balance': str(balance)}
 
     if verbose:
         print "\nGenesis Block created:\n"
@@ -194,19 +203,6 @@ def createEthereumGenesisBlockConfigFile ( chainId,
         json.dump(data, outfile, indent=4, sort_keys=False)
 
     print "Genesis Block File output to: " + str(outFile)
-
-
-
-#if __name__ == '__main__':
-
-#    clients = [ '778f8989b580ddb1626ec1c7cc7d305a0cbd68e4',
-#                'fd7d97627f9124f7ef10d29024cb7cf1c8d4d924',
-#                '97b75fd7ab5c9c787eab46ed89e7783f938f4160',
-#                'dead485dea36a22d65a7bbc84b21cf15f288e4f7',
-#                '20c8ff11d0108ddae3ebf92d51d1bf8707ae2f34'
-#    ]
-
-#    createEthereumGenesisBlock("15", clients=clients, balance=300000, verbose=False)
 
 
 ##############################################################################
@@ -250,33 +246,33 @@ def createEthereumGenesisBlockConfigFile ( chainId,
 # Since we can mine local Ether quickly, we don't use this option.
 #
 # coinbase - The 160-bit address to which all rewards (in Ether)
-# collected from the successful mining of this block have been 
-# transferred. They are a sum of the mining reward itself and the 
-# Contract transaction execution refunds. Often named "beneficiary" in 
-# the specifications, sometimes "etherbase" in the online documentation. 
-# This can be anything in the Genesis Block since the value is set by 
+# collected from the successful mining of this block have been
+# transferred. They are a sum of the mining reward itself and the
+# Contract transaction execution refunds. Often named "beneficiary" in
+# the specifications, sometimes "etherbase" in the online documentation.
+# This can be anything in the Genesis Block since the value is set by
 # the setting of the Miner when a new Block is created.
 #
-# timestamp - A scalar value equal to the reasonable output of Unix 
-# time() function at this block inception. This mechanism enforces a 
-# homeostasis in terms of the time between blocks. A smaller period 
-# between the last two blocks results in an increase in the difficulty 
-# level and thus additional computation required to find the next valid 
-# block. If the period is too large, the difficulty, and expected time 
-# to the next block, is reduced. The timestamp also allows verifying the 
+# timestamp - A scalar value equal to the reasonable output of Unix
+# time() function at this block inception. This mechanism enforces a
+# homeostasis in terms of the time between blocks. A smaller period
+# between the last two blocks results in an increase in the difficulty
+# level and thus additional computation required to find the next valid
+# block. If the period is too large, the difficulty, and expected time
+# to the next block, is reduced. The timestamp also allows verifying the
 # order of block within the chain (Yellowpaper, 4.3.4. (43)).
 #
-# parentHash - The Keccak 256-bit hash of the entire parent block header 
-# (including its nonce and mixhash). Pointer to the parent block, thus 
-# effectively building the chain of blocks. In the case of the Genesis 
+# parentHash - The Keccak 256-bit hash of the entire parent block header
+# (including its nonce and mixhash). Pointer to the parent block, thus
+# effectively building the chain of blocks. In the case of the Genesis
 # block, and only in this case, it's 0.
 #
-# extraData - An optional free, but max. 32-byte long space to conserve 
+# extraData - An optional free, but max. 32-byte long space to conserve
 # smart things for ethernity. :)
 #
-# gasLimit - A scalar value equal to the current chain-wide limit of Gas 
-# expenditure per block. High in our case to avoid being limited by this 
-# threshold during tests. Note: this does not indicate that we should 
+# gasLimit - A scalar value equal to the current chain-wide limit of Gas
+# expenditure per block. High in our case to avoid being limited by this
+# threshold during tests. Note: this does not indicate that we should
 # not pay attention to the Gas consumption of our Contracts.
 #
 # config - Configuration to describe the chain itself. Specifically the
