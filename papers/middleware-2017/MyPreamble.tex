@@ -1,0 +1,113 @@
+% PACKAGES:
+\usepackage{graphics} % for pdf, bitmapped graphics files
+\usepackage{epsfig} % for postscript graphics files
+\usepackage{mathptmx} % assumes new font selection scheme installed
+\usepackage{times} % assumes new font selection scheme installed
+\usepackage{amsmath} % assumes amsmath package installed
+\usepackage{amssymb}  % assumes amsmath package installed
+\usepackage{amsthm}  % used to make theoremstyles not italic
+\usepackage{psfrag}
+\usepackage{textcomp}
+\usepackage{amsthm}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{xfrac}
+\usepackage{relsize}
+\usepackage{pmat}
+\usepackage{url}
+\usepackage{comment}
+\usepackage{pdfsync}
+
+\usepackage[cal=cm]{mathalfa} %this is to get the proper caligraphic font \mathcal and \mathbb (google mathalfa for documentation on how to use)
+
+
+
+
+%\usepackage[margin=1in]{geometry}
+
+
+
+%\usepackage[latin1]{inputenc}
+
+% MY COMMANDS
+\newcommand{\dt}{\frac{d}{dt}}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\tpd}[2]{\tfrac{\partial #1}{\partial #2}}
+\newcommand{\aHalf}{\frac{1}{2}}
+\newcommand{\aFourth}{\frac{1}{4}}
+\DeclareMathOperator{\blkdiag}{blkdiag}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\spn}{span}
+\DeclareMathOperator*{\argmin}{arg\;min}
+\DeclareMathOperator{\co}{co}
+\newcommand{\del}{\nabla}
+\newcommand{\vs}{V_{\Sigma}}
+\newcommand{\vo}{V_{\mathcal{O}}}
+\newcommand{\dvo}{\Delta V_{\mathcal{O}}}
+\newcommand{\dv}{\Delta v^k}
+\newcommand{\ol}{\Omega_{\mathit{l}}}
+\newcommand{\dvoh}{\Delta V_{\hat{\mathcal{O}}}}
+\newcommand{\oh}{\hat{\mathcal{O}}}
+\newcommand{\omo}{\Omega_{\mathcal{O}}}
+\newcommand{\oms}{\Omega_{\Sigma}}
+\newcommand{\omz}{\Omega_z}
+\newcommand{\dis}{|y-y^*|}
+\newcommand{\dist}{\|y-\mathbf{P}_{X^*}(y)\|}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\0}{\mathbf{0}}
+\newcommand{\delxi}{\del_{\!\!x_i}}
+\newcommand{\sumiv}{\sum_{i\in\mathcal{V}}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\Iota}[1]{\mathlarger{\iota}_{#1}\!}
+\newcommand{\lst}[1]{\langle {#1} \rangle\!}
+\newcommand{\lsti}[2]{\langle {#1} \rangle\!_{{#2}}^{-1}}
+\newcommand{\eg}{{e.g., }}
+\newcommand{\ie}{{\it i.e., }}
+\newcommand{\st}{\:|\:}
+\newcommand{\Pxi}{\mathbf{P}_{X_i}}
+\newcommand{\PXi}{\mathbf{P}_{\Xi}}
+\newcommand{\Pxhat}{\mathbf{P}_{\hat{X}}}
+\newcommand{\Pxst}{\mathbf{P}_{X^*}}
+\newcommand{\Pgo}{\mathbf{P}_{\Gamma_0}}
+\newcommand{\Pc}{\mathbf{P}_{S}}
+\newcommand{\Pa}{\mathbf{P}_{\!\!\mathcal{A}}}
+\newcommand{\AIn}{(A\otimes I_n)}
+\newcommand{\MIn}{(M\otimes I_n)}
+\newcommand{\onetin}{(\mathbf{1}_N^T\otimes I_n)}
+\newcommand{\Vo}{V_{\mathcal{O}}}
+\newcommand{\Vc}{V_{\mathcal{C}}}
+\newcommand{\Ap}{\mathcal{A}^{\bot}}
+\newcommand{\Bxst}[1]{\bar{B}_{#1}(X^*)}
+\newcommand{\Bgo}[1]{\bar{B}_{#1}(\Gamma_0)}
+\newcommand{\Bsqy}{ \bar{B}^n_{\!\!\!\!\sqrt{\sfrac{\delta}{2}}}(X^*)}
+\newcommand{\Bsqz}{ \bar{B}^{Nn}_{\!\!\!\sqrt{\sfrac{\delta}{2}}}(\{\0\})}
+
+
+% MATH OPERATORS
+%\DeclareMathOperator{\blkdiag}{blkdiag}
+\DeclareMathOperator{\dg}{diag}
+\DeclareMathOperator{\setspan}{span}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\tr}{tr}
+
+% THEOREM STYLES
+ \theoremstyle{remark} %makes defs etc not italic. Must use with amsthm package
+\newtheorem{assump}{A\!\!}[section]
+\newenvironment{assumpPrime}[1]
+  {\renewcommand{\theassump}{\ref{#1}$'$}%
+   \addtocounter{assump}{-1}%
+   \begin{assump}}
+  {\end{assump}}
+\newtheorem{lem}{Lemma}[section]
+\newtheorem{cor}{Corollary}[section]
+\newtheorem{claim}{Claim}[section]
+\newtheorem{ex}{Example}[section]
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{defn}{Definition}[section]
+\newtheorem{rem}{Remark}[section]
+\newtheorem{alg}{Algorithm}[section]
+\newtheorem{constr}{Construction}[section]
+
