@@ -1,1 +1,1 @@
-The solidity v2 is the smart contract
+This is phase I code
