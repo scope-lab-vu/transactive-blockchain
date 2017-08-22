@@ -57,31 +57,31 @@ An energy and financial transaction contains the following fields:
 \item \field{out}: reference to an EPA output of a previous transaction,
 \item \field{sig}: signature of the referenced output's address,
 \end{itemize}
-\item \field{ECA\_in}: list of ECA inputs, each of which is defined by
-\begin{itemize}[leftmargin=0.5em,nosep]
-\item \field{out}: reference to an ECA output of a previous transaction,
-\item \field{sig}: signature of the referenced output's address,
-\end{itemize}
-\item \field{FA\_in}: list of FA inputs, each of which is defined by
-\begin{itemize}[leftmargin=0.5em,nosep]
-\item \field{out}: reference to an FA output of a previous transaction,
-\item \field{sig}: signature of the referenced output's address,
-\end{itemize}
+\item \field{ECA\_in}: list of ECA inputs (i.e., list of (\field{out}, \field{sig}) pairs), %, each of which is defined by
+%\begin{itemize}[leftmargin=0.5em,nosep]
+%\item \field{out}: reference to an ECA output of a previous transaction,
+%\item \field{sig}: signature of the referenced output's address,
+%\end{itemize}
+\item \field{FA\_in}: list of FA inputs (i.e., list of (\field{out}, \field{sig}) pairs), %, each of which is defined by
+%\begin{itemize}[leftmargin=0.5em,nosep]
+%\item \field{out}: reference to an FA output of a previous transaction,
+%\item \field{sig}: signature of the referenced output's address,
+%\end{itemize}
 \item \field{EPA\_out}: list of EPA outputs, each of which is defined by
 \begin{itemize}[leftmargin=0.5em,nosep]
 \item \field{EPA}: an energy production asset,
 \item \field{address}: address to which EPA is transferred,
 \end{itemize}
-\item \field{ECA\_out}: list of ECA outputs, each of which is defined by
-\begin{itemize}[leftmargin=0.5em,nosep]
-\item \field{ECA}: an energy consumption asset,
-\item \field{address}: address to which ECA is transferred,
-\end{itemize}
-\item \field{FA\_out}: list of FA outputs, each of which is defined by
-\begin{itemize}[leftmargin=0.5em,nosep]
-\item \field{FA}: a financial asset,
-\item \field{address}: address to which FA is transferred.
-\end{itemize}
+\item \field{ECA\_out}: list of ECA outputs (i.e., (\field{ECA}, \field{address}) pairs), %, each of which is defined by
+%\begin{itemize}[leftmargin=0.5em,nosep]
+%\item \field{ECA}: an energy consumption asset,
+%\item \field{address}: address to which ECA is transferred,
+%\end{itemize}
+\item \field{FA\_out}: list of FA outputs (i.e., (\field{ECA}, \field{address}) pairs). %, each of which is defined by
+%\begin{itemize}[leftmargin=0.5em,nosep]
+%\item \field{FA}: a financial asset,
+%\item \field{address}: address to which FA is transferred.
+%\end{itemize}
 \end{itemize}
 \vspace{0.5\parskip} This transaction transfers the assets specified
 in the input lists to the addresses specified in the output lists.
@@ -100,8 +100,8 @@ the ledger) if the following three conditions hold.
 input and output assets are equal.  For example, in the case of
 energy production assets, the condition is
 \begin{align*}
-& \forall t: \sum_{\substack{out \,\in\, \field{EPA\_out}:\\out.\field{EPA}.\field{start} \leq t \leq out.\field{EPA}.\field{end}}} out.\field{EPA}.\field{power} \nonumber \\
-& = \sum_{\substack{in \,\in\, \field{EPA\_in}:\\in.\field{out}.\field{EPA}.\field{start} \leq t \leq in.\field{out}.\field{EPA}.\field{end}}} in.\field{out}.\field{EPA}.\field{power}  .
+ \forall t: ~ & \textstyle \sum_{\substack{out ~ \in ~ \field{EPA\_out}:\\out.\field{EPA}.\field{start} \, \leq \, t \, \leq \, out.\field{EPA}.\field{end}}} out.\field{EPA}.\field{power} \nonumber \\
+ & \textstyle = \sum_{\substack{in ~ \in ~ \field{EPA\_in}:\\in.\field{out}.\field{EPA}.\field{start} \, \leq \, t \, \leq \, in.\field{out}.\field{EPA}.\field{end}}} in.\field{out}.\field{EPA}.\field{power}  .
 \end{align*}
 The conditions for consumption and financial assets can be described
 formally in similar ways.
