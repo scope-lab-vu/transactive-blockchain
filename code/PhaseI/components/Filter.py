@@ -1,7 +1,7 @@
 import logging
 
 from config import *
-from Geth import Geth
+from EthereumClient import EthereumClient
 
 TOPICS = {
   '0x4a4bcdba1fdd3486b8dad947841b692814e16275e05e493465222f13287e779a': "FinancialAdded",
@@ -14,8 +14,11 @@ TOPICS = {
 }
 
 class Filter:
-  def __init__(self):
-    self.geth = Geth()
+  def __init__(self, client=None):
+    if client is None:
+      self.geth = EthereumClient()
+    else:
+      self.geth = client
     self.filterID = self.geth.command("eth_newFilter", params=[{"fromBlock": "0x1"}]) 
     logging.info("Created filter (ID = {}).".format(self.filterID))
     

@@ -19,7 +19,7 @@ class EventRecorder:
     logging.info("DSO connected ({}).".format(self.dso))
     self.query_contract_address()
     logging.info("Creating event filter...")
-    self.filter = Filter()
+    self.filter = Filter(self.geth)
   
   def run(self):
     logging.info("Entering main loop...")

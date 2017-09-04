@@ -6,22 +6,20 @@ from time import time, sleep
 from config import *
 from const import *
 from SmartHomeTrader import SmartHomeTrader
-from Filter import Filter
-from Geth import Geth
+from EthereumClient import EthereumClient
 
 POLLING_INTERVAL = 1 # seconds
 
 class SmartHomeTraderWrapper(SmartHomeTrader):
   def __init__(self, name, net_production, ip, port):
     self.net_production = net_production
-    self.geth = Geth(ip=ip, port=port)
     logging.info("Connecting to DSO...")
     self.dso = zmq.Context().socket(zmq.REQ)
     self.dso.connect(DSO_ADDRESS)
     logging.info("DSO connected ({}).".format(self.dso))
     self.query_contract_address()
     logging.info("Creating event filter...")
-    self.filter = Filter()
+    self.client = EthereumClient(ip=ip, port=port)
     super(SmartHomeTraderWrapper, self).__init__(name)
   
   def run(self):
@@ -45,10 +43,10 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
       
   def get_addresses(self, num_addresses):
     logging.info("Querying own addresses...")
-    return self.geth.get_addresses()
+    return self.client.get_addresses()
       
   def poll_events(self):
-    for event in self.filter.poll_events():
+    for event in self.client.filter.poll_events():
       logging.info("Event: " + str(event))
       params = event['params']
       name = event['name']
@@ -95,15 +93,13 @@ class SmartHomeTraderWrapper(SmartHomeTrader):
   
   def postOffer(self, address, assetID, price):
     logging.info("postOffer({}, {}) using address {}".format(assetID, price, address))
-    data = "0xed7272e2" + Geth.encode_uint(assetID) + Geth.encode_uint(price)
-    result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress, 'gas': TRANSACTION_GAS}])
-    logging.debug("Result: " + result)
+    data = "0xed7272e2" + EthereumClient.encode_uint(assetID) + EthereumClient.encode_uint(price)
+    self.client.transaction(address, data, self.contractAddress)
 
   def acceptOffer(self, address, offerID, assetID):
     logging.info("acceptOffer({}, {}) using address {}".format(offerID, assetID, address))
-    data = "0xf1edd7e2" + Geth.encode_uint(offerID) + Geth.encode_uint(assetID)
-    result = self.geth.command("eth_sendTransaction", params=[{'from': address, 'data': data, 'to': self.contractAddress, 'gas': TRANSACTION_GAS}])
-    logging.debug("Result: " + result)
+    data = "0xf1edd7e2" + EthereumClient.encode_uint(offerID) + EthereumClient.encode_uint(assetID)
+    self.client.transaction(address, data, self.contractAddress)
 
 def read_data(prosumer_id):
   logging.info("Reading net production values...")

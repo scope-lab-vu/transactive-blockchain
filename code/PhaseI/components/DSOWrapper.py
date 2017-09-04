@@ -5,12 +5,12 @@ from time import sleep
 
 from config import *
 from DSO import DSO
-from Geth import Geth
+from EthereumClient import EthereumClient
 
 class DSOWrapper(DSO): 
   def __init__(self, ip, port):
-    self.geth = Geth(ip=ip, port=port)    
-    self.account = self.geth.get_addresses()[0]
+    self.client = EthereumClient(ip=ip, port=port)    
+    self.account = self.client.get_addresses()[0] # use the first owned address
     self.deploy_contract()
     super(DSOWrapper, self).__init__()
     
@@ -28,7 +28,7 @@ class DSOWrapper(DSO):
           result = self.withdraw_assets(params['prosumer'], params['auth'], params['asset'], params['financial'], params['address'])
         except Exception as e:
           logging.exception(e)
-          result = "Malformed message."
+          result = "Error occurred during message processing."
         logging.info(result)
         trader.send_pyobj(result)
       elif msg['request'] == "query_contract_address":
@@ -40,45 +40,36 @@ class DSOWrapper(DSO):
       
   def deploy_contract(self):
     logging.info("Deploying contract...")
-    receiptID = self.geth.command("eth_sendTransaction", params=[{'data': BYTECODE, 'from': self.account, 'gas': TRANSACTION_GAS}])
+    # use command function because we need to get the contract address later
+    receiptID = self.client.command("eth_sendTransaction", params=[{'data': BYTECODE, 'from': self.account, 'gas': TRANSACTION_GAS}])
     logging.info("Transaction receipt: " + receiptID)
     while True:
       sleep(5)
-      logging.info("Waiting for contract to be mined... (block number: {})".format(self.geth.command("eth_blockNumber", params=[])))
-      receipt = self.geth.command("eth_getTransactionReceipt", params=[receiptID])
+      logging.info("Waiting for contract to be mined... (block number: {})".format(self.client.command("eth_blockNumber", params=[])))
+      receipt = self.client.command("eth_getTransactionReceipt", params=[receiptID])
       if receipt is not None:
         self.contractAddress = receipt['contractAddress']
         break
     logging.info("Contract address: " + self.contractAddress)    
             
   def sendEther(self, address):
+    # TODO: this should also be implemented using the transaction interface of EthereumClient
     # TODO: check this, especially the amount of Ether
     logging.info("sendEther()")
-    result = self.geth.command("eth_sendTransaction", params=[{'to': address, 'value': "0xffffff", 'from': self.account}])
+    result = self.client.command("eth_sendTransaction", params=[{'to': address, 'value': "0xffffff", 'from': self.account}])
     logging.debug("Result: " + result)
 
   # contract function calls 
   
-  def printReceipt(self, receiptID):
-    while True:
-      sleep(1)
-      logging.info("Block number: " + self.geth.command("eth_blockNumber", params=[]))
-      receipt = self.geth.command("eth_getTransactionReceipt", params=[receiptID])
-      if receipt is not None:              
-        logging.info(receipt)
-        break       
-
   def addFinancialBalance(self, address, amount):
     logging.info("addFinancialBalance({}, {})".format(address, amount))
-    data = "0x3b719dc0" + Geth.encode_address(address) + Geth.encode_uint(amount)
-    result = self.geth.command("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress, 'from': self.account, 'gas': TRANSACTION_GAS}])
-    logging.debug("Result: " + result)
+    data = "0x3b719dc0" + EthereumClient.encode_address(address) + EthereumClient.encode_uint(amount)
+    self.client.transaction(self.account, data, self.contractAddress)
 
   def addEnergyAsset(self, address, power, start, end):
     logging.info("addEnergyAsset({}, {}, {}, {})".format(address, power, start, end))
-    data = "0x23b87507" + Geth.encode_address(address) + Geth.encode_int(power) + Geth.encode_uint(start) + Geth.encode_uint(end)
-    result = self.geth.command("eth_sendTransaction", params=[{'data': data, 'to': self.contractAddress, 'from': self.account, 'gas': TRANSACTION_GAS}])
-    logging.debug("Result: " + result)
+    data = "0x23b87507" + EthereumClient.encode_address(address) + EthereumClient.encode_int(power) + EthereumClient.encode_uint(start) + EthereumClient.encode_uint(end)
+    self.client.transaction(self.account, data, self.contractAddress)
     
 if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
