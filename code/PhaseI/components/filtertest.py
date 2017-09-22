@@ -1,10 +1,12 @@
 from time import sleep
 
 from config import *
-from Geth import Geth
+from EthereumClient import EthereumClient
 from Filter import decode_log
 
-geth = Geth()
+ip=192.168.1.2
+port=9000
+geth = EthereumClient(ip=ip, port=port)
 filterID = geth.command("eth_newFilter", params=[{"fromBlock": "0x1"}]) 
 print("filterID = ", filterID)
 account = geth.command("eth_accounts")[0]

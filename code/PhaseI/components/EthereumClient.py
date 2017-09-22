@@ -20,21 +20,16 @@ class EthereumClient:
   def encode_int(value):
     return format(value & 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, "064x")
 
-  def __init__(self, port=None, ip=None):
-    if ip is None:
-      self.ip = "10.4.209.25"
-    else:
-      self.ip = ip
-    if port is None:
-      self.port = 9010
-    else:
-      self.port = port
+  def __init__(self, ip, port):
+self.ip = ip
+    self.port = port
+
     self.waiting = [] # transactions which have not been submitted
     self.pending = [] # transactions which have been submitted but not yet mined
     self.lock = RLock()
     # TODO: restructure code to get rid of this ugliness...
     from Filter import Filter
-    self.filter = Filter(self)
+    self.filter = Filter(self, self.ip, self.port)
     thread = Thread(target=self.__run)
     thread.start()
     
@@ -63,7 +58,7 @@ class EthereumClient:
   def __restart_client(self):
     logging.info("Restarting the client...")
     # TODO: writeme
-    self.filter = Filter(self) # recreate even filter
+    self.filter = Filter(self, self.ip, self.port) # recreate even filter
             
   def __submit_trans(self, trans):
     try:

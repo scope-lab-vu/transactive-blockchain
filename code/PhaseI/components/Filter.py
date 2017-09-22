@@ -14,11 +14,14 @@ TOPICS = {
 }
 
 class Filter:
-  def __init__(self, client=None):
-    if client is None:
-      self.geth = EthereumClient()
-    else:
+  def __init__(self, client=None, ip=None, port=None):
+    if client is not None:
       self.geth = client
+    else:
+      if ip is not None and port is not None:
+        self.geth = EthereumClient(ip=ip, port=port)
+      else:
+        raise ValueError("Value of client was None. Therefore, both ip and port can NOT be None. But had values ip: {}, port:{}",ip,port)
     self.filterID = self.geth.command("eth_newFilter", params=[{"fromBlock": "0x1"}]) 
     logging.info("Created filter (ID = {}).".format(self.filterID))
     
@@ -91,10 +94,11 @@ def decode_log(log):
   
 # generate topics from event signatures
   
-def keccak256(string):
-  geth = Geth()
-  print("'{}': '{}'".format(geth.command("web3_sha3", params=["0x" + bytes(string, 'ascii').hex()], port=9006, ip="10.4.209.25"), string))
+def keccak256(string, ip, port):
+  geth = EthereumClient(ip=ip, port=port)
+  print("'{}': '{}'".format(geth.command("web3_sha3", params=["0x" + bytes(string, 'ascii').hex()] ), string))
 
+# TODO Aron, do we need this still?
 def generate_topics():
   events = [
     "FinancialAdded(address,uint64)",
@@ -106,7 +110,7 @@ def generate_topics():
     "OfferAccepted(uint64,uint64,int64,uint64,uint64,uint64)",
   ]
   for event in events:
-    keccak256(event)
+    keccak256(event, 192.168.1.2, 9000)
     
 # test
 if __name__ == "__main__":

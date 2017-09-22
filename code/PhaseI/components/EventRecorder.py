@@ -6,20 +6,20 @@ from time import time, sleep, asctime
 
 from config import *
 from Filter import Filter
-from Geth import Geth
+from EthereumClient import EthereumClient
 
 POLLING_INTERVAL = 1 # seconds
 
 class EventRecorder:
   def __init__(self, ip, port):
-    self.geth = Geth(ip=ip, port=port)
+    self.geth = EthereumClient(ip=ip, port=port)
     logging.info("Connecting to DSO...")
     self.dso = zmq.Context().socket(zmq.REQ)
     self.dso.connect(DSO_ADDRESS)
     logging.info("DSO connected ({}).".format(self.dso))
     self.query_contract_address()
     logging.info("Creating event filter...")
-    self.filter = Filter(self.geth)
+    self.filter = Filter(self.geth, ip=ip, port=port)
   
   def run(self):
     logging.info("Entering main loop...")
