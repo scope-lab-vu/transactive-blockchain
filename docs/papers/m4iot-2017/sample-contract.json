@@ -1,0 +1,21 @@
+{"configurationName":"test network a001",
+"configurationVersion":"1",
+"chainId": 15,
+"difficulty": 100000,
+"gasLimit": 200000000000000000,
+"balance": 40000000000000000000000000,
+"genesisBlockOutFile":"genesis-data.json",
+"clients": {
+    "startPort": 9000,
+    "prosumer": {
+        "count": 15,
+        "hosts": [ "10.4.209.25",
+                   "10.4.209.26",
+                   "10.4.209.27",
+                   "10.4.209.28" ] },
+    "dso": {
+        "count": 1,
+        "hosts": [ "10.4.209.29" ] },
+    "miner": {
+        "count": 1,
+        "hosts": [ "10.4.209.30" ] } } }

@@ -1,0 +1,70 @@
+\documentclass{standalone}
+
+\usepackage{tikz}
+\usepackage{lmodern}
+\usetikzlibrary{shapes}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{calc}
+\usetikzlibrary{shadows}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.10}
+
+\usetikzlibrary{arrows.meta}
+\usepackage{colortbl}
+\definecolor{Gray}{gray}{0.90}
+
+%\setlength\oddsidemargin{0in}
+
+\begin{document}
+	
+	% declare that we use 2 layers= background & main
+	\pgfdeclarelayer{background}
+	\pgfsetlayers{background,main}
+
+	% define styles, similar to CSS 
+%	\newcommand*\ab{.4}
+%	\tikzset{
+%		net node/.style = {circle, minimum width=2.75*\ab cm, inner sep=2pt, outer sep=0pt, draw},
+%		net node2/.style = {circle, minimum width=2.75*\ab cm, inner sep=7pt, outer sep=0pt, draw, fill=white!100},
+%		net root node/.style = {net node, minimum width=3*\ab cm},
+%		dashed connect/.style = {line width=2pt,dashed, draw=blue!50!cyan!25!black},
+%		net connect/.style = {line width=3pt, draw=blue!50!cyan!25!black},
+%		snake it/.style = {line width=2pt,decorate, decoration=snake, draw=blue!50!cyan!25!black},
+%		texter/.style = {draw, rectangle,anchor=west},
+%	}
+
+	\begin{tikzpicture}[x=5.3cm, y=-0.11cm, font=\small,
+RedDashed/.style={red, dashed},
+RedDotted/.style={red, dotted}]
+\def\posDSO{3}
+\def\posProsumer{0}
+\def\posLedger{1}
+\def\posOtherProsumer{2}
+\foreach \name/\pos in {DSO/\posDSO, Prosumer/\posProsumer, Smart contract via client/\posLedger, Consumer/\posOtherProsumer} {
+	\draw (\pos, 0) -- (\pos, 58);
+	\node [draw, fill=white, rounded corners=0.1cm] at (\pos, 0) {\name};
+}
+\newcounter{seqTime}
+\setcounter{seqTime}{0}
+\foreach \action/\from/\to/\styl/\delta in {
+	{withdrawAssets(anonAddress, assets)/\posProsumer/\posDSO/dotted/7}, 
+	{failedWithdrawal(anonAddress, msg)/\posDSO/\posProsumer/RedDotted/6},
+	{addEnergyAsset(anonAddress, asset), addFinancialBalance(anonAddress, amount)/\posDSO/\posLedger/solid/9},
+	{AssetAdded(anonAddress, assetID, asset)/\posLedger/\posProsumer/dashed/3},
+	{postOffer({assetID, price})/\posProsumer/\posLedger/solid/5},
+	{OfferPosted({offerID, assetID, price})/\posLedger/\posOtherProsumer/dashed/2},
+	{rescindOffer(offerID)/\posProsumer/\posLedger/red/3},
+	{OfferRescinded(offerID)/\posLedger/\posOtherProsumer/RedDashed/2},
+	{acceptOffer({offerID, assetID})/\posOtherProsumer/\posLedger/solid/6},
+	{OfferAccepted({offerID, assetID})/\posLedger/\posProsumer/dashed/3},
+	{depositEnergyAsset(assetID), depositFinancial(amount)/\posProsumer/\posLedger/solid/9},
+	{AssetDeposited(anonAddress, asset), FinancialDeposited(anonAddress, amount)/\posLedger/\posDSO/dashed/2}%
+} {
+	\addtocounter{seqTime}{\delta}
+	\draw [->, >=stealth, shorten <=0.05cm, shorten >=0.05cm, \styl] (\from, \value{seqTime}) -- (\to, \value{seqTime}) node [midway, above, align=center, text width={abs(\to - \from) * 4.8cm}, fill=white, fill opacity=0.90, text opacity=1] {\footnotesize\texttt{\action}};
+}
+%\useasboundingbox ([shift={(20\pgflinewidth,20\pgflinewidth)}]current 
+%bounding box.south west) -- (current bounding box.north east);
+\end{tikzpicture}
+\end{document}

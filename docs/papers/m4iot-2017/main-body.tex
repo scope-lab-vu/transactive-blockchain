@@ -1,0 +1,317 @@
+\section{Introduction}
+
+Interest in---and commercial adoption of---blockchain technology has increased in recent years~\cite{TheTruthAdoption:online}. For example, blockchain adoption in the financial industry has yielded market capitalization surpassing \$75 billion USD~\cite{BitcoinPrices:online} for Bitcoin and \$36 billion USD for Ethereum ~\cite{EthereumPrices:online}.  One reason for this growth stems from blockchains' combination of existing technologies to enable  the interoperation of non-trusted parties in a decentralized, cryptographically secure, and immutable ecosystem without the need of a trusted central authority.
+%\AbhishekOld{You should also state that at the same time the adoption of IoT devices has been increasing significantly to the point where these devices are not only passive data generating devices but are active participants, which leads to the necessity of providing transactional integrity.} 
+
+During roughly the same time, the increased proliferation of IoT devices has motivated the need for transactional integrity due to the transition of IoT devices from just being smart-sensors to being active participants that impact their environment via communication, decision making, and physical actuation. These abilities require transactional integrity to provide auditing of actions made by potentially untrusted networked 3rd party IoT devices. The demand for transactional integrity in IoT devices that simultaneously leverage  blockchain features (such as decentralization, cryptographic security, and immutability) has motivated research on creating transactive IoT blockchain applications~\cite{Bogner2016,Buccafurri2017}.
+
+Blockchain deployments (and specifically Ethereum, which is the focus of this paper due to its large installed base, and its powerful smart contract language) are generally managed via programs that have different modes in which they can operate. They broadly fall into Command-Line Interfaces (CLI), RPC APIs, or creating Graphical Interfaces via the use of HTML pages and JavaScript code~\cite{EthereumAPInterfaces:online}. These interfaces provide standard means to either run Ethereum applications within the clients themselves, or to interface other applications with the Ethereum clients. 
+
+In practice, however, the existing blockchain deployment interfaces lack built-in fault tolerance, most notably for either network communication errors or application execution faults. Moreover, Ethereum clients are deployed manually since no official manager exists for them. As a result, developers can---and do~\cite{ethereumLostCoinAPI:online}---lose all of their Ether (Ethereum's digital currency) due to insecure client configurations. This problem is compounded by the fact that Ethereum's clients do not warn of this risk within their built-in help feature, and instead rely upon online documentation to warn developers. 
+
+Addressing this problem requires patterns and tools that enable the deployment of blockchain clients in a repeatable and systematic way.
+This requirement becomes even more important when integrating IoT blockchain applications (ITBAs). The IoT component of ITBAs add other requirements atop traditional blockchain applications due to their interactions with the physical environment and increased privacy concerns, \emph{e.g.}, thus preventing leakage of personal data, such as  energy usage that would reveal a user's activity patterns in their home~\cite{gubbi2013IoT}.  
+
+Moreover, ITBAs may not only communicate over the blockchain, but may also use off-blockchain communications via TCP/IP or other networking protocols for the following reasons:
+\begin{itemize}
+\item  There are interactions with the physical environment that might require communication with sensors and/or actuators.  For example, a user's smart-meter might communicate wirelessly with their smart-car's battery to activate charging based on current energy production/cost considerations. 
+\item The distributed ledger (which makes an immutable record of transactions in blockchain) is public, so it is common to only  include information within transactions that can safely be stored publicly. In particular, if some or all data from a transaction must be kept secret for privacy or any other reasons the transaction can, instead, contain the meta-data and a cryptographic hash of the secret data.  Private information must, therefore, be communicated off-blockchain while still preserving integrity by storing meta-data and hash information on the blockchain ledger.
+\item Management tasks such as: updates, monitoring, calibration, debugging, or auditing may require off-blockchain communication (with possible on-blockchain components for logging). Currently, these management tasks are done manually in conventional blockchain ecosystems. Similar to the need for a systematic means of deploying apps in a blockchain network, there is a need to systematically configure the network topology between all components of ITBAs.
+\end{itemize}
+%Blockchain constraints 
+%Enabling Blockchain to interact with IoT brings an additional dynamic, interactions with the physical environment to blockchain, that doesn't normally exist. Interacting with the physical environment also brings with it additional constraints. These constraints will vary depending on specific IoT deployment scenarios. However, some 
+
+%What is the pattern of deploying/testing/recovering/communication in a BC IOT?
+%Blockchain and IoT interactions need a 
+
+
+%\subsubsection{Blockchain}
+%-What are distributed ledgers and why are they so important for IoT systems? \cite{TheEnerg14:online}
+
+%-What are the typical design patterns and communication requirements for these systems? Note the challenge is to mix off-blockchain and on-blockchain communication primitives.
+
+%-What are the current state of the art solutions that are available, and how are they tested?
+
+%-What are the gaps in the state of the art, and why is it important to have comprehensive testing?
+
+%-The contribution of this paper is an architecture and description of lessons learned.
+
+
+
+
+%\cite{Eisele2017}
+
+% \cite{zhang2017applying} % Dana's PLOP paper
+
+This paper presents the structure and functionality of PlaTIBART, which is a \textit{Platform for Transactive IoT Blockchain Applications with Repeatable Testing} that provides a set of tools and techniques for enhancing the development, deployment, execution, management, and testing of ITBAs. In particular, we describe a pattern for developing ITBAs, a Domain Specific Language (DSL) for defining a private blockchain deployment network, Actor components upon which the application can be deployed and tested, a tool using these DSL models to manage deployment networks in a reproducible test environment, and interfaces that provide fault tolerance via an application of the \textit{Observer} pattern. 
+
+The remainder of this paper is organized as follows: 
+Section \ref{system_model} explains the system model underlying PlaTIBART and describes the scenario of transactive energy used in this paper to motivate the need for ITBAs;
+Section \ref{stateOfArt} reviews the current state-of-the-art regarding IoT and blockchain integration;
+Section \ref{proposedArch} illustrates our proposed ITBA architecture and shows how we use the \textit{Actor} pattern to construct our solution, the DSL we created, and the network manager script we created to generate  test networks for ITBAs; Section \ref{empirical} examines our experimental testbed configuration and analyzes our results; Section \ref{lessonslearned} summarizes lessons learned, while implementing our proposed architecture; and Section \ref{conclusion} presents concluding remarks and outlines future work. 
+
+\section{System Model}
+\label{system_model}
+
+This section explains the system model underlying PlaTIBART and describes the use case scenario of transactive energy we employ in this paper to motivate the need for ITBAs.
+%
+% 3 layers - 
+%	3) system-wide agreed upon sequence events
+%	2) distribued database
+% 	1) IoT Interactions , events, decisions
+% we ignore #2 for now
+%  We address #1 and #3 for now. and provide testing 
+Based on our experience developing decentralized apps (DApps) for blockchain ecosystems~\cite{Zhang2016,dubey2017resilience},  three key capabilities are essential for DApps to function effectively in an ITBA ecosystem: traditional IoT computations and interactions should be supported, information should be robustly sorted in a distributed database, and a system-wide accepted sequential log of events should be provided. Each requirement can be delegated to a separate layer in a three-tiered architecture.  The first tier is the IoT middleware layer that facilitates communication between networked devices, which can be addressed by existing IoT middleware, such as RIAPS~\cite{RIAPS_IEEE_ISORC_2017}. The second tier is a distributed database layer. The third tier is a sequential log of events layer, which can be solved by blockchain integration. 
+
+PlaTIBART provides an architecture for coordinating all these layers in a fault tolerant manner, along with tools for repeatable testing at scale. It leverages the Actor model~\cite{lee2003actor} to integrate these three layers. Each layer is composed of components that accomplish their designated layer-dependent tasks. These components are then combined into a single actor that can interact with each layer and other actors in the network, as described in Section~\ref{proposedArch}. 
+
+%IoT system requirements are much more demanding than most traditional Blockchain software. Specifically IoT systems, due to their interaction with the physical environment, having constraints 
+
+% Traditional Blockchian software bugs and crashes result in possible lost work, but IoT bugs and crashes can potentially result in property damage, injury, and even potential loss of life. There is also the underlying concept of \"Internet of Things\", in that an ever increasing number of devices or "things" will be added to the network in the future. These two things combine to give us a large number of devices that, if not trustworthy, can potentially be disastrous. Therefore, there needs to be a means to allow for the system as a whole to protect itself from either malicious or faulty devices within the network. Blockchain addressees this concerns by providing a Byzentine fault-tolerant mechanism for a distributed ledger. This alone isn't enough to provide a complete system, but it does provide a core component upon which to build. 
+%
+%In the Proof-of-Work operating manner, Byzentine Fault-Tolerance is guaranteed when less than 50\% of the network's computation is faulty or malicious. This provides a acceptable guarantee on a public network, due to the insatiability of controlling 51\% of the world-wide network's computational power. There are other Proof mechanisms, such as Proof-of-Stake, that are being explored but are not yet widely adopted specifically on the Ethereum network, which we are using for our testing, so we will assume a Proof-of-Work mechanism is being used for the remainder of this paper.
+
+\subsection{Case Study: Transactive Energy System}
+\label{case_study}
+
+%Transactive Energy, or technology used for managing the creation and consumption of electricity within an electrical grid, provides a good case study because not only the demand of electricity could potentially be life-threatening if demands are not met appropriately, but it is also being explored in actual deployments. \{cite here} Let us explore a Transactive Energy enabled smart grid, where the grid itself is connected to a traditional power company. The power company provides smart-meters to every property that has the ability to measure energy consumed, and also, potentially produced. The smart-grid would also have a network adjacent to it that provides a communication network upon which components of the network can communicate. 
+
+Transactive Energy Systems (TES) have emerged in response to the shift in the power industry away from centralized, monolithic business models characterized by bulk generation and one-way delivery toward a decentralized model in which end users play a more active role in both production and consumption \cite{NIST_TE,Gridwise}.
+ %There are a number of well-documented factors contributing to this shift, including the increasing deterioration and fragility of the current grid, the regulatory and public mandate for environmental awareness, and general social trends toward the democratization of services, as exemplified by the "sharing economy" \cite{TheGrid}.
+The GridWise Architecture Council defines TES as ``a system of economic and control mechanisms that allows the dynamic balance of supply and demand across the entire electrical infrastructure, using value as a key operational parameter'' \cite{Gridwise}. 
+%The idea is to realize a user-centric system that allows residential consumers and prosumers (consumers that also produce energy) to trade energy futures directly in a local, open, peer-to-peer (P2P) market at the distribution level, which includes middleware components and messaging services that ensure secure, reliable, and timely communication between various TMP modules, sensors, and the blockchain system.
+%We highlight the architectural and protocol specifications of our middleware that ensure \emph{privacy} and \emph{security} for participants in the TES, as well as \emph{safety} for the TES. 
+
+In this paper, we consider a class of TES that operates in a grid-connected mode, meaning the local electric network is connected to a Distribution System Operator (DSO) that provides electricity when the demand is greater than what the local-network can generate. The main actors are the consumers, which are comprised primarily of residential loads, and prosumers who operate distributed energy resources, such as rooftop solar batteries or flexible loads capable of demand/response. Additionally, the DSO manages the grid connection of the network. Such installations are equipped with an advanced metering infrastructure consisting of TES-enabled smart meters.
+%In addition to the standard functionalities of smart meters: i.e. the ability to measure line voltages, power consumption and production, and communicate these to the DSO. TE-enabled smart meters are also capable of communicating with other smart meters, have substantial on-board computational resources, and are capable of accessing the Internet and cloud computing services as needed. 
+Examples of such installations include the Brooklyn Microgrid Project \cite{BrooklynMicrogrid} and the Sterling Ranch learning community~\cite{SterlingRanch}. A key component of TES is a transaction management platform (TMP), which handles market clearing functions in a way that balances supply and demand in a local market.
+
+%Use the transactive energy system to explain the timing and criticality requirements for these systems. Explain the nature of the communication patterns here. Also explain that there are differences between privately managed systems and public systems.
+
+\iffalse
+Figure \ref{fig:workflow} shows a proposed TES trading workflow, which demonstrates several key aspects and interactions of IoT blockchain applications . For example, this figure shows patterns of communication that can occur both on-blockchain and off-blockchain. Likewise, it shows that multi-step transactions can be terminated mid-process. It also shows how a prosumer and a consumer interact only via on-blockchain communication through the use of a smart contract. 
+
+
+%In the figure, we have both on-blockchain and off-blockchain communication, smart contract method invocations, smart contract triggered events, and messages and transactions that cause the trading workflow to terminate. Additionally, neither the timing constraints for each step in the trading process, nor the logic to handle transactions or messaging being lost and needing resubmission to the blockchain are expressly shown, but both must be accounted for. 
+
+%Figure \ref{fig:workflow}
+\begin{figure*} [h]
+	
+	\center
+	
+	\includestandalone[scale=0.9]{sequence-diagram}
+	\vspace{-0.2em}
+	\caption{Sequence diagram of a proposed Transactive Energy (TE) trading workflow. Dotted lines are RIAPS messages, solid lines are Ethereum transactions, and dashed lines are smart contract events. Messages and transactions in \textcolor{red}{red} stop the trading workflow. %\textcolor{blue}{I don't think RIAPS has been mentioned before. Describe this as an example application that needs to be tested. RIAPS is not important, say that this off block-chain communication.}
+		%	Both Ethereum transactions and smart-contract events are processed through associated geth client.
+	}
+	\label{fig:workflow}
+	\vspace{-0.12in}
+\end{figure*}
+\fi
+
+
+\section{Analysis of State-of-the-Art}
+\label{stateOfArt}
+
+This section reviews the state-of-the-art in IoT and blockchain integration,  focusing on testing. Prior work~\cite{christidis2016blockchains} has shown that IoT and blockchain can be integrated, allowing peers to interact in a trustless, auditable manner via the use of blockchain as a resilient, decentralized, and peer-to-peer ledger. Work has also been done on the topics of security and privacy of IoT and Blockchain integrations~\cite{dorri2017blockchain,ouaddah2017towards}. Beyond that, work has focused on formal verification of smart contracts~\cite{kumaresan2014use}, and how to write smart contracts ``defensively''~\cite{delmolino2016step} to avoid exceptions when multiple contracts interact. The current state-of-the-art with respect to testing, however, is lacking because blockchains are infrequently tested at scale in a systematic and repeatable manner, so we focus on that below.
+
+%\AbhishekOld{This paragraph does not describe related research for this work. Please search specific literature that talks about using IoT and Blockchain together and perhaps discussing the reliability issues. }
+%Additionally, it has been disclosed that the United State Internal Revenue Service has purchased software to deanonymize Bitcoin tax fraud~\cite{IRSBlockchain:online} through advanced tracking of transactions, including across multiple addresses and associating off-blockchain information. 
+ %This demonstrates the maturity of Blockchain profiling tools, which further increases the already high privacy requirements on development of Blockchain enabled IoT devices and networks. Additionally, this shows that considerations need to be taken into account to consider all possible avenues in which personal information is disclosed to prevent profiling. 
+
+% 
+% > Additionally, it has been disclosed that the United State Internal Revenue Service has purchased software to deanonymize Bitcoin tax fraud\cite{IRSBlockchain:online} through advanced tracking of transactions, including across addresses. This demonstrates the maturity of Blockchain profiling tools. 
+% >  are lacking in privacy protection because of the existence of external Blockchain sources of data can assist in profiling users.
+% > of the power of axillary information has in creating data profiling models. This is why creation of new Blockchain accounts and cycling of these accounts quickly is so important.
+% 
+% ^.
+
+%are lacking in privacy protection because of the existence of external Blockchain sources of data can assist in profiling users.
+
+%of the power of axillary information has in creating data profiling models. This is why creation of new Blockchain accounts and cycling of these accounts quickly is so important. 
+
+\subsection{Testing IoT Blockchain Systems}
+
+%Explain current IoT-BC systems and how are they tested.
+
+Popular blockchain ecosystems, such as Bitcoin and Ethereum, suffer from design limitations that prevent their direct application to IoT. In particular, transaction-confirmation times are relatively long (around tens of minutes) and variable on public blockchain networks due largely to their proof-of-work algorithms. Likewise, IoT devices have limited processing power and storage capabilities, which must be accounted for and tested~\cite{IoTandBl20:online} to ensure constraints are met.
+% \AronOld{I don't see why ``predominantly designed to communicate via the ledger'' implies long/variable confirmation time} most applications being predominantly designed to communicate via the ledger~\cite{IoTandBl20:online}. 
+
+Prior work on testing of IoT blockchain systems generally fall into two categories: (1) their test implementation has a single client and one or more smart contracts or (2) they focus purely on theoretical aspects and discuss future work implementing a test example. For example, Beck et.\ al~\cite{beck2016blockchain} discusses their implementation, but apparently (since it is not discussed in detail) the implementation only uses a single client, two smart contracts, and no additional transactions on the ledger. Conversely, Simic et.\ al \cite{simicCaseStudyIoTBlockchainHealthcare2017}  presents a purely theoretical paper where they discuss IoT and blockchain powered healthcare at a high level, without addressing privacy or any of the many other significant implementation difficulties. 
+%Even those that do implement a slightly broader testing 
+%Aitzhan and Svetinovic who implemented a proof-of-concept platform for decentralized smart grid energy trading using blockchains using a proof-of-work consensus, but they do not consider grid control and stability, or scalability~\cite{aitzhan2016security}.
+
+\subsection{Testing Repeatability}
+%Also explain that in distributed systems deter-lab and EMulab enabled significant progress because of the repeatability and testing mechanisms available.
+%\AbhishekOld{What exactly is the challenge of testing for block-chain IOT applications. Can you describe the complexity in terms of figure 1. Consider should all of the actors come online at the same time. Should they come online sequentially. The actor to geth client (you should explain what is geth client) connection can lose transactions. Actor can lose messages. Then you can say we need a testing network that help us introduce these test cases.}
+
+The importance of integration and regression testing in software development has been well-established for over 20 years~\cite{rothermel2001prioritizing,agrawal1993incremental,leung1990study}. Integration and regression testing of distributed systems has been improved via network emulation testbeds, such as DETERLAB~\cite{mirkovic2012teachingDETERLAB} and Emulab~\cite{siaterlis2013useEmulab}. These testbeds provide mechanisms to repeatably deploy and test a distributed system for both integration and regression testing.
+
+Testing ITBAs incurs additional difficulties that standard IoT applications do not face. For example, there is a completely separate network for each component of the actor in an ITBA: the IoT middleware/application layer, possibly a distributed database layer, and the blockchain layer.  We focus on the IoT middleware/application layer and blockchain layer in this paper. Testing thus requires that for each actor, we must run both the actor's IoT middleware/application code and a blockchain client instance. This pairing incurs a wide range of conditions that must be planned for, tracked, corrected, and tested. 
+
+Some examples of what must be tested include: (1) the order of actor/blockchain client starting; (2) whether all actors should be started before processing on either the IoT and/or blockchain network starts; and (3) what detection and recovery mechanisms are needed to account for lost messages between the blockchain client and the actor, the actor losing a message, and transactions being lost on the blockchain. A testing environment for ITBAs, thus, needs to repeatably create networks and network conditions to address these conditions. Section~\ref{proposedArch} describes how the PlaTIBART architecture enables the building of such test networks. 
+
+
+\section{The Architecture of PlaTIBART}
+\label{proposedArch}
+
+%Your architecture
+%\AbhishekOld{Where is figure 1 referenced. See the blue comments in figure 1}
+PlaTIBART architecture for creating repeatable test network deployments of IoT/blockchain applications combines a Domain Specific Language (DSL) to define the network topology and settings, a Python program leveraging the Fabric API to manage the test network, and the RIAPS middleware~\cite{RIAPS_IEEE_ISORC_2017} to facilitate communication between nodes on the network. 
+\iffalse
+PlaTIBART's DSL is textual and uses the JSON formatting for notation. The network manager application leverages the usage of SSH via the Python Fabric API to allow remote management of potentially multiple nodes on each host in the network. The RIAPS middleware provides each node on the network the off-blockchain communication mechanism to communicate with other nodes and contains the application logic for each node. 
+\fi
+Each of these components is described below.
+
+\subsection{Application Platform}
+
+%Resilient Information Architecture Platform for the Smart Grid (RIAPS) is the middleware platform our solution uses to facilitate discovery of peers on the network, containment of application logic, and 
+
+%Explain all the pieces and show the execution of the transactive energy application as example
+%\Mike{This is 3rd time we use RIAPS, but first spelling out, is that okay?}
+The \textit{Resilient Information Architecture Platform} for Smart Grid (RIAPS)~\cite{RIAPS_IEEE_ISORC_2017} is the application platform used by PlaTIBART to implement our case-study example described in Section~\ref{case_study}. %\footnote{\url{https://riaps.isis.vanderbilt.edu/}} 
+RIAPS provides actor and component based abstraction, as well as support for deploying algorithms on devices across the network \footnote{RIAPS uses ZeroMQ \cite{hintjens2010zeromq} and Cap'n Proto \cite{varda2015cap} to manage the communication layer.} and solves problems collaboratively by providing micro-second level time synchronization \cite{RIAPS_IEEE_ISORC_2017}, failure based reconfiguration \cite{dubey2017resilience}, and group creation and coordination services (still under active development), in addition to the services described in \cite{LeeNiddodiSrivastavaBakken2016}. It is capable of handling different communications and running implemented algorithms in real-time.
+
+\subsection{Actor Pattern}
+Each application client in the network is implemented as an actor with two main components: (1) a wrapper class specific to the role the actor is given and (2) a geth client, the  reference client for Ethereum\footnote{\url{https://github.com/ethereum/go-ethereum/wiki/geth}}. Figure \ref{fig:network-component-topology} shows a small network of five actors (indicated by an ellipse around a wrapper and geth client pair) and the networking connections between each actor's components. Geth clients communicate exclusively via on-blockchain means,\textit{ i.e.}, the geth client of each actor communicates directly with its associated wrapper, and the wrapper  communicates directly with other wrappers via an off-blockchain channel, such as TCP P2P communications. 
+
+\begin{figure}[ht]
+\vspace{-0.10in}
+	%\textbf{Sample Model}\par\medskip
+	\centering
+	\includestandalone[width=0.8\columnwidth]{pic2}
+	%    \resizebox{\textwidth}
+    \vspace{-0.05in}
+	\caption{Sample Actor Component Network with an Actor is a Geth Client and a Wrapper.}
+	\label{fig:network-component-topology}
+    \vspace{-0.10in}
+\end{figure}
+
+\subsection{Fault Tolerance}
+
+%\Abhishek{Be precise about the fault model. In this case you are considering transaction loss. Say that this is one of the problems we have witnessed. Refer to the online bug report of ethereum and cite it. Say that other kinds of faults, specially in actor communication are handled by other middleware solutions like RIAPS - cite RIAPS}
+A key benefit of decoupling the blockchain client and the wrapper into two  components of an actor is enhanced fault tolerance around transaction loss, compared with tightly coupled solutions. Specifically, it allows the wrapper to not only monitor the blockchain client, but also shut down and restart the client as needed. This design allows the wrapper component to ensure that if any known or discovered faults arise from defects in the blockchain software, the wrapper can at least attempt to recover. 
+
+For example, in our Ethereum test network described in Section~\ref{experiment}, we have encountered faults where transactions are never mined~\cite{EthereumIssue14893:online} until a client is restarted. These lost transactions are problematic since they prevent a client from being able to interact with the blockchain network. Other types of faults, such as those related to an actor's communication with other components of the network, are handled by other middleware solutions, such as RIAPS.
+
+PlaTIBART applies the \textit{Observer} pattern to notify the wrapper of the occurrence of events, such as faults and other blockchain-related conditions. This notification is accomplished by a separate thread within the wrapper that monitors its paired geth client for new events, such as completed transactions, or potential faults. This thread then notifies registered callback(s) when target events occur. For example, if the geth client becomes unresponsive or transactions appear to have stalled, then registered callback method(s) are called to notify the wrapper. 
+%\AbhishekOld{I though the observer pattern is done. Explain how does this pattern work by describing the sequence of activities.}.
+
+\subsection{Domain Specific Language}
+
+PlaTIBART's DSL defines the roles that different clients in our network have, based on the \textit{Actor} pattern. This DSL model implements a correct-by-construction design, thereby allowing for a verification stage on the model to check for internal consistency before any deployment is attempted. This verification prevents inconsistencies, such as two clients requesting the same port on the same host. 
+
+Figure \ref{fig:model-sample} shows an example of our DSL, which specifies a full network configuration file for a test network. The first two lines of the configuration file contain two unique identifiers for this test network and its current version, ``configurationName'' and ``configurationVersion'', respectively. Next, it contains values specific for the creation of an Ethereum private network's Genesis block. 
+
+A Genesis block in Ethereum is the first block in a blockchain and has special properties, such as not having a predecessor and being able to declare accounts that already have balances before any mining or transactions begin. The ``chainID'' is a unique positive integer identifying which blockchain the test network is using; 1 through 4 are public Ethereum blockchains of varying production/testing phases\footnote{By setting ``chainID'' to a public value, it is possible to connect a test network to a preexisting public blockchain network instead of creating a new one.}. 
+
+Next, ``difficulty'' indicates how computationally hard it is to mine a block, and ``gasLimit'' is the maximum difficulty of a transaction based on length in bytes of the data and other Ethereum runtime values. The ``balance'' is the starting balance that we allocate to each client's starting account upon creation of the network\footnote{``balance'' applies only to accounts created before a new blockchain is created. Accounts created after the blockchain, be it public or private, is created will not receive any starting balance.}, which eliminates the situation where clients cannot begin transactions to request assets before any mining has begun. Lastly, the ``clients'' represent the actual nodes in our network. 
+
+%\AbhishekOld{Make sure you separate the DSL from the example. An easy way to do this is to have separate paragraphs for DSL explanation and example.}
+Clients in the DSL represent the individual actors in our network, comprised of a geth client and a RIAPs instance using a wrapper interface. The geth client has two interfaces and TCP ports associated with it: one for incoming Blockchain connections, and one for administration. 
+
+%\Mike{Took out Par. talking about port allocation for space}
+%In the network defined in Figure \ref{fig:model-sample}, we allocate each client a pair of ports on a private subnet, and for each new client type we offset the port by 1,000. This means that in the example network defined by Figure \ref{fig:model-sample}, Prosumers use ports 9,000-9,029, DSO uses ports 10,000 and 10,001, and "miners" use ports 11,000 and 11,001. This design limits the total number of clients to 1,000, though this limit can be removed by assigning unique start ports to each client type.
+\begin{figure}[t]
+%\textbf{Sample Model}\par\medskip
+\lstinputlisting{sample-contract.json}
+\vspace{-0.12in}
+\caption{Sample DSL model.}
+\label{fig:model-sample}
+\vspace{-0.15in}
+\end{figure}
+
+\subsection{Network Manager}
+\label{networkmanager}
+%We wrote a network manager application for PlaTIBART that uses the DSL to create and manage test network instances. To simplify deployment requirements on test machines the only requirements, other than required ssh key management logistics, are that each test machine have geth and dtach installed and that an ssh daemon(assumed A Linux operating system) be running. 
+
+The PlaTIBART network manager is written in Python and leverages the Fabric API to manage the SSH connections from a deployment/management host to each test host. The network manager is a stateless command-line program that takes a DSL file and a series of command operands to determine which operation it should perform. This design makes the manager readily adaptable into existing development workflows. 
+
+Based on an input DSL file, PlaTIBART's network manager can create, start, stop, and delete ``clients'', ``miner''(s), and entire test network instances. The only exception to this approach is managing blockchains, which must have a configuration file made from the DSL file, and then adds that file into a new Genesis block. A Genesis block is the first block in a new Ethereum network. This Genesis block must be distributed to geth's private storage for each ``miner'' and ``clients'', before the test network can be started.
+
+% interesting, but not 'directly' relevant & cut to save space.
+%To provide additional comparability for other designs, the model fully supports Ethereum's discovery mechanism Bootnodes, despite not being used in our network. Called "bootnodes", it is an optional top-level dict that follows the same conventions as a  "clients" grouping.
+
+%\begin{figure}[h]
+%%\textbf{Sample Model Bootnode Extension}\par\medskip
+%\lstinputlisting{sample-contract-bootnodes.json}
+%\caption{Sample Model Bootnode Extension}
+%\label{fig:model-bootnodes}
+%\end{figure}
+%\subsection{Network Manager}
+%
+%The 
+
+\section{Empirical Results}
+\label{empirical}
+This section examines our experimental testbed configuration and analyzes our experiment's results.
+\subsection{Experimental Testbed Configuration}
+
+To test PlaTIBART we implemented a solution to the Transactive Energy case study discussed in Section \ref{case_study} and deployed it to the test network defined in Figure \ref{fig:model-sample}. This network was installed on a private cloud instance hosted at Vanderbilt University. We ran our tests on 6 virtual hosts, each with: 4GB RAM, 40GB hard drive space, running Ubuntu 16.04.02, and gigabit networking.
+
+For these tests we implemented a custom smart contract and wrappers for both Smart Grid distribution system operators (DSO) and prosumer clients in Python. Each wrapper had one geth client associated with it. We used PlaTIBART's network manager tool outlined in Section~\ref{networkmanager} to create, start, shutdown, and delete the test network. We manually paired each wrapper with its geth client's IP address and port (in future work this is to be integrated and automated into the network manager's capabilities).  
+
+Using our custom written wrappers, smart contract, and managed test network we simulated a day's worth of transactive energy trading between actors. Via the Linux ``time'' command we measured each step needed in the entire process to create a test network, including Clients Create, Miners Create, Blockchain Make, Blockchain Create, Distribute to Clients, and Distribute to Miners. We also measured the steps required to start and connect the geth instance for each ``clients'' (``prosumer'' and ``DSO'') to the geth client of each ``miner.''\footnote{Miners are treated as a special case of ``clients'' and have their own unique set of network manager commands.} Currently, this star-network is the only network topology supported by PlaTIBART, but we will expand the supported topologies in the future. 
+
+\subsection{Analysis of Results}
+\label{results}
+After running our tests, described above, we observed the results shown in Table~\ref{tab:1}. As shown in this table, the standard deviation for each testing phase was small (the largest being 0.09\% of the time taken). Likewise, the average time either remained relatively static, or scaled linearly, in relation to the number of clients (2, 5, 10, 15, 20 prosumers + 1 DSO) with one exception, that being ``network stop'', which had a sudden jump in its otherwise linear times at the 20 prosumer test.
+
+\label{experiment}
+\begin{table*}[!htbp]
+	\centering
+	%	\vspace{-0.2em}
+	\input{results-tabular}
+	\caption{Average Time (Seconds) and Standard Deviation of Five Tests for Each Variation of Number of Prosumer Clients}
+	\label{tab:1}
+	\vspace{-0.3in}
+\end{table*}
+
+The test phases that remained relatively static included: Miners Create, Blockchain Make, Blockchain Create, Distribute to Miners, Miners Start, and Network Delete. The test phases that scaled with increase in number of prosumers were: Clients Create, Distribute to Clients, Full Network Created, Clients Start, Network Connect, and Network Stop. Other than Network Stop, which appears exponential but we suspect might become linear at greater network sizes, all of the scaling increases were linear (Std Dev < 0.065) after dividing the average time increase by the difference in number of clients. 
+
+The results of our experiments indicate that there exists high consistency and predictability of managing PlaTIBART-based blockchain test networks, with the exception of the network stop operation, which needs further testing. These results help build confidence that PlaTIBART's approach to creating repeatable testing networks for IoT blockchain applications scales well, which is important to encourage adoption by IoT system developers. 
+
+%We believe that it is likely that in addition to these phases, that the time required for each phase related to Miners would scale with the number of miners if they were increased.\Mike{This is likely true, but should we mention this, b/c we should have tested it?}
+
+\section{Lessons Learned}
+\label{lessonslearned}
+
+During the implementation of our initial PlaTIBART prototype, we learned many lessons related to integrating IoT and blockchain. The three main categories of lessons learned involved documentation deficiencies, buggy behavior of the Ethereum geth client, and limitations of both Ethereum's management APIs and the Solidity smart contract language.
+
+The official documentation for Ethereum is deficient in many key areas, such as organization, completeness, lack of meaningful examples, and clarity on best practices and security warnings. Here are some examples that demonstrate this:
+
+\begin{itemize}
+	\item Ethereum does not maintain its own documentation, instead linking to an outside resource maintained by volunteers from the Ethereum Community.
+	\item The only official documentation is a FAQ on the main page, and the wikis in Ethereum's various source code repositories. 
+	\item Important side effects of a management API call are only found listed under other method's documentation.
+\end{itemize}
+
+There are also programmatic bugs with Ethereum's reference client implementation, geth. While building and evaluating our test network, we experienced new transactions that were not mined regardless of how many new blocks were being mined, Ether available to the client, or any other obvious cause. 
+
+Similar issues have been reported frequently on the public bug-reporting/tracking system about others attempting to setup private networks~\cite{EthereumIssue14893:online}. As of writing this paper, however, there is no solution other than to restart the geth client. This issue is addressable, but highlights the importance of fault tolerance in individual client execution and ways to recover from faults at that level. 
+
+There are also idiosyncrasies of the Ethereum management APIs that are not well documented. An example is the polling mechanism that clients use to see if transactions occurred, which meet certain search criteria, and are called filters. The problem is that created filters are set to an undefined timer and will simply cease to work if not used ``for a while''~\cite{EthereumJSONRPC}. This quote, however, does not come from the description of the method for creating the filter. Instead, it is on a secondary method, eth\_uninstallFilter(), which is never referenced (directly or indirectly) from the original method, eth\_newFilter(). 
+
+There are also limits to the Solidity smart contract language that must be accounted for in early planning stages of development. For example, the language currently does not support floating-point numbers. Moreover, all values must be converted to a specific binary representation for submission as a transaction. These limitations prevent---or dramatically increase the complexity (and therefore computational cost)---of advanced mathematical computations on-blockchain, which yields more off-blockchain processing and communication.
+
+%\AbhishekOld{Why don't we have an experiment and results section?}
+ 
+\section{Concluding Remarks}
+\label{conclusion}
+This paper describes how PlaTIBART applies the \textit{Actor} pattern with DSL-driven test network management software and component creation to enable the development of resilient, fault-tolerant IoT-blockchain applications and middleware. We employed PlaTIBART to dynamically deploy and manage test blockchain networks of varying sizes based on DSL configuration files. We also defined APIs for monitoring and recovering from faults, which standard blockchain applications were unable to recover from. This capability provides the means for fully integrated regression testing of blockchain applications, which is a novel contribution.
+
+PlaTIBART currently  uses Ethereum as its blockchain implementation. For example, our DSL has Ethereum-specific required settings, such as ``chainId'' and ``gasLimit.'' Future versions of PlaTIBART will refactor these requirements so that other blockchain platforms, such as Hyperledger, can be substituted seamlessly.  Other areas of future work focus on formal verification of internal-consistency of a configuration file and a means of defining incremental adjustments to a test network through the DSL. Likewise, we are developing network management tools that help to simplify and automate the network topology for both the overall test framework instance, as well as which Actor components are paired.
+
+
+%Our solution's DSL for configuring test networks has  a lot of areas of improvement, such as better support for different Blockchain network software, more precisely configured TCP port designations per client type, and for a means of declaring a network topology for clients to have upon deployment. 
+
+ 
+
+%\end{section}  % This is where a 'short' article might terminate
+
+
+
+%\appendix
+%Appendix A
+%\section{Headings in Appendices}
+

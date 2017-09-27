@@ -1,0 +1,508 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{00}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{}, \showDOI{}, and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showDOI}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showDOI #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showDOI      \undefined \def \showDOI       #1{#1}\fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[\protect\citeauthoryear{??}{Eth}{[n. d.]}]%
+        {EthereumIssue14893:online}
+ \bibinfo{year}{[n. d.]}\natexlab{}.
+\newblock \bibinfo{title}{Sometimes, transactions disappear from txpool rather
+  than being mined into the next block · Issue \#14893 ·
+  ethereum/go-ethereum}.
+\newblock
+  \bibinfo{howpublished}{\url{https://github.com/ethereum/go-ethereum/issues/14893}}.
+    (\bibinfo{year}{[n. d.]}).
+\newblock
+\newblock
+\shownote{(Accessed on 09/06/2017).}
+
+
+\bibitem[\protect\citeauthoryear{??}{Bit}{2017}]%
+        {BitcoinPrices:online}
+ \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{title}{Bitcoin (BTC) price, charts, market cap, and other
+  metrics | CoinMarketCap}.
+\newblock
+  \bibinfo{howpublished}{\url{https://coinmarketcap.com/currencies/bitcoin/}}.
+   (\bibinfo{date}{08} \bibinfo{year}{2017}).
+\newblock
+\newblock
+\shownote{(Accessed on 08/30/2017).}
+
+
+\bibitem[\protect\citeauthoryear{??}{Bro}{2017}]%
+        {BrooklynMicrogrid}
+ \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{title}{Brooklyn Microgrid}.
+\newblock   (\bibinfo{year}{2017}).
+\newblock
+\showURL{%
+\url{http://brooklynmicrogrid.com/}}
+
+
+\bibitem[\protect\citeauthoryear{??}{Eth}{2017a}]%
+        {EthereumPrices:online}
+ \bibinfo{year}{2017}\natexlab{a}.
+\newblock \bibinfo{title}{Ethereum (ETH) \$381.84 (3.83\%) | CoinMarketCap}.
+\newblock
+  \bibinfo{howpublished}{\url{https://coinmarketcap.com/currencies/ethereum/}}.
+    (\bibinfo{date}{08} \bibinfo{year}{2017}).
+\newblock
+\newblock
+\shownote{(Accessed on 08/30/2017).}
+
+
+\bibitem[\protect\citeauthoryear{??}{Eth}{2017b}]%
+        {EthereumAPInterfaces:online}
+ \bibinfo{year}{2017}\natexlab{b}.
+\newblock \bibinfo{title}{Interfaces | Ethereum Frontier Guide}.
+\newblock
+  \bibinfo{howpublished}{\url{https://ethereum.gitbooks.io/frontier-guide/content/interfaces.html}}.
+    (\bibinfo{year}{2017}).
+\newblock
+\newblock
+\shownote{(Accessed on 08/30/2017).}
+
+
+\bibitem[\protect\citeauthoryear{??}{Eth}{2017c}]%
+        {EthereumJSONRPC}
+ \bibinfo{year}{2017}\natexlab{c}.
+\newblock \bibinfo{title}{JSON RPC · ethereum/wiki Wiki · GitHub}.
+\newblock
+  \bibinfo{howpublished}{\url{https://github.com/ethereum/wiki/wiki/JSON-RPC}}.
+    (\bibinfo{year}{2017}).
+\newblock
+\newblock
+\shownote{(Accessed on 08/28/2017).}
+
+
+\bibitem[\protect\citeauthoryear{??}{The}{2017}]%
+        {TheTruthAdoption:online}
+ \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{title}{The Truth About Blockchain}.
+\newblock
+  \bibinfo{howpublished}{\url{https://hbr.org/2017/01/the-truth-about-blockchain}}.
+    (\bibinfo{date}{01} \bibinfo{year}{2017}).
+\newblock
+\newblock
+\shownote{(Accessed on 08/30/2017).}
+
+
+\bibitem[\protect\citeauthoryear{??}{eth}{2017}]%
+        {ethereumLostCoinAPI:online}
+ \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{title}{use RPC API personal\_sendTransaction lost coin ·
+  Issue \#14901 · ethereum/go-ethereum}.
+\newblock
+  \bibinfo{howpublished}{\url{https://github.com/ethereum/go-ethereum/issues/14901}}.
+    (\bibinfo{date}{08} \bibinfo{year}{2017}).
+\newblock
+\newblock
+\shownote{(Accessed on 08/30/2017).}
+
+
+\bibitem[\protect\citeauthoryear{Agrawal, Horgan, Krauser, and London}{Agrawal
+  et~al\mbox{.}}{1993}]%
+        {agrawal1993incremental}
+\bibfield{author}{\bibinfo{person}{Hiralal Agrawal},
+  \bibinfo{person}{Joseph~Robert Horgan}, \bibinfo{person}{Edward~W Krauser},
+  {and} \bibinfo{person}{Saul~A London}.} \bibinfo{year}{1993}\natexlab{}.
+\newblock \showarticletitle{Incremental regression testing}. In
+  \bibinfo{booktitle}{{\em Software Maintenance, 1993. CSM-93, Proceedings.,
+  Conference on}}. IEEE, \bibinfo{pages}{348--357}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Banafa}{Banafa}{2017}]%
+        {IoTandBl20:online}
+\bibfield{author}{\bibinfo{person}{Ahmed Banafa}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{title}{IoT and Blockchain Convergence: Benefits and
+  Challenges - IEEE Internet of Things}.
+\newblock
+  \bibinfo{howpublished}{\url{https://iot.ieee.org/newsletter/january-2017/iot-and-blockchain-convergence-benefits-and-challenges.html}}.
+    (\bibinfo{year}{2017}).
+\newblock
+\newblock
+\shownote{(Accessed on 08/31/2017).}
+
+
+\bibitem[\protect\citeauthoryear{Beck, Czepluch, Lollike, and Malone}{Beck
+  et~al\mbox{.}}{2016}]%
+        {beck2016blockchain}
+\bibfield{author}{\bibinfo{person}{Roman Beck}, \bibinfo{person}{Jacob~Stenum
+  Czepluch}, \bibinfo{person}{Nikolaj Lollike}, {and} \bibinfo{person}{Simon
+  Malone}.} \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{Blockchain-the Gateway to Trust-Free Cryptographic
+  Transactions.}. In \bibinfo{booktitle}{{\em ECIS}}.
+  \bibinfo{pages}{ResearchPaper153}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Bogner, Chanson, and Meeuw}{Bogner
+  et~al\mbox{.}}{2016}]%
+        {Bogner2016}
+\bibfield{author}{\bibinfo{person}{Andreas Bogner}, \bibinfo{person}{Mathieu
+  Chanson}, {and} \bibinfo{person}{Arne Meeuw}.}
+  \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{A Decentralised Sharing App Running a Smart
+  Contract on the Ethereum Blockchain}. In \bibinfo{booktitle}{{\em Proceedings
+  of the 6th International Conference on the Internet of Things}} {\em
+  (\bibinfo{series}{IoT'16})}. \bibinfo{publisher}{ACM}, \bibinfo{address}{New
+  York, NY, USA}, \bibinfo{pages}{177--178}.
+\newblock
+\showISBNx{978-1-4503-4814-0}
+\showDOI{%
+\url{https://doi.org/10.1145/2991561.2998465}}
+
+
+\bibitem[\protect\citeauthoryear{Buccafurri, Lax, Nicolazzo, and
+  Nocera}{Buccafurri et~al\mbox{.}}{2017}]%
+        {Buccafurri2017}
+\bibfield{author}{\bibinfo{person}{Francesco Buccafurri},
+  \bibinfo{person}{Gianluca Lax}, \bibinfo{person}{Serena Nicolazzo}, {and}
+  \bibinfo{person}{Antonino Nocera}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Overcoming Limits of Blockchain for IoT
+  Applications}. In \bibinfo{booktitle}{{\em Proceedings of the 12th
+  International Conference on Availability, Reliability and Security}} {\em
+  (\bibinfo{series}{ARES '17})}. \bibinfo{publisher}{ACM},
+  \bibinfo{address}{New York, NY, USA}, Article \bibinfo{articleno}{26},
+  \bibinfo{numpages}{6}~pages.
+\newblock
+\showISBNx{978-1-4503-5257-4}
+\showDOI{%
+\url{https://doi.org/10.1145/3098954.3098983}}
+
+
+\bibitem[\protect\citeauthoryear{Cazalet, Marini, Price, Woychik, and
+  Caldwell}{Cazalet et~al\mbox{.}}{2016}]%
+        {NIST_TE}
+\bibfield{author}{\bibinfo{person}{E. Cazalet}, \bibinfo{person}{P.~De Marini},
+  \bibinfo{person}{J. Price}, \bibinfo{person}{E. Woychik}, {and}
+  \bibinfo{person}{J. Caldwell}.} \bibinfo{year}{2016}\natexlab{}.
+\newblock \bibinfo{booktitle}{{\em Transactive Energy Models}}.
+\newblock \bibinfo{type}{{T}echnical {R}eport}. \bibinfo{institution}{National
+  Institute of Standards Technology}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Christidis and Devetsikiotis}{Christidis and
+  Devetsikiotis}{2016}]%
+        {christidis2016blockchains}
+\bibfield{author}{\bibinfo{person}{Konstantinos Christidis} {and}
+  \bibinfo{person}{Michael Devetsikiotis}.} \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{Blockchains and smart contracts for the internet of
+  things}.
+\newblock \bibinfo{journal}{{\em IEEE Access\/}}  \bibinfo{volume}{4}
+  (\bibinfo{year}{2016}), \bibinfo{pages}{2292--2303}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Company}{Company}{2017}]%
+        {SterlingRanch}
+\bibfield{author}{\bibinfo{person}{Sterling Ranch~Development Company}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{title}{The Nature of Sterling Ranch}.
+\newblock   (\bibinfo{year}{2017}).
+\newblock
+\showURL{%
+\url{http://sterlingranchcolorado.com/about/}}
+
+
+\bibitem[\protect\citeauthoryear{Delmolino, Arnett, Kosba, Miller, and
+  Shi}{Delmolino et~al\mbox{.}}{2016}]%
+        {delmolino2016step}
+\bibfield{author}{\bibinfo{person}{Kevin Delmolino}, \bibinfo{person}{Mitchell
+  Arnett}, \bibinfo{person}{Ahmed Kosba}, \bibinfo{person}{Andrew Miller},
+  {and} \bibinfo{person}{Elaine Shi}.} \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{Step by step towards creating a safe smart
+  contract: Lessons and insights from a cryptocurrency lab}. In
+  \bibinfo{booktitle}{{\em International Conference on Financial Cryptography
+  and Data Security}}. Springer, \bibinfo{pages}{79--94}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Dorri, Kanhere, Jurdak, and Gauravaram}{Dorri
+  et~al\mbox{.}}{2017}]%
+        {dorri2017blockchain}
+\bibfield{author}{\bibinfo{person}{Ali Dorri}, \bibinfo{person}{Salil~S
+  Kanhere}, \bibinfo{person}{Raja Jurdak}, {and} \bibinfo{person}{Praveen
+  Gauravaram}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Blockchain for IoT security and privacy: The case
+  study of a smart home}. In \bibinfo{booktitle}{{\em Pervasive Computing and
+  Communications Workshops (PerCom Workshops), 2017 IEEE International
+  Conference on}}. IEEE, \bibinfo{pages}{618--623}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Dubey, Karsai, and Pradhan}{Dubey
+  et~al\mbox{.}}{2017}]%
+        {dubey2017resilience}
+\bibfield{author}{\bibinfo{person}{Abhishek Dubey}, \bibinfo{person}{Gabor
+  Karsai}, {and} \bibinfo{person}{Subhav Pradhan}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Resilience at the edge in cyber-physical systems}.
+  In \bibinfo{booktitle}{{\em Fog and Mobile Edge Computing (FMEC), 2017 Second
+  International Conference on}}. IEEE, \bibinfo{pages}{139--146}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Eisele, Mardari, Dubey, and Karsai}{Eisele
+  et~al\mbox{.}}{2017a}]%
+        {RIAPS1}
+\bibfield{author}{\bibinfo{person}{S. Eisele}, \bibinfo{person}{I. Mardari},
+  \bibinfo{person}{A. Dubey}, {and} \bibinfo{person}{G. Karsai}.}
+  \bibinfo{year}{2017}\natexlab{a}.
+\newblock \showarticletitle{RIAPS: Resilient Information Architecture Platform
+  for Decentralized Smart Systems}. In \bibinfo{booktitle}{{\em 2017 IEEE 20th
+  International Symposium on Real-Time Distributed Computing (ISORC)}}.
+  \bibinfo{pages}{125--132}.
+\newblock
+\showDOI{%
+\url{https://doi.org/10.1109/ISORC.2017.22}}
+
+
+\bibitem[\protect\citeauthoryear{Eisele, Mardari, Dubey, and Karsai}{Eisele
+  et~al\mbox{.}}{2017b}]%
+        {RIAPS_IEEE_ISORC_2017}
+\bibfield{author}{\bibinfo{person}{S. Eisele}, \bibinfo{person}{I. Mardari},
+  \bibinfo{person}{A. Dubey}, {and} \bibinfo{person}{G. Karsai}.}
+  \bibinfo{year}{2017}\natexlab{b}.
+\newblock \showarticletitle{RIAPS: Resilient Information Architecture Platform
+  for Decentralized Smart Systems}. In \bibinfo{booktitle}{{\em 2017 IEEE 20th
+  International Symposium on Real-Time Distributed Computing (ISORC)}}.
+  \bibinfo{pages}{125--132}.
+\newblock
+\showDOI{%
+\url{https://doi.org/10.1109/ISORC.2017.22}}
+
+
+\bibitem[\protect\citeauthoryear{Gubbi, Buyya, Marusic, and Palaniswami}{Gubbi
+  et~al\mbox{.}}{2013}]%
+        {gubbi2013IoT}
+\bibfield{author}{\bibinfo{person}{Jayavardhana Gubbi},
+  \bibinfo{person}{Rajkumar Buyya}, \bibinfo{person}{Slaven Marusic}, {and}
+  \bibinfo{person}{Marimuthu Palaniswami}.} \bibinfo{year}{2013}\natexlab{}.
+\newblock \showarticletitle{Internet of Things (IoT): A vision, architectural
+  elements, and future directions}.
+\newblock \bibinfo{journal}{{\em Future generation computer systems\/}}
+  \bibinfo{volume}{29}, \bibinfo{number}{7} (\bibinfo{year}{2013}),
+  \bibinfo{pages}{1645--1660}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Hintjens}{Hintjens}{2010}]%
+        {hintjens2010zeromq}
+\bibfield{author}{\bibinfo{person}{Pieter Hintjens}.}
+  \bibinfo{year}{2010}\natexlab{}.
+\newblock \showarticletitle{ZeroMQ: The Guide}.
+\newblock \bibinfo{journal}{{\em URL http://zeromq. org\/}}
+  (\bibinfo{year}{2010}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Ibba, Pinna, Seu, and Pani}{Ibba
+  et~al\mbox{.}}{2017}]%
+        {Ibba2017}
+\bibfield{author}{\bibinfo{person}{Simona Ibba}, \bibinfo{person}{Andrea
+  Pinna}, \bibinfo{person}{Matteo Seu}, {and} \bibinfo{person}{Filippo~Eros
+  Pani}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{CitySense: Blockchain-oriented Smart Cities}. In
+  \bibinfo{booktitle}{{\em Proceedings of the XP2017 Scientific Workshops}}
+  {\em (\bibinfo{series}{XP '17})}. \bibinfo{publisher}{ACM},
+  \bibinfo{address}{New York, NY, USA}, Article \bibinfo{articleno}{12},
+  \bibinfo{numpages}{5}~pages.
+\newblock
+\showISBNx{978-1-4503-5264-2}
+\showDOI{%
+\url{https://doi.org/10.1145/3120459.3120472}}
+
+
+\bibitem[\protect\citeauthoryear{Kumaresan and Bentov}{Kumaresan and
+  Bentov}{2014}]%
+        {kumaresan2014use}
+\bibfield{author}{\bibinfo{person}{Ranjit Kumaresan} {and}
+  \bibinfo{person}{Iddo Bentov}.} \bibinfo{year}{2014}\natexlab{}.
+\newblock \showarticletitle{How to use bitcoin to incentivize correct
+  computations}. In \bibinfo{booktitle}{{\em Proceedings of the 2014 ACM SIGSAC
+  Conference on Computer and Communications Security}}. ACM,
+  \bibinfo{pages}{30--41}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Lee, Neuendorffer, and Wirthlin}{Lee
+  et~al\mbox{.}}{2003}]%
+        {lee2003actor}
+\bibfield{author}{\bibinfo{person}{Edward~A Lee}, \bibinfo{person}{Stephen
+  Neuendorffer}, {and} \bibinfo{person}{Michael~J Wirthlin}.}
+  \bibinfo{year}{2003}\natexlab{}.
+\newblock \showarticletitle{Actor-oriented design of embedded hardware and
+  software systems}.
+\newblock \bibinfo{journal}{{\em Journal of circuits, systems, and
+  computers\/}} \bibinfo{volume}{12}, \bibinfo{number}{03}
+  (\bibinfo{year}{2003}), \bibinfo{pages}{231--260}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Lee, Niddodi, Srivastava, and Bakken}{Lee
+  et~al\mbox{.}}{2016}]%
+        {LeeNiddodiSrivastavaBakken2016}
+\bibfield{author}{\bibinfo{person}{H. Lee}, \bibinfo{person}{S. Niddodi},
+  \bibinfo{person}{A. Srivastava}, {and} \bibinfo{person}{D. Bakken}.}
+  \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{Decentralized voltage stability monitoring and
+  control in the smart grid using distributed computing architecture}. In
+  \bibinfo{booktitle}{{\em 2016 IEEE Industry Applications Society Annual
+  Meeting}}. \bibinfo{pages}{1--9}.
+\newblock
+\showDOI{%
+\url{https://doi.org/10.1109/IAS.2016.7731871}}
+
+
+\bibitem[\protect\citeauthoryear{Leung and White}{Leung and White}{1990}]%
+        {leung1990study}
+\bibfield{author}{\bibinfo{person}{Hareton~KN Leung} {and} \bibinfo{person}{Lee
+  White}.} \bibinfo{year}{1990}\natexlab{}.
+\newblock \showarticletitle{A study of integration testing and software
+  regression at the integration level}. In \bibinfo{booktitle}{{\em Software
+  Maintenance, 1990, Proceedings., Conference on}}. IEEE,
+  \bibinfo{pages}{290--301}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Melton}{Melton}{2013}]%
+        {Gridwise}
+\bibfield{author}{\bibinfo{person}{R.~B. Melton}.}
+  \bibinfo{year}{2013}\natexlab{}.
+\newblock \bibinfo{booktitle}{{\em Gridwise transactive energy framework}}.
+\newblock \bibinfo{type}{{T}echnical {R}eport}. \bibinfo{institution}{Pacific
+  Northwest National Laboratory}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Mirkovic and Benzel}{Mirkovic and
+  Benzel}{2012}]%
+        {mirkovic2012teachingDETERLAB}
+\bibfield{author}{\bibinfo{person}{Jelena Mirkovic} {and}
+  \bibinfo{person}{Terry Benzel}.} \bibinfo{year}{2012}\natexlab{}.
+\newblock \showarticletitle{Teaching cybersecurity with DeterLab}.
+\newblock \bibinfo{journal}{{\em IEEE Security \& Privacy\/}}
+  \bibinfo{volume}{10}, \bibinfo{number}{1} (\bibinfo{year}{2012}),
+  \bibinfo{pages}{73--76}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Ouaddah, Elkalam, and Ouahman}{Ouaddah
+  et~al\mbox{.}}{2017}]%
+        {ouaddah2017towards}
+\bibfield{author}{\bibinfo{person}{Aafaf Ouaddah}, \bibinfo{person}{Anas~Abou
+  Elkalam}, {and} \bibinfo{person}{Abdellah~Ait Ouahman}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Towards a novel privacy-preserving access control
+  model based on blockchain technology in IoT}.
+\newblock In \bibinfo{booktitle}{{\em Europe and MENA Cooperation Advances in
+  Information and Communication Technologies}}. \bibinfo{publisher}{Springer},
+  \bibinfo{pages}{523--533}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Rothermel, Untch, Chu, and Harrold}{Rothermel
+  et~al\mbox{.}}{2001}]%
+        {rothermel2001prioritizing}
+\bibfield{author}{\bibinfo{person}{Gregg Rothermel}, \bibinfo{person}{Roland~H.
+  Untch}, \bibinfo{person}{Chengyun Chu}, {and} \bibinfo{person}{Mary~Jean
+  Harrold}.} \bibinfo{year}{2001}\natexlab{}.
+\newblock \showarticletitle{Prioritizing test cases for regression testing}.
+\newblock \bibinfo{journal}{{\em IEEE Transactions on software engineering\/}}
+  \bibinfo{volume}{27}, \bibinfo{number}{10} (\bibinfo{year}{2001}),
+  \bibinfo{pages}{929--948}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Siaterlis, Garcia, and Genge}{Siaterlis
+  et~al\mbox{.}}{2013}]%
+        {siaterlis2013useEmulab}
+\bibfield{author}{\bibinfo{person}{Christos Siaterlis},
+  \bibinfo{person}{Andres~Perez Garcia}, {and} \bibinfo{person}{B{\'e}la
+  Genge}.} \bibinfo{year}{2013}\natexlab{}.
+\newblock \showarticletitle{On the use of Emulab testbeds for scientifically
+  rigorous experiments}.
+\newblock \bibinfo{journal}{{\em IEEE Communications Surveys \& Tutorials\/}}
+  \bibinfo{volume}{15}, \bibinfo{number}{2} (\bibinfo{year}{2013}),
+  \bibinfo{pages}{929--942}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Simi{\'c}, Sladi{\'c}, and
+  Milosavljevi{\'c}}{Simi{\'c} et~al\mbox{.}}{2017}]%
+        {simicCaseStudyIoTBlockchainHealthcare2017}
+\bibfield{author}{\bibinfo{person}{Milo{\v{s}} Simi{\'c}},
+  \bibinfo{person}{Goran Sladi{\'c}}, {and} \bibinfo{person}{Branko
+  Milosavljevi{\'c}}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{A Case Study IoT and Blockchain powered
+  Healthcare}.
+\newblock  (\bibinfo{date}{06} \bibinfo{year}{2017}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Varda}{Varda}{2015}]%
+        {varda2015cap}
+\bibfield{author}{\bibinfo{person}{Kenton Varda}.}
+  \bibinfo{year}{2015}\natexlab{}.
+\newblock \bibinfo{title}{Cap’n Proto}.
+\newblock   (\bibinfo{year}{2015}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Zhang, Cecchetti, Croman, Juels, and
+  Shi}{Zhang et~al\mbox{.}}{2016}]%
+        {Zhang2016}
+\bibfield{author}{\bibinfo{person}{Fan Zhang}, \bibinfo{person}{Ethan
+  Cecchetti}, \bibinfo{person}{Kyle Croman}, \bibinfo{person}{Ari Juels}, {and}
+  \bibinfo{person}{Elaine Shi}.} \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{Town Crier: An Authenticated Data Feed for Smart
+  Contracts}. In \bibinfo{booktitle}{{\em Proceedings of the 2016 ACM SIGSAC
+  Conference on Computer and Communications Security}} {\em
+  (\bibinfo{series}{CCS '16})}. \bibinfo{publisher}{ACM}, \bibinfo{address}{New
+  York, NY, USA}, \bibinfo{pages}{270--282}.
+\newblock
+\showISBNx{978-1-4503-4139-4}
+\showDOI{%
+\url{https://doi.org/10.1145/2976749.2978326}}
+
+
+\end{thebibliography}

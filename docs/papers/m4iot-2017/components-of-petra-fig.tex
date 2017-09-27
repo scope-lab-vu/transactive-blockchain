@@ -1,0 +1,36 @@
+%\begin{figure}
+%	\resizebox {0.7\columnwidth} {!} {
+%		\begin{tikzpicture}[x=1.5cm, y=1.5cm, font=\small,
+%		Component/.style={fill=white, draw, align=center, rounded corners=0.1cm, drop shadow={shadow xshift=0.05cm, shadow yshift=-0.05cm, fill=black}},
+%		Connection/.style={<->, >=stealth, shorten <=0.05cm, shorten >=0.05cm}]
+%		
+%		\foreach \pos/\name in {0/pros1, 0.8/pros2, 1.6/pros3} {
+%			\node [Component] (\name) at (\pos - 4, \pos) {Prosumer\\(\texttt{RIAPS, geth})};
+%		}
+%		
+%		\node [Component] (dso) at (-1, 2.6) {DSO\\(\texttt{RIAPS, geth})};
+%		
+%		\fill [fill=black!15] (90:1.5) -- (200:1.5) -- (340:1.5) -- (90:1.5);
+%		
+%		\foreach \pos in {90, 200, 340} {
+%			\node [Component] at (\pos:1.5) {Ethereum\\miner (\texttt{geth})};
+%		}
+%		
+%		\node [Component, dotted] (contract) at (0, 0) {Smart contract\\(\texttt{Solidity})};
+%		
+%		\draw [Connection, bend left=65] (pros1) to node [midway, left, shift={(-0.25,0)}] {RIAPS ($\emptyset$MQ)} (dso);
+%		\draw [Connection, bend left=55] (pros2) to (dso);
+%		\draw [Connection, bend left=45] (pros3) to (dso);
+%		
+%		\draw [Connection, bend right=15] (dso) to (contract);
+%		\draw [Connection, bend right=0] (pros1) to node [midway, below left] {Ethereum} (contract);
+%		\draw [Connection, bend right=0] (pros2) to (contract);
+%		\draw [Connection, bend right=0] (pros3) to (contract);
+%		\end{tikzpicture}
+%		
+%	}
+%	\vspace{-0.1in}
+%	\caption{Components of PETra. The DSO and prosumers are comprised of RIAPS components and \texttt{geth} Ethereum clients. The smart contract is implemented in Solidity, a high-level language for Ethereum, and it is executed by a network of \texttt{geth} miners.}
+%	\vspace{-0.1in}
+%	\label{fig:components}
+%\end{figure}

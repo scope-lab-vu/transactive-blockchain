@@ -1,0 +1,76 @@
+\documentclass{standalone}
+
+\usepackage{tikz}
+\usepackage{lmodern}
+\usetikzlibrary{shapes}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{calc}
+
+%\setlength\oddsidemargin{0in}
+
+\begin{document}
+	
+	% declare that we use 2 layers= background & main
+	\pgfdeclarelayer{background}
+	\pgfsetlayers{background,main}
+
+	% define styles, similar to CSS 
+	\newcommand*\ab{.4}
+	\tikzset{
+		net node/.style = {circle, minimum width=2.75*\ab cm, inner sep=2pt, outer sep=0pt, draw},
+		net node2/.style = {circle, minimum width=2.75*\ab cm, inner sep=7pt, outer sep=0pt, draw, fill=white!100},
+		net root node/.style = {net node, minimum width=3*\ab cm},
+		dashed connect/.style = {line width=2pt,dashed, draw=blue!50!cyan!25!black},
+		net connect/.style = {line width=3pt, draw=blue!50!cyan!25!black},
+		snake it/.style = {line width=2pt,decorate, decoration=snake, draw=blue!50!cyan!25!black},
+		texter/.style = {draw, rectangle,anchor=west},
+	}
+
+	\begin{tikzpicture}
+		
+		% draw nodes
+		\foreach \i in {0,...,4} {
+			% draw wrapper nodes
+			\path (-90+\i*72:2.25) node (i\i) [net node] {Wrapper};
+			% draw geth nodes
+			\path (-90+\i*72:4.5) node (o\i) [net node2] {geth};
+			% draw the json-rpc thick lines 
+			\path [net connect] (i\i) -- (o\i);
+		
+			% draw eclipse around node pairs
+			\draw let \p1=(o\i), \p2=(i\i), \n1={atan2(\y2-\y1,\x2-\x1)}, \n2={veclen(\y2-\y1,\x2-\x1)}
+			% no clue why 4*\n1 works, just played with it + radius
+			in ($ (o\i)!0.5!(i\i) $) ellipse [x radius=\n2/2+30pt, y radius=1.1cm,rotate=90-4*\n1];
+		}
+	
+		% draw the perimeter lines, needs to be background due to snake line overdrawing into geth
+		\begin{pgfonlayer}{background}
+			% loop through list tupple
+			\foreach \x/\nodename in {o/snake it, i/dashed connect}
+				% draw connector lines
+				\path [\nodename] (\x0) -- (\x1) -- (\x2) -- (\x3) -- (\x4) -- (\x0);
+		\end{pgfonlayer}
+	
+		% define variables for 'key' dimensions
+		\newcommand{\y}{-3.2}
+		\newcommand{\x}{-3.5}
+		\newcommand{\yscale}{0.7}
+		\newcommand{\keylinestart}{2.1}
+		\newcommand{\keylineend}{1.5}
+		
+		% define values tuple 'list'
+		\newcommand{\mylist} { dashed connect/.5/Off-Blockchain, net connect/2.5/Management APIs, snake it/1.5/On-Blockchain }
+	
+		% loop through the 'list' 
+		\foreach \nodename/\spacer/\text in \mylist {
+	
+			% draw 'sample' line
+			\draw [\nodename] (\x-\keylineend,\y-\spacer*\yscale) -- (\x-\keylinestart,\y-\spacer*\yscale);	
+			% draw 'sample' text
+			\draw [texter] (\x-1.2,\y-\spacer*\yscale) node {\text};
+		}
+
+		\end{tikzpicture}
+	
+\end{document}

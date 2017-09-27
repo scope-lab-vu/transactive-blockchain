@@ -1,0 +1,8 @@
+"bootnodes" : {
+    "count": 1,
+    "hosts": [
+        "10.4.209.30"
+    ],
+    "startPort": 30301,
+    "protocol": "rpc"
+}
