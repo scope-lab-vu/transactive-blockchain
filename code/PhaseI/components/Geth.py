@@ -12,16 +12,11 @@ class Geth:
   def encode_int(value):
     return format(value & 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, "064x")
 
-  def __init__(self, port=None, ip=None):
-    if ip is None:
-      self.ip = "10.4.209.25"
-    else:
-      self.ip = ip
-    if port is None:
-      self.port = 9010
-    else:
-      self.port = port
-
+  def __init__(self, ip, port):
+    # TODO do validation of input 
+    self.ip = ip
+    self.port = port
+    
   def command(self, method, params=[], id=1, jsonrpc="2.0", verbose=False):
     """ Method to abstract away 'curl' usage to interact with RPC of geth clients. """
     # the <ip:port> to connect to
