@@ -1,0 +1,62 @@
+%!TEX root = paper.tex
+
+
+
+\section{Conclusion and Discussion}
+\label{sec:discussion}
+
+% This section presents an analysis of PETra and shows that
+% it satisfies the security, safety, and privacy requirements formulated
+% earlier.
+
+% \subsection{Security}
+% Satisfaction of the security requirements follows from:
+% \begin{itemize}[noitemsep,topsep=-\parskip]
+% \item immutability of transactions in the distributed ledger,
+% \item validity of transactions
+% \item and tamper-resistance of smart meters.
+% \end{itemize}
+% Together, these properties ensure that only the right entities may
+% create and sign a transaction, that transactions adhere to the rules
+% of the trading workflow, and that transactions cannot be tampered
+% with. Double-spending is resolved by scanning the blockchain to allow only unique outputs. 
+
+% \subsection{Safety}
+% We now demonstrate that faulty or malicious prosumers cannot trade
+% excessive amounts of energy if normal prosumers follow the rules of
+% the trading workflow.  Due to the rules of the trading workflow, the gross amount of energy sold is less than or equal to the amount of EPA
+% obtained by a prosumer.
+% %
+% A prosumer can obtain EPA either by withdrawing from its smart meter
+% or by purchasing from another prosumer.  From its smart meter,
+% prosumer can withdraw at most $\field{MAXEPA}$.  Although the
+% prosumer may also buy EPA from another prosumer, this constitutes
+% buying energy, which decreases the net amount of energy sold with the
+% same amount.  Hence, the net amount of energy sold by prosumer
+% cannot exceed $\field{MAXEPA}$.  By extending the argument, we can
+% show that the net amount of energy sold by a group of prosumers~$G$
+% cannot exceed $\sum_{i \in G} \field{MAXEPA}_i$.  Similarly, %we can
+% %show that
+%  the net amount of energy bought by a group of prosumers $G$
+% cannot exceed $\sum_{i \in G} \field{MAXECA}_i$.
+
+%Using a similar argument, we can also show that the total amount of energy bids (or asks) posted at
+%the same time by prosumer $i$ for each timestep is at most
+%$\field{MAXEPA}_i + \field{MAXECA}_i$.  This limit is higher than for
+%net energy sold or bought, since prosumer $i$ may purchase
+%$\field{MAXECA}_i$ amount of EPA (or $\field{MAXEPA}_i$ amount of ECA)
+%from other prosumers, and then post an energy ask (or bid) in the
+%amount of $\field{MAXEPA}_i + \field{MAXECA}_i$.
+
+Through the use of garlic routing and ring signatures, complete communication and transaction anonymity is achieved. A garlic routing network such as I2P can ensure that no usage, bid, ask or identifiable data is leaked from the system. By using ring signatures, transactions cannot be traced, but it can still be proven that a bid or an ask has been responded to and that a transaction has taken place. The design we've proposed anonymizes the whole chain of transactions, both on a network communication layer and on a distributed ledger transaction layer.
+
+As for the DSO, it receives the same information from the smart meter
+as in a non-transactive smart grid (i.e., amount of energy
+produced and consumed). In
+particular, since price policies are recorded on the ledger (which the
+smart meters may read), each prosumer's smart meter may calculate and
+send the prosumer's monthly bill to the DSO, without revealing the
+prosumer's energy consumption or production. The DSO still gets aggregate information regarding load on the grid, but cannot identify individual users and their energy prosumption. 
+
+
+

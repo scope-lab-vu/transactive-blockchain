@@ -1,0 +1,167 @@
+\documentclass[sigplan]{acmart}
+\usepackage{booktabs} % For formal tables
+
+
+%\setcopyright{acmcopyright}
+% Load basic packages
+\usepackage{balance}       % to better equalize the last page
+\usepackage{graphics}      % for EPS, load graphicx instead 
+\usepackage[T1]{fontenc}   % for umlauts and other diaeresis
+\usepackage{txfonts}
+\usepackage{mathptmx}
+%\usepackage[pdflang={en-US},pdftex]{hyperref}
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{textcomp}
+
+% Some optional stuff you might like/need.
+\usepackage{microtype}        % Improved Tracking and Kerning
+% \usepackage[all]{hypcap}    % Fixes bug in hyperref caption linking
+\usepackage{ccicons}          % Cite your images correctly!
+% \usepackage[utf8]{inputenc} % for a UTF8 editor only
+
+% Custom packages
+
+\usepackage{paralist}
+\usepackage{enumitem}
+
+\usepackage{tikz}
+\usetikzlibrary{shadows,shapes}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.10}
+
+\usepackage{xcolor}
+\usepackage{colortbl}
+\definecolor{Gray}{gray}{0.90}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+
+% If you want to use todo notes, marginpars etc. during creation of
+% your draft document, you have to enable the "chi_draft" option for
+% the document class. To do this, change the very first line to:
+% "\documentclass[chi_draft]{sigchi}". You can then place todo notes
+% by using the "\todo{...}"  command. Make sure to disable the draft
+% option again before submitting your final document.
+\usepackage[textsize=tiny, textwidth=1.5cm]{todonotes}
+\newcommand{\TODO}[1]{\todo[inline]{#1}}
+\newcommand{\Abhishek}[1]{\todo[color=yellow!50, linecolor=black!50]{\textbf{Abhishek}: #1}}
+\newcommand{\Aron}[1]{\todo[color=green!40, linecolor=black!50]{\textbf{Aron}: #1}}
+\newcommand{\AronInline}[1]{\todo[inline,size=\small,color=green!40, linecolor=black!50]{\textbf{Aron}: #1}}
+\newcommand{\Doug}[1]{\todo[color=red!40, linecolor=black!50]{\textbf{Doug}: #1}}
+\newcommand{\Jonatan}[1]{\todo[color=gray!40, linecolor=black!50]{\textbf{Jon}: #1}}
+\newcommand{\JonInline}[1]{\todo[inline,size=\small,color=gray!40, linecolor=black!50]{\textbf{Jon}: #1}}
+
+%\usepackage[normalem]{ulem}
+%\newcommand{\change}[2]{\textcolor{red}{\sout{#1}} \textcolor{blue}{#2}}
+\newcommand{\change}[2]{#2} % DO NOT DISPLAY CHANGES
+
+\newcommand{\circled}[1]{\tikz[baseline=(char.base)]{\node[shape=circle, draw, inner sep=0.5pt, solid] (char) {#1};}}
+            
+\newcommand{\field}[1]{\texttt{#1}}
+
+
+% llt: Define a global style for URLs, rather that the default one
+\makeatletter
+% \def\url@leostyle{%
+%   \@ifundefined{selectfont}{
+%     \def\UrlFont{\sf}
+%   }{
+%     \def\UrlFont{\small\bf\ttfamily}
+%   }}
+\makeatother
+\urlstyle{leo}
+
+\acmConference[SERIAL '17]{SERIAL 2017}
+              {December 2017}{Las Vegas, Nevada USA} 
+\acmYear{2017}
+\copyrightyear{2017}
+
+% create a shortcut to typeset table headings
+% \newcommand\tabhead[1]{\small\textbf{#1}}
+
+% End of preamble. Here it comes the document.
+\begin{document}
+
+% TODO: remove before submission, added only for todonotes
+\setlength{\marginparwidth}{1.5cm}
+
+%\allowdisplaybreaks
+
+\title[Anonymity in Blockchain-Based Transactive Microgrids]{On the Design of Communication and Transaction Anonymity in Blockchain-Based Transactive Microgrids}
+
+\author{Jonatan Bergquist}
+\affiliation{\institution{Datarella GmbH}}
+\author{Aron Laszka}
+\affiliation{\institution{Vanderbilt University}}
+\author{Monika Sturm}
+\affiliation{\institution{Siemens Corporate Technology}}
+\author{Abhishek Dubey}
+\affiliation{\institution{Vanderbilt University}}
+
+\renewcommand{\shortauthors}{J. Bergquist et al.}
+
+
+%\Aron{We need to add authors (\url{https://serial17.ibr.cs.tu-bs.de/cfp.html}: ``Reviewing is single-blind.'')}
+
+\begin{abstract}
+%\textcolor{red}{The abstract needs to be rewritten}
+%Transactive microgrids are emerging as the next  advancement for power grid. They provide robust capabilities for integrating distributed generation resources in communities, creat
+ Transactive microgrids are emerging as a transformative solution for the problems faced by distribution system operators due to an increase in the use of distributed energy resources and a rapid acceleration in renewable energy generation, such as wind and solar power. Distributed ledgers have recently found widespread interest in this domain due to their ability to provide transactional integrity across decentralized computing nodes. However, the existing state of the art has not focused on the privacy preservation requirement of these energy systems --  the transaction level data can provide much greater insights into a prosumer's behavior compared to smart meter data. %\Aron{We could also mention safety requirements as a challenge to privacy (for stable grid control, we need to disseminate information).}\Jonatan{Resolved} 
+ There are specific safety requirements in transactive microgrids to ensure the stability of the grid and to control the load. To fulfil these requirements, the distribution system operator needs transaction information from the grid, which poses a further challenge to the privacy-goals. This problem is made worse by requirement for off-blockchain communication in these networks. In this paper, we extend a recently developed trading workflow called PETra and describe our solution for communication and transactional anonymity.    
+ %exacerbated further by consideration that 
+ %Blockchains is an emerging technology that has found widespread interest in this domain  These, on one hand, pose a decentralized power system controls problem, requiring strategic microgrid control to maintain stability for the community and for the utility. On the other hand, they require robust financial markets where transactions beneficial for the grid should be incentivized, while ensuring that erroneous transactions cannot destabilize the grid. 
+% Successful setup and operation of these microgrids require a distributed transactive and control platform that works together to ensure that transactions of energy (a) are unforgeable in the sense that producers should not be able to create a transaction without actually producing energy, (b) are tamper proof, and (c) preserve the anonymity of the actors.
+ % This last point is crucial because  the transaction level data can provide much greater insights into a prosumer's behavior compared to smart meter data. \Aron{This is the first mention of blockchains. If we are targeting SERIAL, then I think that the abstract needs to be more focused on blockchains and distributed ledgers. Maybe include them in the title as well?} In this paper, we first describe the use of blockchains to create a transactional workflow that satisfy the first two requirements. The third requirement are met by 
+ 
+% Power grids are undergoing major changes due to rapid growth in renewable energy resources and improvements in battery technology. Significant challenges to manage the increasing complexity of these systems are the consequence. Emerging solutions arrange local communities into transactive microgrids, based on connected devices networked over a decentralized Internet-of-Things (IoT). Within a transactive microgrid, 'prosumers' (i.e., consumers with energy generation and storage capabilities) can trade energy with each other, thereby smoothing the load on the main grid using local supply. Security and safety issues that arise are protecting prosumers' personal information and secure the system from careless or malicious trading, which could destabilize the entire grid. This paper describes Privacy-preserving Energy Transactions (PETra), which is a secure and safe solution for transactive microgrids that enables consumers to trade energy without sacrificing their privacy. PETra builds on distributed ledgers, such as blockchains, and provides anonymity for communication, bidding, and trading.    
+\end{abstract}
+
+% TODO!
+
+
+\keywords{transactive energy platforms, blockchain, distributed ledger, privacy, anonymity, onion routing, zero-knowledge proofs}
+\maketitle
+
+\input{intro.tex}
+
+\input{prelim.tex}
+
+\input{solution.tex}
+
+\input{communicationanonymity.tex}
+
+\input{transactionanonymity.tex}
+
+\input{analysis.tex}
+
+\input{related.tex}
+
+\input{concl.tex}
+
+\section*{Acknowledgment}
+This work was funded in part by a grant by Siemens Corporation, CT. 
+
+% BALANCE COLUMNS
+%\balance{}
+%\setlength{\bibsep}{0pt plus 0ex}
+%\let\oldthebibliography\thebibliography
+%\let\endoldthebibliography\endthebibliography
+%\renewenvironment{thebibliography}[1]{
+%  \begin{oldthebibliography}{#1}
+%    \setlength{\itemsep}{0.1em}
+%    \setlength{\parskip}{0em}
+%}
+%{
+%  \end{oldthebibliography}
+%}
+
+% REFERENCES FORMAT
+% References must be the same font size as other body text.
+\bibliographystyle{SIGCHI-Reference-Format}
+\balance
+\bibliography{references}
+
+\end{document}
+

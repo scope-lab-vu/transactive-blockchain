@@ -1,0 +1,76 @@
+%!TEX root = paper.tex
+% \subsection{Transactions}
+
+% The previous subsection gave an overview of how PETra uses
+% transactions in the trading workflow to transfer various assets.  We
+% now describe the format of these transactions, as well as the rules
+% that they have to satisfy to be valid and recorded on the ledger.  We
+% also introduce and detail regulatory transactions, which the DSO uses
+% to regulate the microgrid.
+
+% \subsubsection{Assets}
+% There will be three types of assets that transactions may transfer. First, an energy production asset (EPA) is defined by the amount of power to be produced (for example, measured in watts), and the respective time interval if production. Second, an energy consumption asset (ECA) is defined by the same fields with consumption instead of production respectively. Finally, a financial asset (FA) is an amount, which can be denominated in a currency (Euro, Dollar, Bitcoin, etc.)
+
+% \subsubsection{Energy and Financial Transactions} 
+% Prosumers can use these transactions to trade energy by exchanging assets
+% with other prosumers, to prove to the bid storage service that they
+% possess an asset and to deposit assets at their smart meter.
+% %
+% Input and output lists may differ in length, so one asset may be
+% divided into multiple assets, and multiple assets may be combined into
+% one.
+
+% An energy and financial transaction is valid (and can be recorded on
+% the ledger) if the following three conditions hold.
+% \begin{enumerate}[noitemsep,topsep=-\parskip]
+% \item None of the outputs referenced by the inputs have been spent by
+%   a transaction that has been recorded on the ledger.
+% \item All signatures are valid, which ensures that an asset can be
+%   transferred only by its current owner. 
+% \item For each asset type (and for each timestep), the sums of the
+% input and output assets are equal.  
+% \end{enumerate}
+% The conditions for consumption and financial assets can be described
+% formally in similar ways.
+
+% \subsubsection{Smart-Meter Transactions}
+
+% Prosumers use smart-meter transactions to withdraw energy and
+% financial assets from their own smart meters, before they engage in
+% trading.
+% %
+% This transaction creates and transfers the assets
+% to the prosumer's addresses, which are specified in the output lists.
+
+% The smart meter signs the transaction only if the prosumer is allowed
+% to withdraw these assets.  Also, the amount of assets
+% withdrawn can never exceed certain limits that are set by the DSO.
+% The condition for consumption assets is similar, based on a withdrawal
+% limit.  For financial assets, the smart meter can
+% take into account the amounts withdrawn and deposited, as well as the
+% outside bill payments to the DSO.
+
+% \Aron{To address malfunctioning or compromised smart meters, we could also impose a limit on withdrawals.}
+% A transaction is valid if the following two conditions hold.
+% \begin{enumerate}[noitemsep,topsep=-\parskip]
+% \item The smart meter identified in the transaction has been authorized (and not been banned) by regulatory transactions. % that was previously recorded on the ledger.
+% \item The smart meter's signature is valid (for the smart meter's public key, see regulatory transactions).
+% \end{enumerate}
+
+% \subsubsection{Regulatory Transactions}
+
+% The DSO uses regulatory transactions for two purposes: (1) to manage
+% the set of authorized smart meters and (2) to change the price policy.
+% First, whenever a new smart meter is installed, the DSO notifies the
+% microgrid by authorizing the device using a regulatory transaction.
+% Likewise, whenever a smart meter is deactivated (\emph{e.g.}, because
+% service is stopped or the device is believed to be faulty or
+% compromised), the DSO notifies the microgrid by banning the device.
+% Second, to influence microgrid load, the DSO can set a price policy,
+% which includes a price at which prosumers may buy energy from the DSO
+% and a price at which they may sell energy to the DSO.
+
+% For a regulatory transaction to be excepted by the network, it has to refer to a timestep not in the past, and it must be sent from the DSO.
+% A regulatory transaction of this type is valid if \field{timestep} is
+% not in the past and the DSO's signature is valid. 
+

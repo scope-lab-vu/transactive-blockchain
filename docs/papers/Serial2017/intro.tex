@@ -1,0 +1,33 @@
+%!TEX root = paper.tex
+\section{Introduction}
+
+
+Transactive energy models have been proposed as a set of market based mechanisms for balancing the demand and generation of energy in communities \cite{kok2016society,cox2013structured,melton2013gridwise}.
+ In this approach, customers on the same feeder (i.e. sharing a power line link) can operate in an open market, trading and exchanging generated energy locally. Distribution System Operators can be the custodian of this market, while still meeting the net demand \cite{7462854}. Blockchains have  recently emerged as a foundation for enabling the transactional service in the microgrids. For example, the Brooklyn Microgrid
+(\url{brooklynmicrogrid.com}) is a peer-to-peer market for locally
+generated renewable energy, which was developed by LO3 Energy as a pilot project. Similarly, RWE, and Grid Singularity have developed blockchain based solutions for incentivizing neighbors to sell excess energy to the grid and payments for electric car charging %and (c) enabling pre-paid transactions for electric bills in South Africa, respectively. 
+However, those solutions do not address the requirements for off-blockchain communication network and the requirements for privacy. 
+ 
+ 
+ %Due to a number of challenges, however, these services have been restricted in the present to some pilot programs like Demand/Response \cite{7462854}.  On one hand, transactive energy is a decentralized power system controls problem \cite{7452738}, requiring strategic microgrid control to maintain the stability of the community and the utility. On the other hand, it is a distributed market problem where erroneous as well as malicious transactions can create a gap between demand and supply, eventually destabilizing the system.  Furthermore, this system inherently induces a distributed  infrastructure comprised of smart meters, feeders, smart inverters, utility substations, the utility central offices, and the transmission system operator, which has to provide the necessary computation fabric to support the interplay between the energy control and the fiscal market challenges.
+ 
+ 
+
+Specifically, while blockchains provide the necessary ledger services, we still need a  communication network for sending control commands from the DSO to the prosumers as well as initiating the trade matching mechanisms.
+%as described by our recent publication \textcolor{red}{\cite{Laszka17}}. 
+Additionally, this communication network and the blockchain itself must preserve the privacy of the prosumers. Energy usage patterns (actual or predicted) are sensitive, personally identifiable data. Legal requirements and security considerations make it mandatory to provide a mechanism to hide the identities and transaction patterns of trade partners. Additionally, solutions must also satisfy security and safety requirements, which often conflict with privacy goals. For example, to prevent a prosumer from destabilizing the system through careless or malicious energy trading, a transactive grid must check all of the prosumer's transactions. In a decentralized system, these checks require disseminating information, which could be used to infer the prosumer's future energy consumption. 
+
+%This paper first describes mechanisms to implement anonymity in both the communication and transactional dimensions 
+
+In \cite{Laszka17}, we introduced {\it Privacy-preserving Energy Transactions
+(PETra)}, which is our distributed-ledger based solution that
+(1) enables trading energy futures in a secure and verifiable
+manner, (2) preserves prosumer privacy, and (3) enables distribution system operators to regulate trading and enforce the safety rules. In this paper, we  extend the communication and transaction anonymity mechanisms. The key contributions of this paper are (a) a survey of the key concepts required for implementing the anonymity across the two dimensions, (b) a discussion on the threats that must be considered when we implement the anonymization mechanisms, and lastly (c) a discussion on implementing the anonymization extensions in PETra. 
+%This paper describes privacy-aspects of the communication and transactional components of transactive microgrids. Specifically, we analyze two existing schemes for communication anonymity and two schemes for transaction anonymity. They are analyzed with respect to security and known attacks. The schemes are also judged for appropriateness in regards to their application in transactive microgrids. Based on the analysis, we propose a novel design for achieving communication and transaction anonymity in transactive microgrids.
+% REDUNDANT OUTLINE
+% The outline of this paper is as follows. We first summarize the transaction workflow described in \cite{Laszka17}. Thereafter, we focus on the key contributions of this paper, a discussion on the privacy challenges for both communication as well as transactions.  
+
+% This paper introduces Privacy-preserving Energy Transactions (PETra), which is our distributed-ledger based solution that (1) enables trading energy futures in a secure and verifiable manner, (2) preserves prosumer privacy, and (3) enables DSOs to regulate trading and enforce certain safety rules. 
+
+The outline of this paper is as follows. We first present an overview of the PETra workflow described in \cite{Laszka17} in Section \ref{sec:petra}. We then discuss the communication anonymity extensions in Section \ref{comm} and transaction anonymity in Section \ref{trans}. Section \ref{commthreat} discusses the threat vectors for the communication anonymity approach. Section \ref{transthreat} describes the transaction anonymity threats.
+Finally, we provide concluding remarks in Section~\ref{sec:discussion}.
