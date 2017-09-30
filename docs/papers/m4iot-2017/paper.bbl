@@ -282,26 +282,11 @@
 
 
 \bibitem[\protect\citeauthoryear{Eisele, Mardari, Dubey, and Karsai}{Eisele
-  et~al\mbox{.}}{2017a}]%
-        {RIAPS1}
-\bibfield{author}{\bibinfo{person}{S. Eisele}, \bibinfo{person}{I. Mardari},
-  \bibinfo{person}{A. Dubey}, {and} \bibinfo{person}{G. Karsai}.}
-  \bibinfo{year}{2017}\natexlab{a}.
-\newblock \showarticletitle{RIAPS: Resilient Information Architecture Platform
-  for Decentralized Smart Systems}. In \bibinfo{booktitle}{{\em 2017 IEEE 20th
-  International Symposium on Real-Time Distributed Computing (ISORC)}}.
-  \bibinfo{pages}{125--132}.
-\newblock
-\showDOI{%
-\url{https://doi.org/10.1109/ISORC.2017.22}}
-
-
-\bibitem[\protect\citeauthoryear{Eisele, Mardari, Dubey, and Karsai}{Eisele
-  et~al\mbox{.}}{2017b}]%
+  et~al\mbox{.}}{2017}]%
         {RIAPS_IEEE_ISORC_2017}
 \bibfield{author}{\bibinfo{person}{S. Eisele}, \bibinfo{person}{I. Mardari},
   \bibinfo{person}{A. Dubey}, {and} \bibinfo{person}{G. Karsai}.}
-  \bibinfo{year}{2017}\natexlab{b}.
+  \bibinfo{year}{2017}\natexlab{}.
 \newblock \showarticletitle{RIAPS: Resilient Information Architecture Platform
   for Decentralized Smart Systems}. In \bibinfo{booktitle}{{\em 2017 IEEE 20th
   International Symposium on Real-Time Distributed Computing (ISORC)}}.
@@ -333,23 +318,6 @@
 \newblock \bibinfo{journal}{{\em URL http://zeromq. org\/}}
   (\bibinfo{year}{2010}).
 \newblock
-
-
-\bibitem[\protect\citeauthoryear{Ibba, Pinna, Seu, and Pani}{Ibba
-  et~al\mbox{.}}{2017}]%
-        {Ibba2017}
-\bibfield{author}{\bibinfo{person}{Simona Ibba}, \bibinfo{person}{Andrea
-  Pinna}, \bibinfo{person}{Matteo Seu}, {and} \bibinfo{person}{Filippo~Eros
-  Pani}.} \bibinfo{year}{2017}\natexlab{}.
-\newblock \showarticletitle{CitySense: Blockchain-oriented Smart Cities}. In
-  \bibinfo{booktitle}{{\em Proceedings of the XP2017 Scientific Workshops}}
-  {\em (\bibinfo{series}{XP '17})}. \bibinfo{publisher}{ACM},
-  \bibinfo{address}{New York, NY, USA}, Article \bibinfo{articleno}{12},
-  \bibinfo{numpages}{5}~pages.
-\newblock
-\showISBNx{978-1-4503-5264-2}
-\showDOI{%
-\url{https://doi.org/10.1145/3120459.3120472}}
 
 
 \bibitem[\protect\citeauthoryear{Kumaresan and Bentov}{Kumaresan and

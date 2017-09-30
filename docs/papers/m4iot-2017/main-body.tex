@@ -88,27 +88,6 @@ Examples of such installations include the Brooklyn Microgrid Project \cite{Broo
 
 %Use the transactive energy system to explain the timing and criticality requirements for these systems. Explain the nature of the communication patterns here. Also explain that there are differences between privately managed systems and public systems.
 
-\iffalse
-Figure \ref{fig:workflow} shows a proposed TES trading workflow, which demonstrates several key aspects and interactions of IoT blockchain applications . For example, this figure shows patterns of communication that can occur both on-blockchain and off-blockchain. Likewise, it shows that multi-step transactions can be terminated mid-process. It also shows how a prosumer and a consumer interact only via on-blockchain communication through the use of a smart contract. 
-
-
-%In the figure, we have both on-blockchain and off-blockchain communication, smart contract method invocations, smart contract triggered events, and messages and transactions that cause the trading workflow to terminate. Additionally, neither the timing constraints for each step in the trading process, nor the logic to handle transactions or messaging being lost and needing resubmission to the blockchain are expressly shown, but both must be accounted for. 
-
-%Figure \ref{fig:workflow}
-\begin{figure*} [h]
-	
-	\center
-	
-	\includestandalone[scale=0.9]{sequence-diagram}
-	\vspace{-0.2em}
-	\caption{Sequence diagram of a proposed Transactive Energy (TE) trading workflow. Dotted lines are RIAPS messages, solid lines are Ethereum transactions, and dashed lines are smart contract events. Messages and transactions in \textcolor{red}{red} stop the trading workflow. %\textcolor{blue}{I don't think RIAPS has been mentioned before. Describe this as an example application that needs to be tested. RIAPS is not important, say that this off block-chain communication.}
-		%	Both Ethereum transactions and smart-contract events are processed through associated geth client.
-	}
-	\label{fig:workflow}
-	\vspace{-0.12in}
-\end{figure*}
-\fi
-
 
 \section{Analysis of State-of-the-Art}
 \label{stateOfArt}
