@@ -3,17 +3,17 @@ contract MatchingContract {
     uint64 C_INT = 20 * 1000;
     uint64 C_EXT = 25 * 1000;
     
-    mapping(address => uint64) prosumerFeeder;
+    mapping(uint64 => uint64) prosumerFeeder; // TODO: mapping(address => uint64) prosumerFeeder;
     
-    function addProsumer(address prosumer, uint64 feeder) public {
+    function addProsumer(uint64 prosumer, uint64 feeder) public { // TODO: function addProsumer(address prosumer, uint64 feeder) public {
         prosumerFeeder[prosumer] = feeder;
     }
     
     struct Offer {
+        uint64 prosumer; // TODO: address prosumer;
         uint64 startTime;
         uint64 endTime;
         uint64 energy;
-        address prosumer;
     }
     
     mapping(uint64 => Offer) buyingOffers;
@@ -21,23 +21,23 @@ contract MatchingContract {
     mapping(uint64 => Offer) sellingOffers;
     uint64 numSellingOffers = 0;
     
-    function postBuyingOffer(uint64 startTime, uint64 endTime, uint64 energy) public {
+    function postBuyingOffer(uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy) public { // TODO: function postBuyingOffer(uint64 startTime, uint64 endTime, uint64 energy) public {
         require(startTime <= endTime);
         buyingOffers[numBuyingOffers++] = Offer({
+            prosumer: prosumer, // TODO: msg.sender
             startTime: startTime,
             endTime: endTime,
-            energy: energy,
-            prosumer: msg.sender
+            energy: energy
         });
     }
     
-    function postSellingOffer(uint64 startTime, uint64 endTime, uint64 energy) public {
+    function postSellingOffer(uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy) public { // TODO: function postSellingOffer(uint64 startTime, uint64 endTime, uint64 energy) public {
         require(startTime <= endTime);
         sellingOffers[numSellingOffers++] = Offer({
+            prosumer: prosumer, // TODO: msg.sender
             startTime: startTime,
             endTime: endTime,
-            energy: energy,
-            prosumer: msg.sender
+            energy: energy
         });
     }
     
