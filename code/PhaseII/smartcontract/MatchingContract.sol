@@ -1,7 +1,7 @@
 contract MatchingContract {
     uint64 INTERVAL_LENGTH = 1;
-    uint64 C_INT = 25 * 1000;
-    uint64 C_EXT = 20 * 1000;
+    uint64 C_INT = 25000;
+    uint64 C_EXT = 20000;
     
     mapping(uint64 => uint64) prosumerFeeder; // TODO: mapping(address => uint64) prosumerFeeder;
     
@@ -21,8 +21,12 @@ contract MatchingContract {
     mapping(uint64 => Offer) sellingOffers;
     uint64 numSellingOffers = 0;
     
+    event BuyingOfferPosted(uint64 ID, uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy);
+    event SellingOfferPosted(uint64 ID, uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy);
+    
     function postBuyingOffer(uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy) public { // TODO: function postBuyingOffer(uint64 startTime, uint64 endTime, uint64 energy) public {
         require(startTime <= endTime);
+        BuyingOfferPosted(numBuyingOffers, prosumer, startTime, endTime, energy);
         buyingOffers[numBuyingOffers++] = Offer({
             prosumer: prosumer, // TODO: msg.sender
             startTime: startTime,
@@ -33,6 +37,7 @@ contract MatchingContract {
     
     function postSellingOffer(uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy) public { // TODO: function postSellingOffer(uint64 startTime, uint64 endTime, uint64 energy) public {
         require(startTime <= endTime);
+        SellingOfferPosted(numSellingOffers, prosumer, startTime, endTime, energy);
         sellingOffers[numSellingOffers++] = Offer({
             prosumer: prosumer, // TODO: msg.sender
             startTime: startTime,
@@ -62,7 +67,10 @@ contract MatchingContract {
     uint64 numSolutions = 0;
     Solution bestSolution;
     
+    event SolutionCreated(uint64 ID);
+    
     function createSolution() public returns (uint64 solutionID) {
+        SolutionCreated(numSolutions);
         solutions[numSolutions] = Solution({
             numTrades: 0,
             objective: 0
@@ -71,6 +79,8 @@ contract MatchingContract {
             bestSolution = solutions[numSolutions];
         return numSolutions++;
     }
+    
+    event TradeAdded(uint64 solutionID, uint64 objective);
     
     function addTrade(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power) public {
         require(solutionID < numSolutions);
@@ -119,6 +129,7 @@ contract MatchingContract {
         solution.objective += power;
         if (solution.objective > bestSolution.objective)
             bestSolution = solution;
+        TradeAdded(solutionID, solution.objective);
     }
 }
 
