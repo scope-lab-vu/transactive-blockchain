@@ -2,7 +2,7 @@ from scipy.optimize import linprog
 
 class LinearProgram:
   def __init__(self):
-    self.variables = {} # maps strings to numbers
+    self.variables = {} # maps variable names to numbers (variable name may actually be any object)
     self.num_variables = 0 # counts the number of variables
     self.constraints = []
     
@@ -32,7 +32,7 @@ class LinearProgram:
     return vect
     
   def solve(self):
-    print(self.objective)
+    logging.debug("Solving linear program with {} variables and {} contraints...".format(len(self.variables), len(self.constraints)))
     c = self.get_vector(self.objective)
     A = []
     b = []
@@ -40,6 +40,6 @@ class LinearProgram:
       A.append(self.get_vector(coeffs))
       b.append(const)
     result = linprog(c=c, A_ub=A, b_ub=b)
-    print(result)
+    logging.debug("Solver output: message = '{}', fun = {}, status = {}".format(result.message, result.fun, result.status))
     return {name: result.x[var] for (name, var) in self.variables.items()}
 

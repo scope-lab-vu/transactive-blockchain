@@ -27,9 +27,6 @@ self.ip = ip
     self.waiting = [] # transactions which have not been submitted
     self.pending = [] # transactions which have been submitted but not yet mined
     self.lock = RLock()
-    # TODO: restructure code to get rid of this ugliness...
-    from Filter import Filter
-    self.filter = Filter(self, self.ip, self.port)
     thread = Thread(target=self.__run)
     thread.start()
     
@@ -58,7 +55,7 @@ self.ip = ip
   def __restart_client(self):
     logging.info("Restarting the client...")
     # TODO: writeme
-    self.filter = Filter(self, self.ip, self.port) # recreate even filter
+    # TODO: handle filter re-creation?
             
   def __submit_trans(self, trans):
     try:

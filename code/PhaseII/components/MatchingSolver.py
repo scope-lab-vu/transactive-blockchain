@@ -2,7 +2,8 @@ from Microgrid import Microgrid
 from LinearProgram import LinearProgram
 
 class Offer:
-  def __init__(self, prosumer, startTime, endTime, energy):
+  def __init__(self, ID, prosumer, startTime, endTime, energy):
+    self.ID = ID
     self.prosumer = prosumer 
     self.startTime = startTime
     self.endTime = endTime
@@ -34,7 +35,7 @@ class MatchingSolver:
         b_offer = buying_offers[b]
         s_offer = selling_offers[s]
         for t in b_offer.intersection(s_offer):
-          varname = "p_{},{},{}".format(s, b, t)
+          varname = {'s': s_offer, 'b': b_offer, 't': t}
           variables.append(varname)
           # prosumer production
           try:
@@ -90,7 +91,10 @@ class MatchingSolver:
           for varname in feeder_prod[f][t]:
             expr[varname] = -1.0
           program.add_constraint(expr, microgrid.C_ext)
-    print(program.solve())
+    solution = program.solve()
+    for varname in variables:
+      varname['p'] = solution[varname]
+    self.latest_solution = variables
     
 
 if __name__ == "__main__":
@@ -104,14 +108,14 @@ if __name__ == "__main__":
   }) 
   solver = MatchingSolver(microgrid)
   buying_offers = [
-    Offer(0, 1, 10, 5),
-    Offer(1, 6, 15, 5),
-    Offer(3, 1, 10, 5),
-    Offer(4, 6, 15, 5),
+    Offer(0, 0, 1, 10, 5),
+    Offer(1, 1, 6, 15, 5),
+    Offer(2, 3, 1, 10, 5),
+    Offer(3, 4, 6, 15, 5),
   ]
   selling_offers = [
-    Offer(2, 1, 15, 15),
-    Offer(5, 1, 15, 5),
+    Offer(4, 2, 1, 15, 15),
+    Offer(5, 5, 1, 15, 5),
   ]
   solver.solve(buying_offers=buying_offers, selling_offers=selling_offers)
   print("Success.")

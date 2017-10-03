@@ -14,14 +14,8 @@ TOPICS = {
 }
 
 class Filter:
-  def __init__(self, client=None, ip=None, port=None):
-    if client is not None:
-      self.client = client
-    else:
-      if ip is not None and port is not None:
-        self.client = EthereumClient(ip=ip, port=port)
-      else:
-        raise ValueError("Filter must be provided with an EthereumClient or IP and port numbers!")
+  def __init__(self, client):
+    self.client = client
     self.filterID = self.client.command("eth_newFilter", params=[{"fromBlock": "0x1"}]) 
     logging.info("Created filter (ID = {}).".format(self.filterID))
     
