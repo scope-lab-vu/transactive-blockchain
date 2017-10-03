@@ -4,7 +4,7 @@ import sys
 from time import time, sleep
 
 from config import *
-from MatchingSolver import MatchingSolver, Microgrid
+from MatchingSolver import MatchingSolver, Offer
 from EthereumClient import EthereumClient
 from Filter import Filter
 
@@ -40,6 +40,7 @@ class MatchingSolverWrapper(MatchingSolver):
           params = event['params']
           name = event['name']
           if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
+            logging.info("Offer recorded ({}).".format(params))
             offerID = params['ID']
             prosumer = params['prosumer']
             startTime = params['startTime']
@@ -53,7 +54,8 @@ class MatchingSolverWrapper(MatchingSolver):
             solutionID = params['ID']
             logging.info("Solution {} created by contract, adding trades...".format(solutionID))
             for trade in self.latest_solution:
-              self.addTrade(solutionID, trade['s'].ID, trade['b'].ID, trade['t'], trade['p'])            
+              self.addTrade(solutionID, trade['s'].ID, trade['b'].ID, trade['t'], int(trade['p']))
+            logging.info("{} trades have been submitted to the contract.".format(len(self.latest_solution)))
       if current_time > next_solving:
         logging.info("Solving...")
         next_solving = current_time + SOLVING_INTERVAL

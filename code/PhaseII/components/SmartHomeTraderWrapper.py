@@ -1,12 +1,14 @@
 import zmq
 import logging
 import sys
+from random import random
 
 from config import *
 from EthereumClient import EthereumClient
 
 class SmartHomeTraderWrapper:
   def __init__(self, prosumer_id, net_production, ip, port):
+    self.prosumer_id = prosumer_id
     self.net_production = net_production
     logging.info("Connecting to DSO...")
     self.dso = zmq.Context().socket(zmq.REQ)
@@ -16,33 +18,33 @@ class SmartHomeTraderWrapper:
     logging.info("Setting up connection to Ethereum client...")
     self.client = EthereumClient(ip=ip, port=port)
     self.account = self.client.get_addresses()[0] # use the first owned address
-    super(SmartHomeTraderWrapper, self).__init__(name)
+    super(SmartHomeTraderWrapper, self).__init__()
 
-  def run():
+  def run(self):
     # post all offers
     logging.info("Posting offers...")
-    for t in range(len(net_production)):
-      if net_production[t] < 0:
-        self.postBuyingOffer(prosumer_id, t, t, -net_production[t])
+    for t in range(len(self.net_production)):
+      if self.net_production[t] < 0:
+        self.postBuyingOffer(self.prosumer_id, t, t, -self.net_production[t])
       else:
-        self.postSellingOffer(prosumer_id, t, t, net_production[t])
+        self.postSellingOffer(self.prosumer_id, t, t, self.net_production[t])
     logging.info("Offers posted.")
   
   def postBuyingOffer(self, prosumer, startTime, endTime, energy):
     logging.info("postBuyingOffer({}, {}, {}, {})".format(prosumer, startTime, endTime, energy))
-    data = "0xc37df44e" + 
-      EthereumClient.encode_uint(prosumer) + 
-      EthereumClient.encode_uint(startTime) +
-      EthereumClient.encode_uint(endTime) +
+    data = "0xc37df44e" + \
+      EthereumClient.encode_uint(prosumer) + \
+      EthereumClient.encode_uint(startTime) + \
+      EthereumClient.encode_uint(endTime) + \
       EthereumClient.encode_uint(energy)
     self.client.transaction(self.account, data, self.contractAddress)
 
   def postSellingOffer(self, prosumer, startTime, endTime, energy):
     logging.info("postSellingOffer({}, {}, {}, {})".format(prosumer, startTime, endTime, energy))
-    data = "0x8375ced0" + 
-      EthereumClient.encode_uint(prosumer) + 
-      EthereumClient.encode_uint(startTime) +
-      EthereumClient.encode_uint(endTime) +
+    data = "0x8375ced0" + \
+      EthereumClient.encode_uint(prosumer) + \
+      EthereumClient.encode_uint(startTime) + \
+      EthereumClient.encode_uint(endTime) + \
       EthereumClient.encode_uint(energy)
     self.client.transaction(self.account, data, self.contractAddress)
 
@@ -66,6 +68,10 @@ def read_data(prosumer_id):
     logging.info("Read {} values.".format(len(data)))
     return data
 
+def test_data(prosumer_id):
+  logging.info("Generating random test data...")
+  return [int(random() * 1000 - 500) for t in range(10)]
+
 if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
   prosumer_id = 101
@@ -79,7 +85,7 @@ if __name__ == "__main__":
     ip = sys.argv[2]
   if len(sys.argv) > 3:
     port = sys.argv[3]
-  data = read_data2(prosumer_id)
+  data = test_data(prosumer_id)
   trader = SmartHomeTraderWrapper(prosumer_id, data, ip, port) 
   trader.run()
 

@@ -27,7 +27,7 @@ class MatchingSolver:
     
   def solve(self, buying_offers, selling_offers):
     program = LinearProgram()
-    variables = []
+    variables = {}
     prosumer_prod = {}
     prosumer_cons = {}
     feeder_prod = {f: {} for f in self.microgrid.feeders}
@@ -37,8 +37,9 @@ class MatchingSolver:
         b_offer = buying_offers[b]
         s_offer = selling_offers[s]
         for t in b_offer.intersection(s_offer):
-          varname = {'s': s_offer, 'b': b_offer, 't': t}
-          variables.append(varname)
+          variable = {'s': s_offer, 'b': b_offer, 't': t}
+          varname = 'p_{}_{}_{}'.format(s, b, t)
+          variables[varname] = variable
           # prosumer production
           try:
             prosumer_prod[s_offer].append(varname)
@@ -63,44 +64,44 @@ class MatchingSolver:
             feeder_cons[b_feeder][t].append(varname)
     program.set_objective({varname: -1.0 for varname in variables})
     # eq:constrEnergyProd   
-    for s_offer in selling_offers:
+    for s_offer in prosumer_prod:
       program.add_constraint(
         {varname: 1.0 for varname in prosumer_prod[s_offer]},
-        s_offer.energy / float(microgrid.interval_length))    
+        s_offer.energy / float(self.microgrid.interval_length))    
     # eq:constrEnergyCons       
-    for b_offer in buying_offers:
+    for b_offer in prosumer_cons:
       program.add_constraint(
         {varname: 1.0 for varname in prosumer_cons[b_offer]},
-        b_offer.energy / float(microgrid.interval_length)) 
+        b_offer.energy / float(self.microgrid.interval_length)) 
     for f in self.microgrid.feeders:
       for t in feeder_prod[f]:
         # eq:constrIntProd
         program.add_constraint({varname: 1.0 for varname in feeder_prod[f][t]}, 
-          microgrid.C_int)
+          self.microgrid.C_int)
         # eq:constrExtProd
         if t in feeder_cons[f]:
           expr = {varname: 1.0 for varname in feeder_prod[f][t]}
           for varname in feeder_cons[f][t]:
             expr[varname] = -1.0
-          program.add_constraint(expr, microgrid.C_ext)
+          program.add_constraint(expr, self.microgrid.C_ext)
       for t in feeder_cons[f]:
         # eq:constrIntCons
         program.add_constraint({varname: 1.0 for varname in feeder_cons[f][t]}, 
-          microgrid.C_int)
+          self.microgrid.C_int)
         # eq:constrExtCons
         if t in feeder_prod[f]:
           expr = {varname: 1.0 for varname in feeder_cons[f][t]}
           for varname in feeder_prod[f][t]:
             expr[varname] = -1.0
-          program.add_constraint(expr, microgrid.C_ext)
+          program.add_constraint(expr, self.microgrid.C_ext)
     if not len(variables):
       logging.info("No matching trades, skipping solver.")
       self.latest_solution = []
     else:
       solution = program.solve()
       for varname in variables:
-        varname['p'] = solution[varname]
-      self.latest_solution = variables
+        variables[varname]['p'] = solution[varname]
+      self.latest_solution = variables.values()
     
 
 if __name__ == "__main__":
