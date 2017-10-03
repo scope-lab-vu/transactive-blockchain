@@ -1,7 +1,7 @@
 contract MatchingContract {
     uint64 INTERVAL_LENGTH = 1;
-    uint64 C_INT = 20 * 1000;
-    uint64 C_EXT = 25 * 1000;
+    uint64 C_INT = 25 * 1000;
+    uint64 C_EXT = 20 * 1000;
     
     mapping(uint64 => uint64) prosumerFeeder; // TODO: mapping(address => uint64) prosumerFeeder;
     
