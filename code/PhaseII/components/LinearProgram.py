@@ -1,3 +1,5 @@
+import logging
+
 from scipy.optimize import linprog
 
 class LinearProgram:
@@ -32,7 +34,7 @@ class LinearProgram:
     return vect
     
   def solve(self):
-    logging.debug("Solving linear program with {} variables and {} contraints...".format(len(self.variables), len(self.constraints)))
+    logging.info("Solving linear program with {} variables and {} contraints...".format(len(self.variables), len(self.constraints)))
     c = self.get_vector(self.objective)
     A = []
     b = []
@@ -40,6 +42,6 @@ class LinearProgram:
       A.append(self.get_vector(coeffs))
       b.append(const)
     result = linprog(c=c, A_ub=A, b_ub=b)
-    logging.debug("Solver output: message = '{}', fun = {}, status = {}".format(result.message, result.fun, result.status))
+    logging.info("Solver output: message = '{}', fun = {}, status = {}".format(result.message, result.fun, result.status))
     return {name: result.x[var] for (name, var) in self.variables.items()}
 

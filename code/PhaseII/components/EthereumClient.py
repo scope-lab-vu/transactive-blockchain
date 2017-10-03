@@ -21,9 +21,8 @@ class EthereumClient:
     return format(value & 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, "064x")
 
   def __init__(self, ip, port):
-self.ip = ip
+    self.ip = ip
     self.port = port
-
     self.waiting = [] # transactions which have not been submitted
     self.pending = [] # transactions which have been submitted but not yet mined
     self.lock = RLock()
@@ -31,7 +30,6 @@ self.ip = ip
     thread.start()
     
   def __run(self):
-    logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
     while True:
       sleep(1) # wait one second
       with self.lock:
@@ -42,7 +40,7 @@ self.ip = ip
           receipt = self.command("eth_getTransactionReceipt", params=[trans['hash']])
           if receipt is not None: # yay!
             self.pending.remove(trans)
-            logging.info("Transaction {} has been mined.".format(trans['data']))
+            logging.debug("Transaction {} has been mined.".format(trans['data']))
           elif time() > trans['submission_time'] + PENDING_TIMEOUT: # timeout for pending transaction
             self.pending.remove(trans)
             logging.info("Pending transaction {} has timed out, resubmitting...".format(trans['data']))
@@ -68,7 +66,7 @@ self.ip = ip
       if trans_hash.startswith("0x"): # this looks like a transaction hash (this check could be more thorough of course...)
         trans['hash'] = trans_hash
         trans['submission_time'] = time()
-        logging.info("Transaction {} has been submitted...".format(trans['data']))
+        logging.debug("Transaction {} has been submitted...".format(trans['data']))
         self.pending.append(trans) # keep track of pending transactions
         return # nothing else to do
     except BaseException as e:

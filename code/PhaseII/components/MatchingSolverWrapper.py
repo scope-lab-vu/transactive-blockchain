@@ -6,9 +6,10 @@ from time import time, sleep
 from config import *
 from MatchingSolver import MatchingSolver, Microgrid
 from EthereumClient import EthereumClient
+from Filter import Filter
 
 POLLING_INTERVAL = 1 # seconds
-SOLVING_INTERVAL = 60 # seconds
+SOLVING_INTERVAL = 10 # seconds
 
 class MatchingSolverWrapper(MatchingSolver):
   def __init__(self, ip, port):
@@ -45,20 +46,21 @@ class MatchingSolverWrapper(MatchingSolver):
             endTime = params['endTime']
             energy = params['energy']
             if name == "BuyingOfferPosted":
-              buying_offers.append(Offer(offerID, prosumer, startTime, endTime, energy)
+              buying_offers.append(Offer(offerID, prosumer, startTime, endTime, energy))
             else:
-              selling_offers.append(Offer(offerID, prosumer, startTime, endTime, energy)
+              selling_offers.append(Offer(offerID, prosumer, startTime, endTime, energy))
           elif name == "SolutionCreated":
             solutionID = params['ID']
-            logging.debug("Solution {} created by contract, adding trades...".format(solutionID))
+            logging.info("Solution {} created by contract, adding trades...".format(solutionID))
             for trade in self.latest_solution:
               self.addTrade(solutionID, trade['s'].ID, trade['b'].ID, trade['t'], trade['p'])            
       if current_time > next_solving:
-        logging.debug("Solving...")
+        logging.info("Solving...")
+        next_solving = current_time + SOLVING_INTERVAL
         self.createSolution()
         self.solve(buying_offers, selling_offers)
-        logging.debug("Done, trades will be submitted once the solution is created in the contract.")
-      sleep(next_polling - current_time)
+        logging.info("Done, trades will be submitted once the solution is created in the contract.")
+      sleep(min(next_polling, next_solving) - current_time)
       
   def createSolution(self):
     logging.info("createSolution()")
@@ -67,11 +69,11 @@ class MatchingSolverWrapper(MatchingSolver):
 
   def addTrade(self, solutionID, sellerID, buyerID, time, power):
     logging.info("addTrade({}, {}, {}, {}, {})".format(solutionID, sellerID, buyerID, time, power))
-    data = "0x9e52b99f" + 
-      EthereumClient.encode_uint(solutionID) + 
-      EthereumClient.encode_uint(sellerID) + 
-      EthereumClient.encode_uint(buyerID) + 
-      EthereumClient.encode_uint(time) + 
+    data = "0x9e52b99f" + \
+      EthereumClient.encode_uint(solutionID) + \
+      EthereumClient.encode_uint(sellerID) + \
+      EthereumClient.encode_uint(buyerID) + \
+      EthereumClient.encode_uint(time) + \
       EthereumClient.encode_uint(power)
     self.client.transaction(self.account, data, self.contractAddress)
 

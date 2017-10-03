@@ -4,13 +4,10 @@ from config import *
 from EthereumClient import EthereumClient
 
 TOPICS = {
-  '0x4a4bcdba1fdd3486b8dad947841b692814e16275e05e493465222f13287e779a': "FinancialAdded",
-  '0x6ea1dc127cb431ed30f9518c083ebb1afd5fef492456dea55227403a46e025fb': "FinancialDeposited",
-  '0xc2b1f94b59151b30c16e3d9672f8b2128b809750f3edd22efa3d49d8ad245b18': "AssetAdded",
-  '0x6efbe3bb6c0a76bcd5d282b89fd10c1462d449b514f73f7393039485f770bfd5': "AssetDeposited",
-  '0x00ce43d5445de1586c54d6b80a0c597a8ffdd10c34fc77857a59cbfbb8eee97d': "OfferPosted",
-  '0xae4ff21dfe29840d9ecf23fcfa2dadbe7fed7bebb0aecc06e047f6bb0a30200b': "OfferRescinded",
-  '0x0af11ecfa0ce9284e22f65068ff6043b4ffabbcf5eeeace0f315d1e1ea5d1b70': "OfferAccepted",
+  '0x47be5dd1d9aeb3db0a9753c2d318b0140db2a5524856bd0b17bd92b4b1da8ede': 'BuyingOfferPosted',
+  '0xb0f09a7c285d588112f109144f5e334575b9cd0a6b1ec1c0a5ca6949ab815000': 'SellingOfferPosted',
+  '0x25346e016c4cdf007ed72a549d9e82213a82d4f742035bfe48286948ed7ab4e7': 'SolutionCreated',
+  '0x15640476521fd414bd504b67b615bbd406c0147e66a8b99bc4c6e79d85686593': 'TradeAdded',
 }
 
 class Filter:
@@ -42,45 +39,30 @@ def decode_log(log):
   try:
     event = (TOPICS[log['topics'][0]])
     data = log['data'][2:]
-    if event == "FinancialAdded":
-      params = {'address': decode_address(data, 0), 'amount': decode_uint(data, 1)}
-    elif event == "FinancialDeposited":
-      params = {'address': decode_address(data, 0), 'amount': decode_uint(data, 1)}
-    elif event == "AssetAdded":
+    if event == "SolutionCreated":
       params = {
-        'address': decode_address(data, 0), 
-        'assetID': decode_uint(data, 1), 
-        'power': decode_int(data, 2),
-        'start': decode_uint(data, 3),
-        'end': decode_uint(data, 4),
+        'ID': decode_uint(data, 0)
       }
-    elif event == "AssetDeposited":
+    elif event == "TradeAdded":
       params = {
-        'address': decode_address(data, 0), 
-        'assetID': decode_uint(data, 1), 
-        'power': decode_int(data, 2),
-        'start': decode_uint(data, 3),
-        'end': decode_uint(data, 4),
+        'solutionID': decode_uint(data, 0), 
+        'objective': decode_uint(data, 1)
       }
-    elif event == "OfferPosted":
+    elif event == "BuyingOfferPosted":
       params = {
-        'offerID': decode_uint(data, 0),
-        'assetID': decode_uint(data, 1),
-        'power': decode_int(data, 2),
-        'start': decode_uint(data, 3),
-        'end': decode_uint(data, 4),
-        'price': decode_uint(data, 5),
+        'ID': decode_uint(data, 0),
+        'prosumer': decode_uint(data, 1),
+        'startTime': decode_int(data, 2),
+        'endTime': decode_uint(data, 3),
+        'energy': decode_uint(data, 4),
       }
-    elif event == "OfferRescinded":
-      params = { 'offerID': decode_uint(data, 0) }
-    elif event == "OfferAccepted":
+    elif event == "SellingOfferPosted":
       params = {
-        'offerID': decode_uint(data, 0),
-        'assetID': decode_uint(data, 1),
-        'transPower': decode_int(data, 2),
-        'transStart': decode_uint(data, 3),
-        'transEnd': decode_uint(data, 4),
-        'price': decode_uint(data, 5),
+        'ID': decode_uint(data, 0),
+        'prosumer': decode_uint(data, 1),
+        'startTime': decode_int(data, 2),
+        'endTime': decode_uint(data, 3),
+        'energy': decode_uint(data, 4),
       }
   except KeyError:
     event = "unknown"
@@ -94,22 +76,20 @@ def keccak256(string, ip, port):
 
 def generate_topics():
   events = [
-    "FinancialAdded(address,uint64)",
-    "FinancialDeposited(address,uint64)",
-    "AssetAdded(address,uint64,int64,uint64,uint64)",
-    "AssetDeposited(address,uint64,int64,uint64,uint64)",
-    "OfferPosted(uint64,uint64,int64,uint64,uint64,uint64)",
-    "OfferRescinded(uint64)",
-    "OfferAccepted(uint64,uint64,int64,uint64,uint64,uint64)",
+    "BuyingOfferPosted(uint64,uint64,uint64,uint64,uint64)",
+    "SellingOfferPosted(uint64,uint64,uint64,uint64,uint64)",
+    "SolutionCreated(uint64)",
+    "TradeAdded(uint64,uint64)",
   ]
   for event in events:
-    keccak256(event, 192.168.1.2, 9000)
+    keccak256(event, "10.4.209.25", 9005)
     
 # test
 if __name__ == "__main__":
-  test_log = []
-  for log_item in test_log:
-    print(decode_log(log_item))
+  generate_topics()
+#  test_log = []
+#  for log_item in test_log:
+#    print(decode_log(log_item))
 
 
 

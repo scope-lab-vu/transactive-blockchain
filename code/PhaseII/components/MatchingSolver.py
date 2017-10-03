@@ -1,3 +1,5 @@
+import logging
+
 from Microgrid import Microgrid
 from LinearProgram import LinearProgram
 
@@ -91,10 +93,14 @@ class MatchingSolver:
           for varname in feeder_prod[f][t]:
             expr[varname] = -1.0
           program.add_constraint(expr, microgrid.C_ext)
-    solution = program.solve()
-    for varname in variables:
-      varname['p'] = solution[varname]
-    self.latest_solution = variables
+    if not len(variables):
+      logging.info("No matching trades, skipping solver.")
+      self.latest_solution = []
+    else:
+      solution = program.solve()
+      for varname in variables:
+        varname['p'] = solution[varname]
+      self.latest_solution = variables
     
 
 if __name__ == "__main__":
