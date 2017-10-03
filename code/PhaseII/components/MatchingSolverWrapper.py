@@ -23,6 +23,7 @@ class MatchingSolverWrapper(MatchingSolver):
     self.account = self.client.get_addresses()[0] # use the first owned address
     logging.info("Creating event filter...")
     self.filter = Filter(self.client)
+    self.latest_solution = []
     super(MatchingSolverWrapper, self).__init__(MICROGRID)
 
   def run(self):
@@ -40,7 +41,7 @@ class MatchingSolverWrapper(MatchingSolver):
           params = event['params']
           name = event['name']
           if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
-            logging.info("Offer recorded ({}).".format(params))
+            logging.info("{}({}).".format(name, params))
             offerID = params['ID']
             prosumer = params['prosumer']
             startTime = params['startTime']
@@ -56,6 +57,8 @@ class MatchingSolverWrapper(MatchingSolver):
             for trade in self.latest_solution:
               self.addTrade(solutionID, trade['s'].ID, trade['b'].ID, trade['t'], int(trade['p']))
             logging.info("{} trades have been submitted to the contract.".format(len(self.latest_solution)))
+          elif name == "TradeAdded":
+            logging.info("{}({}).".format(name, params))
       if current_time > next_solving:
         logging.info("Solving...")
         next_solving = current_time + SOLVING_INTERVAL
