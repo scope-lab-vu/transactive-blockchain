@@ -11,8 +11,9 @@ TOPICS = {
 }
 
 class Filter:
-  def __init__(self, client):
+  def __init__(self, client, address=None):
     self.client = client
+    self.address = address
     self.filterID = self.client.command("eth_newFilter", params=[{"fromBlock": "0x1"}]) 
     logging.info("Created filter (ID = {}).".format(self.filterID))
     
@@ -21,7 +22,8 @@ class Filter:
     log = self.client.command("eth_getFilterChanges", params=[self.filterID])
     logging.debug("Log: {} items (block number: {})".format(len(log), block))
     for log_item in log:
-      yield decode_log(log_item)
+      if (self.address is None) or (self.address == log_item['address']):
+        yield decode_log(log_item)
 
 def decode_address(data, pos):
   return "0x" + data[pos * 64 + 24 : (pos + 1) * 64]

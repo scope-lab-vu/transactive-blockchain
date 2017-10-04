@@ -17,7 +17,7 @@ class DSOWrapper:
     logging.info("Entering main function...")
     trader = zmq.Context().socket(zmq.REP)
     trader.bind(DSO_ADDRESS)
-    logging.info("Listening for traders...")
+    logging.info("Listening for traders and solvers...")
     while True:
       msg = trader.recv_pyobj()
       if msg['request'] == "query_contract_address":

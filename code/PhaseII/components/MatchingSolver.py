@@ -96,12 +96,12 @@ class MatchingSolver:
           program.add_constraint(expr, self.microgrid.C_ext)
     if not len(variables):
       logging.info("No matching trades, skipping solver.")
-      self.latest_solution = []
+      return ([], 0)
     else:
-      solution = program.solve()
+      (solution, objective) = program.solve()
       for varname in variables:
         variables[varname]['p'] = solution[varname]
-      self.latest_solution = variables.values()
+      return (variables.values(), -objective)
     
 
 if __name__ == "__main__":

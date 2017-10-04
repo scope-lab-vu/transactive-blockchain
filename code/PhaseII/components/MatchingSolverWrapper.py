@@ -22,8 +22,8 @@ class MatchingSolverWrapper(MatchingSolver):
     self.client = EthereumClient(ip=ip, port=port) 
     self.account = self.client.get_addresses()[0] # use the first owned address
     logging.info("Creating event filter...")
-    self.filter = Filter(self.client)
-    self.latest_solution = []
+    self.filter = Filter(self.client, address=self.contract_address)
+    self.objective = 0
     super(MatchingSolverWrapper, self).__init__(MICROGRID)
 
   def run(self):
@@ -54,23 +54,29 @@ class MatchingSolverWrapper(MatchingSolver):
           elif name == "SolutionCreated":
             solutionID = params['ID']
             logging.info("Solution {} created by contract, adding trades...".format(solutionID))
-            for trade in self.latest_solution:
+            trades = [trade for trade in self.solution if int(trade['p']) > 0]
+            for trade in trades:
               self.addTrade(solutionID, trade['s'].ID, trade['b'].ID, trade['t'], int(trade['p']))
-            logging.info("{} trades have been submitted to the contract.".format(len(self.latest_solution)))
+            logging.info("{} trades have been submitted to the contract.".format(len(trades)))
           elif name == "TradeAdded":
             logging.info("{}({}).".format(name, params))
       if current_time > next_solving:
         logging.info("Solving...")
         next_solving = current_time + SOLVING_INTERVAL
-        self.createSolution()
-        self.solve(buying_offers, selling_offers)
-        logging.info("Done, trades will be submitted once the solution is created in the contract.")
+        (solution, objective) = self.solve(buying_offers, selling_offers)
+        if objective > self.objective:
+          self.solution = solution
+          self.objective = objective
+          self.createSolution()
+          logging.info("Done, trades will be submitted once the solution is created in the contract.")
+        else:
+          logging.info("No better solution found.")
       sleep(min(next_polling, next_solving) - current_time)
       
   def createSolution(self):
     logging.info("createSolution()")
     data = "0xf5757421"
-    self.client.transaction(self.account, data, self.contractAddress)
+    self.client.transaction(self.account, data, self.contract_address)
 
   def addTrade(self, solutionID, sellerID, buyerID, time, power):
     logging.info("addTrade({}, {}, {}, {}, {})".format(solutionID, sellerID, buyerID, time, power))
@@ -80,7 +86,7 @@ class MatchingSolverWrapper(MatchingSolver):
       EthereumClient.encode_uint(buyerID) + \
       EthereumClient.encode_uint(time) + \
       EthereumClient.encode_uint(power)
-    self.client.transaction(self.account, data, self.contractAddress)
+    self.client.transaction(self.account, data, self.contract_address)
 
   def query_contract_address(self):
     msg = {
@@ -88,8 +94,8 @@ class MatchingSolverWrapper(MatchingSolver):
     }
     logging.info(msg)
     self.dso.send_pyobj(msg)
-    self.contractAddress = self.dso.recv_pyobj()
-    logging.info("Contract address: " + self.contractAddress)
+    self.contract_address = self.dso.recv_pyobj()
+    logging.info("Contract address: " + self.contract_address)
 
 if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)

@@ -34,7 +34,7 @@ class LinearProgram:
     return vect
     
   def solve(self):
-    logging.info("Solving linear program with {} variables and {} contraints...".format(len(self.variables), len(self.constraints)))
+    logging.info("Solving linear program with {} variables and {} constraints...".format(len(self.variables), len(self.constraints)))
     c = self.get_vector(self.objective)
     A = []
     b = []
@@ -43,5 +43,7 @@ class LinearProgram:
       b.append(const)
     result = linprog(c=c, A_ub=A, b_ub=b)
     logging.info("Solver output: message = '{}', fun = {}, status = {}".format(result.message, result.fun, result.status))
-    return {name: result.x[var] for (name, var) in self.variables.items()}
+    solution = {name: result.x[var] for (name, var) in self.variables.items()}
+    objective = result.fun
+    return (solution, objective)
 
