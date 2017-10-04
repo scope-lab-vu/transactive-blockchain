@@ -23,11 +23,11 @@ class SmartHomeTraderWrapper:
   def run(self):
     # post all offers
     logging.info("Posting offers...")
-    for t in range(len(self.net_production)):
-      if self.net_production[t] < 0:
-        self.postBuyingOffer(self.prosumer_id, t, t, -self.net_production[t])
+    for offer in self.net_production:
+      if offer['energy'] < 0:
+        self.postBuyingOffer(self.prosumer_id, offer['start'], offer['end'], -offer['energy'])
       else:
-        self.postSellingOffer(self.prosumer_id, t, t, self.net_production[t])
+        self.postSellingOffer(self.prosumer_id, offer['start'], offer['end'], offer['energy'])
     logging.info("Offers posted.")
   
   def postBuyingOffer(self, prosumer, startTime, endTime, energy):
@@ -61,16 +61,25 @@ def read_data(prosumer_id):
   logging.info("Reading net production values...")
   feeder = int(prosumer_id / 100)
   prosumer = prosumer_id % 100
-  with open(DATA_PATH + "TODO.csv", "rt") as fin:
+  with open(DATA_PATH + "prosumer_{}.csv".format(prosumer_id), "rt") as fin:
     line = next(fin)
-    # TODO: data format?
-    data = [int(1000 * float(line.split(',')[prosumer_id])) for line in fin]
+    data = []
+    for line in fin:
+      fields = line.split(',')
+      data.append({
+        'start': int(fields[0]), 
+        'end': int(fields[1]),
+        'energy': int(1000 * float(fields[2]))
+      }) 
     logging.info("Read {} values.".format(len(data)))
     return data
 
 def test_data(prosumer_id):
   logging.info("Generating random test data...")
-  return [int(random() * 1000 - 500) for t in range(10)]
+  return [{
+    'start': t,
+    'end': t,
+    'energy': int(random() * 1000 - 500)} for t in range(10)]
 
 if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
@@ -85,7 +94,7 @@ if __name__ == "__main__":
     ip = sys.argv[2]
   if len(sys.argv) > 3:
     port = sys.argv[3]
-  data = test_data(prosumer_id)
+  data = read_data(prosumer_id)
   trader = SmartHomeTraderWrapper(prosumer_id, data, ip, port) 
   trader.run()
 
