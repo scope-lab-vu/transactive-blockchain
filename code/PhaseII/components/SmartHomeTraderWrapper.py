@@ -65,12 +65,17 @@ def read_data(prosumer_id):
     line = next(fin)
     data = []
     for line in fin:
-      fields = line.split(',')
-      data.append({
-        'start': int(fields[0]), 
-        'end': int(fields[1]),
-        'energy': int(1000 * float(fields[2]))
-      }) 
+      try:
+        fields = line.split(',')
+        data.append({
+          'start': int(fields[0]), 
+          'end': int(fields[1]),
+          'energy': int(1000 * float(fields[2]))
+        })
+      except Exception:
+        pass
+    if not len(data):
+      raise Exception("No values found in data file!") 
     logging.info("Read {} values.".format(len(data)))
     return data
 
