@@ -9,7 +9,6 @@ from EthereumClient import EthereumClient
 from Filter import Filter
 
 POLLING_INTERVAL = 1 # seconds
-SOLVING_INTERVAL = 10 # seconds
 
 class MatchingSolverWrapper(MatchingSolver):
   def __init__(self, ip, port):
@@ -27,11 +26,13 @@ class MatchingSolverWrapper(MatchingSolver):
     super(MatchingSolverWrapper, self).__init__(MICROGRID)
 
   def run(self):
+    finalized = -1
     buying_offers = []
     selling_offers = []
     logging.info("Entering main loop...")
     next_polling = time() + POLLING_INTERVAL
     next_solving = time() + SOLVING_INTERVAL
+    next_finalizing = time() + FINALIZING_INTERVAL
     while True:
       current_time = time()
       if current_time > next_polling:
@@ -63,7 +64,7 @@ class MatchingSolverWrapper(MatchingSolver):
       if current_time > next_solving:
         logging.info("Solving...")
         next_solving = current_time + SOLVING_INTERVAL
-        (solution, objective) = self.solve(buying_offers, selling_offers)
+        (solution, objective) = self.solve(buying_offers, selling_offers, finalized=finalized)
         if objective > self.objective:
           self.solution = solution
           self.objective = objective
@@ -71,7 +72,10 @@ class MatchingSolverWrapper(MatchingSolver):
           logging.info("Done, trades will be submitted once the solution is created in the contract.")
         else:
           logging.info("No better solution found.")
-      sleep(min(next_polling, next_solving) - current_time)
+      if current_time > next_finalizing:
+        finalized += 1
+        logging.info("Trades for interval {} are now final, matching will consider only later intervals from now on.".format(finalized))
+      sleep(min(next_polling, next_solving, next_finalizing) - current_time)
       
   def createSolution(self):
     logging.info("createSolution()")

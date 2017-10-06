@@ -25,7 +25,7 @@ class MatchingSolver:
   def __init__(self, microgrid):
     self.microgrid = microgrid
     
-  def solve(self, buying_offers, selling_offers):
+  def solve(self, buying_offers, selling_offers, finalized=-1):
     program = LinearProgram()
     variables = {}
     prosumer_prod = {}
@@ -37,31 +37,32 @@ class MatchingSolver:
         b_offer = buying_offers[b]
         s_offer = selling_offers[s]
         for t in b_offer.intersection(s_offer):
-          variable = {'s': s_offer, 'b': b_offer, 't': t}
-          varname = 'p_{}_{}_{}'.format(s, b, t)
-          variables[varname] = variable
-          # prosumer production
-          try:
-            prosumer_prod[s_offer].append(varname)
-          except KeyError:
-            prosumer_prod[s_offer] = [varname]
-          # prosumer consumption
-          try:
-            prosumer_cons[b_offer].append(varname)
-          except KeyError:
-            prosumer_cons[b_offer] = [varname]
-          # feeder production
-          s_feeder = self.microgrid.prosumer_feeder[s_offer.prosumer]
-          if t not in feeder_prod[s_feeder]:
-            feeder_prod[s_feeder][t] = [varname]
-          else:
-            feeder_prod[s_feeder][t].append(varname)
-          # feeder consumption
-          b_feeder = self.microgrid.prosumer_feeder[b_offer.prosumer]
-          if t not in feeder_cons[b_feeder]:
-            feeder_cons[b_feeder][t] = [varname]
-          else:
-            feeder_cons[b_feeder][t].append(varname)
+          if t > finalized: # skip time intervals that have been finalized
+            variable = {'s': s_offer, 'b': b_offer, 't': t}
+            varname = 'p_{}_{}_{}'.format(s, b, t)
+            variables[varname] = variable
+            # prosumer production
+            try:
+              prosumer_prod[s_offer].append(varname)
+            except KeyError:
+              prosumer_prod[s_offer] = [varname]
+            # prosumer consumption
+            try:
+              prosumer_cons[b_offer].append(varname)
+            except KeyError:
+              prosumer_cons[b_offer] = [varname]
+            # feeder production
+            s_feeder = self.microgrid.prosumer_feeder[s_offer.prosumer]
+            if t not in feeder_prod[s_feeder]:
+              feeder_prod[s_feeder][t] = [varname]
+            else:
+              feeder_prod[s_feeder][t].append(varname)
+            # feeder consumption
+            b_feeder = self.microgrid.prosumer_feeder[b_offer.prosumer]
+            if t not in feeder_cons[b_feeder]:
+              feeder_cons[b_feeder][t] = [varname]
+            else:
+              feeder_cons[b_feeder][t].append(varname)
     program.set_objective({varname: -1.0 for varname in variables})
     # eq:constrEnergyProd   
     for s_offer in prosumer_prod:
