@@ -26,7 +26,7 @@ class MatchingSolverWrapper(MatchingSolver):
     super(MatchingSolverWrapper, self).__init__(MICROGRID)
 
   def run(self):
-    finalized = -1
+    finalized = START_INTERVAL - 1
     buying_offers = []
     selling_offers = []
     logging.info("Entering main loop...")
@@ -77,7 +77,7 @@ class MatchingSolverWrapper(MatchingSolver):
         next_finalizing += FINALIZING_INTERVAL
         finalized += 1
         logging.info("Trades for interval {} are now final, matching will consider only later intervals from now on.".format(finalized))
-      sleep(min(next_polling, next_solving, next_finalizing) - current_time)
+      sleep(max(min(next_polling, next_solving, next_finalizing) - time(), 0))
       
   def createSolution(self):
     logging.info("createSolution()")

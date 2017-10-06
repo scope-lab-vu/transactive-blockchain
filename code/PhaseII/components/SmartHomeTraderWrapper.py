@@ -21,13 +21,26 @@ class SmartHomeTraderWrapper:
     super(SmartHomeTraderWrapper, self).__init__()
 
   def run(self):
-    # post all offers
+    time_interval = START_INTERVAL
+    next = time()
+    while True:
+      self.post_offers(self, time_interval)
+      time_interval += 1
+      next += FINALIZING_INTERVAL
+      sleep(max(next - time(), 0))
+    
+  def post_offers(self, time_interval):
+    remaining_offers = []
     logging.info("Posting offers...")
     for offer in self.net_production:
-      if offer['energy'] < 0:
-        self.postBuyingOffer(self.prosumer_id, offer['start'], offer['end'], -offer['energy'])
-      else:
-        self.postSellingOffer(self.prosumer_id, offer['start'], offer['end'], offer['energy'])
+      if offer['start'] <= time_interval + PREDICTION_WINDOW: # offer in near future, post it
+        if offer['energy'] < 0:
+          self.postBuyingOffer(self.prosumer_id, offer['start'], offer['end'], -offer['energy'])
+        else:
+          self.postSellingOffer(self.prosumer_id, offer['start'], offer['end'], offer['energy'])
+      else: # offer in far future, post it later
+        remaining_offers.append(offer)
+    self.net_production = remaining_offers
     logging.info("Offers posted.")
   
   def postBuyingOffer(self, prosumer, startTime, endTime, energy):
