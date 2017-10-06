@@ -33,17 +33,22 @@ class LinearProgram:
       vect[var] = coeff
     return vect
     
-  def solve(self):
-    logging.info("Solving linear program with {} variables and {} constraints...".format(len(self.variables), len(self.constraints)))
+  def construct(self):
     c = self.get_vector(self.objective)
     A = []
     b = []
     for (coeffs, const) in self.constraints:
       A.append(self.get_vector(coeffs))
       b.append(const)
+    return (A, b, c)
+    
+  def solve(self):
+    logging.info("Solving linear program with {} variables and {} constraints...".format(len(self.variables), len(self.constraints)))
+    (A, b, c) = self.construct()
     result = linprog(c=c, A_ub=A, b_ub=b)
     logging.info("Solver output: message = '{}', fun = {}, status = {}".format(result.message, result.fun, result.status))
     solution = {name: result.x[var] for (name, var) in self.variables.items()}
     objective = result.fun
     return (solution, objective)
+
 
