@@ -30,9 +30,10 @@ class MatchingSolverWrapper(MatchingSolver):
     buying_offers = []
     selling_offers = []
     logging.info("Entering main loop...")
-    next_polling = time() + POLLING_INTERVAL
-    next_solving = time() + SOLVING_INTERVAL
-    next_finalizing = time() + FINALIZING_INTERVAL
+    current_time = time()
+    next_polling = current_time + POLLING_INTERVAL
+    next_solving = current_time + SOLVING_INTERVAL
+    next_finalizing = current_time + FINALIZING_INTERVAL
     while True:
       current_time = time()
       if current_time > next_polling:
@@ -73,6 +74,7 @@ class MatchingSolverWrapper(MatchingSolver):
         else:
           logging.info("No better solution found.")
       if current_time > next_finalizing:
+        next_finalizing += FINALIZING_INTERVAL
         finalized += 1
         logging.info("Trades for interval {} are now final, matching will consider only later intervals from now on.".format(finalized))
       sleep(min(next_polling, next_solving, next_finalizing) - current_time)
