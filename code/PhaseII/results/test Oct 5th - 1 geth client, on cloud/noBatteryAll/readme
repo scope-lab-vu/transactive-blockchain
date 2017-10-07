@@ -1,0 +1,8 @@
+All feeders and all prosumers
+
+DATA_PATH = "../data/noBattery/"
+
+SOLVING_INTERVAL = 10 # seconds (how often MatchingSolverWrapper solves the energy trading problem)
+FINALIZING_INTERVAL = 60 # seconds (how often the components move onto the next time interval)
+PREDICTION_WINDOW = 3 # how many time intervals ahead SmartHomeTraderWrapper trade (i.e., an offer is posted if offer['start'] <= time_interval + PREDICTION_WINDOW)
+START_INTERVAL = 16 
