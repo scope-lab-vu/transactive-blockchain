@@ -16,6 +16,12 @@ class LinearProgramCplex(LinearProgram):
       A_cplex.append([list(range(len(self.variables))), row])    
     
     prob = cplex.Cplex()
+    
+    prob.set_log_stream(None)
+    #prob.set_error_stream(None)
+    #prob.set_warning_stream(None)
+    prob.set_results_stream(None)
+
     prob.objective.set_sense(prob.objective.sense.minimize)
     prob.variables.add(obj=c)
     prob.linear_constraints.add(lin_expr=A_cplex, senses=['L'] * len(self.constraints), rhs=b)
