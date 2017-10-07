@@ -1,7 +1,7 @@
 import logging
 
 from Microgrid import Microgrid
-from LinearProgram import LinearProgram
+from LinearProgramCplex import LinearProgram
 
 class Offer:
   def __init__(self, ID, prosumer, startTime, endTime, energy):
@@ -125,6 +125,6 @@ if __name__ == "__main__":
     Offer(4, 2, 1, 15, 15),
     Offer(5, 5, 1, 15, 5),
   ]
-  solver.solve(buying_offers=buying_offers, selling_offers=selling_offers)
-  print("Success.")
+  (trades, objective) = solver.solve(buying_offers=buying_offers, selling_offers=selling_offers)
+  print("Success: {} energy traded".format(objective))
 
