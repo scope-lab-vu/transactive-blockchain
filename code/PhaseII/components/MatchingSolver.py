@@ -1,7 +1,7 @@
 import logging
 
 from Microgrid import Microgrid
-from LinearProgramCplex import LinearProgram
+from LinearProgramCplex import LinearProgramCplex 
 
 class Offer:
   def __init__(self, ID, prosumer, startTime, endTime, energy):
@@ -25,8 +25,8 @@ class MatchingSolver:
   def __init__(self, microgrid):
     self.microgrid = microgrid
     
-  def solve(self, buying_offers, selling_offers, finalized=-1):
-    program = LinearProgram()
+  def solve(self, buying_offers, selling_offers, finalized=-1, lp_solver=LinearProgramCplex):
+    program = lp_solver()
     variables = {}
     prosumer_prod = {}
     prosumer_cons = {}
