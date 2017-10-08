@@ -22,7 +22,8 @@ class MatchingSolverWrapper(MatchingSolver):
     self.account = self.client.get_addresses()[0] # use the first owned address
     logging.info("Creating event filter...")
     self.filter = Filter(self.client, address=self.contract_address)
-    self.objective = 0
+    self.objective = float("-inf")
+    self.solution = None
     super(MatchingSolverWrapper, self).__init__(MICROGRID)
 
   def run(self):
@@ -55,11 +56,14 @@ class MatchingSolverWrapper(MatchingSolver):
               selling_offers.append(Offer(offerID, prosumer, startTime, endTime, energy))
           elif name == "SolutionCreated":
             solutionID = params['ID']
-            logging.info("Solution {} created by contract, adding trades...".format(solutionID))
-            trades = [trade for trade in self.solution if int(trade['p']) > 0]
-            for trade in trades:
-              self.addTrade(solutionID, trade['s'].ID, trade['b'].ID, trade['t'], int(trade['p']))
-            logging.info("{} trades have been submitted to the contract.".format(len(trades)))
+            if self.solution is not None:
+              logging.info("Solution {} created by contract, adding trades...".format(solutionID))
+              trades = [trade for trade in self.solution if int(trade['p']) > 0]
+              for trade in trades:
+                self.addTrade(solutionID, trade['s'].ID, trade['b'].ID, trade['t'], int(trade['p']))
+              logging.info("{} trades have been submitted to the contract.".format(len(trades)))
+            else:
+              logging.info("Solution {} created by contract, but no solution has been found for this time interval (yet).".format(solutionID))
           elif name == "TradeAdded":
             logging.info("{}({}).".format(name, params))
       if current_time > next_solving:
@@ -76,6 +80,8 @@ class MatchingSolverWrapper(MatchingSolver):
       if current_time > next_finalizing:
         next_finalizing += FINALIZING_INTERVAL
         finalized += 1
+        self.objective = float("-inf")
+        self.solution = None
         logging.info("Trades for interval {} are now final, matching will consider only later intervals from now on.".format(finalized))
       sleep(max(min(next_polling, next_solving, next_finalizing) - time(), 0))
       

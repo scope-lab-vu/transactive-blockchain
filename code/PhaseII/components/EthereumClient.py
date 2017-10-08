@@ -87,6 +87,9 @@ class EthereumClient:
 
   def get_addresses(self):
     return self.command("eth_accounts")
+    
+  def keccak256(self, string):
+    return self.command("web3_sha3", params=["0x" + bytes(string, 'ascii').hex()])
 
   def command(self, method, params=[], id=1, jsonrpc="2.0", verbose=False):
     """ Method to abstract away 'curl' usage to interact with RPC of geth clients. """

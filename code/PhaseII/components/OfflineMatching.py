@@ -25,6 +25,7 @@ def read_data(prosumer_id):
           'energy': int(1000 * float(fields[2]))
         })
       except Exception:
+        raise Exception("Data read error!")
         pass
     if not len(offers):
       raise Exception("No values found in data file!") 
@@ -72,14 +73,19 @@ if __name__ == "__main__":
   print("Total requested: {}".format(sum((offer.energy for offer in buying_offers)) / 1000))
   total_traded = 0
   experiment_start_time = time()
+  finalized = {}
   for interval in range(0, 97):
     print("Time interval: {} (finalized: {})".format(interval, interval - 1))
     filtered_selling = filter_offers(interval, selling_offers)
     filtered_buying = filter_offers(interval, buying_offers)
     finalized_amount = match(solver, interval, filtered_selling, filtered_buying)
     total_traded += finalized_amount
+    finalized[interval] = finalized_amount
   print("Dataset: {}".format(argv[1]))
   print("Total traded: {}".format(total_traded / 1000))
   print("Total running time: {}".format(time() - experiment_start_time))
+  print("time_interval,energy_transferred")
+  for interval in range(0, 97):
+    print("{},{}".format(interval, finalized[interval]))
 
 
