@@ -6,7 +6,7 @@ from time import time, sleep
 from config import *
 from MatchingSolver import MatchingSolver, Offer
 from EthereumClient import EthereumClient
-from Filter import Filter
+from MatchingContract import MatchingContract
 
 POLLING_INTERVAL = 1 # seconds
 
@@ -18,10 +18,10 @@ class MatchingSolverWrapper(MatchingSolver):
     logging.info("DSO connected ({}).".format(self.dso))
     self.query_contract_address()
     logging.info("Setting up connection to Ethereum client...")
-    self.client = EthereumClient(ip=ip, port=port) 
-    self.account = self.client.get_addresses()[0] # use the first owned address
-    logging.info("Creating event filter...")
-    self.filter = Filter(self.client, address=self.contract_address)
+    client = EthereumClient(ip=ip, port=port) 
+    self.account = self.client.accounts()[0] # use the first owned address
+    logging.info("Creating contract object...")
+    self.contract = MatchingContract(client, address)
     self.objective = float("-inf")
     self.solution = None
     super(MatchingSolverWrapper, self).__init__(MICROGRID)
@@ -34,33 +34,29 @@ class MatchingSolverWrapper(MatchingSolver):
     current_time = time()
     next_polling = current_time + POLLING_INTERVAL
     next_solving = current_time + SOLVING_INTERVAL
-    next_finalizing = current_time + FINALIZING_INTERVAL
+    next_finalizing = current_time + INTERVAL_LENGTH
     while True:
       current_time = time()
       if current_time > next_polling:
         logging.debug("Polling events...")
         next_polling = current_time + POLLING_INTERVAL
-        for event in self.filter.poll_events():
+        for event in self.contract.poll_events():
           params = event['params']
           name = event['name']
           if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
             logging.info("{}({}).".format(name, params))
-            offerID = params['ID']
-            prosumer = params['prosumer']
-            startTime = params['startTime']
-            endTime = params['endTime']
-            energy = params['energy']
+            offer = Offer(params['ID'], params['prosumer'], params['startTime'], params['endTime'], params['energy'])
             if name == "BuyingOfferPosted":
-              buying_offers.append(Offer(offerID, prosumer, startTime, endTime, energy))
+              buying_offers.append(offer)
             else:
-              selling_offers.append(Offer(offerID, prosumer, startTime, endTime, energy))
+              selling_offers.append(offer)
           elif name == "SolutionCreated":
             solutionID = params['ID']
             if self.solution is not None:
               logging.info("Solution {} created by contract, adding trades...".format(solutionID))
               trades = [trade for trade in self.solution if int(trade['p']) > 0]
               for trade in trades:
-                self.addTrade(solutionID, trade['s'].ID, trade['b'].ID, trade['t'], int(trade['p']))
+                self.contract.addTrade(self.account, solutionID, trade['s'].ID, trade['b'].ID, trade['t'], int(trade['p']))
               logging.info("{} trades have been submitted to the contract.".format(len(trades)))
             else:
               logging.info("Solution {} created by contract, but no solution has been found for this time interval (yet).".format(solutionID))
@@ -73,33 +69,18 @@ class MatchingSolverWrapper(MatchingSolver):
         if objective > self.objective:
           self.solution = solution
           self.objective = objective
-          self.createSolution()
+          self.contract.createSolution(self.account)
           logging.info("Done, trades will be submitted once the solution is created in the contract.")
         else:
           logging.info("No better solution found.")
       if current_time > next_finalizing:
-        next_finalizing += FINALIZING_INTERVAL
+        next_finalizing += INTERVAL_LENGTH
         finalized += 1
         self.objective = float("-inf")
         self.solution = None
         logging.info("Trades for interval {} are now final, matching will consider only later intervals from now on.".format(finalized))
       sleep(max(min(next_polling, next_solving, next_finalizing) - time(), 0))
       
-  def createSolution(self):
-    logging.info("createSolution()")
-    data = "0xf5757421"
-    self.client.transaction(self.account, data, self.contract_address)
-
-  def addTrade(self, solutionID, sellerID, buyerID, time, power):
-    logging.info("addTrade({}, {}, {}, {}, {})".format(solutionID, sellerID, buyerID, time, power))
-    data = "0x9e52b99f" + \
-      EthereumClient.encode_uint(solutionID) + \
-      EthereumClient.encode_uint(sellerID) + \
-      EthereumClient.encode_uint(buyerID) + \
-      EthereumClient.encode_uint(time) + \
-      EthereumClient.encode_uint(power)
-    self.client.transaction(self.account, data, self.contract_address)
-
   def query_contract_address(self):
     msg = {
       'request': "query_contract_address"

@@ -7,19 +7,11 @@ from threading import Thread, RLock
 
 from config import * 
 
+CHECK_INTERVAL = 1 # check for receipts every second
 PENDING_TIMEOUT = 120 # if a transaction has been pending for more than 120 seconds, submit it again
 CLIENT_TIMEOUT = 600 # if a transaction has been stuck for more than 600 seconds, restart the client
 
 class EthereumClient:
-  def encode_address(address):
-    return "000000000000000000000000" + address[2:]
-
-  def encode_uint(value):
-    return format(value, "064x")
-
-  def encode_int(value):
-    return format(value & 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, "064x")
-
   def __init__(self, ip, port):
     self.ip = ip
     self.port = port
@@ -31,21 +23,22 @@ class EthereumClient:
     
   def __run(self):
     while True:
-      sleep(1) # wait one second
+      sleep(CHECK_INTERVAL) # wait one second
+      current_time = time()
       with self.lock:
         for trans in self.pending + self.waiting:
-          if time() > trans['request_time'] + CLIENT_TIMEOUT: # transaction has been stuck for a long time
+          if current_time > trans['request_time'] + CLIENT_TIMEOUT: # transaction has been stuck for a long time
             self.__restart_client()
         for trans in list(self.pending): # iterate over a copy so that we can remove items
           receipt = self.command("eth_getTransactionReceipt", params=[trans['hash']])
-          if receipt is not None: # yay!
+          if receipt is not None: # transaction receipt is available
             self.pending.remove(trans)
             logging.debug("Transaction {} has been mined.".format(trans['data']))
-          elif time() > trans['submission_time'] + PENDING_TIMEOUT: # timeout for pending transaction
+          elif current_time > trans['submission_time'] + PENDING_TIMEOUT: # timeout for pending transaction
             self.pending.remove(trans)
             logging.info("Pending transaction {} has timed out, resubmitting...".format(trans['data']))
             self.__submit_trans(trans)
-          # otherwise, there is nothing to do
+          # otherwise, wait more for this transaction
         for trans in list(self.waiting): # iterate over a copy so that we can remove items
           self.waiting.remove(trans)
           self.__submit_trans(trans) # resubmit
@@ -85,11 +78,22 @@ class EthereumClient:
     with self.lock:
       self.__submit_trans(trans)
 
-  def get_addresses(self):
+  def accounts(self):
     return self.command("eth_accounts")
     
   def keccak256(self, string):
     return self.command("web3_sha3", params=["0x" + bytes(string, 'ascii').hex()])
+    
+  def new_filter(self):
+    filter_id = self.client.command("eth_newFilter", params=[{"fromBlock": "0x1"}])
+    logging.info("Created filter (ID = {}).".format(self.filter_id))
+    return filter_id
+
+  def get_filter_changes(self, filter_id):    
+    block = self.command("eth_blockNumber")
+    log = self.command("eth_getFilterChanges", params=[filter_id])
+    logging.debug("Log: {} items (block number: {})".format(len(log), block))
+    return log
 
   def command(self, method, params=[], id=1, jsonrpc="2.0", verbose=False):
     """ Method to abstract away 'curl' usage to interact with RPC of geth clients. """

@@ -9,7 +9,7 @@ from EthereumClient import EthereumClient
 class DSOWrapper: 
   def __init__(self, ip, port):
     self.client = EthereumClient(ip=ip, port=port)    
-    self.account = self.client.get_addresses()[0] # use the first owned address
+    self.account = self.client.accounts()[0] # use the first owned address
     self.deploy_contract()
     super(DSOWrapper, self).__init__()
     

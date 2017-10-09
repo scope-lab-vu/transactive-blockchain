@@ -5,6 +5,7 @@ from random import random
 
 from config import *
 from EthereumClient import EthereumClient
+from MatchingContract import MatchingContract
 
 class SmartHomeTraderWrapper:
   def __init__(self, prosumer_id, net_production, ip, port):
@@ -14,10 +15,11 @@ class SmartHomeTraderWrapper:
     self.dso = zmq.Context().socket(zmq.REQ)
     self.dso.connect(DSO_ADDRESS)
     logging.info("DSO connected ({}).".format(self.dso))
-    self.query_contract_address()
+    contract_address = self.query_contract_address()
     logging.info("Setting up connection to Ethereum client...")
-    self.client = EthereumClient(ip=ip, port=port)
-    self.account = self.client.get_addresses()[0] # use the first owned address
+    client = EthereumClient(ip=ip, port=port)
+    self.account = client.accounts()[0] # use the first owned address
+    self.contract = MatchingContract(client, contract_address)
     super(SmartHomeTraderWrapper, self).__init__()
 
   def run(self):
@@ -26,7 +28,7 @@ class SmartHomeTraderWrapper:
     while True:
       self.post_offers(self, time_interval)
       time_interval += 1
-      next += FINALIZING_INTERVAL
+      next += INTERVAL_LENGTH
       sleep(max(next - time(), 0))
     
   def post_offers(self, time_interval):
@@ -35,40 +37,23 @@ class SmartHomeTraderWrapper:
     for offer in self.net_production:
       if offer['start'] <= time_interval + PREDICTION_WINDOW: # offer in near future, post it
         if offer['energy'] < 0:
-          self.postBuyingOffer(self.prosumer_id, offer['start'], offer['end'], -offer['energy'])
+          self.contract.postBuyingOffer(self.account, self.prosumer_id, offer['start'], offer['end'], -offer['energy'])
         else:
-          self.postSellingOffer(self.prosumer_id, offer['start'], offer['end'], offer['energy'])
+          self.contract.postSellingOffer(self.account, self.prosumer_id, offer['start'], offer['end'], offer['energy'])
       else: # offer in far future, post it later
         remaining_offers.append(offer)
     self.net_production = remaining_offers
     logging.info("Offers posted.")
   
-  def postBuyingOffer(self, prosumer, startTime, endTime, energy):
-    logging.info("postBuyingOffer({}, {}, {}, {})".format(prosumer, startTime, endTime, energy))
-    data = "0xc37df44e" + \
-      EthereumClient.encode_uint(prosumer) + \
-      EthereumClient.encode_uint(startTime) + \
-      EthereumClient.encode_uint(endTime) + \
-      EthereumClient.encode_uint(energy)
-    self.client.transaction(self.account, data, self.contractAddress)
-
-  def postSellingOffer(self, prosumer, startTime, endTime, energy):
-    logging.info("postSellingOffer({}, {}, {}, {})".format(prosumer, startTime, endTime, energy))
-    data = "0x8375ced0" + \
-      EthereumClient.encode_uint(prosumer) + \
-      EthereumClient.encode_uint(startTime) + \
-      EthereumClient.encode_uint(endTime) + \
-      EthereumClient.encode_uint(energy)
-    self.client.transaction(self.account, data, self.contractAddress)
-
   def query_contract_address(self):
     msg = {
       'request': "query_contract_address"
     }
     logging.info(msg)
     self.dso.send_pyobj(msg)
-    self.contractAddress = self.dso.recv_pyobj()
-    logging.info("Contract address: " + self.contractAddress)
+    contract_address = self.dso.recv_pyobj()
+    logging.info("Contract address: " + self.contract_address)
+    return contract_address
 
 def read_data(prosumer_id):
   logging.info("Reading net production values...")

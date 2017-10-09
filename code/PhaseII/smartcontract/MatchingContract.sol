@@ -27,7 +27,7 @@ contract MatchingContract {
     
     function postBuyingOffer(uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy, uint64 price) public { // TODO: function postBuyingOffer(uint64 startTime, uint64 endTime, uint64 energy, uint64 price) public {
         require(startTime <= endTime);
-        BuyingOfferPosted(numBuyingOffers, prosumer, startTime, endTime, energy);
+        BuyingOfferPosted(numBuyingOffers, prosumer, startTime, endTime, energy, price);
         buyingOffers[numBuyingOffers++] = Offer({
             prosumer: prosumer, // TODO: msg.sender
             startTime: startTime,
@@ -39,7 +39,7 @@ contract MatchingContract {
     
     function postSellingOffer(uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy, uint64 price) public { // TODO: function postSellingOffer(uint64 startTime, uint64 endTime, uint64 energy) public {
         require(startTime <= endTime);
-        SellingOfferPosted(numSellingOffers, prosumer, startTime, endTime, energy, uint64 price);
+        SellingOfferPosted(numSellingOffers, prosumer, startTime, endTime, energy, price);
         sellingOffers[numSellingOffers++] = Offer({
             prosumer: prosumer, // TODO: msg.sender
             startTime: startTime,
@@ -136,7 +136,7 @@ contract MatchingContract {
         solution.objective += power;
         if (solution.objective > bestSolution.objective)
             bestSolution = solution;
-        TradeAdded(solutionID, solution.objective);
+        TradeAdded(solutionID, sellerID, buyerID, time, power, price, solution.objective);
     }
 }
 
