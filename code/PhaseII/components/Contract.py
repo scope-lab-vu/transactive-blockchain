@@ -91,6 +91,7 @@ class Contract:
               params[pname] = Contract.decode_int(data, data_pos)
             elif ptype == "address":
               params[pname] = Contract.decode_address(data, data_pos)
-         event['params'] = params
+            data_pos += 1
+         event['params'] = params         
     return events
 
