@@ -118,17 +118,17 @@ class EthereumClient:
 
         # check response code (HTTP codes)
         if (c.getinfo(pycurl.RESPONSE_CODE) != 200):
-            if exceptions:
-                raise Exception('rpc_communication_error', 'return_code_not_200')
-            return {'error':'rpc_comm_error','desc':'return_code_not_200','error_num':None}
+            #if exceptions:
+            raise Exception('rpc_communication_error', 'return_code_not_200')
+            #return {'error':'rpc_comm_error','desc':'return_code_not_200','error_num':None}
         # close pycurl object
         c.close()
     except pycurl.error as e:
         c.close()
         errno, message = e.args
-        if exceptions:
-            raise Exception('rpc_communication_error', 'Error No: ' + errno + ", message: " + message)
-        return {'error':'rpc_comm_error','desc':message,'error_num':errno}
+        #if exceptions:
+        raise Exception('rpc_communication_error', 'Error No: ' + errno + ", message: " + message)
+        #return {'error':'rpc_comm_error','desc':message,'error_num':errno}
 
     # decode result
     results = str(buffer.getvalue().decode('iso-8859-1'))
@@ -142,12 +142,12 @@ class EthereumClient:
         return data["result"]
     else:
         if 'error' in data.keys():
-            if exceptions:
-                raise Exception('rpc_communication_error', data)
-            return data
+            #if exceptions:
+            raise Exception('rpc_communication_error', data)
+            #return data
         else:
-            if exceptions:
-                raise Exception('rpc_communication_error', "Unknown Error: possible method/parameter(s) were wrong and/or networking issue.")
-            return {"error":"Unknown Error: possible method/parameter(s) were wrong and/or networking issue."}
+            #if exceptions:
+            raise Exception('rpc_communication_error', "Unknown Error: possible method/parameter(s) were wrong and/or networking issue.")
+            #return {"error":"Unknown Error: possible method/parameter(s) were wrong and/or networking issue."}
 
 

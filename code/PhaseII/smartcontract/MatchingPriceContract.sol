@@ -14,6 +14,7 @@ contract MatchingContract {
         uint64 startTime;
         uint64 endTime;
         uint64 energy;
+        uint64 price;
     }
     
     mapping(uint64 => Offer) buyingOffers;
@@ -21,28 +22,30 @@ contract MatchingContract {
     mapping(uint64 => Offer) sellingOffers;
     uint64 numSellingOffers = 0;
     
-    event BuyingOfferPosted(uint64 ID, uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy);
-    event SellingOfferPosted(uint64 ID, uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy);
+    event BuyingOfferPosted(uint64 ID, uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy, uint64 price);
+    event SellingOfferPosted(uint64 ID, uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy, uint64 price);
     
-    function postBuyingOffer(uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy) public { // TODO: function postBuyingOffer(uint64 startTime, uint64 endTime, uint64 energy) public {
+    function postBuyingOffer(uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy, uint64 price) public { // TODO: function postBuyingOffer(uint64 startTime, uint64 endTime, uint64 energy, uint64 price) public {
         require(startTime <= endTime);
-        BuyingOfferPosted(numBuyingOffers, prosumer, startTime, endTime, energy);
+        BuyingOfferPosted(numBuyingOffers, prosumer, startTime, endTime, energy, price);
         buyingOffers[numBuyingOffers++] = Offer({
             prosumer: prosumer, // TODO: msg.sender
             startTime: startTime,
             endTime: endTime,
-            energy: energy
+            energy: energy,
+            price: price
         });
     }
     
-    function postSellingOffer(uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy) public { // TODO: function postSellingOffer(uint64 startTime, uint64 endTime, uint64 energy) public {
+    function postSellingOffer(uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy, uint64 price) public { // TODO: function postSellingOffer(uint64 startTime, uint64 endTime, uint64 energy) public {
         require(startTime <= endTime);
-        SellingOfferPosted(numSellingOffers, prosumer, startTime, endTime, energy);
+        SellingOfferPosted(numSellingOffers, prosumer, startTime, endTime, energy, price);
         sellingOffers[numSellingOffers++] = Offer({
             prosumer: prosumer, // TODO: msg.sender
             startTime: startTime,
             endTime: endTime,
-            energy: energy
+            energy: energy,
+            price: price
         });
     }
     
@@ -51,6 +54,7 @@ contract MatchingContract {
         uint64 buyerID;
         uint64 time;
         uint64 power;
+        uint64 price;
     }
     
     struct Solution {
@@ -80,14 +84,16 @@ contract MatchingContract {
         return numSolutions++;
     }
     
-    event TradeAdded(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power, uint64 objective);
+    event TradeAdded(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power, uint64 price, uint64 objective);
     
-    function addTrade(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power) public {
+    function addTrade(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power, uint64 price) public {
         require(solutionID < numSolutions);
         require(sellerID < numSellingOffers);
         require(buyerID < numBuyingOffers);
         
         // check if buyer and seller are matchable
+        require(price >= sellingOffers[sellerID].price);
+        require(price <= buyingOffers[buyerID].price);
         require(time >= sellingOffers[sellerID].startTime);
         require(time <= sellingOffers[sellerID].endTime);
         require(time >= buyingOffers[buyerID].startTime);
@@ -123,13 +129,14 @@ contract MatchingContract {
            sellerID: sellerID,
            buyerID: buyerID,
            time: time,
-           power: power
+           power: power,
+           price: price
         });
         
         solution.objective += power;
         if (solution.objective > bestSolution.objective)
             bestSolution = solution;
-        TradeAdded(solutionID, sellerID, buyerID, time, power, solution.objective);
+        TradeAdded(solutionID, sellerID, buyerID, time, power, price, solution.objective);
     }
 }
 
