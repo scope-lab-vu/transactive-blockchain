@@ -85,8 +85,8 @@ class EthereumClient:
     return self.command("web3_sha3", params=["0x" + bytes(string, 'ascii').hex()])
     
   def new_filter(self):
-    filter_id = self.client.command("eth_newFilter", params=[{"fromBlock": "0x1"}])
-    logging.info("Created filter (ID = {}).".format(self.filter_id))
+    filter_id = self.command("eth_newFilter", params=[{"fromBlock": "0x1"}])
+    logging.info("Created filter (ID = {}).".format(filter_id))
     return filter_id
 
   def get_filter_changes(self, filter_id):    

@@ -34,7 +34,7 @@ class Contract:
         params.append((ptype, pname))
       topic['params'] = params
       signature = "{}({})".format(name, ",".join([ptype for (ptype, pname) in params]))
-      keccak256 = client.keccak256(signature)
+      keccak256 = self.client.keccak256(signature)
       if not (keccak256.startswith("0x") and len(keccak256) == 66):
         raise Exception("Incorrect hash {} computed for signature {}!".format(keccak256, signature))
       self.topics[keccak256] = topic 
@@ -55,7 +55,7 @@ class Contract:
       arg_values.append(args[i * 2 + 1])
     signature = "{}({})".format(name, ",".join(arg_types))
     if signature not in self.func_hash:
-      keccak256 = client.keccak256(signature)
+      keccak256 = self.client.keccak256(signature)
       if not (keccak256.startswith("0x") and len(keccak256) == 66):
         raise Exception("Incorrect hash {} computed for signature {}!".format(keccak256, signature))
       self.func_hash[signature] = keccak256[:10]
@@ -77,7 +77,7 @@ class Contract:
     log = self.client.get_filter_changes(self.filter_id)
     events = [] 
     for item in log:
-      if self.address == event['address']:
+      if self.address == item['address']:
         if item['topics'][0] in self.topics:
           topic = self.topics[item['topics'][0]]
           event = {'name': topic['name']}
@@ -92,6 +92,7 @@ class Contract:
             elif ptype == "address":
               params[pname] = Contract.decode_address(data, data_pos)
             data_pos += 1
-         event['params'] = params         
+          event['params'] = params 
+          events.append(event)        
     return events
 

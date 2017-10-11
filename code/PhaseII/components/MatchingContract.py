@@ -1,5 +1,7 @@
 import logging
 
+from Contract import Contract
+
 class MatchingContract(Contract):
   def __init__(self, client, address):
     super(MatchingContract, self).__init__(client, address, [
@@ -26,7 +28,7 @@ class MatchingContract(Contract):
   def createSolution(self, from_account):
     self.call_func(from_account, "createSolution")
     
-  def addTrade(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power)
+  def addTrade(self, from_account, solutionID, sellerID, buyerID, time, power):
     self.call_func(from_account, "addTrade",
       "uint64", solutionID,
       "uint64", sellerID,

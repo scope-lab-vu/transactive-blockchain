@@ -19,10 +19,10 @@ class MatchingSolverWrapper(MatchingSolver):
     self.query_contract_address()
     logging.info("Setting up connection to Ethereum client...")
     client = EthereumClient(ip=ip, port=port) 
-    self.account = self.client.accounts()[0] # use the first owned address
+    self.account = client.accounts()[0] # use the first owned address
     logging.info("Creating contract object...")
-    self.contract = MatchingContract(client, address)
-    self.objective = float("-inf")
+    self.contract = MatchingContract(client, self.contract_address)
+    self.objective = 0
     self.solution = None
     super(MatchingSolverWrapper, self).__init__(MICROGRID)
 
@@ -30,6 +30,8 @@ class MatchingSolverWrapper(MatchingSolver):
     finalized = START_INTERVAL - 1
     buying_offers = []
     selling_offers = []
+    new_offers = False
+    waiting_solutionID = False
     logging.info("Entering main loop...")
     current_time = time()
     next_polling = current_time + POLLING_INTERVAL
@@ -45,12 +47,14 @@ class MatchingSolverWrapper(MatchingSolver):
           name = event['name']
           if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
             logging.info("{}({}).".format(name, params))
+            new_offers = True
             offer = Offer(params['ID'], params['prosumer'], params['startTime'], params['endTime'], params['energy'])
             if name == "BuyingOfferPosted":
               buying_offers.append(offer)
             else:
               selling_offers.append(offer)
           elif name == "SolutionCreated":
+            waiting_solutionID = False
             solutionID = params['ID']
             if self.solution is not None:
               logging.info("Solution {} created by contract, adding trades...".format(solutionID))
@@ -63,21 +67,26 @@ class MatchingSolverWrapper(MatchingSolver):
           elif name == "TradeAdded":
             logging.info("{}({}).".format(name, params))
       if current_time > next_solving:
-        logging.info("Solving...")
         next_solving = current_time + SOLVING_INTERVAL
-        (solution, objective) = self.solve(buying_offers, selling_offers, finalized=finalized)
-        if objective > self.objective:
-          self.solution = solution
-          self.objective = objective
-          self.contract.createSolution(self.account)
-          logging.info("Done, trades will be submitted once the solution is created in the contract.")
-        else:
-          logging.info("No better solution found.")
+        if new_offers:
+          new_offers = False
+          logging.info("Solving...")
+          (solution, objective) = self.solve(buying_offers, selling_offers, finalized=finalized) 
+          if objective > self.objective:
+            self.solution = solution
+            self.objective = objective
+            if not waiting_solutionID:
+              self.contract.createSolution(self.account)
+              waiting_solutionID = True
+            logging.info("Done (objective = {}), trades will be submitted once a solution is created in the contract.".format(objective))
+          else:
+            logging.info("No better solution found (objective = {}).".format(objective))
       if current_time > next_finalizing:
         next_finalizing += INTERVAL_LENGTH
         finalized += 1
         self.objective = float("-inf")
         self.solution = None
+        new_offers = False
         logging.info("Trades for interval {} are now final, matching will consider only later intervals from now on.".format(finalized))
       sleep(max(min(next_polling, next_solving, next_finalizing) - time(), 0))
       

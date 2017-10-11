@@ -1,16 +1,20 @@
 import zmq
 import logging
 import sys
+from time import time, sleep
 from random import random
 
 from config import *
 from EthereumClient import EthereumClient
 from MatchingContract import MatchingContract
 
+POLLING_INTERVAL = 1 # seconds
+
 class SmartHomeTraderWrapper:
   def __init__(self, prosumer_id, net_production, ip, port):
     self.prosumer_id = prosumer_id
     self.net_production = net_production
+    self.offers = set()
     logging.info("Connecting to DSO...")
     self.dso = zmq.Context().socket(zmq.REQ)
     self.dso.connect(DSO_ADDRESS)
@@ -24,21 +28,40 @@ class SmartHomeTraderWrapper:
 
   def run(self):
     time_interval = START_INTERVAL
-    next = time()
+    current_time = time()
+    next_polling = current_time + POLLING_INTERVAL
+    next_prediction = current_time
     while True:
-      self.post_offers(self, time_interval)
-      time_interval += 1
-      next += INTERVAL_LENGTH
-      sleep(max(next - time(), 0))
+      current_time = time()
+      if current_time > next_polling:
+        logging.debug("Polling events...")
+        next_polling = current_time + POLLING_INTERVAL
+        for event in self.contract.poll_events():
+          params = event['params']
+          name = event['name']
+          if ((name == "BuyingOfferPosted") or (name == "SellingOfferPosted")) and (params['prosumer'] == self.prosumer_id):
+            self.offers.add(params['ID'])
+            logging.info("{}({}).".format(name, params))
+          if (name == "TradeAdded") and ((params['sellerID'] in self.offers) or (params['buyerID'] in self.offers)):
+            logging.info("{}({}).".format(name, params))
+      if current_time > next_prediction:
+        self.post_offers(time_interval)
+        time_interval += 1
+        next_prediction += INTERVAL_LENGTH
+      sleep(max(min(next_prediction, next_polling) - time(), 0))
     
   def post_offers(self, time_interval):
     remaining_offers = []
-    logging.info("Posting offers...")
+    logging.info("Posting offers for interval {}...".format(time_interval))
     for offer in self.net_production:
-      if offer['start'] <= time_interval + PREDICTION_WINDOW: # offer in near future, post it
+      if offer['end'] < time_interval: # offer in the past, discard it
+        pass
+      elif offer['start'] <= time_interval + PREDICTION_WINDOW: # offer in near future, post it
         if offer['energy'] < 0:
+          logging.info("postBuyingOffer({}, {}, {}, {})".format(self.prosumer_id, offer['start'], offer['end'], -offer['energy']))
           self.contract.postBuyingOffer(self.account, self.prosumer_id, offer['start'], offer['end'], -offer['energy'])
         else:
+          logging.info("postSellingOffer({}, {}, {}, {})".format(self.prosumer_id, offer['start'], offer['end'], offer['energy']))
           self.contract.postSellingOffer(self.account, self.prosumer_id, offer['start'], offer['end'], offer['energy'])
       else: # offer in far future, post it later
         remaining_offers.append(offer)
@@ -52,7 +75,7 @@ class SmartHomeTraderWrapper:
     logging.info(msg)
     self.dso.send_pyobj(msg)
     contract_address = self.dso.recv_pyobj()
-    logging.info("Contract address: " + self.contract_address)
+    logging.info("Contract address: " + contract_address)
     return contract_address
 
 def read_data(prosumer_id):
@@ -85,7 +108,6 @@ def test_data(prosumer_id):
     'energy': int(random() * 1000 - 500)} for t in range(10)]
 
 if __name__ == "__main__":
-  logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
   prosumer_id = 101
   ip = None
   port = None
@@ -97,6 +119,7 @@ if __name__ == "__main__":
     ip = sys.argv[2]
   if len(sys.argv) > 3:
     port = sys.argv[3]
+  logging.basicConfig(format='%(asctime)s / prosumer {} / %(levelname)s: %(message)s'.format(prosumer_id), level=logging.INFO)
   data = read_data(prosumer_id)
   trader = SmartHomeTraderWrapper(prosumer_id, data, ip, port) 
   trader.run()
