@@ -14,7 +14,8 @@ class SmartHomeTraderWrapper:
   def __init__(self, prosumer_id, net_production, ip, port):
     self.prosumer_id = prosumer_id
     self.net_production = net_production
-    self.offers = set()
+    self.selling_offers = set()
+    self.buying_offers = set()
     logging.info("Connecting to DSO...")
     self.dso = zmq.Context().socket(zmq.REQ)
     self.dso.connect(DSO_ADDRESS)
@@ -39,10 +40,13 @@ class SmartHomeTraderWrapper:
         for event in self.contract.poll_events():
           params = event['params']
           name = event['name']
-          if ((name == "BuyingOfferPosted") or (name == "SellingOfferPosted")) and (params['prosumer'] == self.prosumer_id):
-            self.offers.add(params['ID'])
+          if (name == "BuyingOfferPosted") and (params['prosumer'] == self.prosumer_id):
+            self.buying_offers.add(params['ID'])
             logging.info("{}({}).".format(name, params))
-          if (name == "TradeAdded") and ((params['sellerID'] in self.offers) or (params['buyerID'] in self.offers)):
+          elif (name == "SellingOfferPosted") and (params['prosumer'] == self.prosumer_id):
+            self.selling_offers.add(params['ID'])
+            logging.info("{}({}).".format(name, params))
+          if (name == "TradeAdded") and ((params['sellerID'] in self.selling_offers) or (params['buyerID'] in self.buying_offers)):
             logging.info("{}({}).".format(name, params))
       if current_time > next_prediction:
         self.post_offers(time_interval)
