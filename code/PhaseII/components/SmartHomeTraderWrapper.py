@@ -32,7 +32,8 @@ class SmartHomeTraderWrapper:
     current_time = time()
     next_polling = current_time + POLLING_INTERVAL
     next_prediction = current_time
-    while True:
+    # we stop after the END_INTERVAL
+    while time_interval<=END_INTERVAL:
       current_time = time()
       if current_time > next_polling:
         logging.debug("Polling events...")

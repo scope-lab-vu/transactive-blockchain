@@ -1,0 +1,398 @@
+2017-10-12 00:50:43,675 / prosumer 814 / INFO: Reading net production values...
+2017-10-12 00:50:43,676 / prosumer 814 / INFO: Read 96 values.
+2017-10-12 00:50:43,676 / prosumer 814 / INFO: Connecting to DSO...
+2017-10-12 00:50:43,677 / prosumer 814 / INFO: DSO connected (<zmq.sugar.socket.Socket object at 0x7f46f3ced6a8>).
+2017-10-12 00:50:43,677 / prosumer 814 / INFO: {'request': 'query_contract_address'}
+2017-10-12 00:50:43,691 / prosumer 814 / INFO: Contract address: 0x9620745a3eea45fba176d2ac42325d158baa93b7
+2017-10-12 00:50:43,694 / prosumer 814 / INFO: Setting up connection to Ethereum client...
+2017-10-12 00:50:43,810 / prosumer 814 / INFO: Created filter (ID = 0x53c2ac7fd42038462e081c84c38f2881).
+2017-10-12 00:50:43,997 / prosumer 814 / INFO: Posting offers for interval 28...
+2017-10-12 00:50:43,997 / prosumer 814 / INFO: postBuyingOffer(814, 28, 28, 500)
+2017-10-12 00:50:44,097 / prosumer 814 / INFO: postBuyingOffer(814, 29, 29, 500)
+2017-10-12 00:50:44,207 / prosumer 814 / INFO: postBuyingOffer(814, 30, 30, 600)
+2017-10-12 00:50:44,292 / prosumer 814 / INFO: postBuyingOffer(814, 31, 31, 600)
+2017-10-12 00:50:44,373 / prosumer 814 / INFO: postBuyingOffer(814, 32, 32, 600)
+2017-10-12 00:50:44,439 / prosumer 814 / INFO: postBuyingOffer(814, 33, 33, 600)
+2017-10-12 00:50:44,499 / prosumer 814 / INFO: Offers posted.
+2017-10-12 00:50:54,173 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 30, 'prosumer': 814, 'startTime': 30, 'ID': 420, 'energy': 600}).
+2017-10-12 00:50:54,173 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 33, 'prosumer': 814, 'startTime': 33, 'ID': 572, 'energy': 600}).
+2017-10-12 00:50:54,173 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 28, 'prosumer': 814, 'startTime': 28, 'ID': 286, 'energy': 500}).
+2017-10-12 00:50:54,174 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 31, 'prosumer': 814, 'startTime': 31, 'ID': 478, 'energy': 600}).
+2017-10-12 00:50:54,174 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 29, 'prosumer': 814, 'startTime': 29, 'ID': 354, 'energy': 500}).
+2017-10-12 00:50:54,174 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 32, 'prosumer': 814, 'startTime': 32, 'ID': 528, 'energy': 600}).
+2017-10-12 00:51:00,229 / prosumer 814 / INFO: TradeAdded({'objective': 600, 'time': 31, 'sellerID': 15, 'power': 600, 'buyerID': 478, 'solutionID': 0}).
+2017-10-12 00:52:43,998 / prosumer 814 / INFO: Posting offers for interval 29...
+2017-10-12 00:52:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 34, 34, 600)
+2017-10-12 00:52:44,015 / prosumer 814 / INFO: Offers posted.
+2017-10-12 00:52:52,387 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 34, 'prosumer': 814, 'startTime': 34, 'ID': 670, 'energy': 600}).
+2017-10-12 00:53:07,370 / prosumer 814 / INFO: TradeAdded({'objective': 600, 'time': 31, 'sellerID': 15, 'power': 600, 'buyerID': 478, 'solutionID': 1}).
+2017-10-12 00:54:43,997 / prosumer 814 / INFO: Posting offers for interval 30...
+2017-10-12 00:54:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 35, 35, 600)
+2017-10-12 00:54:44,010 / prosumer 814 / INFO: Offers posted.
+2017-10-12 00:54:49,412 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 35, 'prosumer': 814, 'startTime': 35, 'ID': 766, 'energy': 600}).
+2017-10-12 00:54:57,452 / prosumer 814 / INFO: TradeAdded({'objective': 1200, 'time': 31, 'sellerID': 15, 'power': 600, 'buyerID': 478, 'solutionID': 2}).
+2017-10-12 00:56:43,997 / prosumer 814 / INFO: Posting offers for interval 31...
+2017-10-12 00:56:43,997 / prosumer 814 / INFO: postBuyingOffer(814, 36, 36, 600)
+2017-10-12 00:56:44,015 / prosumer 814 / INFO: Offers posted.
+2017-10-12 00:56:46,596 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 36, 'prosumer': 814, 'startTime': 36, 'ID': 857, 'energy': 600}).
+2017-10-12 00:57:05,626 / prosumer 814 / INFO: TradeAdded({'objective': 1200, 'time': 31, 'sellerID': 15, 'power': 600, 'buyerID': 478, 'solutionID': 3}).
+2017-10-12 00:58:43,997 / prosumer 814 / INFO: Posting offers for interval 32...
+2017-10-12 00:58:43,997 / prosumer 814 / INFO: postBuyingOffer(814, 37, 37, 600)
+2017-10-12 00:58:44,008 / prosumer 814 / INFO: Offers posted.
+2017-10-12 00:58:49,757 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 37, 'prosumer': 814, 'startTime': 37, 'ID': 960, 'energy': 600}).
+2017-10-12 01:00:43,998 / prosumer 814 / INFO: Posting offers for interval 33...
+2017-10-12 01:00:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 38, 38, 600)
+2017-10-12 01:00:44,033 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:00:45,816 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 38, 'prosumer': 814, 'startTime': 38, 'ID': 1058, 'energy': 600}).
+2017-10-12 01:02:43,997 / prosumer 814 / INFO: Posting offers for interval 34...
+2017-10-12 01:02:43,997 / prosumer 814 / INFO: postBuyingOffer(814, 39, 39, 600)
+2017-10-12 01:02:44,038 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:02:45,999 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 39, 'prosumer': 814, 'startTime': 39, 'ID': 1153, 'energy': 600}).
+2017-10-12 01:04:44,011 / prosumer 814 / INFO: Posting offers for interval 35...
+2017-10-12 01:04:44,011 / prosumer 814 / INFO: postBuyingOffer(814, 40, 40, 600)
+2017-10-12 01:04:44,029 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:04:53,006 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 40, 'prosumer': 814, 'startTime': 40, 'ID': 1260, 'energy': 600}).
+2017-10-12 01:06:43,998 / prosumer 814 / INFO: Posting offers for interval 36...
+2017-10-12 01:06:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 41, 41, 600)
+2017-10-12 01:06:44,020 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:06:47,167 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 41, 'prosumer': 814, 'startTime': 41, 'ID': 1348, 'energy': 600}).
+2017-10-12 01:07:22,208 / prosumer 814 / INFO: TradeAdded({'objective': 88000, 'time': 41, 'sellerID': 69, 'power': 600, 'buyerID': 1348, 'solutionID': 8}).
+2017-10-12 01:08:43,997 / prosumer 814 / INFO: Posting offers for interval 37...
+2017-10-12 01:08:43,997 / prosumer 814 / INFO: postBuyingOffer(814, 42, 42, 600)
+2017-10-12 01:08:44,016 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:08:48,298 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 42, 'prosumer': 814, 'startTime': 42, 'ID': 1444, 'energy': 600}).
+2017-10-12 01:09:03,311 / prosumer 814 / INFO: TradeAdded({'objective': 105700, 'time': 37, 'sellerID': 45, 'power': 600, 'buyerID': 960, 'solutionID': 9}).
+2017-10-12 01:10:43,997 / prosumer 814 / INFO: Posting offers for interval 38...
+2017-10-12 01:10:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 43, 43, 600)
+2017-10-12 01:10:44,004 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:10:59,376 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 43, 'prosumer': 814, 'startTime': 43, 'ID': 1543, 'energy': 600}).
+2017-10-12 01:11:13,475 / prosumer 814 / INFO: TradeAdded({'objective': 79850, 'time': 39, 'sellerID': 59, 'power': 600, 'buyerID': 1153, 'solutionID': 10}).
+2017-10-12 01:11:13,475 / prosumer 814 / INFO: TradeAdded({'objective': 44400, 'time': 42, 'sellerID': 74, 'power': 100, 'buyerID': 1444, 'solutionID': 10}).
+2017-10-12 01:12:43,997 / prosumer 814 / INFO: Posting offers for interval 39...
+2017-10-12 01:12:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 44, 44, 600)
+2017-10-12 01:12:44,011 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:12:47,565 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 44, 'prosumer': 814, 'startTime': 44, 'ID': 1639, 'energy': 600}).
+2017-10-12 01:13:03,571 / prosumer 814 / INFO: TradeAdded({'objective': 91950, 'time': 39, 'sellerID': 59, 'power': 600, 'buyerID': 1153, 'solutionID': 11}).
+2017-10-12 01:13:03,571 / prosumer 814 / INFO: TradeAdded({'objective': 116550, 'time': 44, 'sellerID': 82, 'power': 600, 'buyerID': 1639, 'solutionID': 11}).
+2017-10-12 01:14:43,997 / prosumer 814 / INFO: Posting offers for interval 40...
+2017-10-12 01:14:43,997 / prosumer 814 / INFO: postBuyingOffer(814, 45, 45, 600)
+2017-10-12 01:14:44,018 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:14:47,677 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 45, 'prosumer': 814, 'startTime': 45, 'ID': 1735, 'energy': 600}).
+2017-10-12 01:14:57,658 / prosumer 814 / INFO: TradeAdded({'objective': 135600, 'time': 40, 'sellerID': 61, 'power': 600, 'buyerID': 1260, 'solutionID': 12}).
+2017-10-12 01:14:57,659 / prosumer 814 / INFO: TradeAdded({'objective': 44500, 'time': 45, 'sellerID': 85, 'power': 600, 'buyerID': 1735, 'solutionID': 12}).
+2017-10-12 01:14:57,659 / prosumer 814 / INFO: TradeAdded({'objective': 89400, 'time': 41, 'sellerID': 69, 'power': 600, 'buyerID': 1348, 'solutionID': 12}).
+2017-10-12 01:16:43,997 / prosumer 814 / INFO: Posting offers for interval 41...
+2017-10-12 01:16:43,997 / prosumer 814 / INFO: postBuyingOffer(814, 46, 46, 600)
+2017-10-12 01:16:44,039 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:16:50,782 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 46, 'prosumer': 814, 'startTime': 46, 'ID': 1833, 'energy': 600}).
+2017-10-12 01:17:07,779 / prosumer 814 / INFO: TradeAdded({'objective': 74300, 'time': 42, 'sellerID': 72, 'power': 600, 'buyerID': 1444, 'solutionID': 13}).
+2017-10-12 01:17:07,780 / prosumer 814 / INFO: TradeAdded({'objective': 97900, 'time': 41, 'sellerID': 69, 'power': 600, 'buyerID': 1348, 'solutionID': 13}).
+2017-10-12 01:18:43,997 / prosumer 814 / INFO: Posting offers for interval 42...
+2017-10-12 01:18:43,997 / prosumer 814 / INFO: postBuyingOffer(814, 47, 47, 600)
+2017-10-12 01:18:44,021 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:18:58,921 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 47, 'prosumer': 814, 'startTime': 47, 'ID': 1929, 'energy': 600}).
+2017-10-12 01:19:08,926 / prosumer 814 / INFO: TradeAdded({'objective': 73100, 'time': 47, 'sellerID': 98, 'power': 600, 'buyerID': 1929, 'solutionID': 14}).
+2017-10-12 01:19:10,883 / prosumer 814 / INFO: TradeAdded({'objective': 134600, 'time': 45, 'sellerID': 87, 'power': 600, 'buyerID': 1735, 'solutionID': 14}).
+2017-10-12 01:20:43,997 / prosumer 814 / INFO: Posting offers for interval 43...
+2017-10-12 01:20:43,997 / prosumer 814 / INFO: postBuyingOffer(814, 48, 48, 600)
+2017-10-12 01:20:44,010 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:20:44,984 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 48, 'prosumer': 814, 'startTime': 48, 'ID': 2027, 'energy': 600}).
+2017-10-12 01:21:07,051 / prosumer 814 / INFO: TradeAdded({'objective': 59500, 'time': 47, 'sellerID': 98, 'power': 600, 'buyerID': 1929, 'solutionID': 15}).
+2017-10-12 01:21:07,051 / prosumer 814 / INFO: TradeAdded({'objective': 110650, 'time': 43, 'sellerID': 78, 'power': 600, 'buyerID': 1543, 'solutionID': 15}).
+2017-10-12 01:22:43,998 / prosumer 814 / INFO: Posting offers for interval 44...
+2017-10-12 01:22:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 49, 49, 700)
+2017-10-12 01:22:44,023 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:22:57,146 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 49, 'prosumer': 814, 'startTime': 49, 'ID': 2124, 'energy': 700}).
+2017-10-12 01:23:10,103 / prosumer 814 / INFO: TradeAdded({'objective': 125000, 'time': 46, 'sellerID': 90, 'power': 600, 'buyerID': 1833, 'solutionID': 16}).
+2017-10-12 01:23:16,117 / prosumer 814 / INFO: TradeAdded({'objective': 143500, 'time': 45, 'sellerID': 88, 'power': 600, 'buyerID': 1735, 'solutionID': 16}).
+2017-10-12 01:24:43,998 / prosumer 814 / INFO: Posting offers for interval 45...
+2017-10-12 01:24:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 50, 50, 700)
+2017-10-12 01:24:44,009 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:25:01,316 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 50, 'prosumer': 814, 'startTime': 50, 'ID': 2220, 'energy': 700}).
+2017-10-12 01:26:43,998 / prosumer 814 / INFO: Posting offers for interval 46...
+2017-10-12 01:26:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 51, 51, 700)
+2017-10-12 01:26:44,014 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:26:55,398 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 51, 'prosumer': 814, 'startTime': 51, 'ID': 2314, 'energy': 700}).
+2017-10-12 01:27:11,327 / prosumer 814 / INFO: TradeAdded({'objective': 30900, 'time': 49, 'sellerID': 106, 'power': 700, 'buyerID': 2124, 'solutionID': 18}).
+2017-10-12 01:28:43,998 / prosumer 814 / INFO: Posting offers for interval 47...
+2017-10-12 01:28:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 52, 52, 700)
+2017-10-12 01:28:44,018 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:28:49,485 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 52, 'prosumer': 814, 'startTime': 52, 'ID': 2414, 'energy': 700}).
+2017-10-12 01:29:01,496 / prosumer 814 / INFO: TradeAdded({'objective': 86400, 'time': 47, 'sellerID': 98, 'power': 600, 'buyerID': 1929, 'solutionID': 19}).
+2017-10-12 01:29:03,452 / prosumer 814 / INFO: TradeAdded({'objective': 143900, 'time': 49, 'sellerID': 108, 'power': 700, 'buyerID': 2124, 'solutionID': 19}).
+2017-10-12 01:30:43,997 / prosumer 814 / INFO: Posting offers for interval 48...
+2017-10-12 01:30:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 53, 53, 700)
+2017-10-12 01:30:44,011 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:30:51,633 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 53, 'prosumer': 814, 'startTime': 53, 'ID': 2512, 'energy': 700}).
+2017-10-12 01:32:43,997 / prosumer 814 / INFO: Posting offers for interval 49...
+2017-10-12 01:32:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 54, 54, 700)
+2017-10-12 01:32:44,034 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:32:48,725 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 54, 'prosumer': 814, 'startTime': 54, 'ID': 2618, 'energy': 700}).
+2017-10-12 01:34:43,997 / prosumer 814 / INFO: Posting offers for interval 50...
+2017-10-12 01:34:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 55, 55, 700)
+2017-10-12 01:34:44,030 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:34:52,903 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 55, 'prosumer': 814, 'startTime': 55, 'ID': 2715, 'energy': 700}).
+2017-10-12 01:35:02,805 / prosumer 814 / INFO: TradeAdded({'objective': 2100, 'time': 50, 'sellerID': 114, 'power': 700, 'buyerID': 2220, 'solutionID': 22}).
+2017-10-12 01:35:06,855 / prosumer 814 / INFO: TradeAdded({'objective': 61050, 'time': 52, 'sellerID': 120, 'power': 700, 'buyerID': 2414, 'solutionID': 22}).
+2017-10-12 01:36:43,997 / prosumer 814 / INFO: Posting offers for interval 51...
+2017-10-12 01:36:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 56, 56, 600)
+2017-10-12 01:36:44,027 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:36:48,985 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 56, 'prosumer': 814, 'startTime': 56, 'ID': 2803, 'energy': 600}).
+2017-10-12 01:37:40,008 / prosumer 814 / INFO: TradeAdded({'objective': 89300, 'time': 51, 'sellerID': 125, 'power': 700, 'buyerID': 2314, 'solutionID': 23}).
+2017-10-12 01:37:40,009 / prosumer 814 / INFO: TradeAdded({'objective': 79400, 'time': 52, 'sellerID': 120, 'power': 700, 'buyerID': 2414, 'solutionID': 23}).
+2017-10-12 01:38:43,998 / prosumer 814 / INFO: Posting offers for interval 52...
+2017-10-12 01:38:43,999 / prosumer 814 / INFO: postBuyingOffer(814, 57, 57, 600)
+2017-10-12 01:38:44,043 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:38:46,120 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 57, 'prosumer': 814, 'startTime': 57, 'ID': 2900, 'energy': 600}).
+2017-10-12 01:39:05,175 / prosumer 814 / INFO: TradeAdded({'objective': 79500, 'time': 53, 'sellerID': 133, 'power': 700, 'buyerID': 2512, 'solutionID': 24}).
+2017-10-12 01:39:05,175 / prosumer 814 / INFO: TradeAdded({'objective': 11100, 'time': 56, 'sellerID': 112, 'power': 600, 'buyerID': 2803, 'solutionID': 24}).
+2017-10-12 01:39:05,175 / prosumer 814 / INFO: TradeAdded({'objective': 2100, 'time': 57, 'sellerID': 145, 'power': 600, 'buyerID': 2900, 'solutionID': 24}).
+2017-10-12 01:39:05,175 / prosumer 814 / INFO: TradeAdded({'objective': 32100, 'time': 52, 'sellerID': 121, 'power': 700, 'buyerID': 2414, 'solutionID': 24}).
+2017-10-12 01:40:43,998 / prosumer 814 / INFO: Posting offers for interval 53...
+2017-10-12 01:40:43,999 / prosumer 814 / INFO: postBuyingOffer(814, 58, 58, 600)
+2017-10-12 01:40:44,035 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:40:58,245 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 58, 'prosumer': 814, 'startTime': 58, 'ID': 2998, 'energy': 600}).
+2017-10-12 01:41:18,341 / prosumer 814 / INFO: TradeAdded({'objective': 99650, 'time': 54, 'sellerID': 143, 'power': 700, 'buyerID': 2618, 'solutionID': 25}).
+2017-10-12 01:41:35,220 / prosumer 814 / INFO: TradeAdded({'objective': 132500, 'time': 56, 'sellerID': 123, 'power': 600, 'buyerID': 2803, 'solutionID': 25}).
+2017-10-12 01:41:38,251 / prosumer 814 / INFO: TradeAdded({'objective': 144700, 'time': 55, 'sellerID': 131, 'power': 700, 'buyerID': 2715, 'solutionID': 25}).
+2017-10-12 01:42:43,998 / prosumer 814 / INFO: Posting offers for interval 54...
+2017-10-12 01:42:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 59, 59, 600)
+2017-10-12 01:42:44,034 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:42:52,320 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 59, 'prosumer': 814, 'startTime': 59, 'ID': 3097, 'energy': 600}).
+2017-10-12 01:43:15,373 / prosumer 814 / INFO: TradeAdded({'objective': 1500, 'time': 57, 'sellerID': 161, 'power': 300, 'buyerID': 2900, 'solutionID': 26}).
+2017-10-12 01:43:15,374 / prosumer 814 / INFO: TradeAdded({'objective': 41700, 'time': 54, 'sellerID': 146, 'power': 700, 'buyerID': 2618, 'solutionID': 26}).
+2017-10-12 01:43:15,374 / prosumer 814 / INFO: TradeAdded({'objective': 66500, 'time': 57, 'sellerID': 143, 'power': 300, 'buyerID': 2900, 'solutionID': 26}).
+2017-10-12 01:44:43,998 / prosumer 814 / INFO: Posting offers for interval 55...
+2017-10-12 01:44:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 60, 60, 500)
+2017-10-12 01:44:44,012 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:44:49,497 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 60, 'prosumer': 814, 'startTime': 60, 'ID': 3192, 'energy': 500}).
+2017-10-12 01:45:32,593 / prosumer 814 / INFO: TradeAdded({'objective': 93400, 'time': 57, 'sellerID': 133, 'power': 600, 'buyerID': 2900, 'solutionID': 27}).
+2017-10-12 01:46:43,997 / prosumer 814 / INFO: Posting offers for interval 56...
+2017-10-12 01:46:43,999 / prosumer 814 / INFO: postBuyingOffer(814, 61, 61, 500)
+2017-10-12 01:46:44,013 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:46:48,624 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 61, 'prosumer': 814, 'startTime': 61, 'ID': 3289, 'energy': 500}).
+2017-10-12 01:47:23,641 / prosumer 814 / INFO: TradeAdded({'objective': 118311, 'time': 57, 'sellerID': 133, 'power': 600, 'buyerID': 2900, 'solutionID': 28}).
+2017-10-12 01:48:43,997 / prosumer 814 / INFO: Posting offers for interval 57...
+2017-10-12 01:48:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 62, 62, 500)
+2017-10-12 01:48:44,029 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:48:52,741 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 62, 'prosumer': 814, 'startTime': 62, 'ID': 3385, 'energy': 500}).
+2017-10-12 01:49:28,747 / prosumer 814 / INFO: TradeAdded({'objective': 32100, 'time': 60, 'sellerID': 161, 'power': 500, 'buyerID': 3192, 'solutionID': 29}).
+2017-10-12 01:49:28,747 / prosumer 814 / INFO: TradeAdded({'objective': 2850, 'time': 61, 'sellerID': 179, 'power': 500, 'buyerID': 3289, 'solutionID': 29}).
+2017-10-12 01:49:28,747 / prosumer 814 / INFO: TradeAdded({'objective': 55300, 'time': 58, 'sellerID': 131, 'power': 600, 'buyerID': 2998, 'solutionID': 29}).
+2017-10-12 01:50:43,997 / prosumer 814 / INFO: Posting offers for interval 58...
+2017-10-12 01:50:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 63, 63, 500)
+2017-10-12 01:50:44,020 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:50:49,934 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 63, 'prosumer': 814, 'startTime': 63, 'ID': 3482, 'energy': 500}).
+2017-10-12 01:51:14,914 / prosumer 814 / INFO: TradeAdded({'objective': 16750, 'time': 58, 'sellerID': 123, 'power': 600, 'buyerID': 2998, 'solutionID': 30}).
+2017-10-12 01:51:14,914 / prosumer 814 / INFO: TradeAdded({'objective': 17750, 'time': 60, 'sellerID': 147, 'power': 500, 'buyerID': 3192, 'solutionID': 30}).
+2017-10-12 01:51:14,915 / prosumer 814 / INFO: TradeAdded({'objective': 61150, 'time': 63, 'sellerID': 143, 'power': 500, 'buyerID': 3482, 'solutionID': 30}).
+2017-10-12 01:52:43,997 / prosumer 814 / INFO: Posting offers for interval 59...
+2017-10-12 01:52:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 64, 64, 500)
+2017-10-12 01:52:44,038 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:52:52,960 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 64, 'prosumer': 814, 'startTime': 64, 'ID': 3578, 'energy': 500}).
+2017-10-12 01:53:31,039 / prosumer 814 / INFO: TradeAdded({'objective': 118220, 'time': 62, 'sellerID': 127, 'power': 500, 'buyerID': 3385, 'solutionID': 31}).
+2017-10-12 01:53:31,039 / prosumer 814 / INFO: TradeAdded({'objective': 96520, 'time': 61, 'sellerID': 176, 'power': 500, 'buyerID': 3289, 'solutionID': 31}).
+2017-10-12 01:53:31,039 / prosumer 814 / INFO: TradeAdded({'objective': 48380, 'time': 59, 'sellerID': 155, 'power': 600, 'buyerID': 3097, 'solutionID': 31}).
+2017-10-12 01:53:31,040 / prosumer 814 / INFO: TradeAdded({'objective': 95620, 'time': 60, 'sellerID': 176, 'power': 500, 'buyerID': 3192, 'solutionID': 31}).
+2017-10-12 01:53:31,040 / prosumer 814 / INFO: TradeAdded({'objective': 145820, 'time': 64, 'sellerID': 123, 'power': 500, 'buyerID': 3578, 'solutionID': 31}).
+2017-10-12 01:54:43,998 / prosumer 814 / INFO: Posting offers for interval 60...
+2017-10-12 01:54:43,999 / prosumer 814 / INFO: postBuyingOffer(814, 65, 65, 500)
+2017-10-12 01:54:44,015 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:54:51,092 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 65, 'prosumer': 814, 'startTime': 65, 'ID': 3677, 'energy': 500}).
+2017-10-12 01:55:33,102 / prosumer 814 / INFO: TradeAdded({'objective': 91298, 'time': 60, 'sellerID': 139, 'power': 500, 'buyerID': 3192, 'solutionID': 32}).
+2017-10-12 01:55:33,103 / prosumer 814 / INFO: TradeAdded({'objective': 99698, 'time': 63, 'sellerID': 155, 'power': 500, 'buyerID': 3482, 'solutionID': 32}).
+2017-10-12 01:56:43,998 / prosumer 814 / INFO: Posting offers for interval 61...
+2017-10-12 01:56:43,999 / prosumer 814 / INFO: postBuyingOffer(814, 66, 66, 500)
+2017-10-12 01:56:44,023 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:56:48,234 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 66, 'prosumer': 814, 'startTime': 66, 'ID': 3773, 'energy': 500}).
+2017-10-12 01:58:43,998 / prosumer 814 / INFO: Posting offers for interval 62...
+2017-10-12 01:58:43,999 / prosumer 814 / INFO: postBuyingOffer(814, 67, 67, 500)
+2017-10-12 01:58:44,017 / prosumer 814 / INFO: Offers posted.
+2017-10-12 01:58:50,343 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 67, 'prosumer': 814, 'startTime': 67, 'ID': 3869, 'energy': 500}).
+2017-10-12 01:59:21,383 / prosumer 814 / INFO: TradeAdded({'objective': 45600, 'time': 67, 'sellerID': 225, 'power': 500, 'buyerID': 3869, 'solutionID': 34}).
+2017-10-12 02:00:43,998 / prosumer 814 / INFO: Posting offers for interval 63...
+2017-10-12 02:00:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 68, 68, 500)
+2017-10-12 02:00:44,019 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:00:45,514 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 68, 'prosumer': 814, 'startTime': 68, 'ID': 3967, 'energy': 500}).
+2017-10-12 02:01:10,531 / prosumer 814 / INFO: TradeAdded({'objective': 100300, 'time': 66, 'sellerID': 163, 'power': 500, 'buyerID': 3773, 'solutionID': 35}).
+2017-10-12 02:02:43,997 / prosumer 814 / INFO: Posting offers for interval 64...
+2017-10-12 02:02:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 69, 69, 500)
+2017-10-12 02:02:44,068 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:02:56,550 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 69, 'prosumer': 814, 'startTime': 69, 'ID': 4061, 'energy': 500}).
+2017-10-12 02:03:34,581 / prosumer 814 / INFO: TradeAdded({'objective': 1400, 'time': 66, 'sellerID': 135, 'power': 500, 'buyerID': 3773, 'solutionID': 36}).
+2017-10-12 02:03:34,582 / prosumer 814 / INFO: TradeAdded({'objective': 5800, 'time': 65, 'sellerID': 218, 'power': 500, 'buyerID': 3677, 'solutionID': 36}).
+2017-10-12 02:04:43,997 / prosumer 814 / INFO: Posting offers for interval 65...
+2017-10-12 02:04:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 70, 70, 500)
+2017-10-12 02:04:44,020 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:04:50,713 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 70, 'prosumer': 814, 'startTime': 70, 'ID': 4161, 'energy': 500}).
+2017-10-12 02:05:15,768 / prosumer 814 / INFO: TradeAdded({'objective': 10233, 'time': 69, 'sellerID': 152, 'power': 500, 'buyerID': 4061, 'solutionID': 37}).
+2017-10-12 02:05:15,768 / prosumer 814 / INFO: TradeAdded({'objective': 23149, 'time': 67, 'sellerID': 173, 'power': 500, 'buyerID': 3869, 'solutionID': 37}).
+2017-10-12 02:06:43,997 / prosumer 814 / INFO: Posting offers for interval 66...
+2017-10-12 02:06:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 71, 71, 500)
+2017-10-12 02:06:44,027 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:06:47,810 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 71, 'prosumer': 814, 'startTime': 71, 'ID': 4257, 'energy': 500}).
+2017-10-12 02:07:09,848 / prosumer 814 / INFO: TradeAdded({'objective': 4300, 'time': 70, 'sellerID': 159, 'power': 300, 'buyerID': 4161, 'solutionID': 38}).
+2017-10-12 02:08:43,997 / prosumer 814 / INFO: Posting offers for interval 67...
+2017-10-12 02:08:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 72, 72, 600)
+2017-10-12 02:08:44,009 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:08:59,968 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 72, 'prosumer': 814, 'startTime': 72, 'ID': 4355, 'energy': 600}).
+2017-10-12 02:09:27,959 / prosumer 814 / INFO: TradeAdded({'objective': 124446, 'time': 71, 'sellerID': 171, 'power': 500, 'buyerID': 4257, 'solutionID': 39}).
+2017-10-12 02:09:27,960 / prosumer 814 / INFO: TradeAdded({'objective': 145882, 'time': 68, 'sellerID': 176, 'power': 500, 'buyerID': 3967, 'solutionID': 39}).
+2017-10-12 02:10:44,010 / prosumer 814 / INFO: Posting offers for interval 68...
+2017-10-12 02:10:44,010 / prosumer 814 / INFO: postBuyingOffer(814, 73, 73, 600)
+2017-10-12 02:10:44,028 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:10:50,088 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 73, 'prosumer': 814, 'startTime': 73, 'ID': 4456, 'energy': 600}).
+2017-10-12 02:11:12,058 / prosumer 814 / INFO: TradeAdded({'objective': 16066, 'time': 71, 'sellerID': 120, 'power': 500, 'buyerID': 4257, 'solutionID': 40}).
+2017-10-12 02:11:12,058 / prosumer 814 / INFO: TradeAdded({'objective': 29765, 'time': 70, 'sellerID': 147, 'power': 500, 'buyerID': 4161, 'solutionID': 40}).
+2017-10-12 02:12:43,998 / prosumer 814 / INFO: Posting offers for interval 69...
+2017-10-12 02:12:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 74, 74, 600)
+2017-10-12 02:12:44,022 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:12:48,232 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 74, 'prosumer': 814, 'startTime': 74, 'ID': 4548, 'energy': 600}).
+2017-10-12 02:13:12,201 / prosumer 814 / INFO: TradeAdded({'objective': 118900, 'time': 73, 'sellerID': 160, 'power': 600, 'buyerID': 4456, 'solutionID': 41}).
+2017-10-12 02:14:43,997 / prosumer 814 / INFO: Posting offers for interval 70...
+2017-10-12 02:14:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 75, 75, 600)
+2017-10-12 02:14:44,021 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:15:02,285 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 75, 'prosumer': 814, 'startTime': 75, 'ID': 4644, 'energy': 600}).
+2017-10-12 02:15:37,369 / prosumer 814 / INFO: TradeAdded({'objective': 143550, 'time': 75, 'sellerID': 120, 'power': 600, 'buyerID': 4644, 'solutionID': 42}).
+2017-10-12 02:16:43,998 / prosumer 814 / INFO: Posting offers for interval 71...
+2017-10-12 02:16:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 76, 76, 700)
+2017-10-12 02:16:44,014 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:16:52,388 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 76, 'prosumer': 814, 'startTime': 76, 'ID': 4744, 'energy': 700}).
+2017-10-12 02:18:43,998 / prosumer 814 / INFO: Posting offers for interval 72...
+2017-10-12 02:18:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 77, 77, 700)
+2017-10-12 02:18:44,049 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:18:48,529 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 77, 'prosumer': 814, 'startTime': 77, 'ID': 4848, 'energy': 700}).
+2017-10-12 02:20:43,997 / prosumer 814 / INFO: Posting offers for interval 73...
+2017-10-12 02:20:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 78, 78, 700)
+2017-10-12 02:20:44,027 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:21:00,665 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 78, 'prosumer': 814, 'startTime': 78, 'ID': 4937, 'energy': 700}).
+2017-10-12 02:21:29,711 / prosumer 814 / INFO: TradeAdded({'objective': 39800, 'time': 73, 'sellerID': 254, 'power': 600, 'buyerID': 4456, 'solutionID': 45}).
+2017-10-12 02:22:43,998 / prosumer 814 / INFO: Posting offers for interval 74...
+2017-10-12 02:22:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 79, 79, 700)
+2017-10-12 02:22:44,020 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:23:03,808 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 79, 'prosumer': 814, 'startTime': 79, 'ID': 5033, 'energy': 700}).
+2017-10-12 02:23:37,859 / prosumer 814 / INFO: TradeAdded({'objective': 146700, 'time': 79, 'sellerID': 286, 'power': 500, 'buyerID': 4986, 'solutionID': 46}).
+2017-10-12 02:24:43,997 / prosumer 814 / INFO: Posting offers for interval 75...
+2017-10-12 02:24:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 80, 80, 700)
+2017-10-12 02:24:44,040 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:24:54,874 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 80, 'prosumer': 814, 'startTime': 80, 'ID': 5130, 'energy': 700}).
+2017-10-12 02:25:29,024 / prosumer 814 / INFO: TradeAdded({'objective': 83850, 'time': 77, 'sellerID': 123, 'power': 700, 'buyerID': 4848, 'solutionID': 47}).
+2017-10-12 02:25:29,025 / prosumer 814 / INFO: TradeAdded({'objective': 45300, 'time': 76, 'sellerID': 269, 'power': 700, 'buyerID': 4744, 'solutionID': 47}).
+2017-10-12 02:25:34,908 / prosumer 814 / INFO: TradeAdded({'objective': 144475, 'time': 79, 'sellerID': 286, 'power': 900, 'buyerID': 4986, 'solutionID': 47}).
+2017-10-12 02:26:44,017 / prosumer 814 / INFO: Posting offers for interval 76...
+2017-10-12 02:26:44,018 / prosumer 814 / INFO: postBuyingOffer(814, 81, 81, 700)
+2017-10-12 02:26:44,052 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:26:52,048 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 81, 'prosumer': 814, 'startTime': 81, 'ID': 5231, 'energy': 700}).
+2017-10-12 02:27:25,031 / prosumer 814 / INFO: TradeAdded({'objective': 35600, 'time': 79, 'sellerID': 286, 'power': 700, 'buyerID': 4968, 'solutionID': 48}).
+2017-10-12 02:27:25,031 / prosumer 814 / INFO: TradeAdded({'objective': 29200, 'time': 78, 'sellerID': 129, 'power': 700, 'buyerID': 4937, 'solutionID': 48}).
+2017-10-12 02:27:28,069 / prosumer 814 / INFO: TradeAdded({'objective': 122500, 'time': 79, 'sellerID': 168, 'power': 700, 'buyerID': 5033, 'solutionID': 48}).
+2017-10-12 02:27:28,069 / prosumer 814 / INFO: TradeAdded({'objective': 103300, 'time': 77, 'sellerID': 123, 'power': 700, 'buyerID': 4848, 'solutionID': 48}).
+2017-10-12 02:28:43,998 / prosumer 814 / INFO: Posting offers for interval 77...
+2017-10-12 02:28:43,999 / prosumer 814 / INFO: postBuyingOffer(814, 82, 82, 700)
+2017-10-12 02:28:44,009 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:28:51,180 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 82, 'prosumer': 814, 'startTime': 82, 'ID': 5326, 'energy': 700}).
+2017-10-12 02:29:21,205 / prosumer 814 / INFO: TradeAdded({'objective': 52600, 'time': 80, 'sellerID': 127, 'power': 700, 'buyerID': 5130, 'solutionID': 49}).
+2017-10-12 02:29:21,205 / prosumer 814 / INFO: TradeAdded({'objective': 112100, 'time': 79, 'sellerID': 159, 'power': 700, 'buyerID': 5033, 'solutionID': 49}).
+2017-10-12 02:29:21,205 / prosumer 814 / INFO: TradeAdded({'objective': 45700, 'time': 82, 'sellerID': 128, 'power': 700, 'buyerID': 5326, 'solutionID': 49}).
+2017-10-12 02:29:21,205 / prosumer 814 / INFO: TradeAdded({'objective': 2600, 'time': 81, 'sellerID': 133, 'power': 300, 'buyerID': 5231, 'solutionID': 49}).
+2017-10-12 02:29:22,130 / prosumer 814 / INFO: TradeAdded({'objective': 145600, 'time': 77, 'sellerID': 277, 'power': 700, 'buyerID': 4848, 'solutionID': 49}).
+2017-10-12 02:30:43,998 / prosumer 814 / INFO: Posting offers for interval 78...
+2017-10-12 02:30:43,999 / prosumer 814 / INFO: postBuyingOffer(814, 83, 83, 700)
+2017-10-12 02:30:44,040 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:30:56,314 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 83, 'prosumer': 814, 'startTime': 83, 'ID': 5423, 'energy': 700}).
+2017-10-12 02:31:32,394 / prosumer 814 / INFO: TradeAdded({'objective': 115000, 'time': 79, 'sellerID': 286, 'power': 1000, 'buyerID': 5017, 'solutionID': 50}).
+2017-10-12 02:31:32,395 / prosumer 814 / INFO: TradeAdded({'objective': 107800, 'time': 80, 'sellerID': 113, 'power': 700, 'buyerID': 5130, 'solutionID': 50}).
+2017-10-12 02:32:43,998 / prosumer 814 / INFO: Posting offers for interval 79...
+2017-10-12 02:32:43,999 / prosumer 814 / INFO: postBuyingOffer(814, 84, 84, 700)
+2017-10-12 02:32:44,041 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:32:53,416 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 84, 'prosumer': 814, 'startTime': 84, 'ID': 5519, 'energy': 700}).
+2017-10-12 02:33:14,499 / prosumer 814 / INFO: TradeAdded({'objective': 64500, 'time': 79, 'sellerID': 152, 'power': 700, 'buyerID': 5033, 'solutionID': 51}).
+2017-10-12 02:33:14,500 / prosumer 814 / INFO: TradeAdded({'objective': 88300, 'time': 82, 'sellerID': 301, 'power': 700, 'buyerID': 5326, 'solutionID': 51}).
+2017-10-12 02:34:43,998 / prosumer 814 / INFO: Posting offers for interval 80...
+2017-10-12 02:34:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 85, 85, 700)
+2017-10-12 02:34:44,017 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:34:48,555 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 85, 'prosumer': 814, 'startTime': 85, 'ID': 5616, 'energy': 700}).
+2017-10-12 02:35:56,544 / prosumer 814 / INFO: TradeAdded({'objective': 131800, 'time': 84, 'sellerID': 151, 'power': 700, 'buyerID': 5519, 'solutionID': 52}).
+2017-10-12 02:35:56,545 / prosumer 814 / INFO: TradeAdded({'objective': 149000, 'time': 85, 'sellerID': 139, 'power': 700, 'buyerID': 5616, 'solutionID': 52}).
+2017-10-12 02:36:43,997 / prosumer 814 / INFO: Posting offers for interval 81...
+2017-10-12 02:36:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 86, 86, 700)
+2017-10-12 02:36:44,014 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:36:56,664 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 86, 'prosumer': 814, 'startTime': 86, 'ID': 5713, 'energy': 700}).
+2017-10-12 02:37:14,683 / prosumer 814 / INFO: TradeAdded({'objective': 27400, 'time': 83, 'sellerID': 119, 'power': 700, 'buyerID': 5423, 'solutionID': 53}).
+2017-10-12 02:37:19,720 / prosumer 814 / INFO: TradeAdded({'objective': 68700, 'time': 81, 'sellerID': 168, 'power': 700, 'buyerID': 5231, 'solutionID': 53}).
+2017-10-12 02:37:21,667 / prosumer 814 / INFO: TradeAdded({'objective': 129800, 'time': 85, 'sellerID': 112, 'power': 700, 'buyerID': 5616, 'solutionID': 53}).
+2017-10-12 02:38:43,997 / prosumer 814 / INFO: Posting offers for interval 82...
+2017-10-12 02:38:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 87, 87, 700)
+2017-10-12 02:38:44,032 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:38:55,803 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 87, 'prosumer': 814, 'startTime': 87, 'ID': 5809, 'energy': 700}).
+2017-10-12 02:40:43,997 / prosumer 814 / INFO: Posting offers for interval 83...
+2017-10-12 02:40:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 88, 88, 700)
+2017-10-12 02:40:44,024 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:40:55,947 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 88, 'prosumer': 814, 'startTime': 88, 'ID': 5911, 'energy': 700}).
+2017-10-12 02:41:22,905 / prosumer 814 / INFO: TradeAdded({'objective': 37500, 'time': 88, 'sellerID': 157, 'power': 700, 'buyerID': 5911, 'solutionID': 55}).
+2017-10-12 02:42:44,010 / prosumer 814 / INFO: Posting offers for interval 84...
+2017-10-12 02:42:44,011 / prosumer 814 / INFO: postBuyingOffer(814, 89, 89, 700)
+2017-10-12 02:42:44,030 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:42:58,047 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 89, 'prosumer': 814, 'startTime': 89, 'ID': 6003, 'energy': 700}).
+2017-10-12 02:43:33,064 / prosumer 814 / INFO: TradeAdded({'objective': 108500, 'time': 86, 'sellerID': 144, 'power': 700, 'buyerID': 5713, 'solutionID': 56}).
+2017-10-12 02:43:42,047 / prosumer 814 / INFO: TradeAdded({'objective': 128000, 'time': 87, 'sellerID': 168, 'power': 700, 'buyerID': 5809, 'solutionID': 56}).
+2017-10-12 02:44:43,998 / prosumer 814 / INFO: Posting offers for interval 85...
+2017-10-12 02:44:43,999 / prosumer 814 / INFO: postBuyingOffer(814, 90, 90, 600)
+2017-10-12 02:44:44,032 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:45:01,160 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 90, 'prosumer': 814, 'startTime': 90, 'ID': 6101, 'energy': 600}).
+2017-10-12 02:45:27,177 / prosumer 814 / INFO: TradeAdded({'objective': 14266, 'time': 85, 'sellerID': 179, 'power': 700, 'buyerID': 5616, 'solutionID': 57}).
+2017-10-12 02:45:37,229 / prosumer 814 / INFO: TradeAdded({'objective': 109264, 'time': 88, 'sellerID': 168, 'power': 700, 'buyerID': 5911, 'solutionID': 57}).
+2017-10-12 02:45:37,229 / prosumer 814 / INFO: TradeAdded({'objective': 115464, 'time': 86, 'sellerID': 144, 'power': 700, 'buyerID': 5713, 'solutionID': 57}).
+2017-10-12 02:46:43,998 / prosumer 814 / INFO: Posting offers for interval 86...
+2017-10-12 02:46:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 91, 91, 600)
+2017-10-12 02:46:44,018 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:47:01,273 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 91, 'prosumer': 814, 'startTime': 91, 'ID': 6200, 'energy': 600}).
+2017-10-12 02:47:33,369 / prosumer 814 / INFO: TradeAdded({'objective': 94600, 'time': 88, 'sellerID': 168, 'power': 700, 'buyerID': 5911, 'solutionID': 58}).
+2017-10-12 02:47:33,369 / prosumer 814 / INFO: TradeAdded({'objective': 24900, 'time': 91, 'sellerID': 123, 'power': 600, 'buyerID': 6200, 'solutionID': 58}).
+2017-10-12 02:48:43,998 / prosumer 814 / INFO: Posting offers for interval 87...
+2017-10-12 02:48:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 92, 92, 600)
+2017-10-12 02:48:44,042 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:48:52,444 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 92, 'prosumer': 814, 'startTime': 92, 'ID': 6292, 'energy': 600}).
+2017-10-12 02:49:39,476 / prosumer 814 / INFO: TradeAdded({'objective': 116900, 'time': 91, 'sellerID': 169, 'power': 600, 'buyerID': 6200, 'solutionID': 59}).
+2017-10-12 02:50:43,998 / prosumer 814 / INFO: Posting offers for interval 88...
+2017-10-12 02:50:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 93, 93, 600)
+2017-10-12 02:50:44,041 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:50:55,508 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 93, 'prosumer': 814, 'startTime': 93, 'ID': 6392, 'energy': 600}).
+2017-10-12 02:51:24,589 / prosumer 814 / INFO: TradeAdded({'objective': 24900, 'time': 93, 'sellerID': 125, 'power': 600, 'buyerID': 6392, 'solutionID': 60}).
+2017-10-12 02:52:43,997 / prosumer 814 / INFO: Posting offers for interval 89...
+2017-10-12 02:52:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 94, 94, 500)
+2017-10-12 02:52:44,030 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:52:51,668 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 94, 'prosumer': 814, 'startTime': 94, 'ID': 6490, 'energy': 500}).
+2017-10-12 02:53:21,746 / prosumer 814 / INFO: TradeAdded({'objective': 115600, 'time': 94, 'sellerID': 168, 'power': 500, 'buyerID': 6490, 'solutionID': 61}).
+2017-10-12 02:53:21,746 / prosumer 814 / INFO: TradeAdded({'objective': 68300, 'time': 90, 'sellerID': 147, 'power': 600, 'buyerID': 6101, 'solutionID': 61}).
+2017-10-12 02:53:21,746 / prosumer 814 / INFO: TradeAdded({'objective': 110900, 'time': 91, 'sellerID': 169, 'power': 600, 'buyerID': 6200, 'solutionID': 61}).
+2017-10-12 02:54:43,997 / prosumer 814 / INFO: Posting offers for interval 90...
+2017-10-12 02:54:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 95, 95, 500)
+2017-10-12 02:54:44,010 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:54:49,795 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 95, 'prosumer': 814, 'startTime': 95, 'ID': 6583, 'energy': 500}).
+2017-10-12 02:55:14,786 / prosumer 814 / INFO: TradeAdded({'objective': 18100, 'time': 95, 'sellerID': 168, 'power': 500, 'buyerID': 6583, 'solutionID': 62}).
+2017-10-12 02:55:40,789 / prosumer 814 / INFO: TradeAdded({'objective': 69750, 'time': 90, 'sellerID': 147, 'power': 600, 'buyerID': 6101, 'solutionID': 62}).
+2017-10-12 02:56:43,997 / prosumer 814 / INFO: Posting offers for interval 91...
+2017-10-12 02:56:43,998 / prosumer 814 / INFO: postBuyingOffer(814, 96, 96, 400)
+2017-10-12 02:56:44,028 / prosumer 814 / INFO: Offers posted.
+2017-10-12 02:56:52,870 / prosumer 814 / INFO: BuyingOfferPosted({'endTime': 96, 'prosumer': 814, 'startTime': 96, 'ID': 6684, 'energy': 400}).
+2017-10-12 02:57:15,002 / prosumer 814 / INFO: TradeAdded({'objective': 38550, 'time': 95, 'sellerID': 163, 'power': 150, 'buyerID': 6583, 'solutionID': 63}).
+2017-10-12 02:57:15,002 / prosumer 814 / INFO: TradeAdded({'objective': 75850, 'time': 92, 'sellerID': 176, 'power': 600, 'buyerID': 6292, 'solutionID': 63}).
+2017-10-12 02:58:43,997 / prosumer 814 / INFO: Posting offers for interval 92...
+2017-10-12 02:58:43,998 / prosumer 814 / INFO: Offers posted.
+2017-10-12 03:00:43,998 / prosumer 814 / INFO: Posting offers for interval 93...
+2017-10-12 03:00:43,998 / prosumer 814 / INFO: Offers posted.
+2017-10-12 03:02:43,998 / prosumer 814 / INFO: Posting offers for interval 94...
+2017-10-12 03:02:43,998 / prosumer 814 / INFO: Offers posted.
+2017-10-12 03:04:43,998 / prosumer 814 / INFO: Posting offers for interval 95...
+2017-10-12 03:04:43,998 / prosumer 814 / INFO: Offers posted.
+2017-10-12 03:06:43,998 / prosumer 814 / INFO: Posting offers for interval 96...
+2017-10-12 03:06:43,998 / prosumer 814 / INFO: Offers posted.
+2017-10-12 03:08:43,997 / prosumer 814 / INFO: Posting offers for interval 97...
+2017-10-12 03:08:43,998 / prosumer 814 / INFO: Offers posted.
+2017-10-12 03:10:43,997 / prosumer 814 / INFO: Posting offers for interval 98...
+2017-10-12 03:10:43,998 / prosumer 814 / INFO: Offers posted.
+2017-10-12 03:12:43,997 / prosumer 814 / INFO: Posting offers for interval 99...
+2017-10-12 03:12:43,998 / prosumer 814 / INFO: Offers posted.
+2017-10-12 03:14:43,997 / prosumer 814 / INFO: Posting offers for interval 100...
+2017-10-12 03:14:43,998 / prosumer 814 / INFO: Offers posted.
