@@ -7,7 +7,7 @@ SOLVING_INTERVAL = 5 # seconds (how often MatchingSolverWrapper tries to solve t
 INTERVAL_LENGTH = 120 # seconds (how often the components move onto the next time interval)
 PREDICTION_WINDOW = 5 # how many time intervals ahead SmartHomeTraderWrapper trade (i.e., an offer is posted if offer['start'] <= time_interval + PREDICTION_WINDOW)
 START_INTERVAL = 28 # starting time interval for the components
-END_INTERVAL= 100 # Last Interval
+END_INTERVAL= 100 # last time interval
 
 
 # model
