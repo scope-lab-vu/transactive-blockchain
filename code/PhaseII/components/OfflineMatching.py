@@ -59,6 +59,7 @@ def match(solver, interval, selling_offers, buying_offers):
   return finalized_amount
 
 if __name__ == "__main__":
+  logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
   solver = MatchingSolver(MICROGRID)
   interval = 0
   selling_offers = []
