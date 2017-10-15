@@ -70,7 +70,7 @@ class MatchingSolverWrapper(MatchingSolver):
                 # BEGIN TESTING
                 selling_feeder = MICROGRID.prosumer_feeder[s_to_offer[trade['s']].prosumer]
                 buying_feeder = MICROGRID.prosumer_feeder[b_to_offer[trade['b']].prosumer]
-                logging.info("Adding trade {} (selling feeder: {}, buying feeder: {})".format(trade, selling_feeder, buying_feeder)
+                logging.info("Adding trade {} (selling feeder: {}, buying feeder: {})".format(trade, selling_feeder, buying_feeder))
                 # END TESTING
               logging.info("{} trades have been submitted to the contract.".format(len(trades)))
               logging.info("Amount of energy traded in the solution for interval {}: {}".format(finalized + 1, sum([trade['p'] for trade in trades if trade['t'] == finalized + 1]))) # TESTING
