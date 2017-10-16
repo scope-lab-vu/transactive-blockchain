@@ -1,0 +1,153 @@
+% !TeX root = ICCPS18.tex
+\section{Energy Trading Problem}
+\label{sec:problem}
+
+\newcommand{\vect}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\ve}{\vect{e}}
+\newcommand{\vp}{\vect{p}}
+\newcommand{\vpi}{\vect{\pi}}
+
+\newcommand{\calB}[0]{\ensuremath{\mathcal{B}}}
+\newcommand{\calF}[0]{\ensuremath{\mathcal{F}}}
+\newcommand{\calM}[0]{\ensuremath{\mathcal{M}}}
+\newcommand{\calS}[0]{\ensuremath{\mathcal{S}}}
+
+In this section, we formulate the problem of matching energy future bids with asks (i.e., offers to buy energy to be delivered in the future with offers to sell energy) in the local energy trading market. Our formulation aims to promote market efficiency by maximizing the amount of energy futures traded within the microgrid, while satisfying microgrid safety requirements. We first introduce an initial problem formulation, in which we assume that all offers are available at the same time, and we clear the market at once.  Then, we describe the generalized version of the problem, in which we consider a stream of incoming offers, which are cleared periodically. % while ensuring that no two participants can know the exact identity of their peers later.
+
+\subsection{Safety Requirements}
+
+While these trades are being cleared, we must consider \emph{safety requirements}.  
+ At the distribution level, the amount of power that can be sent over a transmission line is typically limited by the thermal properties of the conductor, and it is physically enforced by protection equipment such as overcurrent relays. In traditional power systems, these capacity constraints are logically enforced by deploying some combination of load and generation curtailment schemes. Such schemes effectively impose upper bounds on the amount of power consumed by each load and the amount of power injected into the network by each source. For dispatchable generation, these upper bounds are typically calculated by solving some variant of an optimal power flow problem \cite{OPFtutorial}. 
+
+Since the setting of TES is fundamentally different from settings in which economic dispatch is appropriate (i.e. privately-owned DERs are not dispatchable by the DSO), we implement line capacity safety constraints by formulating them as constraints in the trading problem described below. 
+
+\subsection{Problem Formalization}
+
+\begin{table}
+\caption{List of Symbols}
+\centering
+\label{tab:symbols}
+\renewcommand*{\arraystretch}{1.2}
+\begin{tabular}{|l|p{5.8cm}|}
+\hline
+Symbol & Description \\
+\hline
+\multicolumn{2}{|c|}{Microgrid} \\
+\hline
+$\calF$ & set of feeders \\
+\rowcolor{TableRowGray} $C_f^{ext}$ & maximum net power consumption or net power production in feeder $f \in \calF$ \\
+$C_f^{int}$ & maximum total power consumption or total power production in feeder $f \in \calF$ \\
+\rowcolor{TableRowGray} $\Delta$ & length of time intervals \\
+$T_{clear}$ & minimum number of time intervals between the finalization and delivery of a trade \\
+\hline
+\multicolumn{2}{|c|}{Offers} \\
+\hline
+\rowcolor{TableRowGray} $\calS_f$ & set of selling offers from feeder $f \in \calF$ \\
+$\calB_f$ & set of buying offers from feeder $f \in \calF$ \\
+\rowcolor{TableRowGray} $\calS$, $\calB$ & set of all selling and buying offers, resp. \\
+$\calS^{(t)}$, $\calB^{(t)}$ & set of selling and buying offers submitted by the end of time interval $t$, resp. \\
+\rowcolor{TableRowGray} $E_s$, $E_b$ & amount of energy to be sold or bought by offers $s \in \calS$ and $b \in \calB$, resp. \\
+$I_s$, $I_b$ & time intervals in which energy could be provided or consumed by offers $s \in \calS$ and $b \in \calB$, resp. \\
+\rowcolor{TableRowGray} $R_s$, $R_b$ & reservation prices of offers $s \in \calS$ and $b \in \calB$, resp. \\
+$\calM(s)$, $\calM(b)$ & set of offers that are matchable with offers $s$ and~$b$, resp. \\
+\rowcolor{TableRowGray} $I(s, b)$ & $I_s \cap I_b$ \\
+\hline
+\multicolumn{2}{|c|}{Solution} \\
+\hline
+$p_{s,b,t}$ & amount of energy that should be provided by $s$ to $b$ in interval $t$ \\
+\rowcolor{TableRowGray} $\pi_{s,b,t}$ & unit price for the energy provided by $s$ to $b$ in interval~$t$ \\
+$\textit{Feasible}(\calS, \calB)$ & set of feasible solutions given sets of selling and buying offers $\calS$ and $\calB$ \\
+\rowcolor{TableRowGray} $\hat{p}_{s,b,t}$, $\hat{\pi}_{s,b,t}$ & finalized trade values \\
+\hline
+\multicolumn{2}{|c|}{Implementation Parameters} \\
+\hline
+$L$ & prediction window used by prosumers when posting selling and buying offers ($\min(L) = 2$) \\
+\rowcolor{TableRowGray} $\hat{\Delta}$ &  length of the time step used for simulating the real-interval of length $\Delta$ \\
+$\Delta_s$ & periodicity of solver that matches offers \\
+\hline
+\end{tabular}
+\end{table}
+
+We begin by introducing notation for elements of the microgrid.
+For a list of symbols used in this paper, see Table~\ref{tab:symbols}.
+We let $\calF$ denote the set of feeders.
+For a feeder $f \in \calF$, we let $C_f^{ext}$ denote the maximum amount of power that is allowed to flow into or out of the feeder at any point in time. 
+Similarly, we let $C_f^{int}$ denote the maximum amount of power that is allowed to be consumed or produced within the feeder at any point in time.\footnote{In other words, limit $C_f^{ext}$ is imposed on the net production and net consumption of all prosumers in feeder $f$, while limit $C_f^{int}$ is imposed on the total production and total consumption.} 
+We assume that time is divided into intervals of fixed length~$\Delta$, and we refer to the $t$th interval simply as time interval $t$.
+
+The input of the energy trading problem is the set of buying and selling offers posted by the participants.\footnote{Participants may include both prosumers and the DSO. The DSO can shape load and trade energy futures by participating in the energy market the same way as prosumers do.}
+%
+For feeder $f \in \calF$, we let $\calS_f$ and $\calB_f$ denote the set of selling and buying offers posted by participants located in that feeder, respectively.\footnote{If the DSO wants to participate in this energy trading market, it can be assigned to a ``dummy'' feeder in the problem formulation.} 
+A selling offer $s \in \calS_f$ is a tuple $\left(E_s, I_s, R_s\right)$, where
+\begin{itemize}
+\item $E_s$ is the amount of energy to be sold,
+\item $I_s$ is the set of time intervals in which the energy could be provided,
+%\KarlaC{A time interval is different from the index of a time interval. I recommend we emphasize that $I$ denotes a set of indices that identify time intervals in question. See below for reason.}
+%\AronC{I don't see why this needs to be emphasized, we only ever use discrete time. In any case, there is a one-to-one correspondence between time intervals and their indices.}
+%\KarlaC{It needs to be emphasized because it does not mean the same thing}
+\item $R_s$ is the reservation price, i.e., lowest unit price for which the participant is willing to sell energy. %\AbhishekC{We should clarify why our results do not include pricing experiments. We can mention that this is because of lack of real-data. However, it is clear that the formulation will work for that.}\AronC{Done (in experiments section)}
+\end{itemize}
+Similarly, a buying offer $b \in \calB_f$ is a tuple $\left(E_b, I_b, R_b\right)$, where the values pertain to consuming/buying energy instead of producing/selling, and $R_b$ is the highest price that the participant is willing to pay.
+For convenience, we also let $\calS$ and $\calB$ denote the set of all buying and selling offers (i.e., we let $\calS = \cup_{f \in \calF} \calS_f$ and $\calB = \cup_{f \in \calF} \calB_f$).
+
+We say that a pair of selling and buying offers $s \in \calS$ and $b \in \calB$ is \emph{matchable} if
+\begin{align}
+R_s \leq R_b \\
+I_s \cap I_b \neq \emptyset .
+\end{align}
+In other words, a pair of offers is matchable if there exists a price that both participants would accept and a time interval in which the seller and buyer could provide and consume energy.
+For a given selling offer $s \in \calS$,
+we let the set of buying offers that are matchable with $s$ be denoted by $\calM(s)$.
+Similarly, we let the set of selling offers that are matchable with a buying offer $b$ be denoted by $\calM(b)$.
+Further, we let $I(s, b) = I_s \cap I_b$.
+
+A solution to the energy trading problem is a pair of vectors $(\vp, \vpi)$, where
+\begin{itemize}
+\item $p_{s,b,t}$ is a non-negative amount of power that should be provided by the seller $s \in \calS$ and consumed by the buyer $b \in \calM(s)$ in time interval $t \in I(s, b)$.\footnote{We require the both the seller and buyer to produce a constant level of power during the time interval.}
+%     \KarlaC{we should distinguish between $t$, which normally denotes an instant of time, and a time interval itself. I recommend we use $k$ to index the time intervals and $t$ to refer to time instances within intervals, if needed. So, for example, $E_s$ energy is transferred in the $k$th interval means that $P(t)=\tfrac{E_s}{\delta}$, for all $t\in [k\delta, (k+1)\delta)$. }
+%     \AronC{Sure, we can switch to using $k$ for time intervals. I don't think that we ever specify instances of time, so $t$ will be unused}
+%     \AbhishekC{Also note that all participants have synchronized intervals. Thus, they will never have to sell or buy anything a time segment that is smaller than an interval.}
+\item $\pi_{s,b,t}$ is the unit price for the energy provided by seller $s \in \calS$ to buyer $b \in \calM(s)$ in time interval $t \in I(s, b)$.
+\end{itemize}
+
+A pair of vectors $(\vp, \vpi)$ is a feasible solution to the energy trading problem if it satisfies the following constraints:
+\begin{itemize}
+\item The amount of energy sold or bought from each offer is at most the amount of energy offered:
+\begin{align}
+\forall s \in \calS: ~ \sum_{b \in \calM(s)} \sum_{t \in I(s,b)} p_{s,b,t} \cdot \Delta \leq E_s \label{eq:constrEnergyProd} \\
+\forall b \in \calB: ~ \sum_{s \in \calM(b)} \sum_{t \in I(s,b)} p_{s,b,t} \cdot \Delta \leq E_b \label{eq:constrEnergyCons} 
+\end{align}
+\item The amount of power flowing into or out of each feeder is below the safety limit in all time intervals:
+%\KarlaC{Note, a reviewer might object: the amount of power sold / bought is not an indicator of actual power flows between feeders... because electrons don't care about transactions... Consider adding explanation...}
+%\AronC{I think that we need to make it clear earlier that the trading system can only tell participants what they should do, but it cannot force them to do anything. By this point, I think that the reader will understand that we are proposing a market clearing mechanism, not a power flow controller.}
+%\KarlaC{I don't think this needs to even be pointed out, since it is obvious that actual power injection and consumption need not match the transaction amounts, for a number of different reasons. My point was not about whether or not participants do what they say they will, but the formulation itself, assuming that participants do exactly what they say they will. I think we should leave it as is right now, but somehow I am not completely convinced that limiting the difference between the total power sold to other feeders and the total power bought from other feeders implies that the actual power flows between the feeders will satisfy line capacity constraints... No time to think of a counterexample now. Also, I disagree with your last statement - The fact that we are even considering line constraints puts our proposed solution into the intersection of market and control design.}
+%\KarlaC{One way to think about this: first calculate the net deficit or surplus in each feeder (you can use the transformation I proposed earlier with calculating $s$ and $b$ from $X$). Net surplus won't go anywhere unless there is demand for it in another feeder.... }
+%\AronC{That is exactly what the formulae below calculate, the net production (sum production minus sum consumption) for each feeder.}
+\begin{align}
+\forall f \in & \, \calF, t: \nonumber \\ 
+& \left( \sum_{s \in \calS_f} \sum_{b \in \calB} p_{s,b,t} \right) - \left( \sum_{b \in \calB_f} \sum_{s \in \calS} p_{s,b,t} \right) \leq C_f^{ext} \label{eq:constrExtProd} \\
+\forall f \in & \, \calF, t: \nonumber \\
+& \left( \sum_{s \in \calS_f} \sum_{b \in \calB} p_{s,b,t} \right) - \left( \sum_{b \in \calB_f} \sum_{s \in \calS} p_{s,b,t} \right) \geq -C_f^{ext} \label{eq:constrExtCons} 
+\end{align}
+\item The amount of energy consumed and produced within each feeder is below the safety limit in all time intervals:
+\begin{align}
+\forall f \in \calF, t: ~ \sum_{b \in \calB_f} \sum_{s \in \calS} p_{s,b,t} \leq C_f^{int} \label{eq:constrIntCons} \\
+\forall f \in \calF, t: ~ \sum_{s \in \calS_f} \sum_{b \in \calB} p_{s,b,t} \leq C_f^{int} \label{eq:constrIntProd} 
+\end{align}
+\item The unit prices are between the reservation prices of the seller and buyer:
+\begin{align}
+\forall s \in \calS, b \in \calM(s), t \in I(s,b): ~ R_s \leq \pi_{s,b,t} \leq R_b \label{eq:constrPrice} 
+\end{align}
+\end{itemize}
+
+The objective of the energy trading problem is to maximize the amount of energy traded.
+Formally, an optimal solution to the energy trading problem is
+\begin{align}
+\max_{(\vp,\vpi) \, \in \textit{ Feasible}(\calS, \calB)} ~
+\sum_{s \in \calS} \sum_{b \in \calM(s)} \sum_{t \in I(s,b)} p_{s,b,t} \, , 
+\end{align}
+where $\textit{Feasible}(\calS, \calB)$ is the set of feasible solutions given selling and buying offers $\calS$ and $\calB$ (i.e., set of solutions satisfying Equations~\eqref{eq:constrEnergyProd} to \eqref{eq:constrPrice} with $\calS$ and $\calB$).
+
+\input{extensions.tex}
+
+

@@ -1,0 +1,129 @@
+\documentclass[conference,10pt,letterpaper]{IEEEtran}
+
+\newif\ifShowLog
+\ShowLogfalse
+
+\usepackage[utf8]{inputenc}
+
+% IEEE recommended packages
+\usepackage{amsmath}
+\interdisplaylinepenalty=2500
+\usepackage{algorithmic}
+\ifCLASSOPTIONcompsoc
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\else
+\usepackage[caption=false,font=footnotesize]{subfig}
+\fi
+\usepackage{dblfloatfix}
+\usepackage{url}
+
+% custom packages
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{soul}
+\usepackage{paralist}
+
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{colortbl}
+\definecolor{TableRowGray}{gray}{0.93}
+
+\usepackage{tikz}
+\usetikzlibrary{shadows}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.10}
+
+\definecolor{blueLine}{RGB}{57,106,177}
+\definecolor{blueFill}{RGB}{114,147,203}
+\definecolor{redLine}{RGB}{204,37,41}
+\definecolor{greenline}{RGB}{0,250,0}
+\definecolor{blackLine}{RGB}{0,0,0}
+\definecolor{goldLine}{RGB}{160,82,45}
+
+
+\usepackage{listings}%
+
+\usepackage[textsize=tiny, textwidth=1.5cm,disable]{todonotes}
+%\usepackage{marginnote} 
+%\let\marginpar\marginnote
+
+\newcommand{\Abhishek}[1]{\todo[color=yellow!50, linecolor=black!50,inline]{\textbf{Abhishek}: #1}}
+\newcommand{\AbhishekC}[1]{\todo[color=yellow!50, linecolor=black!50]{\textbf{Abhishek}: #1}}
+
+\newcommand{\Karla}[1]{\todo[color=green!30, linecolor=black!50,inline]{\textbf{Karla}: #1}}
+\newcommand{\KarlaC}[1]{\todo[color=green!30, linecolor=black!50]{\textbf{Karla}: #1}}
+
+\newcommand{\Aron}[1]{\todo[color=blue!10, linecolor=black!50,inline]{\textbf{Aron}: #1}}
+\newcommand{\AronC}[1]{\todo[color=blue!10, linecolor=black!50]{\textbf{Aron}: #1}}
+
+\newcommand{\Mike}[1]{\todo[color=orange!30, linecolor=black!50,inline]{\textbf{Mike}: #1}}
+\newcommand{\MikeC}[1]{\todo[color=orange!30, linecolor=black!50]{\textbf{Mike}: #1}}
+
+\newcommand{\scott}[1]{\todo[color=purple!30, linecolor=black!50,inline]{\textbf{Scott}: #1}}
+\newcommand{\scottC}[1]{\todo[color=purple!30, linecolor=black!50]{\textbf{Scott}: #1}}
+
+\begin{document}
+\setlength{\marginparwidth}{1.5cm} % THIS IS REQUIRED FOR THE CORRECT PLACEMENT OF TODONOTES MARGIN NOTES
+
+\title{Design and Implementation of Safe and Private Forward-Trading Platform for\\ IoT-Based Transactive Microgrids}
+
+\author{\IEEEauthorblockN{Aron Laszka}
+\IEEEauthorblockA{University of Houston}\\
+%\IEEEauthorblockN{Monika Sturm}
+%\IEEEauthorblockA{Siemens Corporate Technology}
+\and
+\IEEEauthorblockN{Abhishek Dubey}
+\IEEEauthorblockA{Vanderbilt University}
+\and
+\IEEEauthorblockN{Scott Eisele}
+\IEEEauthorblockA{Vanderbilt University}
+\and
+\IEEEauthorblockN{Michael Walker}
+\IEEEauthorblockA{Vanderbilt University}
+\and
+\IEEEauthorblockN{Karla Kvaternik}
+\IEEEauthorblockA{Siemens Corporate Technology}\\
+%\IEEEauthorblockN{Martin Lehofer}
+%\IEEEauthorblockA{Siemens Corporate Technology}
+}
+\renewcommand{\lstlistingname}{log}
+
+
+
+\maketitle
+
+% REMOVE BEFORE SUBMISSION!
+\thispagestyle{plain}
+\pagestyle{plain}
+
+\begin{abstract}
+Power grids are undergoing major changes due to rapid growth in renewable energy and improvements in battery technology. Prompted by the increasing complexity of power systems, decentralized IoT solutions are emerging, which arrange local communities into transactive microgrids.
+We address the problem of implementing transactive energy mechanisms in a distributed setting, providing both privacy and safety.  Specifically, we design and implement an automated auction and matching system that ensures safety (i.e. satisfaction of line capacity constraints), preserves privacy, and promotes local trade and market efficiency for IoT-based transactive energy systems. This design problem is challenging because safety, market efficiency, and privacy are competing objectives.
+We implement our solution as a decentralized IoT-based trading platform, which is built on blockchain technology and smart contracts.
+To demonstrate the feasibility of our platform, we perform experiments with dozens of embedded devices and energy production and consumption profiles from a real dataset.
+\end{abstract}
+
+\begin{IEEEkeywords}Transactive energy platform, Internet of Things, blockchain, privacy, security, safety, smart contract.\end{IEEEkeywords}
+
+\input{intro.tex}
+
+\input{setting.tex}
+
+\input{problem.tex}
+
+\input{solution.tex}
+
+\input{system.tex}
+
+\input{implementation.tex}
+
+\input{resultsandtestbed.tex}
+
+\input{concl.tex}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references} 
+
+\clearpage
+%\input{draft.tex}
+
+\end{document}

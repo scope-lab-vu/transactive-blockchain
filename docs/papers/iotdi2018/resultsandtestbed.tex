@@ -1,0 +1,208 @@
+% !TeX root = ICCPS18.tex
+\section{Experimental Evaluation and Discussions}
+\label{sec:results}
+
+We consider a collection of load traces recorded by Siemens from a microgrid in Germany, containing $102$ homes across $11$ feeders ($5$ producers and $97$ consumers). %Table \ref{tab:prosumers}
+Figure~\ref{fig:feeder} describes the feeder structure, the number of participants per feeder, and  the feeder safety limits. We use $\Delta =15$ minute intervals, resulting in a total of $96$ intervals across the whole day.   Figure~\ref{fig:profile} shows the total production and consumption across this microgrid. The horizontal axis shows the starting time for each of the $96$ intervals. 
+\AronC{I added this to address the lack of prices in our }
+Since the dataset does not include prices, we assume reservation prices to be uniform in our experiments, and focus on studying the amount of energy traded and the performance of the system.
+
+As one of our primary contributions in this work is the ability to specify multiple time intervals for  selling offers, we extended the trace that was collected by Siemens to allow each producer to have a battery with a total capacity of $90$ kWh. With a battery, a producer can take the energy produced in  a time interval and decide to make it available in future time intervals.
+Note that the resulting offers always span a contiguous set of time intervals, so they can be specified by their starting time and length. 
+Figure \ref{fig:batteryEffect} shows these intervals for one particular producer. The producers charge their batteries only when the total consumption is less than the total production, which happens just after 12:00 PM, see Figure~\ref{fig:profile}.
+
+
+\input{feeder}
+
+
+
+
+
+\begin{figure}[ht]
+\begin{tikzpicture}
+\begin{axis}[
+  font=\footnotesize,
+  width=\columnwidth,
+  height=0.61\columnwidth,
+  ymin=2865,
+  ymax=2975,
+  ytick={2875,2900,2925,2950},
+  xtick={2,3,5,7,10,13},
+  legend pos=north west,
+  xlabel={Prosumer prediction window [time intervals]},
+  ylabel={Total energy traded [kWh]},
+grid=both,
+    grid style={line width=.1pt, draw=gray!10},
+    major grid style={line width=.2pt,draw=gray!50},
+]
+\addplot[mark=o, color=blueLine, only marks, thick] table[x=predictionWindow, y=withoutBattery, comment chars={\%}, col sep=comma] {diagrams/total-energy-traded.csv};
+\addlegendentry{without battery};
+\addplot[mark=+, color=redLine, only marks, thick] table[x=predictionWindow, y=withBattery, comment chars={\%}, col sep=comma] {diagrams/total-energy-traded.csv};
+\addlegendentry{with battery};
+\end{axis}
+\end{tikzpicture}
+\caption{Total amount of energy traded in the entire microgrid with and without batteries, for various prediction window lengths.}
+\label{fig:multihorizon}
+\end{figure}
+
+
+\begin{figure}[t]
+	\centering
+\includegraphics[width=1\columnwidth]{diagrams/prosumer101.pdf}
+	\caption{Energy generated in each interval (blue line) and energy traded to a set of consumers in each interval (vertical bars) for the first prosumer of the first feeder (Test case C). The stacked colors show the different consumers that were matched with the prosumer in each interval (note that the same color across multiple intervals does not necessarily mean the same consumer). When the energy traded exceeds the generation, the excess is drawn from the battery.}
+	\label{fig:allocate1NRG}
+\end{figure}
+
+\begin{figure}[htb]
+	\centering
+    \begin{tikzpicture}
+    	\begin{axis}[
+	width=\columnwidth,
+	height=0.5\columnwidth,
+	bar width=0.04\textwidth,
+    font=\footnotesize,
+    grid=both,
+    grid style={line width=.1pt, draw=gray!10},
+    major grid style={line width=.2pt,draw=gray!50},
+	ybar,
+	ytick={0, 5, 10, 15, 20},
+	%yticklabels={40, 60, 90, 135},
+	xlabel style={align=center},
+	xlabel={Real time [seconds]},
+	ylabel={Number of Offers},
+	symbolic x coords={0,1,2,3,4,5},
+	xticklabels={{[11, 23]}, {(23, 35]}, {(35, 47]}, {(47, 59]}, {(59, 71]}, {(71, 84]}},
+	xtick=data,
+	ylabel style={align=center},
+	]
+\addplot[fill=blueFill] coordinates { 
+		(0, 20)
+		(1, 20)
+		(2, 12)
+		(3, 5)
+		(4, 1)
+		(5, 1)
+	};
+	\end{axis}
+\end{tikzpicture}
+%\includegraphics[width=1\columnwidth]{diagrams/timechart.pdf}
+	\caption{Real time in seconds between posting an offer and recording a trade that includes the offer (Test case C). This time includes the communication delay, the time to mine the blockchain, and the running time required to find a solution. Since the solver runs periodically and receives offers asynchronously, there might be a few runs before a suitable match is found.}
+	\label{fig:time}
+\end{figure}
+
+
+%\textcolor{red}{Table ... describes our data conversion rules.}
+
+
+
+
+
+
+
+\subsection{Test Bed}
+The hardware test bed is a cluster of 31 BeagleBone Black~\footnote{https://beagleboard.org/black} (BBB)  single-board computers (see Figure~\ref{fig:testbed_architecture}) acting as participants in the energy trading system. The BBBs are set up as light clients because they are resource constrained and therefore are not suitable for mining or acting as solvers. This means that they can safely access the blockchain but do not participate in the consensus process.  In the dataset provided by Siemens, there are 95 consumers and 7 producers of power,  see Figure \ref{fig:components}. These participants are divided between the BBBs in the cluster. The  PlaTIBART (Platform for Transactive IoT Blockchain Applications with Repeatable Testing platform) \cite{platibart}  platform provided us with the necessary devops support.
+
+The block mining is provided by external hardware, locally or in a cloud server. We had a single miner instance that was responsible for maintaining the blockchain, and a single solver instance that used CPLEX \cite{cplex2009v12} to solve the energy trading problem. This setup can be easily scaled to add more miners and solvers if there are enough computational resources available. The communication between the components was implemented using ZeroMQ, which is one of the communication protocols available in RIAPS. 
+
+%To evaluate our approach, we use a decentralized blockchain testbed that has been established in our lab. The  PlaTIBART (Platform for Transactive IoT Blockchain Applications with Repeatable Testing platform) \cite{platibart}  platform provided us with the necessary devops support to start the trading processes for all $102$ homes in the system, see Figure \ref{fig:components}. 
+
+
+
+
+
+
+
+
+\subsection{Experiments}
+Table~\ref{table:test-parameters} describes the specifics of the four categories of tests that we ran. The tests vary the different implementation parameters (see Table \ref{tab:symbols} and Section~\ref{sec:implementation}). This allows us to study how changing these parameters affects the total amount of energy traded. 
+
+Figure \ref{fig:multihorizon} shows the total energy traded for different tests. We varied the prediction window ($L$) for the participants from $2$ to $13$. That is, in each interval, the participants submitted offers starting from the next $1$ to $12$ intervals (current interval is always counted in the prediction window). The experiment simulated the whole day from the first interval starting at 0:00 (12:00 AM) to the $95^{th}$ interval ending at 23:59 (11:59 PM). % in the next night.
+%
+As expected, increasing the prediction window without batteries has no effect on the total amount energy traded. This is because any production must be dispatched within one time interval, so the solver cannot optimize energy usage across multiple intervals even if future offers are available. % So, the solver can never use the energy from a previous interval in a producer to provide energy to a consumer in a subsequent interval.
+
+However, this is possible if there are batteries in the system. With batteries, the amount of energy traded increases as we allow the solver to match offers across multiple time intervals at once. Trading increases with the prediction window because of the increased analysis space available to the solver.
+Figure~\ref{fig:profile} shows the  per interval trades for three of these cases (A, C, and D): without battery, with battery and $L=5$, as well as with battery and $L=13$.  
+
+Figure \ref{fig:allocate1NRG} shows the energy matched per interval in test case~C for the first prosumer of the first feeder. Figure \ref{fig:time} shows a histogram of the time between posting an offer and recording a trade on the blockchain that includes the offer (also in test case C). The time length was always less than $\hat{\Delta}$, which was $120$ seconds (see Table \ref{table:test-parameters}).
+\ifShowLog
+Figure \ref{fig:log} shows an extract of raw log messages from the system that were used to produce this chart.
+\fi
+
+\ifShowLog
+\definecolor{keywords}{HTML}{8A4A0B}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{comments}{HTML}{868686}
+
+\lstdefinelanguage{log}{
+ morekeywords={ prosumer,  INFO, Postingoffers, SellingOfferPosted, TradeAdded, solutionID, time, objective, buyerID, power, energy, sellerID},
+ keywordstyle=\color{keywords},
+ basicstyle=\scriptsize\ttfamily,
+ morecomment=[l]{//}, 
+ morecomment=[s]{/*}{*/}, 
+ morestring=[b]",
+ basicstyle=\scriptsize\ttfamily,%
+ commentstyle=\color{comments}\ttfamily,
+numbers=none,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+breaklines=true,
+    frame=tb,
+ tabsize=4}
+ 
+ \begin{figure}
+ \begin{lstlisting}[language=log,numbers=none]
+2017-10-12 03:27:05,122 / prosumer 101 / INFO: Posting offers for interval 28...
+...
+2017-10-12 03:27:05,123 / prosumer 101 / INFO: postSellingOffer(101, 28, 28, 100)
+...
+2017-10-12 03:27:19,973 / prosumer 101 / INFO: SellingOfferPosted({'endTime': 28, 'ID': 6, 'startTime': 28, 'prosumer': 101, 'energy': 100}).
+...
+2017-10-12 03:27:38,131 / prosumer 101 / INFO: TradeAdded({'solutionID': 1, 'time': 28, 'objective': 5400, 'buyerID': 133, 'energy': 100, 'sellerID': 6}).
+...
+ \end{lstlisting}
+ \caption{Example log output from prosumer 101. The \texttt{postSellingOffer} call happens when the prosumer posts the selling offer. At the same time, there are prosumers who have posted the buying offer. The smart contract records the offer and the event \texttt{SellingOfferPosted} is generated. We see the \texttt{TradeAdded} event when the solution has been generated by the solver and certified by the smart contract. The objective is the total energy traded. All values have been scaled by $1000$ to account for the problem that the current Ethereum smart contract cannot handle floating-point numbers. Thus the actual objective value is $5.4$ kWh.\textcolor{red}{take out this figure if space is needed}}
+ \label{fig:log}
+ \end{figure}
+\fi
+
+\subsection{Discussion}
+
+\Abhishek{The discussion should include reinforcement about the privacy aspect. it should also explain how using blockchains enables us to handle malicious actors. we should discuss why decentralization is better for resilience.}
+
+\Abhishek{Describe the lessons learned as an itemized list}
+
+We conclude our evaluation by providing a brief discussion of how our platform satisfies the requirements listed in Section~\ref{sec:requirements} (see Table~\ref{tab:discussion} for a summary).
+First, the communication architecture is provided by Ethereum and our middleware RIAPS.
+Our performance results in Figure~\ref{fig:time} demonstrate that our platform can process and match trades much faster than what would typically be required in practice (Section~\ref{sec:implementation}).
+Second, we enforce feeder-level operational safety and stability constraints on trading using a blockchain-based smart contract (Section~\ref{sec:hybridSolver}).
+These are in addition to the prosumer-level constraints enforced by tracking energy assets~(Section~\ref{sec:privacy}, \cite{Laszka17}).
+Third, we ensure market efficiency and security by enabling the smart contract to validate and evaluate the trading solutions that it receives (Section~\ref{sec:hybridSolver}).
+Finally, we provide privacy for prosumers by allowing them to hide their identity using anonymous addresses (Section~\ref{sec:privacy} and~\cite{Laszka17}). However, prosumers are required to reveal which feeder they belong to in order to enable enforcing feeder-level safety constraints.
+
+\begin{table}[h]
+\caption{Requirements and Proposed Solutions}
+\label{tab:discussion}
+\centering
+\setlength{\tabcolsep}{0.3em}
+\renewcommand*{\arraystretch}{1.3}
+\begin{tabular}{|p{2.6cm}|p{5.75cm}|}
+\hline
+Requirement & Proposed Solution \\
+\hline
+\hline
+Communication Fabric & RIAPS~\cite{riaps} and Ethereum \\
+\hline
+Operational Safety and Stability & feeder-level constraints modeled in the energy trading problem and enforced by the smart contract (Section~\ref{sec:hybridSolver}); prosumer-level constraints enforced by energy asset tracking~(Section~\ref{sec:privacy}, \cite{Laszka17}) \\
+\hline
+Market Efficiency and Security & objective modeled in the energy trading problem and enforced by the smart contract (Section~\ref{sec:hybridSolver})\\
+\hline
+Privacy & anonymous addresses~(Section~\ref{sec:privacy}, \cite{Laszka17}) \\
+\hline
+\end{tabular}
+\end{table}
+
+
+During the design and evaluation of our platform, one of the main challenges was the conflict between safety, privacy, and efficiency.
+For example, the enforcement of feeder-level safety constraints required prosumers to reveal their feeder during trading, instead of staying completely anonymous.
+Further, feeder-level safety constraints can also prevent meeting energy demand with local supply, even if there is surplus production in the microgrid (Figure~\ref{fig:profile}).

@@ -1,0 +1,83 @@
+\section{Solution Approach}
+\label{sec:solution}
+In this section, we present a hybrid approach for solving the energy trading problem on a decentralized computing platform.
+Our hybrid approach combines the auditability and trustworthiness of blockchain-based smart contracts\footnote{Our current implementation uses Ethereum.} with the efficiency of more traditional computing platforms.
+We first show how to solve the problem by formulating it as a linear program.
+Then, we describe the computation and verification that need to be performed by the computational nodes and the smart contract in a decentralized microgrid.
+
+\subsection{Linear-Programming Solution}
+%\KarlaC{Equation (16) is identical to (10); Not sure what this subsection adds (it just repeats the previous section). I think we can just omit the whole subsection, and rename section 5 as "Hybrid solver implementation"}
+We can solve the basic energy trading problem efficiently by formulating it as a linear program.
+First, create real-valued variables $p_{s,b,t}$ and $\pi_{s,b,t}$ for each $s \in S, b \in \calM(s), t \in I(s, b)$.
+Then, the following reformulation of the matching problem is a linear program:
+\begin{equation}
+\max_{\vp,\vpi}
+\sum_{s \in \calS} \sum_{b \in \calM(s)} \sum_{t \in I(s,b)} p_{s,b,t} \label{eq:linProgObj}
+\end{equation}
+subject to Equations~\eqref{eq:constrEnergyProd} to \eqref{eq:constrPrice} and
+\begin{equation}
+\vp \geq \vect{0} \text{ and } \vpi \geq \vect{0} .
+\end{equation} 
+The extended energy trading problem introduced in Section~\ref{sec:extendedProblem} can be reformulated as a linear program similarly, by considering $\calS^{(t)}$, $\calB^{(t)}$, $\hat{\vp}$, $\hat{\vpi}$, and the additional constraints.
+
+\subsection{Hybrid Solver Implementation}
+\label{sec:hybridSolver}
+
+Although solving linear programs is not computationally hard, it can be challenging with a large number of variables and constraints in resource-constrained computing environments.
+Since computation is relatively expensive on blockchain-based distributed platforms\footnote{Further, Solidity, the preferred high-level language for Ethereum, currently lacks built-in support for certain features that would facilitate the implementation of a linear programming solver, such as floating-point arithmetics.}, solving the energy trading problem using a block\-chain-based smart contract would not be scalable in practice.
+In light of this, we propose a \emph{hybrid implementation approach}, which combines the trustworthiness of blockchain-based smart contracts with the efficiency of more traditional computational platforms.
+
+The key idea of our hybrid approach is to (1) use a high-performance computer to solve the computationally expensive linear program \emph{off-blockchain} and then (2) use a smart contract to record the solution \emph{on the blockchain}.
+To implement this hybrid approach securely and reliably, we must address the following issues.
+\begin{compactitem}
+\item Computation that is performed off-blockchain does not satisfy the auditability and security requirements that smart contracts do. Thus, the results of any off-blockchain computation must be verified in some way by the smart contract before recording them on the blockchain.
+\item Due to network disruptions and other errors (including deliberate denial-of-service attacks), the off-blockchain solver might fail to provide the smart contract with a solution on time (i.e., before trades are supposed to be finalized). Thus, the smart contract must be able to proceed without an up-to-date solution.
+\item For the sake of reliability, the smart contract should accept solutions from multiple off-blockchain sources; however, these sources might provide different solutions.
+Thus, the smart contract must be able to choose from multiple solutions (some of which may come from a compromised computer).
+\end{compactitem}
+
+%\Abhishek{The time synchronization discussion can go here.}
+\subsubsection{Blockchain-based Smart Contract}
+
+We implement a smart contract that can (1) verify whether a solution $(\vp, \vpi)$ is feasible and (2) compute the value of the objective function for a feasible solution.
+Compared to finding an optimal solution, these operations are computationally inexpensive, and they can easily be performed on a blockchain-based decentralized platform.
+Using these capabilities, the smart contract provides the following functionality:
+\begin{compactitem}
+\item Solutions may be submitted to the contract at any time. 
+The contract verifies the feasibility of each submitted solution, and if the solution is feasible, then it computes the value of the objective function.
+The contract always keeps track of the best feasible solution submitted so far, which we call the \emph{candidate solution}.
+\item At the end of each time interval $t$, the contract finalizes the trade values for interval $t + T_{clear}$ based on the candidate solution.\footnote{If no solution has been submitted to the contract so far, which might be the case right after the trading system has been launched, $\vp = \vect{0}$ may be used as a candidate solution.}
+\end{compactitem}
+
+This simple functionality achieves a high level of security and reliability.
+Firstly, it is clear that an adversary cannot force the contract to finalize trades based on an unsafe (i.e., infeasible) solution since such a solution would be rejected.
+Similarly, an adversary cannot force the contract to choose an inferior solution instead of a superior one.
+In sum, the only action available to the adversary is proposing a superior feasible solution, which would actually improve energy trading in the microgrid.
+
+The contract is also reliable and can tolerate temporary disruptions in the solver or the communication network.
+Notice that any solution $(\vp, \vpi)$ that is feasible for sets $\calS$ and $\calB$ is also feasible for supersets $\calS' \supseteq \calS$ and $\calB' \supseteq \calB$.
+As the sets of offers can only grow over time, the contract can use a candidate solution submitted during time interval $t$ to finalize trades in any subsequent time interval $\tau > t$.
+In fact, without receiving new solutions, the difference between the amount of finalized trades and the optimum will increase only gradually:
+since the earlier candidate solution can specify trades for any future time interval,
+the difference is only due to the offers that have been posted since the solution was found and submitted.
+
+%In our hybrid approach, we implement a relatively simple algorithm in our smart contract, which can (1) check if a solution $(\vp, \vpi)$ is feasible and (2) evaluate the objective function for a given solution (see Equation~\eqref{eq:linProgObj}).
+
+\subsubsection{Off-blockchain Solver}
+
+We complement the smart contract with an efficient linear programming solver, which can be run off-blockchain, on any capable computer (or multiple computers for reliability).
+The solver is run periodically to find a solution to the energy trading problem based on the latest set of offers posted. 
+Once a solution is found by the solver, it is submitted to the smart contract in a blockchain transaction.
+Note that if new offers have been posted since the solver started working on the solution, the contract will still consider the solution to be feasible. 
+This again due to any feasible solution for sets $\calS$ and $\calB$ also being feasible for supersets $\calS' \supseteq \calS$ and $\calB' \supseteq \calB$.
+%The smart contract then verifies whether the solution is feasible and whether it is better than any feasible solution submitted before,  and if both conditions hold, accepts the solution as the best matching (found so far).
+
+From the perspective of the solver, being able to submit multiple solutions to the contract for the same problem has many advantages. %that multiple solutions may be submitted to the smart contract, which will always choose the best feasible one.
+%This is advantageous because
+For example, it allows the linear programming solver to be run as an anytime algorithm.
+Further, we can allow multiple---potentially untrusted---entities to try to solve the problem and submit solutions, since the smart contract will always choose the best feasible one.
+This is especially important in microgrids where a trusted third party is not guaranteed to always be present.
+In such settings, prosumers can be allowed to volunteer and provide solutions to the energy trading problem.%
+\footnote{Of course, each prosumer will try to submit a solution that favors the prosumer. However, the submitted solution still needs to be superior with respect to the optimization objective, which roughly corresponds to social utility. Hence, each prosumer is incentivized to improve social utility by submitting a superior solutions that favors the prosumer. We leave the analysis of these incentives for future work.}
+Thereby, we enable finding solutions in an efficient and very flexible manner, while reaping the benefits of smart contracts, such as auditability and trustworthiness.
+

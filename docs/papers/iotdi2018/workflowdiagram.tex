@@ -1,0 +1,36 @@
+\begin{figure*} [!t]
+\centering
+\begin{tikzpicture}[x=5.65cm, y=-0.063cm, semithick, font=\small,
+RedDashed/.style={red, dashed}]
+\def\posDSO{0}
+\def\posProsumer{1}
+\def\posLedger{2.05}
+\def\posSolver{3}
+\foreach \name/\pos in {DSO/\posDSO, Prosumer/\posProsumer, Smart contract/\posLedger, Solver/\posSolver} {
+  \draw (\pos, 0) -- (\pos, 110);
+  \node [draw, fill=white, rounded corners=0.1cm] at (\pos, 0) {\name};
+}
+\newcounter{seqTime}
+\setcounter{seqTime}{0}
+\foreach \action/\from/\to/\styl/\delta in {
+  {withdrawAssets(anonAddress, energy, intervals, amount)/\posProsumer/\posDSO/solid/17},
+  {failedWithdrawal(anonAddress, msg)/\posDSO/\posProsumer/red/8},
+  {addEnergy(anonAddress, energy, intervals), addFinancialBalance(anonAddress, amount)/\posDSO/\posLedger/solid/14},
+  {AssetAdded(anonAddress, energy, intervals)/\posLedger/\posProsumer/dashed/14},
+  {postOffer({energy, intervals, price})/\posProsumer/\posLedger/solid/8},
+  {OfferPosted({offerID, energy, intervals, price})/\posLedger/\posSolver/dashed/6},
+%  {rescindOffer(offerID)/\posProsumer/\posLedger/red/6},
+%  {OfferRescinded(offerID)/\posLedger/\posSolver/RedDashed/4},
+  {submitSolution({powers, prices})/\posSolver/\posLedger/solid/8},
+  {SolutionFinalized({powers, prices})/\posLedger/\posProsumer/dashed/6},
+  {depositEnergy(energy, intervals), depositFinancial(amount)/\posProsumer/\posLedger/solid/14},
+  {EnergyDeposited(anonAddress, energy, intervals), FinancialDeposited(anonAddress, amount)/\posLedger/\posDSO/dashed/14}%
+} {
+  \addtocounter{seqTime}{\delta}
+  \draw [->, >=stealth, shorten <=0.05cm, shorten >=0.05cm, \styl] (\from, \value{seqTime}) -- (\to, \value{seqTime}) node [midway, above, align=center, text width={abs(\to - \from) * 5.1cm}, fill=white, fill opacity=0.67, text opacity=1] {\footnotesize\texttt{\scriptsize\action}};
+}
+\end{tikzpicture}
+\caption{Sequence diagram of the trading workflow. Solid lines represent messages, including smart-contract function calls (i.e., blockchain transactions), while dashed lines represent smart-contract events. For ease of presentation, we show only a single prosumer and one instance of each communication. 
+}
+\label{fig:workflow}
+\end{figure*}

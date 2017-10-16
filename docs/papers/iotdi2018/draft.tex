@@ -1,0 +1,351 @@
+\clearpage
+\section{Draft}
+
+%\Karla{An idea: Carry out a two-stage market. First at the feeder level: match as much supply and demand at the feeder. Second: take what is left over and run a second matching at the inter-feeder level. Advantages: (1) satisfying capacity constraints could be simplified. (2) aggregating residual supply/demand and running a separate inter-feeder market could help make privacy easier? (3) matching itself might be simpler?}
+
+%\Aron{Regarding aggregation at the feeder level: This might give us a much worse matching than the optimum. For example, suppose that there are two feeders, called 1 and 2, and both feeders have a producer and a consumer, called 1p, 1c and 2p, 2c, respectively. Suppose that 1p can be matched with either 1c or 2c, but 2p can be matched only with 1c. If we aggregate at the feeder level, we match 1p and 1c, after which we cannot match 2p and 2c to anyone. On the other hand, the optimal matching (i.e., 1p to 2c and 2p to 1c) satisfies everyone. (Btw, this reminded me of \url{http://www.cs.cmu.edu/~arielpro/15896s16/slides/896s16-14.pdf})}
+
+%\Abhishek{To actually solve the capacity constraints properly we will need to do a load flow analysis. That is, consider all the generators in the system in that time interval (we can aggregate them per feeder), consider all the loads (we can aggregate them per feeder) and solve the nodal equations. However, this might not be feasible to do in a smart contract. Aggregation based on matched trades if done by the DSO can absolve us of the privacy leak issue/.}
+
+%\Karla{An idea: Obfuscate identity within feeder by breaking up every offer received by the OSS into a random number of positive and negative offers that sum to the original offer. Assign different identities to each piece of the original offer}
+
+%\Abhishek{But  these identities will still be associated with the feeder and I think aggregation per feeder will solve the same issue.}
+
+\Karla{To maximize the amount of energy traded in the microgrid, we need to scrap the trade finalization process I proposed earlier, where periodic clearing pertains only to a single time slot and feeder. However, if we do so, we need to think about the following:}
+ \begin{itemize}
+\item how often the market is to be cleared across all time slots beyond $t+H$. (As a side note, I have added a comment explaining the rationale for the time horizon $H$)
+\Aron{The optimal value of the market clearing frequency could be found using experiments. We need to keep it low so that prosumers hear back from the trading system in a reasonable amount of time, and we need to keep it high to minimize computational cost and maximize matching efficiency (the more we wait, the more offers we have, which means more matches).}
+\Karla{We can identify it as another tunable parameter, without offering heuristics on how to select it.}
+\item The sequence of events involving arrival of offers, solving the matching problem, finalization of transactions (a transaction is finalized if it is ready for execution - i.e. the parties involved are in a binding agreement, and now only the actual delivery or consumption are left.)
+\Aron{1) offers are submitted by participants 2) market is cleared (matching algorithm), the end (we should discuss this somewhere between the problem setting and the matching problem formulation)}
+\Karla{@Aron, maybe this is trivial, as you suggest. However, please consider the following two points; the implementations would be different depending on which of the two sequences of events we adopt, and I would imagine that the overall system behavior would also be quite different. There could be other possibilities in addition to the two below}
+\item One possibility: Collect all unmatched offers that have arrived in any slot prior to the $k$th time slot. In the $k$'th time slot, finalize the transactions for time slot $k+H+1$ by solving the matching problem across all feeders, across all time slots starting at $k+H+1$. So the input to the problem is the set of all offers with at least one time slot in the interval $[(k+H)T,\infty)$, and the output is a set of matchings that may pertain to time slots beyond $k+H+1$. So, in the $k$th time slot, the matching algorithm outputs matchings that may pertain to time slots beyond $k+H+1$. However, we consider as "finalized" only those matchings in the $k+H+1$th time slot. In the next time slot - i.e. $k+1$, we simply repeat this process, and re-input all unfinalized offers, even if they were previously matched (because now we have new offers that have come in, and there might be more optimal matchings than those outputted in the $k$th time slot.). Note this is why it may be useful to distinguish between ``matching'' and ``finalization''.
+\item Another possibility: Same as above, except we finalize all matchings arbitrarily far into the future (or up to some maximal time horizon restricting $\max I_{i,k}$). In the $(k+1)$'th time slot, collect all offers that have arrived since the beginning of the $k$th time slot and those that are still left unmatched. Solve the matching problem, but using new constraints for all future time slots, since some trades have already been finalized (there is now less capacity remaining). 
+\end{itemize}
+
+
+\subsection{Problem Statement}
+The problem addressed in this paper is to design a trading mechanism and propose an architecture for a \emph{Transaction Management Platform} (TMP) that is able to implement the proposed trading mechanism in a way that satisfies the following requirements:
+\subsubsection{Safety}
+\begin{itemize}
+\item At any given time $t$, $P(n,t)$, where $n \in N$, is the instantaneous power transferred by the home. Note that if the home is not a prosumer its value becomes $0$.
+
+\item DSO also operates as a trading entity and can inject power into the microgrid. \textcolor{red}{We need to consider the effect of DSO's trade. The DSO will inject power into the whole grid. Its ratio for a feeder will depend upon the load ratio of the feeder}. Suppose we calculate the function $P(dso,f,t)$, where $f \in F$ provides the power transmitted by dso into the feeder $f$. This function can be approximated as the load divider circuit. $P(dso,f,t)=P(dso,t)\frac{\sum_{i=1}^{|F|}{load(i)}}{load(f)}$. This fractional term is a constant value that can be calculated before hand.
+\item Then, safety constraint is $(\forall{f})(\forall{t})(P(dso,f,t)+\sum_{i=1}^{|F_M(f)|}(P(i,t)) \leq L(f))$
+\end{itemize}
+\Karla{@Abhishek: consider the following reformulation:}
+\Abhishek{@Karla: The problem is that you cannot compute or control the instantaneous power injected by DSO per feeder. The DSO effectively is responsible for current $i$ at a given voltage. This current will redistribute through out the microgrid depending upon the loads of each feeder. Note that while load in each feeder is in series. The feeders themselves are in parallel. Thus, the equation I had above with the fraction is required to know how the current will distribute. Alternatively, as we discussed we can just ignore the DSO's power injection by not including it in the trading process. And if we consider that we ensure that total consumption  in a feeder is less than the limit across all feeders, we have effectively solved the problem. Of course it requires that the producer will never inject power if no matching trade exists. }
+\begin{itemize}
+\item For each feeder $f$ in the microgrid, we require the total power flow along any segment to not exceed the feeder capacity $C_f$. More precisely, let $S_f$ denote the set of all participants on feeder $f$, $P_i(t)$ denote the instantaneous power being supplied by participant $i$ at time $t$
+\Aron{Is this the same as $P(i, t)$?}
+, and $P_{f,DSO}(t)$ denote the instantaneous power delivered by the DSO to feeder $f$ at time $t$. For each feeder $f$ in the microgrid, the safety constraint can then be formulated as:
+\begin{equation}
+P_{f,DSO}(t) + \sum_{i\in S_f} P_i(t) \leq C_f,\quad \forall t\in\mathbb{R}_{\geq 0},
+\end{equation}
+\Aron{How is this different from the previous equation? What is the relation between $L(f)$ and $C_f$? Where is $L(f)$ defined?}
+\Karla{Yes, just offering an alternative to the formulation above i.e., consider omitting the functional definition L(f) - keep it as simple as possible}
+where it is understood that $P_i(t)=0$ if participant $i$ is not a producer.
+\item Given the total instantaneous power supplied to the microgrid by the DSO and the aggregate load on feeder $f$, the quantity $P_{f,DSO}(t)$ can be calculated according to a current divider relationship. 
+\end{itemize}
+
+\subsection{Background}
+\begin{itemize}
+\item we explain the transactive energy workflow.
+\end{itemize}
+\subsection{Privacy}
+TODO 
+\begin{itemize}
+\item List the threats and the sequence of steps where the individual identity can either be directly revealed or analytically inferred. we should show by proof that it will be possible to infer the aggregative trading activity per feeder. But, individual activity cannot be inferred.
+\end{itemize}
+\subsection{Market Efficiency and Fairness}
+TODO
+\begin{itemize}
+\item Formally describe the constraint that all producers should eventually be matched if their offer is lowest and the capacity request is higher than the production capacity.
+\Aron{I think that this goal may contradict the second one. For example, if the DSO would like the microgrid demand (i.e., net consumption) to be 1 MW but there is 1 MW production capacity and only 1.5 MW consumption capacity in the microgrid, then 0.5 MW of the production capacity should be unmatched. Since the DSO is primarily interested in load shaping, I think that it will opt for the second goal. (I know that the example is atypical, but even for typical cases, the second objective would be sufficient.)}
+
+\item The market closely follows the demand profile set by the DSO.
+\Aron{I think that this is better, see previous point.}
+\Karla{Agreed}
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+\section{Market and TMP Design}
+
+\subsection{Market interaction protocol}
+\begin{itemize}
+\item There is an \emph{Offer Storage Service} (OSS) that pools all incoming offers until they are either cleared or rejected
+\Abhishek{We can use the blockhain for this. The trade service will add filters to know when new offers/bids have come in.}
+\item There is a \emph{Trade Service} that performs trade finalization---i.e. market clearing and offer matching functions.
+\Abhishek{The trade service is run as a smart contract. Either the DSO or the miner will be responsible for submitting the function. The result of successful execution of the function will be a list of assets that have been traded. new assets can be created as a result. Each prosumer/consumer will have a filter that will let them know when their asset has been traded. }
+
+\Karla{I simplified this part from what I originally wrote}
+\item \textbf{Time:} Time is divided into equal slots of duration $T$. 
+\item During the $k$'th time slot:
+\begin{itemize}
+\item Previously finalized trades get executed
+\Aron{What do we mean by executed? Does it mean that prosumers produce/consume energy?}
+\Karla{I think it is useful to distinguish between finalization and execution. When I say a Tx is finalized, I mean that the parties involved have entered an enforcible contract, and when the time slot in question arrives, the trade actually executes - i.e. production and consumption take place. Moreover, matching takes place prior to finalization, though it could be synonymous to it.}
+\Aron{Okay, but we need to keep in mind that prosumers can only consume or produce energy, there is not direct transfer between them. Further, prosumer may consume/produce more than what they agreed to (no one can predict their load perfectly), and pay/get spot market prices. So there is no explicit ``execution'' of a trade.}
+\Karla{@Aron, I agree - in fact, the point you make is yet another reason to adopt this distinction. So a trade is ``executed'' when the seller attempts to inject power into the grid and the buyer actually consumes it (even if the amount actually injected / consumed may differ from the amount in the finalized trade) }
+\Aron{``adopt this distinction'' Distinction between what?}
+\item Unmet demand for slot $k$ is supplied by the DSO at regulator-approved maximal prices
+\item Trades in slot $k+H+1$ get finalized\footnote{We say that a trade if finalized if it is ready for execution. Matched offers become finalized trades.}, where $H$ is the time horizon associated with the primary market.\footnote{We can consider implementing a secondary market with a shorter time horizon. This ``second round'' market accepts new offers on \emph{top} of all trades already finalized in the primary market, and tires to finalize them before the end of the $k$'th time slot.}
+\Aron{What do we mean by finalized? How is $H$ chosen? Are we still optimizing multiple slots at the same time?}
+\Karla{re finalized, see comment above}
+\Karla{H is a tunable parameter; we do not have to provide a method of selecting H. H could be adjusted by the DSO for example, to affect factors such as volatility, or predictability to aid in planning. I do not know what all the implications of various values of H are, but they probably depend on the physical structure of the microgrid, and the trading policies adopted by the participants.}
+\end{itemize}
+
+% \Aron{How is this interval related to the intervals $T_M$ and $T_E$?}
+% \item The market clears every $T_M$ units of time, producing an interval sequence $\{[t+kT_M, t+(k+1)T_M)\}_{k\in\{0,1,2,\ldots\}}$, starting from time $t$. 
+% \Aron{For sake of simplicity, can we assume that $t = 0$, and interval numbers start from some initial number $k_0$?}
+% \item Energy trades are scheduled to occur every $T_E$ units of time, producing an interval sequence $\{[t+kT_E, t+(k+1)T_E)\}_{k\in\{0,1,2,\ldots\}}$, starting from time $t$. 
+% \Aron{For sake of simplicity, can we assume that $t = 0$, and interval numbers start from some initial number $k_0$?}
+% \item $T_E$ need not be the same as $T_M$.
+
+
+\item Market participants include the consumers, prosumers and the DSO.
+\Aron{Is the behavior of prosumers a ``strict superset'' of the behavior of consumers?}
+\Karla{Behaviorally they are nearly identical: consumers only submit offers with $X_i\leq0$.. I don't mind referring to everyone as prosumer, but I felt that conceptually it is helpful to distinguish between consumers and prosumers, and refer to them collectively as participants... So prosumers may have either negative or positive offers, while consumers only submit negative offers.}
+\Aron{Do we need to explicitly model consumers? We could model them simply as prosumers with zero production capacity. If we model them explicitly, is their number $N - M$ fixed?}
+\Karla{As a first modeling and implementation step it may help to fix $N-M$ an think later about generalizing}
+
+
+\item \textbf{Offer Specification:}\Karla{I modified this 9/20/17, got rid of t} The $i$th market participant may interact with the market within the $k$'th time slot by submitting a single \emph{offer} $O_{i,k} = (X_{i,k},I_{i,k}, p_{i,k})$ to the OSS, which collects all offers submitted since the last time the market cleared. 
+\Karla{We will need k in order to express the possibility that a single participant submits two distinct offers, $O_{i,k_1}$ and $O_{i,k_2}$ for which $I_{i,k_1}\cap I_{i,k_2}\neq \emptyset$.}
+\Karla{Only one offer per time slot per participant: This is without loss of generality, since if a participant wishes to submit multiple offers during the $k$th interval they can just be combined into a single offer by adding the $X$'s and taking union of time slot sets}
+\Aron{Not necessarily. Prosumers will actually need to submit multiple offers covering the same time interval.}
+\Karla{Note that I am talking here about submission of offers, not the time slots they cover.}
+\Aron{But there are many cases in which offers cannot be combined: for example, if I could produce 100 Watt in intervals 0 or 1 and 150 Watt in intervals 2 or 3, then I need to submit two offers because they cannot be combined.}
+
+\item The elements of an offer are:
+\begin{itemize}
+% \item $t\in\mathbb{R}_{\geq 0}$ indicates the time at which $O_{i,t}$ is received by the OSS.\footnote{The first sanity check to perform is whether there exist some time intervals in the offer that are sufficiently far in the future, prior to forwarding the offer to the matching algorithm.}
+% \Abhishek{This assumes that the clocks are synchronized.}
+% \Karla{@Abhishek, We may not need a time stamp after all - need to think about this more...}
+% \Aron{I don't think that will need $t$ for the matching. More importantly, what happens if the prosumer submits multiple offers at the same time? Do they all get the same subscript?}
+
+\item $X_{i,k}$, the amount of power in [W] that participant $i$ is offering to either consume (if $X_{i,k}\leq 0$) or produce (if $X_{i,k}\geq 0$) at a constant rate within one of the specified time slots.  
+\Abhishek{We assume the presence of power electronics and battery to ensure the constant production rate. See the paper at https://arxiv.org/pdf/1705.06130.pdf. if the offer intervals are small then the constant power assumption can be implemented.}
+\Karla{Awesome - thank you Abhishek!}
+\item $I_{i,k}\subset \mathbb{N}$ is an index set that identifies those intervals in which participant $i$ is able to consume or produce energy at a constant rate of $X_{i,k}$ Watts. Specifically, $I_{i,k}$ indicates that participant $i$ is able to produce or consume $X_{i,k}$ Watts of power constantly throughout \emph{any one} of the intervals in the set $\{[kT, (k+1)T)\}_{k\in I}$. 
+\Karla{@Aron, do we still need "atomic values" below? If not, can we change it to $X_i\in\mathbb{R}$?}
+\Aron{Probably not. It might make solving the problem computationally easier, but at this point I don't see if it actually will...}
+
+
+%\item $X_i$ can take atomic / quantized values in a finite set $\mathcal{P}\subset\mathbb{R}$.
+\Aron{I think that it might be simpler to present $X_i$ as the amount of energy to be produced/consumed (noting of course that the prosumer is expected to produce/consume it with constant power in the interval that is determined by the auction.}
+\Karla{@Aron, can you explain?}
+\Aron{Which part? I would like to emphasize again that if we consider generating in a single (fixed length) interval, then power and energy are interchangeable.}
+
+\Abhishek{Either we assume that the consumers also use storage devices to shape their consumption considering energy transfer will not help. A consumer requires exact power input when they plug in a new device. Thus, the consumers power requirement will be constant for the time when the trade is settled. In other words, we have to match the $X_i$, the power transferred to the consumer in the  requested time interval. Or, tell the consumer that the matched profile is some $X^{'}_{i}$, which is less than $X_i$. Also the time when the power has been matched can be a subset of the requested interval. Given that consumers can always pull power from DSO, the difference in settled asset and requested asset will be billed using DSO rates.} 
+\Karla{@Abhishek - That is a nice point. Instead of "rejecting" offers, we could consider (later) proposing a curtailment scheme (for both loads and producers) to satisfy capacity and possibly other constraints. The question is whether there is a way to do this as a preliminary step prior to matching, or if it needs to be incorporated this into the matching problem formulation, and if so, how... }
+\Karla{@Aron, we can do it like that, or obtain this info from $X_i$ directly see item I added below:}
+\item  Define $s_i = \tfrac{1}{2}(X_i+|X_i|)$ and $b_i = -\tfrac{1}{2}(X_i-|X_i|)$, so that if $X_i\geq 0$, $s_i = X_i$ while $b_i = 0$, and if $X_i\leq 0$, $s_i=0$ while $b_i=|X_i|$. In that case $s_i$ represents the amount of power produced and to be sold, and $b_i$ represents the amount of power to be bought and consumed. 
+\item $p_{i,k}$ is the \emph{reservation price} for the current offer. If $X_{i,k}>0$ then $p_{i,k}$ indicates the minimum price that participant $i$ is willing to sell $X_{i,k}$ Watts of power within the intervals indicated by $I_{i,k}$
+\end{itemize}
+
+ \item To protect against denial-of-service attacks, each participant is allowed to submit at most $\bar{o}$ offers within any single time slot.  
+ \Aron{I think that we can leave the introduction of such constraints to the discussion of the implementation. (We would also need to limit the size of $I_i$, and I think that we should rather try to keep the model ``clean.'')}
+ \Karla{Hi Aron, as per my comment above, I think we should omit the $\bar{o}$ constraint and, WOLOG allow only a single offer to be submitted per participant per time slot...  }
+ \Aron{I am afraid that this would not be WOLOG.}
+ \Karla{I believe that under the offer specification and event sequencing I proposed previously, it would be WOLOG. What would be the benefit of having a single participant submit multiple offers within time slot $k$? Note that I am referring here to the time of submission, not the time slots specified in $I_i$.}
+ \Aron{See comment above. Another example: I don't have a battery, but I have solar power. I am trying to sell 120 Watt between 4pm and 5pm and 80 Watt between 5pm and 6pm. If I am restricted in the number of offers that I can post, I have to wait until I post the second one, which could put me at disadvantage or decrease matching efficiency. Also, I do not see the advantage of introducing this 1 offer per 1 time interval limit.}
+ \Karla{@Aron, looking at your matching problem formulation, I guess we should limit the horizon over which time slots are specified in the $I_{i,k}$, since this affects the dimensionality of the problem... }
+
+\item  There are no restrictions on specifying $I_{i,k}$; the OSS accepts offers to buy or sell power arbitrarily far into the future, and it automatically rejects (and notifies the participant) time slots that are insufficiently far into the future. The cardinality of $I_{i,k}$ is also not restricted.
+\item The rationale for allowing participants to specify an index set identifying those time slots in which they are able to provide or consume power is to leverage the flexibility afforded by battery storage.
+
+\item If an offer $O_{i,k}$ is matched, participant $i$ is required to produce or consume a constant power level of $X_{i,k}$ Watts (within some tolerance) for the entire duration $T$ of the trade interval in the match, regardless of instantaneous energy requirements by the participant's local load.
+\item Upon receiving an offer, the OSS first checks whether any of the time intervals in the offer are sufficiently far in the future. If not, the offer is rejected and the participant who submitted it is notified. 
+\end{itemize}
+
+
+
+\subsection{Trade Finalization Process}
+Within time slot $k$:
+\begin{itemize}
+\item The OSS forms a set $O_{f,k}$ of offers $O_{i,t}$ submitted to the OSS prior to time $t=kT$, with $k+H+1\in I_i$, and $i$ a participant in feeder $f$. 
+\item There is some sort of anonymization step. (??)
+\Aron{Anonymization needs to be earlier if we use blockchains for OSS (which I think we do).}
+\item The OSS submits $O_{f,k}$ to the Trading Service, which:
+\begin{itemize}
+\item Enforces the capacity constraint for feeder $f$ by checking that the aggregate demand in time slot $k+H+1$ does not exceed the feeder capacity (NOTE: supply need not be  checked). If capacity is exceeded, some offers are rejected according to one or more prioritization schemes\footnote{One possibility is to prioritize offers with time slot index sets whose cardinalities have undergone the greatest number of reductions, which indirectly prioritizes offers that have been waiting longest to be matched.}, and the OSS is notified about the rejected offers. Let $\tilde{O}_{f,k}$ denote the remaining set of offers.
+\item The remaining offers $\tilde{O}_{f,k}$ undergo the Market Clearing Process, which finalizes the trades for interval $k+H+1$.
+\end{itemize}
+\item For each offer $O_{i,t}\in O_{f,k}$ rejected by the Trade 
+ Service, the OSS makes the replacement $I_i\leftarrow I_i \setminus \{k\}$, and notifies participant $i$. If $I_i$ is now empty, the offer is rejected and the participant is notified. In other words, offers not matched in time slot $k+H+1$ remain in the OSS until they are matched in a subsequent time slot, or rejected.  
+ \Karla{Sorry - there is some notational overloading here - I will fix this}
+\end{itemize}
+
+\Aron{For the sake of readability, we could first present a single-market solution, and then propose the multi-market solution as a straightforward extension for improving efficiency.}
+\Karla{Agreed}
+\Abhishek{yes, I think that will work.}
+
+
+
+
+\subsection{Market Clearing Process}
+The market clearing process is designed to maximize some measure of market efficiency. For example, maximize the normalized difference between total trades that took place and the total trades that would have taken place if all offers were matched. 
+\Karla{Probably not the best measure of "efficiency". Have to think about this.}
+The market clearing process takes the following steps:
+\begin{itemize}
+\item From $\tilde{O}_{f,k}$, determine the market clearing price $p$ for time slot $k+H+1$ according to the procedure outlined in \cite{Basar14}:
+\Karla{i.e., see the discussion starting at equation (3) in the paper}
+\begin{itemize}
+\item Sort all sellers in an increasing order of their reservation prices, and sort all buyers in a decreasing order of their reservation prices. 
+\item Form the supply and demand curves (price vs. volume)
+\item Determine the seller $s^*$ and buyer $b^*$ at the intersection point of the demand and supply curve
+\item Allow the first $s^*-1$ sellers and the first $b^*-1$ buyers to participate in this double auction. The rest are rejected and notified. Let $\tilde{\tilde{O}}_{f,k}$ denote the remaining set of offers. 
+\item It is shown in \cite{Emarket} that excluding $s^*$ and $b^*$ ensures that total supply and demand match and that the double auction is \emph{strategy proof} -- i.e., there is no incentive for participants to submit untruthful reservation prices. 
+\item The market clearing price for time slot $k+H+1$ is selected as $p=\tfrac{p_{s^*} - p_{b^*}}{2}$, where $p_{s^*}$ and $p_{b^*}$ are reservation prices of seller $s^*$ and buyer $b^*$. 
+\item Apply any matching mechanism to match all remaining offers in $\tilde{\tilde{O}}_{f,k}$, and finalize the matched trades at price $p$.
+\Karla{@Aron, do we need to elaborate on this? i.e. how matching is done? I was thinking at this point, since we are still within a single feeder, we just match any which way - i.e. line up all the demand and line up all the supply, break up as needed, and match in the obvious way.}
+\end{itemize}
+\Aron{Are we sure that we want to use this matching algorithm? It's suboptimal.}
+\end{itemize}
+
+\subsection{Other Market Architectures}
+A selling feature of the proposed platform is that it provides a messaging framework for a variety of market architectures, including:
+\begin{itemize}
+\item Full double auction, with automated market clearing and matching service
+\item Producers (including DSO) post offers, and consumers manually pick producers with whom to transact.
+\item DSO sets all prices, producers and consumers post offers without prices. Automated matching. DSO takes transaction fee... 
+\end{itemize}
+
+
+
+\subsection{TODO}
+\begin{itemize}
+\item Think of other meaningful market efficiency measures (i.e. max total dollars exchanged?), or other objectives (fairness?). 
+\item explain rationale for spot v futures market include graphic. 
+\item fix notational overloading
+\end{itemize}
+
+\section{Old Problem Formulation}
+
+\Aron{\textbf{Note}: I'll rewrite this section based on the comments (e.g., using arbitrary sets of intervals in the offers instead of pairs of beginning and ending intervals), and move the old version to the appendix.}
+
+\newcommand{\vx}[0]{\ensuremath{\boldsymbol{x}}}
+\newcommand{\PUD}[0]{\ensuremath{\textit{PD}}}
+\newcommand{\PUDD}[0]{\ensuremath{\textit{PDD}}}
+\newcommand{\Real}[0]{\ensuremath{\mathbb{R}}}
+\newcommand{\Natural}[0]{\ensuremath{\mathbb{N}}}
+
+Constants:
+\begin{itemize}
+\item $D_t$: ideal unmet demand in the microgrid in time interval $t$ (for traffic shaping by DSO)
+\Karla{what is $D_t$ - a function of time? What are the units? Can we give a pictorial example? }
+\Aron{Yes, $D_t$ depends on the time interval $t$. It is measured in Watts (or whatever we use to measure power/energy). Since it is for a single fixed-length time interval, we can measure it either as power or energy.  I am not sure what you mean by pictorial example.}
+\item $F$: set of feeders
+\Karla{Defining ``set of feeders'' might be notational overkill ;-). Could just say ``there are F feeders'' (i.e. use F to denote the cardinality), and then talk about feeder $f$}
+\Aron{Hmmm... I think that using $F$ to denote the set will be simpler because we can then say $f \in F$ instead of $1 \leq f \leq F$ (or $f \in \{1, \ldots, F\}$).}
+\item for feeder $f \in F$,
+\begin{itemize}
+\item $S_f$: set of selling offers
+\item $B_f$: set of buying offers
+\item $C_f$: energy flow capacity
+\end{itemize}
+\item for selling offer $s \in S_f$ (or buying offer $b \in B_f$),
+\begin{itemize}
+%\item $F_s$ (or $F_b$): feeder
+\item $E_s$ (or $E_b$): amount of energy
+\Karla{This should be power, no?}
+\Aron{No, prosumers are trading energy, which they will produce/consume in some time intervals. (Again, the usage is somewhat interchangeable because we could say that $E_s$ is the amount of power that the prosumer will produce/consume in exactly on time interval.)}
+\item $T^{begin}_s$ (or $T^{begin}_b$): first time interval in which energy could be produced (or consumed)
+\item $T^{end}_s$ (or $T^{end}_b$): last time interval in which energy could be produced (or consumed)
+\Karla{From the participants' point of view, it might be better if they can specify an arbitrary list of time intervals in which they are willing to trade - i.e. don't impose that the intervals have to be consecutive.}
+\Aron{Sure, we can definitely change that.}
+\item $P_s$ (or $P_b$): reservation price
+\end{itemize}
+\end{itemize}
+
+For convenience, we also introduce
+\begin{itemize}
+\item $S = \cup_{f \in F} S_f$: set of selling offers 
+\item $B = \cup_{f \in F} B_f$: set of buying offers 
+\end{itemize}
+
+A pair of selling and buying offers $(s, b)$
+\Karla{these need to be associated with participants - i.e. maybe subscripted by $i$, for the $i$'th participant} 
+\Aron{Yes, after the optimal matching is found, we need to know which offer belongs to which prosumer. (Of course, we also need to provide privacy, so we should include an anonymous address in the offer rather than the actual identity of the prosumer.)}
+match each other if
+\Karla{Nice - let us define what we mean by "match"}
+\begin{itemize}
+\item $P_s \leq B_s$
+\item $T^{begin}_s \leq T^{end}_b$
+\item $T^{begin}_b \leq T^{end}_s$ 
+\Karla{3 things to consider when defining "matching": (1) What if the power quantities do not match? (2) what if the intervals don't perfectly overlap? (3) It might be more flexible for participants to indicate a set of numbered time slots in which they are willing to trade, instead of specifying a contiguous interval with a start and finish. And, it may not be more difficult to do matching when numbered intervals are indicated. i.e., consider definition of offer provided above. On the other hand, there may be an advantage to indicating contiguous intervals instead of time slots... What is the advantage?}
+\Aron{(1) and (2) ``Match'' here means only that the prosumers may exchange some amount of energy (not necessarily all the energy that they offered). We should mention this in text before the definition. We could also use a different word instead of ``match'' (e.g., we could say that the offers are ``compatible'' or  ``matchable'' or that they ``intersect'' or ``overlap''). (3) Yes, in the model it will indeed be simpler to work with arbitrary sets of intervals. Contiguous intervals can simplify the implementation (e.g., each offer can be represented by a fixed-size structure instead of a structure containing a variable-length list).}
+\end{itemize}
+For convenience, we let $M(s)$ and $M(b)$ denote the set of offers that match offer $s$ and $b$, respectively.
+Further, we let $T(s, b)$ denote the time intervals in the intersection of offers $s$ and $b$, i.e., 
+\begin{equation}
+T(s, b) = \left\{t ~\middle|~  \max\{T^{begin}_s, T^{begin}_b\} \leq t \leq \min\{T^{end}_s, T^{end}_b\} \right\} .
+\end{equation}
+
+Variables:
+\begin{itemize}
+\item $\forall s \in S, b \in M(s), t \in T(s, b): x_{s,b,t} \in \Real_{\geq 0}$: amount of energy transferred from selling offer~$s$ to buying offer $b$ in time interval $t$
+\end{itemize}
+For convenience, we let $x_{s,b,t} \equiv 0$ for $s \in S, b \not\in M(s)$ or $s \in S, b \in M(s), t \not\in T(s, b)$.
+
+Further variables (for certain optimization objectives, see below):
+\begin{itemize}
+\item $\PUD \in \Real_{\geq 0}$: peak unmet demand
+\item $\PUDD \in \Real_{\geq 0}$: peak difference to ideal unmet demand
+\end{itemize}
+
+Constraints:
+\begin{itemize}
+\item amount of energy:
+\begin{align}
+\forall b \in B: ~& \sum_{s \in S} \sum_t x_{s,b,t} \leq E_b \\
+\forall s \in S: ~& \sum_{b \in B} \sum_t x_{s,b,t} \leq E_s 
+\end{align}
+\item safety:
+\begin{align}
+\forall f \in F, t: -C_f \leq & \left( \sum_{s \in S_f} \sum_{\bar{f} \in F} \sum_{b \in B_{\bar{f}}} x_{s,b,t} \right) \nonumber \\
+ & - \left( \sum_{b \in B_f} \sum_{\bar{f} \in F} \sum_{s \in S_{\bar{f}}} x_{s,b,t} \right)
+\leq C_f 
+\end{align}
+\begin{align}
+\forall f \in F, t: & \left( \sum_{s \in S_f} \sum_{\bar{f} \in F} \sum_{b \in B_{\bar{f}}} x_{s,b,t} \right) \leq totalProdLimit \\
+\forall f \in F, t: & \left( \sum_{b \in B_f} \sum_{\bar{f} \in F} \sum_{s \in S_{\bar{f}}} x_{s,b,t} \right) \leq totalConsLimit 
+\end{align}
+\end{itemize}
+
+Further constraints (for certain optimization objectives):
+\begin{itemize}
+\item peak unmet demand:
+\begin{align}
+\forall t: ~\sum_{b \in B} E_b - \sum_{s \in S} \sum_t x_{s,b,t} \leq \PUD 
+\end{align}
+\item peak difference to ideal unmet demand:
+\begin{align}
+\forall t: -\PUDD \leq D_t - \left( \sum_{b \in B} E_b - \sum_{s \in S} \sum_t x_{s,b,t} \right) \leq \PUDD
+\end{align}
+\end{itemize}
+
+Objective (we consider multiple formulations):
+\begin{itemize}
+\item maximize trading activity (i.e., amount of energy demand met using local supply):
+\begin{align}
+\max_{\vx} \sum_{b \in B} \sum_{s \in S} \sum_t x_{s,b,t}
+\end{align}
+\item minimize peak of unmet demand:
+\begin{align}
+\min_{\vx, \PUD} \PUD
+\end{align}
+\item minimize peak difference to  unmet demand:
+\begin{align}
+\min_{\vx, \PUDD} \PUDD
+\end{align}
+\end{itemize}

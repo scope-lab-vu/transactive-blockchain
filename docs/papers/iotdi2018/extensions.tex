@@ -1,0 +1,48 @@
+\subsection{Advanced Problem Formulation}
+\label{sec:extendedProblem}
+
+In our basic problem formulation, we assumed that all buying and selling offers $\calB$ and $\calS$ are available at once, and we cleared the market in one take.
+In practice, however, both the prosumers and the DSO may continuously submit new offers as their predictions, their physical state, and the market conditions change over time.
+As the set of submitted offers grows, the optimal solution to the energy trading problem may change, and the optimal value of each $p_{s,b,t}$ may vary.
+While each change can increase the amount of energy traded, the \emph{trade values} $p_{s,b,t}$ and $\pi_{s,b,t}$ need to be \emph{finalized} at some point in time.
+At the very latest, values for interval $t$ need to be finalized by the end of interval $t - 1$; otherwise, participants would have no chance of actually delivering the trade.
+Here, we extend the energy trading problem to consider a growing set of offers and a time constraint for finalizing trades.
+Our approach finalizes a minimum set of trades in each interval, which maximizes efficiency while providing safety.
+
+%Consequently, the optimal matching changes over time as new offers arrive.
+%A simple approach for accommodating an evolving set of offers would be to periodically find an optimal matching, finalize the trades, and start from scratch for the next set of offers. 
+%In this section, we propose a superior approach, which improves trading by matching as many offers at the same time as possible, while finalizing as few of them as possible. 
+
+We assume that all trades for time interval $t$ (i.e., all values~$p_{s,b,t}$ and $\pi_{s,b,t}$) must be finalized by the end of time interval $t - T_{clear}$, where $T_{clear}$ is a positive integer constant, which is set by the operator. 
+Preventing ``last-minute'' changes can be crucial for safety and fairness since it allows both the DSO and the prosumers to prepare for delivering (or consuming) the right amount of power. %\KarlaC{Gotta be careful about making categorical statements like that. We have no evidence to support this claim. Future (experimental) work!}\AronC{Okay, we should motivate this more and emphasize that this is a tweakable parameter.}
+In practice, the value of $T_{clear}$ must be chosen taking into account both physical constraints (e.g., how long it takes to turn on a generator) and communication delay (e.g., some participants might learn of a trade with delay due to network disruptions).
+
+We let $\hat{p}_{s,b,t}$ and $\hat{\pi}_{s,b,t}$ denote the finalized trade values, and we let $\calB^{(t)}$ and $\calS^{(t)}$ denote the set of buying and selling offers that participants have submitted by the end of time interval $t$.
+Then, the system takes the following steps at the end of each time interval $t$:
+\begin{itemize}
+\item Find an optimal solution $(\vp^*, \vpi^*)$ to the extended energy trading problem:
+\begin{equation}
+\max_{(\vp, \vpi) \, \in \textit{ Feasible}(\calS^{(t)}\!,\, \calB^{(t)})} \sum_{s \in \calS^{(t)}} \sum_{b \in \calM(s)} \sum_{\tau \in I(s,b)} p_{s,b,\tau}
+%\max_{\substack{(\vp, \vpi) \, \in \textit{ Feasible}(\calS^{(t)}\!,\, \calB^{(t)}) \\ \text{subject to} \\ \forall \tau \leq t - T_{clear}: ~ \hat{p}_{s,b,t} = p_{s,b,t} \wedge \hat{\pi}_{s,b,t} = \pi_{s,b,t}}}
+\end{equation}
+subject to
+\begin{align}
+\forall \, \tau < t + T_{clear}\!: ~ & p_{s,b,\tau} = \hat{p}_{s,b,\tau} \\ %~\wedge~ \pi_{s,b,t} = \hat{\pi}_{s,b,t} .
+& \pi_{s,b,\tau} = \hat{\pi}_{s,b,\tau} 
+\end{align}
+\item Finalize trade values for time interval $t + T_{clear}$ based on the optimal solution $(\vp^*, \vpi^*)$:
+\begin{align}
+& \hat{p}_{s,b,t + T_{clear}} := p^*_{s,b,t + T_{clear}} \\ 
+& \hat{\pi}_{s,b,t + T_{clear}} := \pi^*_{s,b,t + T_{clear}} 
+\end{align}
+\end{itemize}
+
+By taking the above steps at the end of each time interval, trades are always cleared based on as much information as possible (i.e., considering as many offers as possible) without violating any safety or timing constraints.
+Next, we discuss how to implement the market using a blockchain-based decentralized platform.
+
+%\AbhishekC{We should reference the earlier discussion to emphasize why we choose blockchains}
+
+%Every $T_{match}$ ($\leq T_{clear}$) time intervals, the smart contract finalizes trades based on the solution of the matching problem.
+%More specifically, at the beginning of time interval $t$, where $t$ is a multiple of $T_{match}$, the smart contract marks values $p_{s,b,\tau}$ as final for all $\tau \leq t + T_{match}$. 
+%Then, the next solution for the matching contract must consider the values $p_{s,b,\tau}$ to be constant.
+
