@@ -1,0 +1,71 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+
+\usepackage[hyphens]{url}
+\usepackage[breaklinks,hidelinks]{hyperref}
+\usepackage[anythingbreaks]{breakurl}
+
+\begin{document}
+
+\paragraph{Bidirectional Energy Trading and Residential Load Scheduling with Electric Vehicles in the Smart Grid} (2013)
+\cite{kim2013bidirectional} \\
+\url{http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=6547831} \\
+\url{http://medianetlab.ee.ucla.edu/papers/Kim&Ren&vdS&Lee-BidirectionalEnergy-JSAC-2013.pdf}
+\begin{itemize}
+\item ``electricity load scheduling algorithms which jointly consider load scheduling for appliances and energy trading using electric vehicles''
+\item customers: determine how much energy to purchase from or to sell to the aggregator, considering the load demands of their residential appliances and the associated electricity bill
+\item approaches
+\begin{itemize}
+\item collaborative: optimal distributed load scheduling algorithm that maximizes the social welfare of the power system
+\item non-collaborative: model the energy scheduling problem as a non-cooperative game among self-interested customers
+\end{itemize}
+\item impact of uncertainty: consider worst-case-uncertainty approach and develop distributed load scheduling algorithms that provide the guaranteed minimum performances in uncertain environments
+\item ``energy trading leads to an increase in the social welfare''
+\item customer incentives for participation
+\end{itemize}
+
+\paragraph{Demand Side Management in Smart Grids Using a Repeated Game Framework} (2014)
+\cite{song2014demand} \\
+\url{http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=6840289}
+\url{http://www.seas.ucla.edu/~linqi/smartgrids.pdf}
+\begin{itemize}
+\item ``model the interaction emerging among self-interested and foresighted consumers as a repeated energy scheduling game and prove that the stationary strategies are suboptimal in terms of long-term total billing and discomfort costs''
+\item ``novel framework for determining optimal nonstationary demand-side management strategies, in which consumers can choose different daily power consumption patterns depending on their preferences, routines, and needs''
+\item incentive compatible strategies
+\end{itemize}
+
+\paragraph{Optimal Residential Load Control with Price Prediction in Real-Time Electricity Pricing Environments} (2010)
+\cite{mohsenian2010optimal} \\
+\url{http://www.ee.ucr.edu/~hamed/MRLGjTSG10.pdf}
+\begin{itemize}
+\item ``lack of knowledge among users about how to respond to time-varying prices as well as the lack of effective building automation systems are two major barriers for fully utilizing the potential benefits of real-time pricing tariffs''
+\item optimal and automatic residential energy consumption scheduling based on simple linear programming computations
+\item ``residential load control strategy in real-time electricity pricing environments requires price prediction capabilities'' (especially if ``utility companies provide price information only one or two hours ahead of time'')
+\item weighted average price prediction
+\end{itemize}
+
+\paragraph{Appliance Commitment for Household Load Scheduling} (2011)
+\cite{du2011appliance} \\
+\url{https://www.researchgate.net/profile/Ning_Lu4/publication/220592828_Appliance_Commitment_for_House_Hold_Load_Scheduling/links/53fdeb450cf2dca80003abf0.pdf}
+\begin{itemize}
+\item ``appliance commitment algorithm that schedules thermostatically controlled household loads based on price and consumption forecasts considering users’ comfort settings to meet an optimization objective such as minimum payment or maximum comfort''
+\item two-step adjustment process: day-ahead scheduling and real-time adjustment
+\item example: electrical water heater, whose thermal dynamics are modeled with physical methods
+\item random hot water consumption: modeled with statistical methods
+\item user comfort: set of linear constraints
+\end{itemize}
+
+\paragraph{Scheduling Power Consumption With Price Uncertainty} (2011)
+\cite{kim2011scheduling} \\
+\url{http://ieeexplore.ieee.org/abstract/document/5959241/}
+\begin{itemize}
+\item ``scheduling power consumption to minimize the expected cost at the consumer side''
+\item scheduling problem: find decision thresholds for a Markov decision process (for both noninterruptible and interruptible loads under a deadline constraint)
+\item incorporating the statistical knowledge about future prices into the scheduling policies can result in significant savings
+\end{itemize}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
