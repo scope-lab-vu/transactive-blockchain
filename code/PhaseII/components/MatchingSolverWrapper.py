@@ -68,8 +68,8 @@ class MatchingSolverWrapper(MatchingSolver):
               for trade in trades:
                 self.contract.addTrade(self.account, solutionID, trade['s'].ID, trade['b'].ID, trade['t'], int(trade['p']))
                 # BEGIN TESTING
-                selling_feeder = MICROGRID.prosumer_feeder[s_to_offer[trade['s']].prosumer]
-                buying_feeder = MICROGRID.prosumer_feeder[b_to_offer[trade['b']].prosumer]
+                selling_feeder = MICROGRID.prosumer_feeder[s_to_offer[trade['s'].ID].prosumer]
+                buying_feeder = MICROGRID.prosumer_feeder[b_to_offer[trade['b'].ID].prosumer]
                 logging.info("Adding trade {} (selling feeder: {}, buying feeder: {})".format(trade, selling_feeder, buying_feeder))
                 # END TESTING
               logging.info("{} trades have been submitted to the contract.".format(len(trades)))
