@@ -27,20 +27,15 @@ class MatchingSolverWrapper(MatchingSolver):
     super(MatchingSolverWrapper, self).__init__(MICROGRID)
 
   def run(self):
-    finalized = START_INTERVAL - 1
+    finalized = -1
     buying_offers = []
     selling_offers = []
-    # BEGIN TESTING
-    b_to_offer = {}
-    s_to_offer = {}
-    # END TESTING
     new_offers = False
     waiting_solutionID = False
     logging.info("Entering main loop...")
     current_time = time()
     next_polling = current_time + POLLING_INTERVAL
     next_solving = current_time + SOLVING_INTERVAL
-    next_finalizing = current_time + INTERVAL_LENGTH
     while True:
       current_time = time()
       if current_time > next_polling:
@@ -55,10 +50,8 @@ class MatchingSolverWrapper(MatchingSolver):
             offer = Offer(params['ID'], params['prosumer'], params['startTime'], params['endTime'], params['energy'])
             if name == "BuyingOfferPosted":
               buying_offers.append(offer)
-              b_to_offer[params['ID']] = offer # TESTING
             else:
               selling_offers.append(offer)
-              s_to_offer[params['ID']] = offer # TESTING
           elif name == "SolutionCreated":
             waiting_solutionID = False
             solutionID = params['ID']
@@ -67,15 +60,25 @@ class MatchingSolverWrapper(MatchingSolver):
               trades = [trade for trade in self.solution if int(trade['p']) > 0]
               for trade in trades:
                 self.contract.addTrade(self.account, solutionID, trade['s'].ID, trade['b'].ID, trade['t'], int(trade['p']))
-                # BEGIN TESTING
-                selling_feeder = MICROGRID.prosumer_feeder[s_to_offer[trade['s'].ID].prosumer]
-                buying_feeder = MICROGRID.prosumer_feeder[b_to_offer[trade['b'].ID].prosumer]
-                logging.info("Adding trade {} (selling feeder: {}, buying feeder: {})".format(trade, selling_feeder, buying_feeder))
-                # END TESTING
               logging.info("{} trades have been submitted to the contract.".format(len(trades)))
-              logging.info("Amount of energy traded in the solution for interval {}: {}".format(finalized + 1, sum([trade['p'] for trade in trades if trade['t'] == finalized + 1]))) # TESTING
             else:
               logging.info("Solution {} created by contract, but no solution has been found for this time interval (yet).".format(solutionID))
+          elif name == "Finalized":
+            finalized = params['interval']
+            self.objective = float("-inf")
+            self.solution = None
+            new_offers = False # TODO: offers for next interval might be added in the same block as the finalization for the previous!
+            logging.info("Trades for interval {} are now final, matching will consider only later intervals from now on.".format(finalized))
+          elif name == "TradeFinalized":
+            logging.info("{}({}).".format(name, params))
+            for offer in selling_offers:
+              if offer.ID == params['sellerID']:
+                offer.energy -= params['power']
+                break
+            for offer in buying_offers:
+              if offer.ID == params['buyerID']:
+                offer.energy -= params['power']
+                break
           elif name == "TradeAdded":
             logging.info("{}({}).".format(name, params))
       if current_time > next_solving:
@@ -93,14 +96,7 @@ class MatchingSolverWrapper(MatchingSolver):
             logging.info("Done (objective = {}), trades will be submitted once a solution is created in the contract.".format(objective))
           else:
             logging.info("No better solution found (objective = {}).".format(objective))
-      if current_time > next_finalizing:
-        next_finalizing += INTERVAL_LENGTH
-        finalized += 1
-        self.objective = float("-inf")
-        self.solution = None
-        new_offers = False
-        logging.info("Trades for interval {} are now final, matching will consider only later intervals from now on.".format(finalized))
-      sleep(max(min(next_polling, next_solving, next_finalizing) - time(), 0))
+      sleep(max(min(next_polling, next_solving) - time(), 0))
       
   def query_contract_address(self):
     msg = {
@@ -108,7 +104,9 @@ class MatchingSolverWrapper(MatchingSolver):
     }
     logging.info(msg)
     self.dso.send_pyobj(msg)
-    self.contract_address = self.dso.recv_pyobj()
+    response = self.dso.recv_pyobj()
+    self.epoch = time() - response['time']
+    self.contract_address = response['contract']
     logging.info("Contract address: " + self.contract_address)
 
 if __name__ == "__main__":

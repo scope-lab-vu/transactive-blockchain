@@ -1,12 +1,17 @@
+pragma solidity ^0.4.19;
+
 contract MatchingContract {
     uint64 INTERVAL_LENGTH = 1;
     uint64 C_INT = 25000;
     uint64 C_EXT = 20000;
     
+    event ProsumerRegistered(uint64 prosumer, uint64 feeder);
+    
     mapping(uint64 => uint64) prosumerFeeder; // TODO: mapping(address => uint64) prosumerFeeder;
     
-    function addProsumer(uint64 prosumer, uint64 feeder) public { // TODO: function addProsumer(address prosumer, uint64 feeder) public {
+    function registerProsumer(uint64 prosumer, uint64 feeder) public { // TODO: function addProsumer(address prosumer, uint64 feeder) public {
         prosumerFeeder[prosumer] = feeder;
+        ProsumerRegistered(prosumer, feeder);
     }
     
     struct Offer {
@@ -65,7 +70,9 @@ contract MatchingContract {
     
     mapping(uint64 => Solution) solutions;
     uint64 numSolutions = 0;
-    Solution bestSolution;
+    
+    uint64 nextInterval = 0;
+    int64 bestSolution = -1;
     
     event SolutionCreated(uint64 ID);
     
@@ -75,8 +82,6 @@ contract MatchingContract {
             numTrades: 0,
             objective: 0
         });
-        if (numSolutions == 0)
-            bestSolution = solutions[numSolutions];
         return numSolutions++;
     }
     
@@ -86,6 +91,8 @@ contract MatchingContract {
         require(solutionID < numSolutions);
         require(sellerID < numSellingOffers);
         require(buyerID < numBuyingOffers);
+        
+        require(time >= nextInterval);
         
         // check if buyer and seller are matchable
         require(time >= sellingOffers[sellerID].startTime);
@@ -127,9 +134,37 @@ contract MatchingContract {
         });
         
         solution.objective += power;
-        if (solution.objective > bestSolution.objective)
-            bestSolution = solution;
+        if ((bestSolution < 0) || (solution.objective > solutions[uint64(bestSolution)].objective))
+            bestSolution = int64(solutionID);
+
         TradeAdded(solutionID, sellerID, buyerID, time, power, solution.objective);
+    }
+    
+    event Finalized(uint64 interval, int64 bestSolution);
+    event TradeFinalized(uint64 sellerID, uint64 buyerID, uint64 time, uint64 power);
+    
+    function finalize(uint64 interval) public {
+        require(interval == nextInterval);
+      
+        Finalized(interval, bestSolution);
+      
+        if (bestSolution >= 0) {
+            Solution storage solution = solutions[uint64(bestSolution)];
+        
+            for (uint64 i = 0; i < solution.numTrades; i++) {
+                Trade storage trade = solution.trades[i];
+                if (trade.time == nextInterval) {
+                    uint64 energy = trade.power * INTERVAL_LENGTH;
+                    sellingOffers[trade.sellerID].energy -= energy;
+                    buyingOffers[trade.buyerID].energy -= energy;
+                    TradeFinalized(trade.sellerID, trade.buyerID, trade.time, trade.power);
+                }
+            }
+        
+            bestSolution = -1;
+        }
+      
+        nextInterval++;
     }
 }
 

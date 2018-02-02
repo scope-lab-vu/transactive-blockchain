@@ -1,28 +1,45 @@
 import zmq
 import logging
 import sys
-from time import sleep
+from time import time, sleep
+from threading import Thread
 
 from config import *
 from EthereumClient import EthereumClient
+from MatchingContract import MatchingContract
 
 class DSOWrapper: 
   def __init__(self, ip, port):
     self.client = EthereumClient(ip=ip, port=port)    
     self.account = self.client.accounts()[0] # use the first owned address
     self.deploy_contract()
+    self.register_prosumers()
     super(DSOWrapper, self).__init__()
+  
+  def finalizer(self):
+    logging.info("Finalizer thread starting...")
+    next_interval = 0 # must be in sync with the starting interval of the smart contract
+    next_finalization = time() + INTERVAL_LENGTH
+    while True:
+      sleep(next_finalization - time())
+      next_finalization += INTERVAL_LENGTH
+      logging.info("Finalizing interval {}".format(next_interval))
+      self.contract.finalize(self.account, next_interval)
+      next_interval += 1
     
   def run(self):
     logging.info("Entering main function...")
+    thread = Thread(target=self.finalizer)
+    thread.start()
     trader = zmq.Context().socket(zmq.REP)
     trader.bind(DSO_ADDRESS)
+    epoch = time()
     logging.info("Listening for traders and solvers...")
     while True:
       msg = trader.recv_pyobj()
       if msg['request'] == "query_contract_address":
         logging.info("query_contract_address()")
-        trader.send_pyobj(self.contractAddress)
+        trader.send_pyobj({'contract': self.contract_address, 'time': time() - epoch})
       else:
         logging.error("Unknown request: " + msg['request'])
         trader.send_pyobj("Unknown request!")
@@ -37,9 +54,16 @@ class DSOWrapper:
       logging.info("Waiting for contract to be mined... (block number: {})".format(self.client.command("eth_blockNumber", params=[])))
       receipt = self.client.command("eth_getTransactionReceipt", params=[receiptID])
       if receipt is not None:
-        self.contractAddress = receipt['contractAddress']
+        self.contract_address = receipt['contractAddress']
         break
-    logging.info("Contract address: " + self.contractAddress)                
+    self.contract = MatchingContract(self.client, self.contract_address)  
+    logging.info("Contract address: " + self.contract_address)   
+    
+  def register_prosumers(self):
+    logging.info("Registering prosumers...")
+    for prosumer_id in PROSUMERS:
+      feeder_id = PROSUMER_FEEDER[prosumer_id]
+      self.contract.registerProsumer(self.account, prosumer_id, feeder_id)           
     
 if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)

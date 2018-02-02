@@ -5,11 +5,19 @@ from Contract import Contract
 class MatchingContract(Contract):
   def __init__(self, client, address):
     super(MatchingContract, self).__init__(client, address, [
+      "ProsumerRegistered(uint64 prosumer, uint64 feeder)",
       "BuyingOfferPosted(uint64 ID, uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy)",
       "SellingOfferPosted(uint64 ID, uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy)",
       "SolutionCreated(uint64 ID)",
-      "TradeAdded(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power, uint64 objective)"
+      "TradeAdded(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power, uint64 objective)",
+      "Finalized(uint64 interval, int64 bestSolution)",
+      "TradeFinalized(uint64 sellerID, uint64 buyerID, uint64 time, uint64 power)"
     ])
+    
+  def registerProsumer(self, from_account, prosumer_id, feeder_id):
+    self.call_func(from_account, "registerProsumer",
+      "uint64", prosumer_id,
+      "uint64", feeder_id)
 
   def postBuyingOffer(self, from_account, prosumer_id, start_time, end_time, energy):
     self.call_func(from_account, "postBuyingOffer", 
@@ -35,4 +43,8 @@ class MatchingContract(Contract):
       "uint64", buyerID,
       "uint64", time,
       "uint64", power)
+      
+  def finalize(self, from_account, time_interval):
+    self.call_func(from_account, "finalize",
+      "uint64", time_interval)
 

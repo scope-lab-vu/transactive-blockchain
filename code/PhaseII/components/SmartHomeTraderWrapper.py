@@ -28,12 +28,12 @@ class SmartHomeTraderWrapper:
     super(SmartHomeTraderWrapper, self).__init__()
 
   def run(self):
-    time_interval = START_INTERVAL
     current_time = time()
+    time_interval = int(current_time - self.epoch) // INTERVAL_LENGTH
     next_polling = current_time + POLLING_INTERVAL
-    next_prediction = current_time
+    next_prediction = self.epoch + (time_interval + 1) * INTERVAL_LENGTH - current_time
     # we stop after the END_INTERVAL
-    while time_interval<=END_INTERVAL:
+    while time_interval <= END_INTERVAL:
       current_time = time()
       if current_time > next_polling:
         logging.debug("Polling events...")
@@ -79,7 +79,9 @@ class SmartHomeTraderWrapper:
     }
     logging.info(msg)
     self.dso.send_pyobj(msg)
-    contract_address = self.dso.recv_pyobj()
+    response = self.dso.recv_pyobj()
+    self.epoch = time() - response['time']
+    contract_address = response['contract']
     logging.info("Contract address: " + contract_address)
     return contract_address
 
