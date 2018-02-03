@@ -25,6 +25,8 @@ class SmartHomeTraderWrapper:
     client = EthereumClient(ip=ip, port=port)
     self.account = client.accounts()[0] # use the first owned address
     self.contract = MatchingContract(client, contract_address)
+    logging.info("Registering with the smart contract...")
+    self.contract.registerProsumer(self.account, prosumer_id, PROSUMER_FEEDER[prosumer_id])
     super(SmartHomeTraderWrapper, self).__init__()
 
   def run(self):
