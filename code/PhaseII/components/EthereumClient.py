@@ -101,25 +101,24 @@ class EthereumClient:
     ip_port = str(self.ip) + ":" + str(self.port)
     # buffer to capture output
     buffer = BytesIO()
-    try:
-      # start building curl command to process
-      c = pycurl.Curl()
-      c.setopt(pycurl.URL, ip_port)
-      c.setopt(pycurl.HTTPHEADER, ['Accept:application/json'])
-      c.setopt(pycurl.WRITEFUNCTION, buffer.write)
-      data2 = {"jsonrpc":str(jsonrpc),"method": str(method),"params":params,"id":str(id)}
-      data = json.dumps(data2)
-      c.setopt(pycurl.POST, 1)
-      c.setopt(pycurl.POSTFIELDS, data)
-      if verbose:
-        c.setopt(pycurl.VERBOSE, 1)
-      # perform pycurl
-      c.perform()
-      # check response code (HTTP codes)
-      if (c.getinfo(pycurl.RESPONSE_CODE) != 200):
-        raise Exception('rpc_communication_error', "response code is {} insted of 200".format(c.getinfo(pycurl.RESPONSE_CODE)))
-      # close pycurl object
-      c.close()
+    # start building curl command to process
+    c = pycurl.Curl()
+    c.setopt(pycurl.URL, ip_port)
+    c.setopt(pycurl.HTTPHEADER, ['Accept:application/json'])
+    c.setopt(pycurl.WRITEFUNCTION, buffer.write)
+    data2 = {"jsonrpc":str(jsonrpc),"method": str(method),"params":params,"id":str(id)}
+    data = json.dumps(data2)
+    c.setopt(pycurl.POST, 1)
+    c.setopt(pycurl.POSTFIELDS, data)
+    if verbose:
+      c.setopt(pycurl.VERBOSE, 1)
+    # perform pycurl
+    c.perform()
+    # check response code (HTTP codes)
+    if (c.getinfo(pycurl.RESPONSE_CODE) != 200):
+      raise Exception('rpc_communication_error', "response code is {} insted of 200".format(c.getinfo(pycurl.RESPONSE_CODE)))
+    # close pycurl object
+    c.close()
 
     # decode result
     results = str(buffer.getvalue().decode('iso-8859-1'))

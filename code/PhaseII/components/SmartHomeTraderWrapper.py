@@ -33,7 +33,7 @@ class SmartHomeTraderWrapper:
     current_time = time()
     time_interval = int(current_time - self.epoch) // INTERVAL_LENGTH
     next_polling = current_time + POLLING_INTERVAL
-    next_prediction = self.epoch + (time_interval + 1) * INTERVAL_LENGTH - current_time
+    next_prediction = self.epoch + (time_interval + 1) * INTERVAL_LENGTH 
     # we stop after the END_INTERVAL
     while time_interval <= END_INTERVAL:
       current_time = time()

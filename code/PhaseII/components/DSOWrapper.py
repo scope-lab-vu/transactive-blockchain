@@ -13,7 +13,6 @@ class DSOWrapper:
     self.client = EthereumClient(ip=ip, port=port)    
     self.account = self.client.accounts()[0] # use the first owned address
     self.deploy_contract()
-    self.register_prosumers()
     super(DSOWrapper, self).__init__()
   
   def finalizer(self):
@@ -59,12 +58,6 @@ class DSOWrapper:
     self.contract = MatchingContract(self.client, self.contract_address)  
     self.contract.setup(self.account, MICROGRID.C_ext, MICROGRID.C_int, START_INTERVAL)
     logging.info("Contract address: " + self.contract_address)   
-    
-  def register_prosumers(self):
-    logging.info("Registering prosumers...")
-    for prosumer_id in PROSUMERS:
-      feeder_id = PROSUMER_FEEDER[prosumer_id]
-      self.contract.registerProsumer(self.account, prosumer_id, feeder_id)           
     
 if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
