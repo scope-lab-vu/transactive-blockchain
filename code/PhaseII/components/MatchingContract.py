@@ -14,6 +14,12 @@ class MatchingContract(Contract):
       "TradeFinalized(uint64 sellerID, uint64 buyerID, uint64 time, uint64 power)"
     ])
     
+  def setup(self, from_account, _Cint, _Cext, _nextInterval):
+    self.call_func(from_account, "setup",
+      "uint64", _Cint,
+      "uint64", _Cext,
+      "uint64", _nextInterval)      
+    
   def registerProsumer(self, from_account, prosumer_id, feeder_id):
     self.call_func(from_account, "registerProsumer",
       "uint64", prosumer_id,

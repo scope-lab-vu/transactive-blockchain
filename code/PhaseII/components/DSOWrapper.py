@@ -18,7 +18,7 @@ class DSOWrapper:
   
   def finalizer(self):
     logging.info("Finalizer thread starting...")
-    next_interval = 0 # must be in sync with the starting interval of the smart contract
+    next_interval = START_INTERVAL # must be in sync with the starting interval of the smart contract
     next_finalization = time() + INTERVAL_LENGTH
     while True:
       sleep(next_finalization - time())
@@ -33,7 +33,7 @@ class DSOWrapper:
     thread.start()
     trader = zmq.Context().socket(zmq.REP)
     trader.bind(DSO_ADDRESS)
-    epoch = time()
+    epoch = time() - START_INTERVAL * INTERVAL_LENGTH
     logging.info("Listening for traders and solvers...")
     while True:
       msg = trader.recv_pyobj()
@@ -57,6 +57,7 @@ class DSOWrapper:
         self.contract_address = receipt['contractAddress']
         break
     self.contract = MatchingContract(self.client, self.contract_address)  
+    self.contract.setup(self.account, MICROGRID.C_ext, MICROGRID.C_int, START_INTERVAL)
     logging.info("Contract address: " + self.contract_address)   
     
   def register_prosumers(self):
