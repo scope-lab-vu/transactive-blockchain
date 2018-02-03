@@ -8,7 +8,7 @@ class MatchingContract(Contract):
       "ProsumerRegistered(uint64 prosumer, uint64 feeder)",
       "BuyingOfferPosted(uint64 ID, uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy)",
       "SellingOfferPosted(uint64 ID, uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy)",
-      "SolutionCreated(uint64 ID)",
+      "SolutionCreated(uint64 solutionID, uint64 solverID)",
       "TradeAdded(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power, uint64 objective)",
       "Finalized(uint64 interval, int64 bestSolution)",
       "TradeFinalized(uint64 sellerID, uint64 buyerID, uint64 time, uint64 power)"
@@ -40,7 +40,8 @@ class MatchingContract(Contract):
       "uint64", energy)
             
   def createSolution(self, from_account):
-    self.call_func(from_account, "createSolution")
+    self.call_func(from_account, "createSolution",
+      "uint64", solverID)
     
   def addTrade(self, from_account, solutionID, sellerID, buyerID, time, power):
     self.call_func(from_account, "addTrade",

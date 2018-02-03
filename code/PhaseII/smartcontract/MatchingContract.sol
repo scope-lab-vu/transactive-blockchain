@@ -78,15 +78,15 @@ contract MatchingContract {
     uint64 numSolutions = 0;
     int64 bestSolution = -1;
         
-    event SolutionCreated(uint64 ID);
+    event SolutionCreated(uint64 solutionID, uint64 solverID);
     
-    function createSolution() public returns (uint64 solutionID) {
-        SolutionCreated(numSolutions);
+    function createSolution(uint64 solverID) public {
         solutions[numSolutions] = Solution({
             numTrades: 0,
             objective: 0
         });
-        return numSolutions++;
+        SolutionCreated(numSolutions, solverID);
+        numSolutions += 1;
     }
     
     event TradeAdded(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power, uint64 objective);
