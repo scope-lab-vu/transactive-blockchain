@@ -39,7 +39,7 @@ class MatchingContract(Contract):
       "uint64", end_time, 
       "uint64", energy)
             
-  def createSolution(self, from_account):
+  def createSolution(self, from_account, solverID):
     self.call_func(from_account, "createSolution",
       "uint64", solverID)
     
