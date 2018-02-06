@@ -7,6 +7,9 @@ from random import random
 from config import *
 from EthereumClient import EthereumClient
 from MatchingContract import MatchingContract
+from Grafana.config import Config
+from Grafana.dbase import Database
+
 
 POLLING_INTERVAL = 1 # seconds
 
@@ -27,6 +30,8 @@ class SmartHomeTraderWrapper:
     self.contract = MatchingContract(client, contract_address)
     logging.info("Registering with the smart contract...")
     self.contract.registerProsumer(self.account, prosumer_id, PROSUMER_FEEDER[prosumer_id])
+    self.dbase = Database()
+    self.role = None
     super(SmartHomeTraderWrapper, self).__init__()
 
   def run(self):
@@ -34,6 +39,7 @@ class SmartHomeTraderWrapper:
     time_interval = int(current_time - self.epoch) // INTERVAL_LENGTH
     next_polling = current_time + POLLING_INTERVAL
     next_prediction = self.epoch + (time_interval + 1) * INTERVAL_LENGTH 
+    interval_trades = {}
     # we stop after the END_INTERVAL
     while time_interval <= END_INTERVAL:
       current_time = time()
@@ -49,8 +55,19 @@ class SmartHomeTraderWrapper:
           elif (name == "SellingOfferPosted") and (params['prosumer'] == self.prosumer_id):
             self.selling_offers.add(params['ID'])
             logging.info("{}({}).".format(name, params))
-          if (name == "TradeAdded") and ((params['sellerID'] in self.selling_offers) or (params['buyerID'] in self.buying_offers)):
+          elif (name == "TradeAdded") and ((params['sellerID'] in self.selling_offers) or (params['buyerID'] in self.buying_offers)):
             logging.info("{}({}).".format(name, params))
+          elif name == "Finalized":
+            finalized = params['interval']
+            logging.info("interval finalized : {}".format(finalized))
+            interval_trades[finalized] = []
+          elif (name == "TradeFinalized") and ((params['sellerID'] in self.selling_offers) or (params['buyerID'] in self.buying_offers)):
+            logging.info("{}({}).".format(name, params))
+            finalized = params['time']
+            power = params['power']
+            interval_trades[finalized].append(power)
+            self.dbase.log(finalized,self.role,self.prosumer_id,sum(interval_trades[finalized]))
+
       if current_time > next_prediction:
         self.post_offers(time_interval)
         time_interval += 1
@@ -65,9 +82,11 @@ class SmartHomeTraderWrapper:
         pass
       elif offer['start'] <= time_interval + PREDICTION_WINDOW: # offer in near future, post it
         if offer['energy'] < 0:
+          self.role = "consumer"
           logging.info("postBuyingOffer({}, {}, {}, {})".format(self.prosumer_id, offer['start'], offer['end'], -offer['energy']))
           self.contract.postBuyingOffer(self.account, self.prosumer_id, offer['start'], offer['end'], -offer['energy'])
         else:
+          self.role = "producer"
           logging.info("postSellingOffer({}, {}, {}, {})".format(self.prosumer_id, offer['start'], offer['end'], offer['energy']))
           self.contract.postSellingOffer(self.account, self.prosumer_id, offer['start'], offer['end'], offer['energy'])
       else: # offer in far future, post it later

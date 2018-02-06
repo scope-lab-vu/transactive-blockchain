@@ -7,6 +7,9 @@ from config import *
 from MatchingSolver import MatchingSolver, Offer
 from EthereumClient import EthereumClient
 from MatchingContract import MatchingContract
+from Grafana.config import Config
+from Grafana.dbase import Database
+
 
 POLLING_INTERVAL = 1 # seconds
 
@@ -22,10 +25,14 @@ class EventRecorder():
     self.account = client.accounts()[0] # use the first owned address
     logging.info("Creating contract object...")
     self.contract = MatchingContract(client, self.contract_address)
+    self.dbase = Database()
 
   def run(self):
     logging.info("Entering main loop...")
     next_polling = time()
+    interval_trades = {} 
+    finalized = 0
+    in_db = True
     while True:
       logging.debug("Polling events...")
       simulation_time = time() - self.epoch
@@ -34,6 +41,21 @@ class EventRecorder():
         name = event['name']
         logging.info("[time = {}] {}({}).".format(simulation_time, name, params))
         # TODO: record data to database
+        if name == "Finalized":
+          finalized = params['interval']
+          logging.info("interval finalized : {}".format(finalized))
+          interval_trades[finalized] = []
+          in_db = False
+        elif name == "TradeFinalized":
+          interval = params['time']
+          power = params['power']
+          interval_trades[finalized].append(power)
+        elif in_db == False and interval_trades[finalized]:
+          logging.info("All trades : {}".format(interval_trades[finalized]))
+          logging.info("Total Energy Traded: {}".format(sum(interval_trades[finalized])))
+          self.dbase.log(finalized,"Solver", "TotalEnergyTraded", sum(interval_trades[finalized]))
+          in_db = True
+
       next_polling += POLLING_INTERVAL
       sleep(max(next_polling - time(), 0))
       
