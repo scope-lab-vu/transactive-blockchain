@@ -1,9 +1,15 @@
 pragma solidity ^0.4.19;
 
 contract MatchingContract {
-    uint64 INTERVAL_LENGTH = 1;
-    uint64 C_INT = 25000;
-    uint64 C_EXT = 20000;
+    uint64 Cint; // maximum power produced (or consumed) within a feeder
+    uint64 Cext; // maximum power outgoing from (incoming to) a feeder
+    uint64 nextInterval; // next time interval to be finalized
+    
+    function setup(uint64 _Cint, uint64 _Cext, uint64 _nextInterval) public {
+      Cint = _Cint;
+      Cext = _Cext;
+      nextInterval = _nextInterval;
+    }
     
     event ProsumerRegistered(uint64 prosumer, uint64 feeder);
     
@@ -70,19 +76,17 @@ contract MatchingContract {
     
     mapping(uint64 => Solution) solutions;
     uint64 numSolutions = 0;
-    
-    uint64 nextInterval = 0;
     int64 bestSolution = -1;
+        
+    event SolutionCreated(uint64 solutionID, uint64 solverID);
     
-    event SolutionCreated(uint64 ID);
-    
-    function createSolution() public returns (uint64 solutionID) {
-        SolutionCreated(numSolutions);
+    function createSolution(uint64 solverID) public {
         solutions[numSolutions] = Solution({
             numTrades: 0,
             objective: 0
         });
-        return numSolutions++;
+        SolutionCreated(numSolutions, solverID);
+        numSolutions += 1;
     }
     
     event TradeAdded(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power, uint64 objective);
@@ -102,7 +106,7 @@ contract MatchingContract {
 
         // notation        
         Solution storage solution = solutions[solutionID];
-        uint64 energy = power * INTERVAL_LENGTH;
+        uint64 energy = power; // assume interval to be unit length for power to energy conversion
         uint64 sellingFeeder = prosumerFeeder[sellingOffers[sellerID].prosumer];
         uint64 buyingFeeder = prosumerFeeder[buyingOffers[buyerID].prosumer];
         
@@ -117,13 +121,13 @@ contract MatchingContract {
         // eq:constrEnergyCons       
         require(solution.buyerConsumption[buyerID] <= buyingOffers[buyerID].energy);
         // eq:constrIntProd
-        require(solution.feederProduction[sellingFeeder][time] <= C_INT);
+        require(solution.feederProduction[sellingFeeder][time] <= Cint);
         // eq:constrIntCons
-        require(solution.feederConsumption[buyingFeeder][time] <= C_INT);
+        require(solution.feederConsumption[buyingFeeder][time] <= Cint);
         // eq:constrExtProd
-        require(solution.feederProduction[sellingFeeder][time] - solution.feederConsumption[sellingFeeder][time] <= C_EXT);
+        require(solution.feederProduction[sellingFeeder][time] - solution.feederConsumption[sellingFeeder][time] <= Cext);
         // eq:constrExtCons
-        require(solution.feederConsumption[buyingFeeder][time] - solution.feederConsumption[buyingFeeder][time] <= C_EXT);
+        require(solution.feederConsumption[buyingFeeder][time] - solution.feederConsumption[buyingFeeder][time] <= Cext);
         
         // add trade to solution
         solution.trades[solution.numTrades++] = Trade({
@@ -154,7 +158,7 @@ contract MatchingContract {
             for (uint64 i = 0; i < solution.numTrades; i++) {
                 Trade storage trade = solution.trades[i];
                 if (trade.time == nextInterval) {
-                    uint64 energy = trade.power * INTERVAL_LENGTH;
+                    uint64 energy = trade.power; // assume interval to be unit length for power to energy conversion
                     sellingOffers[trade.sellerID].energy -= energy;
                     buyingOffers[trade.buyerID].energy -= energy;
                     TradeFinalized(trade.sellerID, trade.buyerID, trade.time, trade.power);

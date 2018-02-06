@@ -1,6 +1,7 @@
 import zmq
 import logging
 import sys
+import os
 from time import time, sleep
 
 from config import *
@@ -11,7 +12,8 @@ from MatchingContract import MatchingContract
 POLLING_INTERVAL = 1 # seconds
 
 class MatchingSolverWrapper(MatchingSolver):
-  def __init__(self, ip, port):
+  def __init__(self, ip, port, solverID):
+    self.solverID = solverID
     logging.info("Connecting to DSO...")
     self.dso = zmq.Context().socket(zmq.REQ)
     self.dso.connect(DSO_ADDRESS)
@@ -52,9 +54,9 @@ class MatchingSolverWrapper(MatchingSolver):
               buying_offers.append(offer)
             else:
               selling_offers.append(offer)
-          elif name == "SolutionCreated":
+          elif (name == "SolutionCreated") and (params['solverID'] == self.solverID):
             waiting_solutionID = False
-            solutionID = params['ID']
+            solutionID = params['solutionID']
             if self.solution is not None:
               logging.info("Solution {} created by contract, adding trades...".format(solutionID))
               trades = [trade for trade in self.solution if int(trade['p']) > 0]
@@ -67,7 +69,7 @@ class MatchingSolverWrapper(MatchingSolver):
             finalized = params['interval']
             self.objective = float("-inf")
             self.solution = None
-            new_offers = False # TODO: offers for next interval might be added in the same block as the finalization for the previous!
+            # new_offers = False # TODO: offers for next interval might be added in the same block as the finalization for the previous!
             logging.info("Trades for interval {} are now final, matching will consider only later intervals from now on.".format(finalized))
           elif name == "TradeFinalized":
             logging.info("{}({}).".format(name, params))
@@ -91,7 +93,7 @@ class MatchingSolverWrapper(MatchingSolver):
             self.solution = solution
             self.objective = objective
             if not waiting_solutionID:
-              self.contract.createSolution(self.account)
+              self.contract.createSolution(self.account, self.solverID)
               waiting_solutionID = True
             logging.info("Done (objective = {}), trades will be submitted once a solution is created in the contract.".format(objective))
           else:
@@ -117,6 +119,7 @@ if __name__ == "__main__":
     ip = sys.argv[1]
   if len(sys.argv) > 2:
     port = sys.argv[2]
-  solver = MatchingSolverWrapper(ip, port)
+  solverID = os.getpid()
+  solver = MatchingSolverWrapper(ip, port, solverID)
   solver.run()
 

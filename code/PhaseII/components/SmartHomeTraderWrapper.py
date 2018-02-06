@@ -25,13 +25,15 @@ class SmartHomeTraderWrapper:
     client = EthereumClient(ip=ip, port=port)
     self.account = client.accounts()[0] # use the first owned address
     self.contract = MatchingContract(client, contract_address)
+    logging.info("Registering with the smart contract...")
+    self.contract.registerProsumer(self.account, prosumer_id, PROSUMER_FEEDER[prosumer_id])
     super(SmartHomeTraderWrapper, self).__init__()
 
   def run(self):
     current_time = time()
     time_interval = int(current_time - self.epoch) // INTERVAL_LENGTH
     next_polling = current_time + POLLING_INTERVAL
-    next_prediction = self.epoch + (time_interval + 1) * INTERVAL_LENGTH - current_time
+    next_prediction = self.epoch + (time_interval + 1) * INTERVAL_LENGTH 
     # we stop after the END_INTERVAL
     while time_interval <= END_INTERVAL:
       current_time = time()

@@ -17,7 +17,7 @@ class Contract:
     return int(data[pos * 64 : (pos + 1) * 64], 16)
 
   def decode_int(data, pos):
-    uint = decode_uint(data, pos)
+    uint = Contract.decode_uint(data, pos)
     if uint > 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff:
       uint -= 0x10000000000000000000000000000000000000000000000000000000000000000
     return uint
