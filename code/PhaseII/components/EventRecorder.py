@@ -50,10 +50,11 @@ class EventRecorder():
           interval = params['time']
           power = params['power']
           interval_trades[finalized].append(power)
-        elif in_db == False and interval_trades[finalized]:
-          logging.info("All trades : {}".format(interval_trades[finalized]))
-          logging.info("Total Energy Traded: {}".format(sum(interval_trades[finalized])))
           self.dbase.log(finalized,"Solver", "TotalEnergyTraded", sum(interval_trades[finalized]))
+        elif in_db == False and interval_trades[finalized]:
+          #logging.info("All trades : {}".format(interval_trades[finalized]))
+          #logging.info("Total Energy Traded: {}".format(sum(interval_trades[finalized])))
+          #self.dbase.log(finalized,"Solver", "TotalEnergyTraded", sum(interval_trades[finalized]))
           in_db = True
 
       next_polling += POLLING_INTERVAL
