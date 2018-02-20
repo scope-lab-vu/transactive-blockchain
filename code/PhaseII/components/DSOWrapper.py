@@ -63,7 +63,6 @@ class DSOWrapper:
     self.contract = MatchingContract(self.client, self.contract_address)
     self.contract.setup(self.account, MICROGRID.C_ext, MICROGRID.C_int, START_INTERVAL)
     logging.info("Contract address: " + self.contract_address)
-
 if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
   ip = None

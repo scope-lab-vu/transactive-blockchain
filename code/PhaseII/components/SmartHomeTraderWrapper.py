@@ -10,9 +10,6 @@ from MatchingContract import MatchingContract
 from Grafana.config import Config
 from Grafana.dbase import Database
 
-
-
-
 POLLING_INTERVAL = 1 # seconds
 
 class SmartHomeTraderWrapper:
@@ -32,6 +29,7 @@ class SmartHomeTraderWrapper:
     self.contract = MatchingContract(client, contract_address)
     logging.info("Registering with the smart contract...")
     self.contract.registerProsumer(self.account, prosumer_id, PROSUMER_FEEDER[prosumer_id])
+
     logging.info("Registered with the smart contract...")
     self.dbase = Database()
     self.role = None
@@ -47,11 +45,13 @@ class SmartHomeTraderWrapper:
     time_interval = int(current_time - self.epoch) // INTERVAL_LENGTH
     logging.info("time_interval %s" %(time_interval))
     next_polling = current_time + POLLING_INTERVAL
+
     next_prediction = self.epoch + (time_interval + 1) * INTERVAL_LENGTH
     logging.info("next_prediction %s" %(next_prediction))
     next_actuation = next_prediction + 2*INTERVAL_LENGTH
     logging.info("next_actuation %s" %(next_actuation))
     interval_trades = {}
+
     # we stop after the END_INTERVAL
     while time_interval <= END_INTERVAL:
       current_time = time()
