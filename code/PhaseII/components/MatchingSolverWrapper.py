@@ -9,6 +9,11 @@ from MatchingSolver import MatchingSolver, Offer
 from EthereumClient import EthereumClient
 from MatchingContract import MatchingContract
 
+from influxdb import InfluxDBClient
+from influxdb.client import InfluxDBClientError
+from Grafana.config import Config
+import datetime
+
 POLLING_INTERVAL = 1 # seconds
 
 class MatchingSolverWrapper(MatchingSolver):
@@ -20,12 +25,20 @@ class MatchingSolverWrapper(MatchingSolver):
     logging.info("DSO connected ({}).".format(self.dso))
     self.query_contract_address()
     logging.info("Setting up connection to Ethereum client...")
-    client = EthereumClient(ip=ip, port=port) 
+    client = EthereumClient(ip=ip, port=port)
     self.account = client.accounts()[0] # use the first owned address
     logging.info("Creating contract object...")
     self.contract = MatchingContract(client, self.contract_address)
     self.objective = 0
     self.solution = None
+
+    self.db = InfluxDBClient(Config.INFLUX_DBASE_HOST,Config.INFLUX_DBASE_PORT,
+                                 Config.INFLUX_DBASE_USER,Config.INFLUX_DBASE_PASSWORD,
+                                 "solverDbase")
+    self.db.create_database(Config.INFLUX_DBASE_NAME)
+    self.db.switch_database(Config.INFLUX_DBASE_NAME)
+
+
     super(MatchingSolverWrapper, self).__init__(MICROGRID)
 
   def run(self):
@@ -88,7 +101,24 @@ class MatchingSolverWrapper(MatchingSolver):
         if new_offers:
           new_offers = False
           logging.info("Solving...")
-          (solution, objective) = self.solve(buying_offers, selling_offers, finalized=finalized) 
+
+          stopWatch = {"interval":finalized, "start":time(), "running" : 1}
+          (solution, objective) = self.solve(buying_offers, selling_offers, finalized=finalized)
+          stopWatch["split"] = time()-stopWatch["start"]
+
+          records = []
+          record = { "time":datetime.datetime.now(),
+                     "measurement" : "solveTime",
+                     "tags" : {"object" : "Solver1"},
+                     "fields" : {"value" : stopWatch["split"]},
+                     }
+          records.append(record)
+          res = self.db.write_points(records)
+
+          logging.info("Solve Time: %s, buy offers: %s, sell offers: %s, total: %s"
+            %(stopWatch["split"], len(buying_offers), len(selling_offers),
+            len(buying_offers)+len(selling_offers) ))
+
           if objective > self.objective:
             self.solution = solution
             self.objective = objective
@@ -99,7 +129,7 @@ class MatchingSolverWrapper(MatchingSolver):
           else:
             logging.info("No better solution found (objective = {}).".format(objective))
       sleep(max(min(next_polling, next_solving) - time(), 0))
-      
+
   def query_contract_address(self):
     msg = {
       'request': "query_contract_address"
@@ -122,4 +152,3 @@ if __name__ == "__main__":
   solverID = os.getpid()
   solver = MatchingSolverWrapper(ip, port, solverID)
   solver.run()
-

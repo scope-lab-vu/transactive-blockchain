@@ -33,6 +33,7 @@ class Database(object):
         self.client.create_database(Config.INFLUX_DBASE_NAME)
         self.client.switch_database(Config.INFLUX_DBASE_NAME)
         self.yesterday = yesterday = datetime.date.today() - datetime.timedelta(days=1)
+        #Yesterday at midnight
         self.yesterday0 = datetime.datetime.combine(self.yesterday, datetime.time.min)
 
     def log(self,interval, obj,seriesName,value):
@@ -57,7 +58,7 @@ class Database(object):
             records.append(record)
         self.logger.info("writing: %s" % str(records))
         res= self.client.write_points(records) # , retention_policy=self.retention_policy)
-        
+
         # print (res)
         # assert res
 

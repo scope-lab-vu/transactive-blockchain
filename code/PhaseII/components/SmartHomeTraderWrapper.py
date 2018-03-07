@@ -34,8 +34,10 @@ class SmartHomeTraderWrapper:
     self.dbase = Database()
     self.role = None
     self.roleID = 0
-    self.grid = zmq.Context().socket(zmq.PUB)
-    self.grid.bind('tcp://127.0.0.1:2000')
+    #self.grid = zmq.Context().socket(zmq.PUB)
+    #self.grid.bind('tcp://127.0.0.1:2000')
+    self.interval_asks = {}
+    self.interval_bids = {}
 
     super(SmartHomeTraderWrapper, self).__init__()
 
@@ -78,18 +80,19 @@ class SmartHomeTraderWrapper:
             finalized = params['time']
             power = params['power']
             interval_trades[finalized].append(power)
-            self.grid.send_pyobj({"interval" : finalized, "power": self.roleID*sum(interval_trades[finalized]), "INTERVAL_LENGTH" : INTERVAL_LENGTH, "time_stamp" : next_actuation})
-            self.dbase.log(finalized,self.role,self.prosumer_id,sum(interval_trades[finalized]))
-
+            #self.grid.send_pyobj({"interval" : finalized, "power": self.roleID*sum(interval_trades[finalized]), "INTERVAL_LENGTH" : INTERVAL_LENGTH, "time_stamp" : next_actuation})
+            self.dbase.log(finalized,self.role,self.role+'_'+str(self.prosumer_id),sum(interval_trades[finalized]))
+            self.dbase.log(finalized, self.prosumer_id, self.role, sum(interval_trades[finalized]))
 
       if current_time > next_prediction:
         self.post_offers(time_interval)
-        self.dbase.log(time_interval-3, "interval_now", self.prosumer_id, time_interval-3)
+        self.dbase.log(time_interval-2, "interval_now", self.role+'_'+str(self.prosumer_id), time_interval-2)
         time_interval += 1
-        self.dbase.log(time_interval, self.role, self.prosumer_id, 0)#trying to have a value posted to influx every interval.
+        self.dbase.log(time_interval, self.role, self.role+'_'+str(self.prosumer_id), 0)#trying to have a value posted to influx every interval.
+        self.dbase.log(time_interval, self.prosumer_id, self.role, 0)
         next_prediction += INTERVAL_LENGTH
         next_actuation += INTERVAL_LENGTH
-        self.grid.send_pyobj({"interval" : time_interval, "power": 0, "INTERVAL_LENGTH" : INTERVAL_LENGTH, "time_stamp" : next_actuation+INTERVAL_LENGTH})
+        #self.grid.send_pyobj({"interval" : time_interval, "power": 0, "INTERVAL_LENGTH" : INTERVAL_LENGTH, "time_stamp" : next_actuation+INTERVAL_LENGTH})
       sleep(max(min(next_prediction, next_polling) - time(), 0))
 
   def post_offers(self, time_interval):
@@ -104,11 +107,21 @@ class SmartHomeTraderWrapper:
           self.roleID = -1
           logging.info("postBuyingOffer({}, {}, {}, {})".format(self.prosumer_id, offer['start'], offer['end'], -offer['energy']))
           self.contract.postBuyingOffer(self.account, self.prosumer_id, offer['start'], offer['end'], -offer['energy'])
+          try:
+              self.interval_bids[offer['start']].append(offer['energy'])
+          except KeyError:
+              self.interval_bids[offer['start']] = [offer['energy']]
+          self.dbase.log(offer['start'], self.prosumer_id, "buying", sum(self.interval_bids[offer['start']]))
         else:
           self.role = "producer"
           self.roleID = 1
           logging.info("postSellingOffer({}, {}, {}, {})".format(self.prosumer_id, offer['start'], offer['end'], offer['energy']))
           self.contract.postSellingOffer(self.account, self.prosumer_id, offer['start'], offer['end'], offer['energy'])
+          try:
+              self.interval_asks[offer['start']].append(offer['energy'])
+          except KeyError:
+              self.interval_asks[offer['start']] = [offer['energy']]
+          self.dbase.log(offer['start'], self.prosumer_id, "selling", sum(self.interval_asks[offer['start']]))
       else: # offer in far future, post it later
         remaining_offers.append(offer)
     self.net_production = remaining_offers
