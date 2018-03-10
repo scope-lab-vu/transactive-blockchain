@@ -16,7 +16,7 @@ class Config(object):
     '''
 
     #grafana Setup
-    INFLUX_DBASE_HOST='192.168.10.108'
+    INFLUX_DBASE_HOST='localhost'
     INFLUX_DBASE_PORT=8086
     INFLUX_DBASE_USER='riaps'
     INFLUX_DBASE_PASSWORD = 'riaps'

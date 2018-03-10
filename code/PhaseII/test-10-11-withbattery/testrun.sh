@@ -8,5 +8,5 @@ echo PARENT $PARENT
 for i in `ls $DIR/all_data/ | cut -d '_' -f2 |tr -d "*.csv"`;
 do
 echo "launching prosumer $i"
-nohup python3 components/SmartHomeTraderWrapper.py $i 192.168.10.108 10000 > test-10-11-withbattery/prosumer$i.out 2>&1 &
+nohup python3 components/SmartHomeTraderWrapper.py $i localhost 10000 > test-10-11-withbattery/prosumer$i.out 2>&1 &
 done

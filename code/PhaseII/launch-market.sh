@@ -16,7 +16,7 @@
 # #/home/ubuntu/test-10-11-withbattery/testrun_tmux.sh
 # $DIR/test-10-11-withbattery/testrun.sh
 
-MINER=192.168.10.108
+MINER=localhost
 DIR=$(pwd)
 echo $DIR
 rm -rf logs/*
