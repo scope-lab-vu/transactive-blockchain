@@ -22,6 +22,10 @@ class Prosumer:
     client = EthereumClient(ip=ip, port=port)
     self.account = client.accounts()[0] # use the first owned address
     self.contract = ResourceAllocationContract(client, contract_address)
+    # offer management
+    self.next_offer = 0 # offer ID that is unique within prosumer
+    self.pending_offers = {} # between createOffer and OfferCreated
+    self.created_offers = {} # between updateOffer and OfferUpdated
     super(Prosumer, self).__init__()
 
   def run(self):
@@ -37,7 +41,22 @@ class Prosumer:
         for event in self.contract.poll_events():
           params = event['params']
           name = event['name']
+          if (name == "OfferCreated") and (params['prosumer'] == self.prosumer_id):
+            offer = self.pending_offers.pop(params['misc'])
+            self.created_offers[params['ID']] = offer
+            for res_type in offer['quantity']:
+              self.contract.updateOffer(self.account, params['ID'], res_type, offer['quantity'][res_type], offer['value'][res_type])
+          elif (name == "OfferUpdated") and (params['ID'] in self.created_offers):
+            offer = self.created_offers[params['ID']]
+            offer['quantity'].pop(params['resourceType'])
+            if not len(offer['quantity']):
+              self.contract.postOffer(self.account, params['ID'])
       sleep(max(next_polling - time(), 0))
+      
+  def post_offer(self, providing, quantity, value):
+    self.pending_offers[self.next_offer] = {'quantity': quantity, 'value': value}
+    self.contract.createOffer(self.account, providing, self.next_offer, self.prosumer_id)
+    self.next_offer += 1
   
   def query_contract_address(self):
     msg = {

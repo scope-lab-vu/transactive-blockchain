@@ -25,7 +25,7 @@ class ResourceAllocationContract(Contract):
       "uint64", misc,
       "uint64", prosumer)
 
-  def updateOffer(self, ID, resourceType, quantity, value):
+  def updateOffer(self, from_account, ID, resourceType, quantity, value):
     self.call_func(from_account, "updateOffer", 
       "uint64", ID, 
       "uint64", resourceType, 

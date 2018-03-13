@@ -29,9 +29,9 @@ class Solver(ResourceAllocationLP):
     super(Solver, self).__init__(PRECISION)
 
   def run(self):
-    offers = {}
-    cons_offers = []
-    prov_offers = []
+    offers = {} # between OfferCreated and OfferPosted
+    cons_offers = [] # after OfferPosted
+    prov_offers = [] # after OfferPosted
     new_offers = False
     waiting_solutionID = False
     logging.info("Entering main loop...")
