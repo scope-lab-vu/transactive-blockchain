@@ -7,6 +7,8 @@ from random import random
 from config import *
 from EthereumClient import EthereumClient
 from MatchingContract import MatchingContract
+from Grafana.config import Config
+from Grafana.dbase import Database
 
 POLLING_INTERVAL = 1 # seconds
 
@@ -27,13 +29,29 @@ class SmartHomeTraderWrapper:
     self.contract = MatchingContract(client, contract_address)
     logging.info("Registering with the smart contract...")
     self.contract.registerProsumer(self.account, prosumer_id, PROSUMER_FEEDER[prosumer_id])
+
+    logging.info("Registered with the smart contract...")
+    self.dbase = Database()
+    self.role = None
+    self.roleID = 0
+    self.grid = zmq.Context().socket(zmq.PUB)
+    self.grid.bind('tcp://127.0.0.1:2000')
+
     super(SmartHomeTraderWrapper, self).__init__()
 
   def run(self):
     current_time = time()
+    logging.info("current_time %s" %current_time)
     time_interval = int(current_time - self.epoch) // INTERVAL_LENGTH
+    logging.info("time_interval %s" %(time_interval))
     next_polling = current_time + POLLING_INTERVAL
-    next_prediction = self.epoch + (time_interval + 1) * INTERVAL_LENGTH 
+
+    next_prediction = self.epoch + (time_interval + 1) * INTERVAL_LENGTH
+    logging.info("next_prediction %s" %(next_prediction))
+    next_actuation = next_prediction + 2*INTERVAL_LENGTH
+    logging.info("next_actuation %s" %(next_actuation))
+    interval_trades = {}
+
     # we stop after the END_INTERVAL
     while time_interval <= END_INTERVAL:
       current_time = time()
@@ -49,14 +67,31 @@ class SmartHomeTraderWrapper:
           elif (name == "SellingOfferPosted") and (params['prosumer'] == self.prosumer_id):
             self.selling_offers.add(params['ID'])
             logging.info("{}({}).".format(name, params))
-          if (name == "TradeAdded") and ((params['sellerID'] in self.selling_offers) or (params['buyerID'] in self.buying_offers)):
+          elif (name == "TradeAdded") and ((params['sellerID'] in self.selling_offers) or (params['buyerID'] in self.buying_offers)):
             logging.info("{}({}).".format(name, params))
+          elif name == "Finalized":
+            finalized = params['interval']
+            logging.info("interval finalized : {}".format(finalized))
+            interval_trades[finalized] = []
+          elif (name == "TradeFinalized") and ((params['sellerID'] in self.selling_offers) or (params['buyerID'] in self.buying_offers)):
+            logging.info("{}({}).".format(name, params))
+            finalized = params['time']
+            power = params['power']
+            interval_trades[finalized].append(power)
+            self.grid.send_pyobj({"interval" : finalized, "power": self.roleID*sum(interval_trades[finalized]), "INTERVAL_LENGTH" : INTERVAL_LENGTH, "time_stamp" : next_actuation})
+            self.dbase.log(finalized,self.role,self.prosumer_id,sum(interval_trades[finalized]))
+
+
       if current_time > next_prediction:
         self.post_offers(time_interval)
+        self.dbase.log(time_interval-3, "interval_now", self.prosumer_id, time_interval-3)
         time_interval += 1
+        self.dbase.log(time_interval, self.role, self.prosumer_id, 0)#trying to have a value posted to influx every interval.
         next_prediction += INTERVAL_LENGTH
+        next_actuation += INTERVAL_LENGTH
+        self.grid.send_pyobj({"interval" : time_interval, "power": 0, "INTERVAL_LENGTH" : INTERVAL_LENGTH, "time_stamp" : next_actuation+INTERVAL_LENGTH})
       sleep(max(min(next_prediction, next_polling) - time(), 0))
-    
+
   def post_offers(self, time_interval):
     remaining_offers = []
     logging.info("Posting offers for interval {}...".format(time_interval))
@@ -65,16 +100,20 @@ class SmartHomeTraderWrapper:
         pass
       elif offer['start'] <= time_interval + PREDICTION_WINDOW: # offer in near future, post it
         if offer['energy'] < 0:
+          self.role = "consumer"
+          self.roleID = -1
           logging.info("postBuyingOffer({}, {}, {}, {})".format(self.prosumer_id, offer['start'], offer['end'], -offer['energy']))
           self.contract.postBuyingOffer(self.account, self.prosumer_id, offer['start'], offer['end'], -offer['energy'])
         else:
+          self.role = "producer"
+          self.roleID = 1
           logging.info("postSellingOffer({}, {}, {}, {})".format(self.prosumer_id, offer['start'], offer['end'], offer['energy']))
           self.contract.postSellingOffer(self.account, self.prosumer_id, offer['start'], offer['end'], offer['energy'])
       else: # offer in far future, post it later
         remaining_offers.append(offer)
     self.net_production = remaining_offers
     logging.info("Offers posted.")
-  
+
   def query_contract_address(self):
     msg = {
       'request': "query_contract_address"
@@ -83,6 +122,7 @@ class SmartHomeTraderWrapper:
     self.dso.send_pyobj(msg)
     response = self.dso.recv_pyobj()
     self.epoch = time() - response['time']
+    logging.info("epoch %s" %self.epoch)
     contract_address = response['contract']
     logging.info("Contract address: " + contract_address)
     return contract_address
@@ -98,14 +138,14 @@ def read_data(prosumer_id):
       try:
         fields = line.split(',')
         data.append({
-          'start': int(fields[0]), 
+          'start': int(fields[0]),
           'end': int(fields[1]),
           'energy': int(1000 * float(fields[2]))
         })
       except Exception:
         pass
     if not len(data):
-      raise Exception("No values found in data file!") 
+      raise Exception("No values found in data file!")
     logging.info("Read {} values.".format(len(data)))
     return data
 
@@ -122,7 +162,7 @@ if __name__ == "__main__":
   port = None
   if len(sys.argv) > 1:
     prosumer_id = int(sys.argv[1])
-    if prosumer_id < 101: 
+    if prosumer_id < 101:
       raise Exception("Format of prosumer identifier is FPP, where F and PP are the number of feeder and prosumer, respectively.")
   if len(sys.argv) > 2:
     ip = sys.argv[2]
@@ -130,7 +170,5 @@ if __name__ == "__main__":
     port = sys.argv[3]
   logging.basicConfig(format='%(asctime)s / prosumer {} / %(levelname)s: %(message)s'.format(prosumer_id), level=logging.INFO)
   data = read_data(prosumer_id)
-  trader = SmartHomeTraderWrapper(prosumer_id, data, ip, port) 
+  trader = SmartHomeTraderWrapper(prosumer_id, data, ip, port)
   trader.run()
-
-    
