@@ -238,7 +238,7 @@ def connectMinerClients(jsonFile,verbose=False):
     for host in minerHostAllocation:
         verboseResults += "\nresults: "
         # for each miner on each host
-        for minerNum in minerHostAllocation[host]:
+        for minerNum in range(1, int(minerHostAllocation[host])):
             # for each 'client' enode that is being paired with each host/minerNum(port) pair.
             for enode in data['enodes']:
 #                print enode + "\n"
