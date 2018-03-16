@@ -231,13 +231,15 @@ def connectMinerClients(jsonFile,verbose=False):
         print data
 
     configurationName , configurationVersion, minerHostAllocation, clientStartPort, networkId = getMinerJsonValues(jsonFile,verbose)
+    print "minerHostAllocation" 
+    print minerHostAllocation
 
     for host in minerHostAllocation:
         verboseResults += "\nresults: "
 
         for enode in data['enodes']:
 #            print enode + "\n"
-            results = check_output(["./test/pycurlAddPeer.py", str(host), str(minerHostAllocation[host]+int(clientStartPort)+2000-1), str(enode) ])
+            results = check_output(["./test/pycurlAddPeer.py", str(host), str(minerHostAllocation[host]+int(clientStartPort)+3000-1), str(enode) ])
             verboseResults += "\n" + str(results)
     if verbose:
         print verboseResults
@@ -252,7 +254,7 @@ def startMinerClients(jsonFile,verbose=False):
     verboseResults = ""
 
     # make variable to hold current Port to use for clients
-    currentProsumerRpcPort = int(clientStartPort) + 2000
+    currentProsumerRpcPort = int(clientStartPort) + 3000
 
     verboseResults = "prosumer port start = " + str(currentProsumerRpcPort)
 

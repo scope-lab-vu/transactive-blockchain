@@ -29,9 +29,6 @@ rm -f ./genesis-data.json
 #create start-timestamp
 timestamp
 
-OUT=../miner/tmp/
-mkdir --path $OUT
-
 #### create bootnodes and store them as 'static-nodes.json' for each etherium client connecting to them.
 # Uncomment this line if you wish to use bootnodes as Ethereum client discovery mechanism
 #./network-manager.py bootnodes create --file $1 --out=./static-nodes.json
@@ -47,7 +44,7 @@ mkdir --path $OUT
 
 
 #### make new blockchain from genesis-data created above, store in ./new-blockchain  directory
-./network-manager.py blockchains create --file genesis-data.json --datadir $OUT/new-blockchain/
+./network-manager.py blockchains create --file genesis-data.json --datadir ./new-blockchain/
 
 #### distribute static-nodes.json to each prosumer and each miner client
 # Uncomment these 2 lines if you wish to use bootnodes as Ethereum client discovery mechanism

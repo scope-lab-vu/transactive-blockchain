@@ -21,7 +21,7 @@
 
 # Gets the enode of each client, & adds each client as a peer of each miner
 # This creates a star-graph from each miner to each prosumer/dso.
-./network-manager.py miners connect --file $1
+./network-manager.py miners connect --file $1 --verbose
 
 ## Network is now running and connected
 

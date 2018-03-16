@@ -153,7 +153,7 @@ def startClients(numberOfClients,
                 mineThreads=1,
                 etherbase='0x0000000000000000000000000000000000000000',
                 overrideCommand='',
-                netrestrict='10.4.0.0/16'):
+                netrestrict='127.0.0.0/16'):
     fh = StringIO();
     result=''
     verboseResults = ''
@@ -161,6 +161,7 @@ def startClients(numberOfClients,
 
     port = int(startPort)
     for i in range(1,int(numberOfClients)+1):
+        fullDataDir = str(datadir) + "/" + str(i).rjust(5,'0')
         command = "geth --password ./password.txt"
         command += " --datadir " + str(datadir) + "/"  + str(i).rjust(5,'0')
         command += " --networkid " + str(network)
@@ -177,6 +178,8 @@ def startClients(numberOfClients,
         if isMiner == 'True':
             command += " --mine --minerthreads=" + str(mineThreads)  + " --etherbase=" + str(etherbase)
         name += str(i).rjust(5,'0')
+
+        command += ">" + fullDataDir + "/output.log" + " 2>&1"
 
         # run built command or 'overrideCommand'
         if overrideCommand <> '':
