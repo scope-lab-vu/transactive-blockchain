@@ -234,13 +234,16 @@ def connectMinerClients(jsonFile,verbose=False):
     print "minerHostAllocation" 
     print minerHostAllocation
 
+    # for each host
     for host in minerHostAllocation:
         verboseResults += "\nresults: "
-
-        for enode in data['enodes']:
-#            print enode + "\n"
-            results = check_output(["./test/pycurlAddPeer.py", str(host), str(minerHostAllocation[host]+int(clientStartPort)+3000-1), str(enode) ])
-            verboseResults += "\n" + str(results)
+        # for each miner on each host
+        for minerNum in minerHostAllocation[host]:
+            # for each 'client' enode that is being paired with each host/minerNum(port) pair.
+            for enode in data['enodes']:
+#                print enode + "\n"
+                results = check_output(["./test/pycurlAddPeer.py", str(host), str(minerNum+int(clientStartPort)+3000-1), str(enode) ])
+                verboseResults += "\n" + str(results)
     if verbose:
         print verboseResults
 
