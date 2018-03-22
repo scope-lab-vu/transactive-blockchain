@@ -23,8 +23,7 @@ rm -rf logs/*
 
 nohup python3 components/DSOWrapper.py $MINER 9000 > logs/DSO.out 2>&1 &
 sleep 5
-nohup python3 components/MatchingSolverWrapper.py $MINER 9001 > logs/Solver.out 2>&1 &
-nohup python3 components/MatchingSolverWrapper.py $MINER 9002 > logs/Solver2.out 2>&1 &
+nohup python3 components/MatchingSolverWrapper.py $MINER 9000 > logs/Solver.out 2>&1 &
 nohup python3 components/EventRecorder.py $MINER 9000 > logs/Recorder.out 2>&1 &
 
 #rm -rf $DIR/test-10-11-withbattery/prosumer*

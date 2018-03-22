@@ -35,6 +35,7 @@ class EventRecorder():
 
     interval_trades = {}
     solutions = collections.defaultdict(dict)
+    solution2solver ={}
     finalized = 0
     in_db = True
 
@@ -66,15 +67,24 @@ class EventRecorder():
             interval = params['time']
             ID = params['solutionID']
             pwr =  params['power']
-            if ID < 10 :
+            solverID = solution2solver[ID]
+            if int(ID) < 10 :
+                ID = "0"+str(ID)
+            if int(ID) < 100 :
                 ID = "0"+str(ID)
             try:
                 solutions[ID][interval] += pwr
             except KeyError:
                 solutions[ID][interval] = pwr
             #TradeAdded({'solutionID': 63, 'power': 400, 'time': 93, 'objective': 400, 'buyerID': 65, 'sellerID': 27}).
-            self.dbase.log(interval, ID, "Solutions",  solutions[ID][interval])
+            logging.info("TradeAdded : interval:{}, Solver:{}, SolutionID:{}, pwr:{}".format(interval,solverID,ID,solutions[ID][interval]))
+            self.dbase.log(interval, "solution"+str(ID), "Solver"+str(solverID),  solutions[ID][interval])
             logging.info("{}({}).".format(name, params))
+        elif (name == "SolutionCreated"):
+            solverID = params['solverID']
+            solutionID = params['solutionID']
+            solution2solver[solutionID] = solverID
+            logging.info("SolutionCreated Solver:{} Solution:{}".format(solverID, solutionID))
         elif in_db == False and interval_trades[finalized]:
           #logging.info("All trades : {}".format(interval_trades[finalized]))
           #logging.info("Total Energy Traded: {}".format(sum(interval_trades[finalized])))

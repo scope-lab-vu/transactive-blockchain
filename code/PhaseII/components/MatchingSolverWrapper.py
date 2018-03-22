@@ -19,6 +19,7 @@ POLLING_INTERVAL = 1 # seconds
 class MatchingSolverWrapper(MatchingSolver):
   def __init__(self, ip, port, solverID):
     self.solverID = solverID
+    print("solverID %s" %self.solverID)
     logging.info("Connecting to DSO...")
     self.dso = zmq.Context().socket(zmq.REQ)
     self.dso.connect(DSO_ADDRESS)
@@ -109,7 +110,7 @@ class MatchingSolverWrapper(MatchingSolver):
           records = []
           record = { "time":datetime.datetime.now(),
                      "measurement" : "solveTime",
-                     "tags" : {"object" : "Solver1"},
+                     "tags" : {"object" : "Solver_"+str(self.solverID)},
                      "fields" : {"value" : stopWatch["split"]},
                      }
           records.append(record)

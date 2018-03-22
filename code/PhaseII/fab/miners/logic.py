@@ -231,17 +231,18 @@ def connectMinerClients(jsonFile,verbose=False):
         print data
 
     configurationName , configurationVersion, minerHostAllocation, clientStartPort, networkId = getMinerJsonValues(jsonFile,verbose)
-    print "minerHostAllocation" 
+    print "minerHostAllocation"
     print minerHostAllocation
 
     # for each host
     for host in minerHostAllocation:
         verboseResults += "\nresults: "
         # for each miner on each host
-        for minerNum in range(1, int(minerHostAllocation[host])):
+        for minerNum in range(1, int(minerHostAllocation[host])+1):
             # for each 'client' enode that is being paired with each host/minerNum(port) pair.
             for enode in data['enodes']:
-#                print enode + "\n"
+                #print enode + "\n"
+                print "host: " + str(host) +", minerNum: " + str(minerNum)  +", enode: " + str(enode)
                 results = check_output(["./test/pycurlAddPeer.py", str(host), str(minerNum+int(clientStartPort)+3000-1), str(enode) ])
                 verboseResults += "\n" + str(results)
     if verbose:
@@ -481,5 +482,3 @@ def getEnode(ip,port):
 #    results = check_output(["./test/pycurlUpgraded.py", "10.4.209.29", "9009" ]).rstrip()
 #    data = json.loads(results.replace("\'", "\""))
 #    print str(data['enode'].split('?')[0]).replace("[::]","10.4.209.29")
-
-

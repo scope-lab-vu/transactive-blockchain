@@ -9,7 +9,7 @@
     "clients": {
         "startPort": 9000,
         "prosumer": {
-            "count": 3,
+            "count": 1,
             "protocol": "rpc",
             "hosts": [
                 "127.0.0.1"
@@ -23,7 +23,7 @@
             ]
         },
         "miner": {
-            "count": 2,
+            "count": 1,
             "protocol": "rpc",
             "hosts": [
                 "127.0.0.1"
