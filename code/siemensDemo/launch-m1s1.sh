@@ -44,4 +44,4 @@ sleep 10s #Wait for Market to connect so they can get events
 # Start prosumers
 $DIR/test-10-11-withbattery/testrun_tmux.sh
 
-tmux -t attach prosumer101.0
+tmux attach -t prosumer101.0
