@@ -6,6 +6,7 @@ import pandas as pd
 # opal rt simualtion.
 
 PATH=os.getcwd()+"/all_data/"
+PATH2=os.getcwd()
 producers = 0
 production = 0
 consumers = 0
@@ -33,5 +34,6 @@ print(producers)
 print(consumption)
 print(consumers)
 
-        #print(df)
-        #df.to_csv(PATH2+filename, index=False)
+filename = "output.csv"
+print(df)
+df.to_csv(filename, index=False)
