@@ -5,3 +5,5 @@ docs/**/*.bbl
 docs/**/*.blg
 docs/**/*.log
 docs/**/*.out
+*.out
+*.pyc
