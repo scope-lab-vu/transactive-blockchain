@@ -33,7 +33,7 @@ xterm -geometry 93x31+${x[i]}+${y[i]} -hold -e tmux new -s Solver &
 tmux new -d -s Solver2
 i=3
 xterm -geometry 93x31+${x[i]}+${y[i]} -hold -e tmux new -s Recorder &
-sleep 1 #wait for tmux to start
+sleep 5 #wait for tmux to start
 
 # Start market
 tmux send -t Miner1.0 "tail -f ~/ethereum/test_network_002_1/miners/00001/output.log" ENTER
