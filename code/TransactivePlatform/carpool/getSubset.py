@@ -21,8 +21,8 @@ print(work_flows_Davidson_df)
 print(work_flows_Davidson_df.shape)
 #-----------------------------------------------------
 
-
-# departure time
+# NEED TO GENERATE : 
+# departure time interval
 # providing (true/false)
 # seats available/required
 # value = 0
