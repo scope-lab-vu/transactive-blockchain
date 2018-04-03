@@ -20,7 +20,7 @@ class Solver(ResourceAllocationLP):
     logging.info("Directory connected ({}).".format(self.directory))
     self.query_contract_address()
     logging.info("Setting up connection to Ethereum client...")
-    client = EthereumClient(ip=ip, port=port) 
+    client = EthereumClient(ip=ip, port=port)
     self.account = client.accounts()[0] # use the first owned address
     logging.info("Creating contract object...")
     self.contract = ResourceAllocationContract(client, self.contract_address)
@@ -46,11 +46,11 @@ class Solver(ResourceAllocationLP):
         for event in self.contract.poll_events():
           params = event['params']
           name = event['name']
-          if name == "OfferCreated":  
+          if name == "OfferCreated":
             logging.info("{}({}).".format(name, params))
             offers[params['ID']] = Offer(params['ID'], params['providing'], params['prosumer'])
           elif name == "OfferUpdated":
-            logging.info("{}({}).".format(name, params))  
+            logging.info("{}({}).".format(name, params))
             offer = offers[params['ID']]
             res_type = params['resourceType']
             offer.quantity[res_type] = params['quantity']
@@ -70,7 +70,7 @@ class Solver(ResourceAllocationLP):
               logging.info("Solution {} created by contract, adding assignments...".format(solutionID))
               assignments = [assign for assign in self.solution if int(assign['q']) > 0]
               for assign in assignments:
-                self.contract.addAssignment(self.account, solutionID, 
+                self.contract.addAssignment(self.account, solutionID,
                   assign['po'].ID, assign['co'].ID, assign['t'], int(assign['q']), assign['co'].value[assign['t']])
               logging.info("{} assignments have been submitted to the contract.".format(len(assignments)))
             else:
@@ -80,7 +80,7 @@ class Solver(ResourceAllocationLP):
         if new_offers:
           new_offers = False
           logging.info("Solving...")
-          (solution, objective) = self.solve(prov_offers, cons_offers) 
+          (solution, objective) = self.solve(prov_offers, cons_offers)
           if objective > self.objective:
             self.solution = solution
             self.objective = objective
@@ -91,14 +91,14 @@ class Solver(ResourceAllocationLP):
           else:
             logging.info("No better solution found (objective = {}).".format(objective))
       sleep(max(min(next_polling, next_solving) - time(), 0))
-      
+
   def query_contract_address(self):
     msg = {
       'request': "query_contract_address"
     }
     logging.info(msg)
-    self.dso.send_pyobj(msg)
-    response = self.dso.recv_pyobj()
+    self.directory.send_pyobj(msg)
+    response = self.directory.recv_pyobj()
     self.contract_address = response['contract']
     logging.info("Contract address: " + self.contract_address)
 
@@ -113,4 +113,3 @@ if __name__ == "__main__":
   solverID = os.getpid()
   solver = Solver(ip, port, solverID)
   solver.run()
-
