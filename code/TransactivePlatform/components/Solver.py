@@ -46,23 +46,27 @@ class Solver(ResourceAllocationLP):
         for event in self.contract.poll_events():
           params = event['params']
           name = event['name']
+          logging.info("{}({}).".format(name, params))
           if name == "OfferCreated":
-            logging.info("{}({}).".format(name, params))
             offers[params['ID']] = Offer(params['ID'], params['providing'], params['prosumer'])
           elif name == "OfferUpdated":
-            logging.info("{}({}).".format(name, params))
             offer = offers[params['ID']]
             res_type = params['resourceType']
             offer.quantity[res_type] = params['quantity']
             offer.value[res_type] = params['value']
           elif name == "OfferPosted":
-            logging.info("{}({}).".format(name, params))
             new_offers = True
             offer = offers[params['ID']]
             if offer.providing:
               prov_offers.append(offer)
             else:
               cons_offers.append(offer)
+          elif name == "OfferCanceled":
+            offer = offers[params['ID']]
+            if offer.providing:
+              prov_offers.remove(offer)
+            else:
+              cons_offers.remove(offer)
           elif (name == "SolutionCreated") and (params['misc'] == self.solverID):
             waiting_solutionID = False
             solutionID = params['solutionID']

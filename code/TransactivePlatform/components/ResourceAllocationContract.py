@@ -8,6 +8,7 @@ class ResourceAllocationContract(Contract):
       "OfferCreated(uint64 ID, bool providing, uint64 misc, uint64 prosumer)",
       "OfferUpdated(uint64 ID, uint64 resourceType, uint64 quantity, uint64 value)",
       "OfferPosted(uint64 ID)",
+      "OfferCanceled(uint64 ID)",
       "SolutionCreated(uint64 ID, uint64 misc)",
       "AssignmentAdded(uint64 ID, uint64 providingOfferID, uint64 consumingOfferID, uint64 resourceType, uint64 quantity, uint64 value, uint64 objective)",
       "AssignmentFinalized(uint64 providingOfferID, uint64 consumingOfferID, uint64 resourceType, uint64 quantity, uint64 value)"
@@ -46,7 +47,11 @@ class ResourceAllocationContract(Contract):
   def postOffer(self, from_account, ID):
     print("ID %s : %s" %(ID, Contract.encode_uint(ID)))
     print("POST OFFER")
-    self.call_func(from_account, "postSellingOffer",
+    self.call_func(from_account, "postOffer",
+      "uint64", ID)
+
+  def cancelOffer(self, from_account, ID):
+    self.call_func(from_account, "cancelOffer",
       "uint64", ID)
 
   def createSolution(self, from_account, misc):

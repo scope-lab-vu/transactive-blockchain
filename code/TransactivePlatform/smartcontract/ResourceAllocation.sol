@@ -24,6 +24,7 @@ contract ResourceAllocation {
     event OfferCreated(uint64 ID, bool providing, uint64 misc, uint64 prosumer);
     event OfferUpdated(uint64 ID, uint64 resourceType, uint64 quantity, uint64 value);
     event OfferPosted(uint64 ID);
+    event OfferCanceled(uint64 ID);
     
     function createOffer(bool providing, uint64 misc, uint64 prosumer) public {
         offers.push(Offer({
@@ -55,6 +56,15 @@ contract ResourceAllocation {
         offers[ID].posted = true;
         
         emit OfferPosted(ID);
+    }
+    
+    function cancelOffer(uint64 ID) public {
+        require(ID < offers.length);
+        require(offers[ID].posted);
+        
+        offers[ID].posted = false;
+        
+        emit OfferCanceled(ID);
     }
     
     struct Assignment {
