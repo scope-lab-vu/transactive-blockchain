@@ -8,10 +8,11 @@ import os
 import pymongo
 import random
 
-from sklearn.cluster import DBSCAN
+from sklearn.cluster import DBSCAN, KMeans
 from geopy.distance import great_circle
 import numpy as np
 from shapely.geometry import MultiPoint
+import matplotlib.pyplot as plt
 
 geo_db = pymongo.MongoClient().geo
 #----DROP OLD COPY------
@@ -90,9 +91,12 @@ else:
 #---- Generate pick up points---------------------------------------------------
 #http://geoffboeing.com/2014/08/clustering-to-reduce-spatial-data-set-size/
 coords = df.as_matrix(columns=['from_lat', 'from_lng'])
+print("coords")
+print(np.radians(coords))
 kms_per_radian = 6371.0088
-epsilon = 1.5 / kms_per_radian
-db = DBSCAN(eps=epsilon, min_samples=4, algorithm='ball_tree', metric='haversine').fit(np.radians(coords))
+epsilon = .7 / kms_per_radian
+#db = DBSCAN(eps=epsilon, min_samples=3, algorithm='ball_tree', metric='haversine').fit(np.radians(coords))
+db = KMeans(n_clusters=100).fit(np.radians(coords))
 cluster_labels = db.labels_
 num_clusters = len(set(cluster_labels))-1
 clusters = pd.Series([coords[cluster_labels == n] for n in range(num_clusters)])
@@ -102,6 +106,19 @@ centermost_points = clusters.map(get_centermost_point)
 lats, lons = zip(*centermost_points)
 rep_points = pd.DataFrame({'lon':lons, 'lat':lats})
 print("rep_points \n%s" %rep_points)
+#rs = rep_points.apply(lambda row: df[(df['lat']==row['lat']) and (df['lon']==row['lon'])].iloc[0], axis=1)
+rs = rep_points
+
+fig, ax = plt.subplots(figsize=[10, 6])
+rs_scatter = ax.scatter(rs['lon'], rs['lat'], c='#99cc99', edgecolor='None', alpha=0.7, s=300)
+df_scatter = ax.scatter(df['from_lng'], df['from_lat'], c='k', alpha=0.9, s=3)
+ax.set_title('Full data set vs DBSCAN reduced set')
+ax.set_xlabel('Longitude')
+ax.set_ylabel('Latitude')
+#ax.legend([df_scatter, rs_scatter], ['Full set', 'Reduced set'], loc='upper right')
+plt.show()
+
+#-----------------------------------------------------------------------------
 ix = 0
 for point in rep_points.to_dict('records'):
     # print(point)

@@ -1,10 +1,10 @@
 import datetime
 import sys
 import random
+import pprint
 import logging
 logging.basicConfig(level=logging.INFO)
-from math import cos, asin, sqrt, floor
-import pprint
+from math import cos, asin, sqrt, floor, atan2, sin
 import pymongo
 import pandas as pd
 from Prosumer import Prosumer
@@ -21,11 +21,11 @@ class Carpooler(Prosumer):
         self.providing = 0
         self.earliest = 0
         self.latest = 0
-        self.pud = 1000
         self.srclat = srclat
         self.srclng = srclng
         self.dstlat = dstlat
         self.dstlng = dstlng
+        self.pud = 1000
         self.dst = str(dstlat) +","+str(dstlng)
         self.departure_times = []
         #self.randomSetup()
@@ -53,7 +53,7 @@ class Carpooler(Prosumer):
                     key = int(str(pup_id)+str(t)+str(self.dst_id))
                     #print("Key : %s" %key)
                     self.quantity[key] = self.seats
-                    self.value[key] = floor(pup_dist+dest_dist-self.directDist)
+                    self.value[key] = floor(pup_dist+dest_dist)
             #pprint.pprint(self.quantity)
             #pprint.pprint(self.value)
             bid = (self.providing, self.quantity, self.value)
@@ -72,12 +72,6 @@ class Carpooler(Prosumer):
             self.seats = 2
         else:
             self.seats = 3
-        #--Randomly assign provider state
-        rnd = random.random()
-        if rnd <= .1:
-            self.providing = True
-        else:
-            self.providing = False
         #--Randomly assign departure interval--
         today = datetime.datetime.combine(datetime.date.today(),datetime.time(hour=7))
         for i in range(9):
@@ -93,16 +87,49 @@ class Carpooler(Prosumer):
 
         self.directDist = self.distance(float(self.srclat), float(self.srclng), float(self.dstlat), float(self.dstlng))
         self.logger.info("Direct Distance : %s" %self.directDist)
-
+        self.mid = self.midpoint(float(self.srclat), float(self.srclng), float(self.dstlat), float(self.dstlng))
+        self.pud = self.directDist*.6
+        #self.pud = random.randint(1, floor(self.directDist))
+        #----Randomly assign provider state------------------------------------
+        rnd = random.random()
+        if rnd <= .5:
+            self.providing = True
+            self.pups = list(self.getPickups(self.pud, self.mid[0],self.mid[1]))
+        else:
+            self.providing = False
+            self.pups = list(self.getPickups(self.pud, self.srclat, srclng))
+        print("mid.pups: %s" %list(self.getPickups(self.pud, self.mid[0],self.mid[1])))
+        print("home.pups: %s" %list(self.getPickups(self.pud, self.srclat, srclng)))
 
     #----Distance-------------------------------------------------------------------
     # https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
 
     def distance(self, lat1, lon1, lat2, lon2):
         '''Distance in km'''
-        p = 0.017453292519943295     #Pi/180
+        p = 0.017453292519943295     #Pi/180 degrees to radians
         a = 0.5 - cos((lat2 - lat1) * p)/2 + cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2
         return 12742 * asin(sqrt(a)) #2*R*asin...
+
+    def midpoint(self, lat1, lon1, lat2, lon2):
+        p = 0.017453292519943295 #Pi/180 degrees to radians
+        #lat/lon for lati­tude/longi­tude in degrees, and φ/λ for lati­tude/longi­tude
+        rlat1 = lat1*p
+        rlat2 = lat2*p
+        rlon1 = lon1*p
+        drlat = (lat2-lat1)*p;
+        drlon = (lon2-lon1)*p
+        Bx = cos(rlat2) * cos(drlon)
+        By = cos(rlat2) * sin(drlon)
+        rlat3 = atan2(sin(rlat1) + sin(rlat2),
+                      sqrt( (cos(rlat1)+Bx) * (cos(rlat1)+Bx) + By*By ))
+        rlon3 = rlon1 + atan2(By, cos(rlat1)+Bx)
+        lat3 = rlat3/p
+        lon3 = rlon3/p
+        print ("lat1: %s lon1: %s" %(lat1,lon1))
+        print ("lat3: %s lon3: %s" %(lat3,lon3))
+        print ("lat2: %s lon2: %s" %(lat2,lon2))
+        return [lat3,lon3]
+
     #-------------------------------------------------------------------------------
 
     def getPickups(self, pud, lat, lng):
@@ -132,10 +159,10 @@ if __name__ == "__main__":
     trips = (pd.read_csv(trip_file)).round(6)
     my_trip = trips.loc[trips['ID'] == prosumer_id]
     #print("my trip \n%s" %my_trip)
-    srclat = my_trip.loc[1,'from_lat']
-    srclng = my_trip.loc[1,'from_lng']
-    dstlat = my_trip.loc[1,'to_lat']
-    dstlng = my_trip.loc[1,'to_lng']
+    srclat = my_trip.loc[prosumer_id,'from_lat']
+    srclng = my_trip.loc[prosumer_id,'from_lng']
+    dstlat = my_trip.loc[prosumer_id,'to_lat']
+    dstlng = my_trip.loc[prosumer_id,'to_lng']
 
     CP = Carpooler(srclat,srclng,dstlat,dstlng)
     #pprint.pprint("all dst: %s" %list(CP.geo_db.Dests.find({})))
@@ -145,10 +172,10 @@ if __name__ == "__main__":
     CP.dst_id = dst[0]['location']['dstID']
 
     #print("pups: %s" %list(CP.geo_db.Pickups.find({})))
-    pups = list(CP.getPickups(10, srclat, srclng))
-    pprint.pprint(pups)
+    # pups = list(CP.getPickups(self.pud, self.srclat, srclng))
+    # pups = list(CP.getPickups(self.pud, self.mid[0],self.mid[1
     CP.randomSetup()
-    bid = CP.bidBuilder(pups)
+    bid = CP.bidBuilder(CP.pups)
     print(type(bid))
     if bid:
         pprint.pprint(bid)
@@ -157,4 +184,6 @@ if __name__ == "__main__":
         print("run")
         CP.run()
     else:
-        print("empty")
+        print("providing: %s, directDist: %s, Pickup distance %s"
+        %(CP.providing, CP.directDist, CP.pud))
+        sys.exit()
