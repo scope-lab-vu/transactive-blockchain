@@ -11,3 +11,4 @@ START_INTERVAL = 1;
 END_INTERVAL = 100;
 INTERVAL_LENGTH = 60;
 SOLVING_INTERVAL = 5;
+POLLING_INTERVAL = 1 # seconds Used in actor to determin how often to check for events

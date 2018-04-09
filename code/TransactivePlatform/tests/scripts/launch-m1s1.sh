@@ -31,7 +31,7 @@ tmux send -t miner.0 "cd $DIR/miner; pwd" ENTER
 tmux send -t miner.0 "pwd ; geth-linux-amd64/geth --datadir eth/  init genesis-data.json" ENTER
 tmux send -t miner.0 "geth-linux-amd64/geth account new --password password.txt --datadir eth/" ENTER
 sleep 5 #Wait for account address
-tmux send -t miner.0 "geth-linux-amd64/geth --datadir eth/ --rpc --rpcport $PORT --rpcaddr localhost --nodiscover --rpcapi "eth,web3,admin,miner,net,db" --password password.txt --unlock 0 --networkid 15 --mine | tee miner.out" ENTER
+tmux send -t miner.0 "geth-linux-amd64/geth --datadir eth/ --rpc --rpcport $PORT --rpcaddr localhost --nodiscover --rpcapi "eth,web3,admin,miner,net,db" --password password.txt --verbosity 3 --unlock 0 --networkid 15 --mine | tee miner.out" ENTER
 
 # Start market
 read -p "Wait for at least 15 blocks to be mined. Then press enter to start Market"

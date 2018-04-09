@@ -9,6 +9,8 @@ import pymongo
 import pandas as pd
 from Prosumer import Prosumer
 METERS_PER_KM = 1000
+from time import time, sleep
+from config import *
 
 #class Carpooler(Prosumer.Prosumer):
 #    def __init__(self, srclat, srclng, dstlat, dstlng, prosumer_id, ip, port):
@@ -142,6 +144,41 @@ class Carpooler(Prosumer):
                                             "$maxDistance": pud * METERS_PER_KM } } })
         print("Pickups in %s KMs : %s " %(pud, near.count()))
         return(near)
+
+
+    def run(self):
+        current_time = time()
+        time_interval = int(current_time - self.epoch) // INTERVAL_LENGTH
+        self.logger.info("time_interval %s" %time_interval)
+        next_polling = current_time + POLLING_INTERVAL
+        # we stop after the END_INTERVAL
+        while time_interval <= END_INTERVAL:
+          current_time = time()
+          if current_time > next_polling:
+            #self.logger.debug("Polling events...")
+            next_polling = current_time + POLLING_INTERVAL
+            for event in self.contract.poll_events():
+              params = event['params']
+              name = event['name']
+              self.logger.info("{}({}).".format(name, params))
+              if (name == "OfferCreated") and (params['prosumer'] == self.prosumer_id):
+                self.logger.info("{}({}).".format(name, params))
+                offer = self.pending_offers.pop(params['misc'])
+                self.created_offers[params['ID']] = offer
+                for res_type in offer['quantity']:
+                  self.contract.updateOffer(self.account, params['ID'], res_type, offer['quantity'][res_type], offer['value'][res_type])
+              elif (name == "OfferUpdated") and (params['ID'] in self.created_offers):
+                self.logger.info("{}({}).".format(name, params))
+                offer = self.created_offers[params['ID']]
+                offer['quantity'].pop(params['resourceType'])
+                if not len(offer['quantity']):
+                  self.contract.postOffer(self.account, params['ID'])
+              elif (name == "OfferPosted") and (params['ID'] in self.created_offers):
+                  self.logger.info("{}({}).".format(name, params))
+              elif (name == "AssignmentAdded") and (params['ID'] in self.created_offers):
+                  #AssignmentAdded(uint64 ID, uint64 providingOfferID, uint64 consumingOfferID, uint64 resourceType, uint64 quantity, uint64 value, uint64 objective);
+                  self.logger.info("{}({}).".format(name, params))
+          sleep(max(next_polling - time(), 0))
 
 
 if __name__ == "__main__":

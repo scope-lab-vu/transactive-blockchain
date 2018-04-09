@@ -64,12 +64,16 @@ class Solver(ResourceAllocationLP):
             else:
               cons_offers.append(offer)
           elif (name == "SolutionCreated") and (params['misc'] == self.solverID):
+            logging.info("{}({}).".format(name, params))
             waiting_solutionID = False
-            solutionID = params['solutionID']
+            solutionID = params['ID']
             if self.solution is not None:
               logging.info("Solution {} created by contract, adding assignments...".format(solutionID))
               assignments = [assign for assign in self.solution if int(assign['q']) > 0]
               for assign in assignments:
+                print("solutionID : POID : COID : T : Q : V")
+                print(solutionID,assign['po'].ID, assign['co'].ID, assign['t'],
+                             int(assign['q']), assign['co'].value[assign['t']])
                 self.contract.addAssignment(self.account, solutionID,
                   assign['po'].ID, assign['co'].ID, assign['t'], int(assign['q']), assign['co'].value[assign['t']])
               logging.info("{} assignments have been submitted to the contract.".format(len(assignments)))
