@@ -8,15 +8,28 @@ from config import *
 from EthereumClient import EthereumClient
 from ResourceAllocationContract import ResourceAllocationContract
 
-class Directory: 
+class Directory:
   def __init__(self, ip, port):
-    self.client = EthereumClient(ip=ip, port=port)    
+    self.client = EthereumClient(ip=ip, port=port)
     self.account = self.client.accounts()[0] # use the first owned address
     self.deploy_contract()
     super(Directory, self).__init__()
-      
+
+  def finalizer(self):
+    logging.info("Finalizer thread starting...")
+    next_interval = START_INTERVAL # must be in sync with the starting interval of the smart contract
+    next_finalization = time() + INTERVAL_LENGTH
+    while True:
+      sleep(next_finalization - time())
+      next_finalization += INTERVAL_LENGTH
+      logging.info("Finalizing interval {}".format(next_interval))
+      self.contract.finalize(self.account)
+      next_interval += 1
+
   def run(self):
     logging.info("Entering main function...")
+    thread = Thread(target=self.finalizer)
+    thread.start()
     client = zmq.Context().socket(zmq.REP)
     client.bind(DIRECTORY_ADDRESS)
     epoch = time() - START_INTERVAL * INTERVAL_LENGTH
@@ -29,7 +42,7 @@ class Directory:
       else:
         logging.error("Unknown request: " + msg['request'])
         client.send_pyobj("Unknown request!")
-      
+
   def deploy_contract(self):
     logging.info("Deploying contract...")
     # use command function because we need to get the contract address later
@@ -42,10 +55,10 @@ class Directory:
       if receipt is not None:
         self.contract_address = receipt['contractAddress']
         break
-    self.contract = ResourceAllocationContract(self.client, self.contract_address)  
+    self.contract = ResourceAllocationContract(self.client, self.contract_address)
     self.contract.setup(self.account, NUM_TYPES, PRECISION, MAX_QUANTITY)
-    logging.info("Contract address: " + self.contract_address)   
-    
+    logging.info("Contract address: " + self.contract_address)
+
 if __name__ == "__main__":
   logging.basicConfig(format='%(asctime)s / %(levelname)s: %(message)s', level=logging.INFO)
   ip = None
@@ -56,4 +69,3 @@ if __name__ == "__main__":
     port = sys.argv[2]
   directory = Directory(ip, port)
   directory.run()
-

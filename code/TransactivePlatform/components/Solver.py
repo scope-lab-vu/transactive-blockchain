@@ -78,6 +78,7 @@ class Solver(ResourceAllocationLP):
                 print("solutionID : POID : COID : T : Q : V")
                 print(solutionID,assign['po'].ID, assign['co'].ID, assign['t'],
                              int(assign['q']), assign['co'].value[assign['t']])
+                self.contract.check(self.account)
                 self.contract.addAssignment(self.account, solutionID,
                   assign['po'].ID, assign['co'].ID, assign['t'], int(assign['q']), assign['co'].value[assign['t']])
               logging.info("{} assignments have been submitted to the contract.".format(len(assignments)))
@@ -93,6 +94,9 @@ class Solver(ResourceAllocationLP):
             self.solution = solution
             self.objective = objective
             if not waiting_solutionID:
+              self.contract.checkcreateSolution(self.account)
+              self.contract.close(self.account)
+              self.contract.checkcreateSolution(self.account)
               self.contract.createSolution(self.account, self.solverID)
               waiting_solutionID = True
             logging.info("Done (objective = {}), assignments will be submitted once a solution is created in the contract.".format(objective))

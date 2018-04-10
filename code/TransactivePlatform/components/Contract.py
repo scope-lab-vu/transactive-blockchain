@@ -1,4 +1,6 @@
 import logging
+from binascii import unhexlify
+
 
 class Contract:
   def encode_address(address):
@@ -9,10 +11,10 @@ class Contract:
 
   def encode_int(value):
     return format(value & 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, "064x")
-    
+
   def encode_bool(value):
     return Contract.encode_uint(1 if value else 0)
- 
+
   def decode_address(data, pos):
     return "0x" + data[pos * 64 + 24 : (pos + 1) * 64]
 
@@ -24,7 +26,7 @@ class Contract:
     if uint > 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff:
       uint -= 0x10000000000000000000000000000000000000000000000000000000000000000
     return uint
-    
+
   def decode_bool(data, pos):
     uint = Contract.decode_uint(data, pos)
     if uint == 1:
@@ -32,7 +34,13 @@ class Contract:
     elif uint == 0:
       return False
     raise Exception("Unexpected boolean value {}".format(uint))
-    
+
+  def decode_string(data, pos):
+    n = 64
+    arrays = [data[i:i+n] for i in range(0, len(data), n)]
+    string = unhexlify(arrays[5].strip("0")).decode('utf-8')
+    return string
+
   def generate_topics(self, events):
     self.topics = {}
     for event in events:
@@ -48,15 +56,15 @@ class Contract:
       keccak256 = self.client.keccak256(signature)
       if not (keccak256.startswith("0x") and len(keccak256) == 66):
         raise Exception("Incorrect hash {} computed for signature {}!".format(keccak256, signature))
-      self.topics[keccak256] = topic 
-   
+      self.topics[keccak256] = topic
+
   def __init__(self, client, address, events):
     self.client = client # instance of EthereumClient
     self.address = address # Ethereum contract address
     self.filter_id = client.new_filter()
     self.func_hash = {}
     self.generate_topics(events)
-    
+
   def call_func(self, from_account, name, *args):
     # generate signature
     arg_types = []
@@ -85,10 +93,10 @@ class Contract:
         raise Exception("Unknown type {}!".format(arg_types[i]))
     # send transaction
     self.client.transaction(from_account, data, self.address)
-    
+
   def poll_events(self):
     log = self.client.get_filter_changes(self.filter_id)
-    events = [] 
+    events = []
     for item in log:
       if self.address == item['address']:
         if item['topics'][0] in self.topics:
@@ -106,8 +114,9 @@ class Contract:
               params[pname] = Contract.decode_address(data, data_pos)
             elif ptype == "bool":
               params[pname] = Contract.decode_bool(data, data_pos)
+            elif ptype == "string":
+              params[pname] = Contract.decode_string(data, data_pos)
             data_pos += 1
-          event['params'] = params 
-          events.append(event)        
+          event['params'] = params
+          events.append(event)
     return events
-

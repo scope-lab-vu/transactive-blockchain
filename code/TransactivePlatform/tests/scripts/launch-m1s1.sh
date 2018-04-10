@@ -14,7 +14,7 @@ pkill python3
 pkill geth
 pkill tmux
 pkill xterm
-#influx -execute 'drop database EnergyMarket'
+influx -execute 'drop database CarpoolMarket'
 rm -rf $DIR/miner/eth
 
 #start TMUX

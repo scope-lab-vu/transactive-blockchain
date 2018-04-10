@@ -12,6 +12,9 @@ METERS_PER_KM = 1000
 from time import time, sleep
 from config import *
 
+from Grafana.config import Config
+from Grafana.dbase import Database
+
 #class Carpooler(Prosumer.Prosumer):
 #    def __init__(self, srclat, srclng, dstlat, dstlng, prosumer_id, ip, port):
 class Carpooler(Prosumer):
@@ -30,6 +33,7 @@ class Carpooler(Prosumer):
         self.pud = 1000
         self.dst = str(dstlat) +","+str(dstlng)
         self.departure_times = []
+        self.dbase = Database()
         #self.randomSetup()
         super(Carpooler, self).__init__(prosumer_id, ip, port)
 
@@ -52,7 +56,7 @@ class Carpooler(Prosumer):
                     # print(t)
                     # print(time.strftime("%d/%m/%Y %H:%M"))
                     # print(self.dst_id)
-                    key = int(str(pup_id)+str(t)+str(self.dst_id))
+                    key = int(str(t)+str(pup_id)+str(self.dst_id))
                     #print("Key : %s" %key)
                     self.quantity[key] = self.seats
                     self.value[key] = floor(pup_dist+dest_dist)
@@ -160,8 +164,10 @@ class Carpooler(Prosumer):
             for event in self.contract.poll_events():
               params = event['params']
               name = event['name']
-              self.logger.info("{}({}).".format(name, params))
-              if (name == "OfferCreated") and (params['prosumer'] == self.prosumer_id):
+              #self.logger.info("{}({}).".format(name, params))
+              if (name == "Debug"):
+                  self.logger.info("{}({}).".format(name, params))
+              elif (name == "OfferCreated") and (params['prosumer'] == self.prosumer_id):
                 self.logger.info("{}({}).".format(name, params))
                 offer = self.pending_offers.pop(params['misc'])
                 self.created_offers[params['ID']] = offer
@@ -175,9 +181,39 @@ class Carpooler(Prosumer):
                   self.contract.postOffer(self.account, params['ID'])
               elif (name == "OfferPosted") and (params['ID'] in self.created_offers):
                   self.logger.info("{}({}).".format(name, params))
-              elif (name == "AssignmentAdded") and (params['ID'] in self.created_offers):
+              elif (name == "AssignmentAdded") and (params['providingOfferID'] in self.created_offers):
                   #AssignmentAdded(uint64 ID, uint64 providingOfferID, uint64 consumingOfferID, uint64 resourceType, uint64 quantity, uint64 value, uint64 objective);
-                  self.logger.info("{}({}).".format(name, params))
+                  self.logger.info("providing offer : {}({}).".format(name, params))
+              elif (name == "AssignmentAdded") and (params['consumingOfferID'] in self.created_offers):
+                  #AssignmentAdded(uint64 ID, uint64 providingOfferID, uint64 consumingOfferID, uint64 resourceType, uint64 quantity, uint64 value, uint64 objective);
+                  self.logger.info("consuming offer : {}({}).".format(name, params))
+              elif (name == "AssignmentFinalized") and (params['providingOfferID'] in self.created_offers):
+                  resourceType = str(params['resourceType'])
+                  timestamp = resourceType[:10]
+                  pickup_time = datetime.datetime.fromtimestamp(int(timestamp))
+                  src = resourceType[10:-1]
+                  dst = resourceType[-1]
+                  carpoolerID = self.prosumer_id
+                  offerID = params['providingOfferID']
+                  quantity = params['quantity']
+                  self.logger.info("Finalized Providing Offer : {}({}).".format(name,params))
+                  print(pickup_time, src, dst, carpoolerID, offerID, type(quantity))
+                  tag_dict = {'ID' : carpoolerID, 'src' : src, 'dst':dst}
+                  self.dbase.log(pickup_time, tag_dict, "Producing", quantity)
+              elif (name == "AssignmentFinalized") and (params['consumingOfferID'] in self.created_offers):
+                  resourceType = str(params['resourceType'])
+                  timestamp = resourceType[:10]
+                  pickup_time = datetime.datetime.fromtimestamp(int(timestamp))
+                  src = resourceType[10:-1]
+                  dst = resourceType[-1]
+                  carpoolerID = self.prosumer_id
+                  offerID = params['consumingOfferID']
+                  quantity = params['quantity']
+                  self.logger.info("Finalized Consuming Offer : {}({}).".format(name,params))
+                  print(pickup_time, src, dst, carpoolerID, offerID, type(quantity))
+                  tag_dict = {'ID' : carpoolerID, 'src' : src, 'dst':dst}
+                  self.dbase.log(pickup_time, tag_dict, "Consuming", quantity)
+
           sleep(max(next_polling - time(), 0))
 
 

@@ -12,7 +12,7 @@ class ResourceAllocationContract(Contract):
       "SolutionCreated(uint64 ID, uint64 misc)",
       "AssignmentAdded(uint64 ID, uint64 providingOfferID, uint64 consumingOfferID, uint64 resourceType, uint64 quantity, uint64 value, uint64 objective)",
       "AssignmentFinalized(uint64 providingOfferID, uint64 consumingOfferID, uint64 resourceType, uint64 quantity, uint64 value)",
-      "Debug(uint64 ID, bool boolean)"
+      "Debug(string Description, uint64 value, bool boolean, uint64 state)"
     ])
 
   def setup(self, from_account, numTypes, precision, maxQuantity):
@@ -55,9 +55,17 @@ class ResourceAllocationContract(Contract):
     self.call_func(from_account, "cancelOffer",
       "uint64", ID)
 
+  def check(self, from_account):
+    self.call_func(from_account, "check")
+
+  def checkcreateSolution(self, from_account):
+    self.call_func(from_account, "checkcreateSolution")
+
   def createSolution(self, from_account, misc):
     self.call_func(from_account, "createSolution",
       "uint64", misc)
+  def close(self, from_account):
+    self.call_func(from_account, "close")
 
   def addAssignment(self, from_account, ID, providingOfferID, consumingOfferID, resourceType, quantity, value):
     print("ID %s : %s" %(ID, Contract.encode_uint(ID)))
@@ -66,7 +74,7 @@ class ResourceAllocationContract(Contract):
     print("RT %s : %s" %(resourceType, Contract.encode_uint(resourceType)))
     print("Q %s : %s" %(quantity, Contract.encode_uint(quantity)))
     print("V %s : %s" %(value, Contract.encode_uint(value)))
-    print("addAssignment")
+    print("addAssignment function")
     self.call_func(from_account, "addAssignment",
       "uint64", ID,
       "uint64", providingOfferID,
