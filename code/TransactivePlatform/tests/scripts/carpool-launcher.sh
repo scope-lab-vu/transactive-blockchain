@@ -13,8 +13,11 @@ FILE=$DIR/$PROJECT/components/data/latlng.csv
 
 
 i=1
-for i in $(seq 0 10);
+#for i in $(seq 0 99);
+#for i in $(seq 0 74)
+for i in $(seq 0 10)
 do
+  echo "launch carpooler$i"
   tmux new -d -s carpooler$i
   tmux send -t carpooler$i.0 "python3 $DIR/$PROJECT/components/Carpooler.py $i $GETHCLIENT $PORT $FILE" ENTER
 done

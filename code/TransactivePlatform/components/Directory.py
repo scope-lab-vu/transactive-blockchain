@@ -23,7 +23,7 @@ class Directory:
       sleep(next_finalization - time())
       next_finalization += INTERVAL_LENGTH
       logging.info("Finalizing interval {}".format(next_interval))
-      self.contract.finalize(self.account)
+      #self.contract.finalize(self.account)
       next_interval += 1
 
   def run(self):

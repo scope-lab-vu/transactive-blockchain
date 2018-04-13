@@ -36,11 +36,11 @@ class ResourceAllocationContract(Contract):
       "uint64", prosumer)
 
   def updateOffer(self, from_account, ID, resourceType, quantity, value):
-    # print("ID %s : %s" %(ID, Contract.encode_uint(ID)))
-    # print("RT %s : %s" %(resourceType, Contract.encode_uint(resourceType)))
-    # print("Q %s : %s" %(quantity, Contract.encode_uint(quantity)))
-    # print("V %s : %s" %(value, Contract.encode_uint(value)))
-    # print("UPDATE OFFER")
+    print("ID %s : %s" %(ID, Contract.encode_uint(ID)))
+    print("RT %s : %s" %(resourceType, Contract.encode_uint(resourceType)))
+    print("Q %s : %s" %(quantity, Contract.encode_uint(quantity)))
+    print("V %s : %s" %(value, Contract.encode_uint(value)))
+    print("UPDATE OFFER")
     self.call_func(from_account, "updateOffer",
       "uint64", ID,
       "uint64", resourceType,
@@ -70,12 +70,12 @@ class ResourceAllocationContract(Contract):
     self.call_func(from_account, "close")
 
   def addAssignment(self, from_account, ID, providingOfferID, consumingOfferID, resourceType, quantity, value):
-    print("ID %s : %s" %(ID, Contract.encode_uint(ID)))
-    print("POID %s : %s" %(providingOfferID, Contract.encode_uint(providingOfferID)))
-    print("COID %s : %s" %(consumingOfferID, Contract.encode_uint(consumingOfferID)))
-    print("RT %s : %s" %(resourceType, Contract.encode_uint(resourceType)))
-    print("Q %s : %s" %(quantity, Contract.encode_uint(quantity)))
-    print("V %s : %s" %(value, Contract.encode_uint(value)))
+    # print("ID %s : %s" %(ID, Contract.encode_uint(ID)))
+    # print("POID %s : %s" %(providingOfferID, Contract.encode_uint(providingOfferID)))
+    # print("COID %s : %s" %(consumingOfferID, Contract.encode_uint(consumingOfferID)))
+    # print("RT %s : %s" %(resourceType, Contract.encode_uint(resourceType)))
+    # print("Q %s : %s" %(quantity, Contract.encode_uint(quantity)))
+    # print("V %s : %s" %(value, Contract.encode_uint(value)))
     print("addAssignment function")
     self.call_func(from_account, "addAssignment",
       "uint64", ID,

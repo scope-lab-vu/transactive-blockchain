@@ -1,6 +1,7 @@
 import logging
 
 from LinearProgramCplex import LinearProgramCplex
+import pprint
 
 class Offer:
   def __init__(self, ID, providing, prosumer, quantity={}, value={}):
@@ -64,6 +65,9 @@ class ResourceAllocationLP:
     (solution, objective) = program.solve()
     for varname in variables:
       variables[varname]['q'] = solution[varname]
+      if not solution[varname] == 0:
+          pprint.pprint(variables[varname])
+    #pprint.pprint(variables)
     return (variables.values(), -objective)
 
 if __name__ == "__main__":

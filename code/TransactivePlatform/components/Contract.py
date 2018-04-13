@@ -35,10 +35,19 @@ class Contract:
       return False
     raise Exception("Unexpected boolean value {}".format(uint))
 
+
   def decode_string(data, pos):
     n = 64
     arrays = [data[i:i+n] for i in range(0, len(data), n)]
-    string = unhexlify(arrays[5].strip("0")).decode('utf-8')
+    for array in arrays:
+        out = unhexlify(array)
+        try:
+            utf8 = out.decode('utf-8')
+            if 'str' in utf8:
+                print("line")
+                string = utf8.strip("\x00")
+        except UnicodeDecodeError:
+            print("not utf-8")
     return string
 
   def generate_topics(self, events):

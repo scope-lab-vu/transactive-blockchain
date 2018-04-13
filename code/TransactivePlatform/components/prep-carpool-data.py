@@ -22,14 +22,19 @@ if "Pickups" in geo_db.collection_names():
     geo_db.Pickups.drop()
 if "Dests" in geo_db.collection_names():
     geo_db.Dests.drop()
+if "places" in geo_db.collection_names():
+    geo_db.places.drop()
 #-----------------------
 
 METERS_PER_MILE = 1609.34
 
 data_dir = 'data/trip-data.csv'
-geo_db.residences.create_index([("location","2dsphere")])
-geo_db.Pickups.create_index([("location","2dsphere")])
-geo_db.Dests.create_index([("location", "2dsphere")])
+# geo_db.residences.create_index([("location","2dsphere")])
+# geo_db.Pickups.create_index([("location","2dsphere")])
+# geo_db.Dests.create_index([("location", "2dsphere")])
+geo_db.residences.create_index([("geometry","2dsphere")])
+geo_db.Pickups.create_index([("geometry","2dsphere")])
+geo_db.Dests.create_index([("geometry", "2dsphere")])
 
 def get_centermost_point(cluster):
     centroid = (MultiPoint(cluster).centroid.x, MultiPoint(cluster).centroid.y)
@@ -38,7 +43,8 @@ def get_centermost_point(cluster):
 
 try :
     trip_data = pd.read_csv(data_dir)
-    #pprint.pprint(trip_data)
+    trip_data = trip_data.iloc[0:100]
+    #pprint.pprint(trip_data.iloc[0:100])
     # from_coordinate, from_taz to_coordinate, to_taz, departure_time
 except FileNotFoundError:
     cwd = os.getcwd()
@@ -54,7 +60,11 @@ logging.info("# of unique end points : %s" %trip_data.loc[:,'to_coordinate'].nun
 ix = 0
 for coord in trip_data.loc[:,'to_coordinate'].unique().tolist():
     to_lat, to_lng = coord.split(" ")
-    geo_db.Dests.insert_one({"location":{"dstID":ix,
+    # geo_db.Dests.insert_one({"location":{"dstID":ix,
+    #                                      "type":"Point",
+    #                                      "coordinates":[float(to_lng),
+    #                                                     float(to_lat)]}})
+    geo_db.Dests.insert_one({"geometry":{"dstID":ix,
                                          "type":"Point",
                                          "coordinates":[float(to_lng),
                                                         float(to_lat)]}})
@@ -62,7 +72,8 @@ for coord in trip_data.loc[:,'to_coordinate'].unique().tolist():
 
 
 pprint.pprint(list(geo_db.Dests.find({})))
-pprint.pprint("dst: %s" %list(geo_db.Dests.find({"location.coordinates": [-86.811862, 36.143494]})))
+# pprint.pprint("dst: %s" %list(geo_db.Dests.find({"location.coordinates": [-86.811862, 36.143494]})))
+pprint.pprint("dst: %s" %list(geo_db.Dests.find({"geometry.coordinates": [-86.811862, 36.143494]})))
 
 
 
@@ -76,7 +87,9 @@ if  not os.path.exists("data/latlng.csv"):
         to_lat, to_lng = row.to_coordinate.split(" ")
         #print(ID, "tooo", float(to_lat), float(to_lng))
         #print(ID, "from", float(from_lat), float(from_lng))
-        #geo_db.residences.insert_one({"location":{"type":"Point", "coordinates":[float(from_lng),float(from_lat)]}})
+        geo_db.residences.insert_one({"geometry":{"type":"Point", "coordinates":[float(from_lng),float(from_lat)]}})
+        # geo_db.residences.insert_one({"location":{"type":"Point", "coordinates":[float(from_lng),float(from_lat)]}})
+
         df = df.append({'ID' : ID,
                         'from_lat':float(from_lat), 'from_lng' : float(from_lng),
                         'to_lat':float(to_lat), 'to_lng':float(to_lng)}, ignore_index=True)
@@ -96,7 +109,7 @@ print(np.radians(coords))
 kms_per_radian = 6371.0088
 epsilon = .7 / kms_per_radian
 #db = DBSCAN(eps=epsilon, min_samples=3, algorithm='ball_tree', metric='haversine').fit(np.radians(coords))
-db = KMeans(n_clusters=100).fit(np.radians(coords))
+db = KMeans(n_clusters=20).fit(np.radians(coords))
 cluster_labels = db.labels_
 num_clusters = len(set(cluster_labels))-1
 clusters = pd.Series([coords[cluster_labels == n] for n in range(num_clusters)])
@@ -122,7 +135,9 @@ plt.show()
 ix = 0
 for point in rep_points.to_dict('records'):
     # print(point)
-    geo_db.Pickups.insert_one({"location":{"pupID":ix, "type":"Point", "coordinates":[float(point['lon']),float(point['lat'])]}})
+    geo_db.Pickups.insert_one({"geometry":{"pupID":ix, "type":"Point", "coordinates":[float(point['lon']),float(point['lat'])]}})
+    # geo_db.Pickups.insert_one({"location":{"pupID":ix, "type":"Point", "coordinates":[float(point['lon']),float(point['lat'])]}})
+
     ix +=1
     #geo_db.Pickups.insert_many(rep_points.to_dict('records'))
 pprint.pprint(list(geo_db.Pickups.find({})))

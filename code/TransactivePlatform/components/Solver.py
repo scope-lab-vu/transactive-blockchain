@@ -9,6 +9,12 @@ from ResourceAllocationLP import ResourceAllocationLP, Offer
 from EthereumClient import EthereumClient
 from ResourceAllocationContract import ResourceAllocationContract
 
+
+from Grafana.config import Config
+from Grafana.dbase import Database
+import datetime
+import pprint
+
 POLLING_INTERVAL = 1 # seconds
 
 class Solver(ResourceAllocationLP):
@@ -26,6 +32,11 @@ class Solver(ResourceAllocationLP):
     self.contract = ResourceAllocationContract(client, self.contract_address)
     self.objective = 0
     self.solution = None
+    self.time = datetime.datetime.combine(datetime.date.today(),datetime.time(hour=7))
+
+
+    self.db = Database()
+
     super(Solver, self).__init__(PRECISION)
 
   def run(self):
@@ -82,6 +93,7 @@ class Solver(ResourceAllocationLP):
                 self.contract.addAssignment(self.account, solutionID,
                   assign['po'].ID, assign['co'].ID, assign['t'], int(assign['q']), assign['co'].value[assign['t']])
               logging.info("{} assignments have been submitted to the contract.".format(len(assignments)))
+              self.contract.finalize(self.account)
             else:
               logging.info("Solution {} created by contract, but no solution has been found for this time interval (yet).".format(solutionID))
       if current_time > next_solving:
@@ -89,7 +101,14 @@ class Solver(ResourceAllocationLP):
         if new_offers:
           new_offers = False
           logging.info("Solving...")
+
+          stopWatch = {"start":time(), "running" : 1}
           (solution, objective) = self.solve(prov_offers, cons_offers)
+          stopWatch["split"] = time()-stopWatch["start"]
+          tag_dict = {"ID" : "Solver_"+str(self.solverID)}
+          self.db.log(self.time-datetime.timedelta(seconds=1), tag_dict, "solveTime", 0)
+          self.db.log(self.time, tag_dict, "solveTime", stopWatch["split"])
+
           if objective > self.objective:
             self.solution = solution
             self.objective = objective

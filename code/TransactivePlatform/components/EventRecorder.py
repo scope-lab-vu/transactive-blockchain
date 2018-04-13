@@ -7,6 +7,10 @@ from config import *
 from EthereumClient import EthereumClient
 from ResourceAllocationContract import ResourceAllocationContract
 
+from Grafana.config import Config
+from Grafana.dbase import Database
+import datetime
+
 POLLING_INTERVAL = 1 # seconds
 
 class EventRecorder():
@@ -15,12 +19,14 @@ class EventRecorder():
     self.directory = zmq.Context().socket(zmq.REQ)
     self.directory.connect(DIRECTORY_ADDRESS)
     logging.info("Directory connected ({}).".format(self.directory))
-    self.query_contract_address()
+    contract_address = self.query_contract_address()
     logging.info("Setting up connection to Ethereum client...")
-    client = EthereumClient(ip=ip, port=port) 
+    client = EthereumClient(ip=ip, port=port)
     self.account = client.accounts()[0] # use the first owned address
     logging.info("Creating contract object...")
-    self.contract = MatchingContract(client, self.contract_address)
+    self.contract = ResourceAllocationContract(client, self.contract_address)
+    self.dbase = Database()
+    self.time = datetime.datetime.combine(datetime.date.today(),datetime.time(hour=7))
 
   def run(self):
     logging.info("Entering main loop...")
@@ -33,9 +39,20 @@ class EventRecorder():
         name = event['name']
         logging.info("[time = {}] {}({}).".format(simulation_time, name, params))
         # TODO: record data to database
+        if (name == "Debug"):
+            logging.info("{}({}).".format(name, params))
+        elif (name == "FinalizeRequested"):
+            stopWatch = {"start":time(), "running" : 1}
+            logging.info("{}({}).".format(name, params))
+        elif(name == "FinalizeComplete"):
+            stopWatch["split"] = time() - stopWatch["start"]
+            logging.info("{}({}).".format(name, params))
+            tag_dict = {}
+            self.dbase.log(self.time-datetime.timedelta(seconds=1), tag_dict, "FinalizeTime", 0)
+            self.dbase.log(self.time, tag_dict, "FinalizeTime", stopWatch["split"])
       next_polling += POLLING_INTERVAL
       sleep(max(next_polling - time(), 0))
-      
+
   def query_contract_address(self):
     msg = {
       'request': "query_contract_address"
@@ -57,4 +74,3 @@ if __name__ == "__main__":
     port = sys.argv[2]
   recorder = EventRecorder(ip, port)
   recorder.run()
-
