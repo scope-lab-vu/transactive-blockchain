@@ -12,7 +12,9 @@ class ResourceAllocationContract(Contract):
       "SolutionCreated(uint64 ID, uint64 misc)",
       "AssignmentAdded(uint64 ID, uint64 providingOfferID, uint64 consumingOfferID, uint64 resourceType, uint64 quantity, uint64 value, uint64 objective)",
       "AssignmentFinalized(uint64 providingOfferID, uint64 consumingOfferID, uint64 resourceType, uint64 quantity, uint64 value)",
-      "Debug(string Description, uint64 value, bool boolean, uint64 state)"
+      "Debug(string Description, uint64 value, bool boolean, uint64 state)",
+      "FinalizeRequested(string Description, uint64 state)",
+      "FinalizeComplete(string Description, uint64 state)"
     ])
 
   def setup(self, from_account, numTypes, precision, maxQuantity):
