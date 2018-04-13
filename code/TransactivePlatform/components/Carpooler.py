@@ -14,6 +14,7 @@ from config import *
 
 from Grafana.config import Config
 from Grafana.dbase import Database
+import copy
 
 #class Carpooler(Prosumer.Prosumer):
 #    def __init__(self, srclat, srclng, dstlat, dstlng, prosumer_id, ip, port):
@@ -186,6 +187,7 @@ class Carpooler(Prosumer):
                 offer = self.pending_offers.pop(params['misc'])
                 #pprint.pprint(offer)
                 self.created_offers[params['ID']] = offer
+                self.current_quantity = copy.copy(offer['quantity'])
                 print("NEWLY CREATED OFFER")
                 pprint.pprint(self.created_offers)
                 for res_type in offer['quantity']:
@@ -194,8 +196,14 @@ class Carpooler(Prosumer):
               elif (name == "OfferUpdated") and (params['ID'] in self.created_offers):
                 self.logger.info("{}({}).".format(name, params))
                 offer = self.created_offers[params['ID']]
-                offer['quantity'].pop(params['resourceType'])
-                if not len(offer['quantity']):
+                print("Prepop")
+                pprint.pprint(self.created_offers)
+                #offer['quantity'].pop(params['resourceType'])
+                self.current_quantity.pop(params['resourceType'])
+                print("Postpop")
+                pprint.pprint(self.created_offers)
+                #if not len(offer['quantity']):
+                if not len(self.current_quantity):
                   self.contract.postOffer(self.account, params['ID'])
               elif (name == "OfferPosted") and (params['ID'] in self.created_offers):
                   stopWatch["split"] = time() - stopWatch["start"]
@@ -219,8 +227,8 @@ class Carpooler(Prosumer):
                   pprint.pprint(self.created_offers)
                   print("RT: {}".format(resourceType))
                   quantity = params['quantity']
-                  my_quantity = self.created_offers[offerID]['quantity'][resourceType]
-                  print("My offer : {} \n Matched Offer: {}".format(my_quantity, quantity))
+                  #my_quantity = self.created_offers[offerID]['quantity'][resourceType]
+                  #print("My offer : {} \n Matched Offer: {}".format(my_quantity, quantity))
                   value = params['value']
                   self.logger.info("Finalized Providing Offer : {}({}).".format(name,params))
                   print(pickup_time, src, dst, carpoolerID, offerID, type(quantity))
@@ -243,8 +251,8 @@ class Carpooler(Prosumer):
                   pprint.pprint(self.created_offers)
                   print("RT: {}".format(resourceType))
                   quantity = params['quantity']
-                  my_quantity = self.created_offers[offerID]['quantity'][resourceType]
-                  print("My offer : {} \n Matched Offer: {}".format(my_quantity, quantity))
+                  #my_quantity = self.created_offers[offerID]['quantity'][resourceType]
+                  #print("My offer : {} \n Matched Offer: {}".format(my_quantity, quantity))
                   value = params['value']
                   self.logger.info("Finalized Consuming Offer : {}({}).".format(name,params))
                   print(pickup_time, src, dst, carpoolerID, offerID, type(quantity))
@@ -303,7 +311,7 @@ if __name__ == "__main__":
         print("BID:")
         pprint.pprint(bid)
         print("post offer")
-        CP.post_offer(bid[0], bid[1], bid[2])
+        CP.post_offer(providing=bid[0], quantity=bid[1], value=bid[2])
         earliest = CP.departure_times[CP.earliest]
         latest = CP.departure_times[CP.latest]
         for pup in CP.pups:

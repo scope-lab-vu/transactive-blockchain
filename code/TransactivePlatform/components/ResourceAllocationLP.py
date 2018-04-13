@@ -80,11 +80,17 @@ class ResourceAllocationLP:
         {varname: 1.0 / float(cons_vars[co][varname]) for varname in cons_vars[co]}, 1.0)
 
     (solution, objective) = program.solve()
+    print("SOLUTION1")
+    with open('solutions.json', 'w') as fp:
+        json.dump(solution, fp)
+    print("OBJECTIVE1")
+    print(objective)
     export_out = {}
     for varname in variables:
       variables[varname]['q'] = solution[varname]
       if not solution[varname] == 0:
-          pprint.pprint(variables[varname])
+        #   print("SOLUTION VARIABLES")
+        #   pprint.pprint(variables[varname])
           export_out[varname]=variables[varname]
     #pprint.pprint(variables)
     # with open('output.json', 'w') as fp:
