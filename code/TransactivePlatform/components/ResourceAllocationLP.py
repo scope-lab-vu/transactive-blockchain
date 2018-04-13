@@ -2,6 +2,7 @@ import logging
 
 from LinearProgramCplex import LinearProgramCplex
 import pprint
+import json
 
 class Offer:
   def __init__(self, ID, providing, prosumer, quantity={}, value={}):
@@ -10,6 +11,9 @@ class Offer:
     self.prosumer = prosumer
     self.quantity = quantity
     self.value = value
+
+  def __repr__(self):
+    return "<{}, {}, {}, {}, {}>".format(self.ID, self.providing, self.prosumer, self.quantity, self.value)
 
   def matchable(self, offer):
     for res_type in self.quantity:
@@ -33,14 +37,21 @@ class ResourceAllocationLP:
   def solve(self, providing_offers, consuming_offers, lp_solver=LinearProgramCplex):
     program = lp_solver()
     variables = {}
+    export_vars = {}
     prov_vars = {}
     cons_vars = {}
+    export_pos = {}
+    export_cos = {}
     for po in providing_offers:
+      export_pos["p_{}".format(po.ID)] = po.__repr__()
       for co in consuming_offers:
+        export_cos["c_{}".format(co.ID)] = co.__repr__()
         for t in po.intersection(co):
           variable = {'po': po, 'co': co, 't': t}
+          export_var = {'po': po.__repr__(), 'co': co.__repr__(), 't': t}
           varname = 'q_{}_{}_{}'.format(po.ID, co.ID, t)
           variables[varname] = variable
+          export_vars[varname] = export_var
           if po in prov_vars:
             prov_vars[po][varname] = po.quantity[t]
           else:
@@ -49,6 +60,12 @@ class ResourceAllocationLP:
             cons_vars[co][varname] = co.quantity[t]
           else:
             cons_vars[co] = {varname: co.quantity[t]}
+    with open('input.json', 'w') as fp:
+        json.dump(export_vars, fp)
+    with open("inputpo.json", 'w') as fp:
+        json.dump(export_pos, fp)
+    with open("inputco.json", 'w') as fp:
+        json.dump(export_cos, fp)
     if not len(variables):
       logging.info("No matchable offers, skipping solver.")
       return ([], 0)
@@ -63,11 +80,15 @@ class ResourceAllocationLP:
         {varname: 1.0 / float(cons_vars[co][varname]) for varname in cons_vars[co]}, 1.0)
 
     (solution, objective) = program.solve()
+    export_out = {}
     for varname in variables:
       variables[varname]['q'] = solution[varname]
       if not solution[varname] == 0:
           pprint.pprint(variables[varname])
+          export_out[varname]=variables[varname]
     #pprint.pprint(variables)
+    # with open('output.json', 'w') as fp:
+    #     json.dump(variables, fp)
     return (variables.values(), -objective)
 
 if __name__ == "__main__":
