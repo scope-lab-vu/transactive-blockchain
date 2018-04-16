@@ -41,15 +41,15 @@ class EventRecorder():
         # TODO: record data to database
         if (name == "Debug"):
             logging.info("{}({}).".format(name, params))
-        elif (name == "FinalizeRequested"):
-            stopWatch = {"start":time(), "running" : 1}
-            logging.info("{}({}).".format(name, params))
-        elif(name == "FinalizeComplete"):
-            stopWatch["split"] = time() - stopWatch["start"]
-            logging.info("{}({}).".format(name, params))
-            tag_dict = {}
-            self.dbase.log(self.time-datetime.timedelta(seconds=1), tag_dict, "FinalizeTime", 0)
-            self.dbase.log(self.time, tag_dict, "FinalizeTime", stopWatch["split"])
+        # elif (name == "FinalizeRequested"):
+        #     stopWatch = {"start":time(), "running" : 1}
+        #     logging.info("{}({}).".format(name, params))
+        # elif(name == "FinalizeComplete"):
+        #     stopWatch["split"] = time() - stopWatch["start"]
+        #     logging.info("{}({}).".format(name, params))
+        #     tag_dict = {}
+        #     self.dbase.log(self.time-datetime.timedelta(seconds=1), tag_dict, "FinalizeTime", 0)
+        #     self.dbase.log(self.time, tag_dict, "FinalizeTime", stopWatch["split"])
       next_polling += POLLING_INTERVAL
       sleep(max(next_polling - time(), 0))
 

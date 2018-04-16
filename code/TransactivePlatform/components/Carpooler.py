@@ -103,13 +103,10 @@ class Carpooler(Prosumer):
         self.mid = self.midpoint(float(self.srclat), float(self.srclng), float(self.dstlat), float(self.dstlng))
         self.pud = self.directDist*.6
         #self.pud = random.randint(1, floor(self.directDist))
-        #----Randomly assign provider state------------------------------------
-        rnd = random.random()
-        if rnd <= .5:
-            self.providing = True
+        #----Depending on provider state from mongodb set pups------------------------------------
+        if self.providing:
             self.pups = list(self.getPickups(self.pud, self.mid[0],self.mid[1]))
         else:
-            self.providing = False
             self.pups = list(self.getPickups(self.pud, self.srclat, srclng))
         print("mid.pups: %s" %list(self.getPickups(self.pud, self.mid[0],self.mid[1])))
         print("home.pups: %s" %list(self.getPickups(self.pud, self.srclat, srclng)))
@@ -293,13 +290,17 @@ if __name__ == "__main__":
 
     CP = Carpooler(srclat,srclng,dstlat,dstlng)
     #pprint.pprint("all dst: %s" %list(CP.geo_db.Dests.find({})))
-    #print(srclat,srclng,dstlat,dstlng)
+    print(srclat,srclng,dstlat,dstlng)
     #pprint.pprint("dst: %s" %list(CP.geo_db.Dests.find({"location.coordinates": [dstlng, dstlat]})))
 
     #dst = list(CP.geo_db.Dests.find({"location.coordinates": [dstlng, dstlat]}))
     #CP.dst_id = dst[0]['location']['dstID']
+    #GET THE ID OF MY DESTINATION
     dst = list(CP.geo_db.Dests.find({"geometry.coordinates": [dstlng, dstlat]}))
     CP.dst_id = dst[0]['geometry']['dstID']
+
+    residence = list(CP.geo_db.residences.find({"geometry.coordinates": [srclng, srclat]}))[0]
+    CP.providing = residence['properties']['prosumer']
 
     #print("pups: %s" %list(CP.geo_db.Pickups.find({})))
     # pups = list(CP.getPickups(self.pud, self.srclat, srclng))

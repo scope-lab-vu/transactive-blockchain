@@ -43,7 +43,7 @@ def get_centermost_point(cluster):
 
 try :
     trip_data = pd.read_csv(data_dir)
-    trip_data = trip_data.iloc[0:100]
+    trip_data = trip_data.iloc[0:75]
     #pprint.pprint(trip_data.iloc[0:100])
     # from_coordinate, from_taz to_coordinate, to_taz, departure_time
 except FileNotFoundError:
@@ -78,7 +78,7 @@ pprint.pprint("dst: %s" %list(geo_db.Dests.find({"geometry.coordinates": [-86.81
 
 
 #---- Put from points into DB---------------------------------------------------
-if  not os.path.exists("data/latlng.csv"):
+if  os.path.exists("data/latlng.csv"):
     df = pd.DataFrame(columns=['ID','from_lat','from_lng', 'to_lat', 'to_lng'])
     print("parse coordinate data")
     ID = 0
@@ -86,15 +86,26 @@ if  not os.path.exists("data/latlng.csv"):
         from_lat, from_lng = row.from_coordinate.split(" ")
         to_lat, to_lng = row.to_coordinate.split(" ")
         #print(ID, "tooo", float(to_lat), float(to_lng))
-        #print(ID, "from", float(from_lat), float(from_lng))
-        geo_db.residences.insert_one({"geometry":{"type":"Point", "coordinates":[float(from_lng),float(from_lat)]}})
-        # geo_db.residences.insert_one({"location":{"type":"Point", "coordinates":[float(from_lng),float(from_lat)]}})
-
         df = df.append({'ID' : ID,
                         'from_lat':float(from_lat), 'from_lng' : float(from_lng),
                         'to_lat':float(to_lat), 'to_lng':float(to_lng)}, ignore_index=True)
         ID += 1
+
+    dfround = df.round(6)
     df.round(6).to_csv("data/latlng.csv")
+
+    for row in dfround.itertuples():
+        from_lng = row.from_lng
+        from_lat = row.from_lat
+        print("from", float(from_lat), float(from_lng))
+        rnd = random.random()
+        if rnd <= .5:
+            providing = 1
+        else:
+            providing = 0
+        geo_db.residences.insert_one({"geometry":{"type":"Point", "coordinates":[float(from_lng),float(from_lat)]}, "properties": {"prosumer" : providing}})
+        # geo_db.residences.insert_one({"location":{"type":"Point", "coordinates":[float(from_lng),float(from_lat)]}})
+
 else:
     print("import coordinate data")
     df = pd.read_csv("data/latlng.csv")

@@ -54,37 +54,58 @@ class Solver(ResourceAllocationLP):
       if current_time > next_polling:
         logging.debug("Polling events...")
         next_polling = current_time + POLLING_INTERVAL
+        event_counter = 0
+        update_counter = 0
         for event in self.contract.poll_events():
           params = event['params']
           name = event['name']
-          logging.info("{}({}).".format(name, params))
+          #logging.info("{}({}).".format(name, params))
           if name == "OfferCreated":
             offers[params['ID']] = Offer(params['ID'], params['providing'], params['prosumer'])
+            print("OfferCreated")
+            pprint.pprint(offers[params['ID']])
+            print("params['ID']: %s" %params['ID'])
+            event_counter += 1
+            print("event count: %s" %event_counter)
+
           elif name == "OfferUpdated":
             offer = offers[params['ID']]
+            print("WHAT IS THE OFFER?")
+            pprint.pprint(offer)
             res_type = params['resourceType']
             offer.quantity[res_type] = params['quantity']
             offer.value[res_type] = params['value']
+            print("params['ID']: %s" %params['ID'])
+            update_counter += 1
+            print("update counter: %s" %update_counter)
+
           elif name == "OfferPosted":
             new_offers = True
             offer = offers[params['ID']]
             if offer.providing:
               prov_offers.append(offer)
+            #   print("APPEND OFFER")
+            #   pprint.pprint(prov_offers)
             else:
               cons_offers.append(offer)
+
           elif name == "OfferCanceled":
             offer = offers[params['ID']]
             if offer.providing:
               prov_offers.remove(offer)
             else:
               cons_offers.remove(offer)
+
+
           elif (name == "SolutionCreated") and (params['misc'] == self.solverID):
             logging.info("{}({}).".format(name, params))
             waiting_solutionID = False
             solutionID = params['ID']
+
             if self.solution is not None:
               logging.info("Solution {} created by contract, adding assignments...".format(solutionID))
               assignments = [assign for assign in self.solution if int(assign['q']) > 0]
+
               for assign in assignments:
                 print("solutionID : POID : COID : T : Q : V")
                 print(solutionID,assign['po'].ID, assign['co'].ID, assign['t'],
@@ -93,9 +114,20 @@ class Solver(ResourceAllocationLP):
                 self.contract.addAssignment(self.account, solutionID,
                   assign['po'].ID, assign['co'].ID, assign['t'], int(assign['q']), assign['co'].value[assign['t']])
               logging.info("{} assignments have been submitted to the contract.".format(len(assignments)))
+              self.stopWatch = {"start":time(), "running" : 1}
               self.contract.finalize(self.account)
+
             else:
               logging.info("Solution {} created by contract, but no solution has been found for this time interval (yet).".format(solutionID))
+
+          elif (name == "FinalizeComplete"):
+              self.stopWatch["running"] = 0
+              self.stopWatch["split"] = time() - self.stopWatch["start"]
+              logging.info("{}({}).".format(name, params))
+              tag_dict = {}
+              self.db.log(self.time-datetime.timedelta(seconds=1), tag_dict, "FinalizeTime", 0)
+              self.db.log(self.time, tag_dict, "FinalizeTime", self.stopWatch["split"])
+
       if current_time > next_solving:
         next_solving = current_time + SOLVING_INTERVAL
         if new_offers:

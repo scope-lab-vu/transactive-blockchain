@@ -5,12 +5,18 @@ import pprint
 import json
 
 class Offer:
-  def __init__(self, ID, providing, prosumer, quantity={}, value={}):
-    self.ID = ID
-    self.providing = providing
-    self.prosumer = prosumer
-    self.quantity = quantity
-    self.value = value
+  def __init__(self, ID, providing, prosumer, quantity=None, value=None):
+      self.ID = ID
+      self.providing = providing
+      self.prosumer = prosumer
+      if quantity is None:
+          self.quantity = {}
+      else:
+          self.quantity = quantity
+      if value is None:
+          self.value = {}
+      else:
+          self.value = value
 
   def __repr__(self):
     return "<{}, {}, {}, {}, {}>".format(self.ID, self.providing, self.prosumer, self.quantity, self.value)
