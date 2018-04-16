@@ -1,0 +1,44 @@
+
+
+%
+% - motivation: in a smart and connected community, a number of stakeholders must collaborate and share/trade resources
+%   * trust problem: stakeholders may have limited trust in each other
+%   * distributed system problem: large number of stakeholder must cooperate and reach consensus on the state of the market
+%   * auditability requirement: market must be transparent
+%   * resilience problem: malicious or negligent stakeholder threaten the entire community 
+
+% decentralized ledger and computational platform
+% - challenges:
+%   * efficiency <- large number of transaction must be cleared in short amount of time
+%   * privacy <- personal information from residents
+%   * correctness <- critical infrastructure for smart communities
+%
+Smart and connected communities (SCC) as a research area lies at the intersection of social science, machine learning, cyber-physical systems, civil infrastructures, and data sciences. This research area is  enabled by the rapid and transformational changes driven by  innovations in smart sensors, such as cameras and air quality monitors, which are now  embedded in almost every physical device and system that we use, ranging from watches and smartphones to automobiles, homes, roads, and workplaces. 
+%Coupled with emerging new modes of networking, new algorithms for data analytics, and new paradigms of distributed computing like fog computing, these sensors create an ``Internet of Things'' (IoT)  that provide endless opportunities for innovation and improving the quality of life, such as improved transportation with reduced congestion and more efficient uses of energy and water. 
+The effects of these innovations can be seen in a number of diverse domains, including transportation, energy, emergency response, and  health care, to name a few.
+
+
+\ifExtended
+At its core, smart and connected community applications are distributed programs where the results received by the end users or the performance that they experience is affected by others using the same application. A classical example of this kind is traffic routing,  implemented by many commercial mobility planning solutions, such as Waze and Google. The routes provided to the end users depend upon the interaction that other users in the systems have had with the application. An effective route planning solution will be proactive in the sense that it will analyze the demands being made by users and will use the dynamic demand model for effectively distributing vehicles and people across space, time, and modes of transportation, improving the efficiency of the mobility system and leading to a reduction of congestion.
+\fi
+
+At its core, a smart and connected community is a
+%Thus, an SCC system can be abstracted as a 
+multi-agent system where agents may enter or leave the system for different reasons. Agents may act on behalf of service owners, managing access to services and ensuring that contracts are fulfilled. Agents can also act on behalf of service consumers, locating services, making contracts, as well as receiving and presenting results.
+For example, agents may coordinate carpooling services. Another example of such coordination exists in transactive energy systems~\cite{Gridwise}, where homeowners in a community exchange excess energy. Consequently, these  agents are required to engage in interactions, negotiate with each other, enter agreements, and make proactive run-time decisions---individually and collectively---while responding to changing circumstances. %In some cases,  agents also need to collaborate within organizations and to form coalitions of agents with different capabilities in support of virtual organizations in order to reach global and individual goals. 
+
+This exchange of information and resources  leads to a problem where the stakeholders of the system may have limited trust in each other. Thus, collaboratively reaching consensus on when, how, and who should access certain resources becomes problematic. However, instead of solving these problems in a domain specific manner, we present \Platform  and show how this platform can provide key design patterns to implement mechanisms for arbitrating resource consumption across different SCC applications. 
+
+Blockchains may form a key component of SCC platforms because they enable participants to reach a consensus on the value of any state variable in the system, without relying on a trusted third party or trusting each other. Distributed consensus not only solves the trust issue, but also provides fault-tolerance since consensus is always reached on the correct state as long as the number of faulty nodes is below a threshold. Further, blockchains can also enable performing computation in a distributed and trustworthy manner in the form of smart contracts. However, while the distributed integrity of a blockchain ledger presents unique opportunities, it also introduces new assurance challenges that must be addressed before protocols and implementations can live up to their potential. For instance, Ethereum smart contracts deployed in practice are riddled with bugs and security vulnerabilities.  Thus, we use a correct-by-construction design toolchain, called FSolidM \cite{mavridou2018designing}, to design and implement  the smart-contract code of \Platform. 
+\ifExtended
+Finally, we present an evaluation of the architecture using a community-based energy-sharing problem and a carpooling problem.
+\fi
+
+The outline of this paper is as follows. We formulate a resource-allocation problem for SCC in Section~\ref{sec:problem},  describing two concrete  applications of the platform in Section~\ref{sec:ExaApp} and presenting extensions to the basic problem formulation in Section~\ref{sec:ProForExt}. We describe our solution architecture in Section~\ref{sec:solution}, which consists of off-blockchain solvers (Section~\ref{sec:solver}) and a smart contract (Section~\ref{sec:smartcontract}), providing a brief analysis in Section~\ref{sec:analysis}. In Section~\ref{sec:results}, we evaluate \Platform using two case studies, a carpooling assignment (Section~\ref{sec:carpool})
+ and an energy trading system  (Section~\ref{sec:energy}). Finally, we discuss the architecture of \Platform in the context of related research in Section~\ref{sec:related},  and we provide concluding remarks in Section \ref{sec:conclusion}. 
+
+%\Aron{Do we?} Thus, we present a formal analysis and  a proof of correctness for our architecture.  Finally, we present an evaluation of the architecture using a community energy sharing problem and a carpooling problem.
+
+%Table \ref{tab:innovations} describe the key innovations of \Platform compared to the state of the art. 
+
+%\textcolor{red}{The outline of this paper is as follows...}

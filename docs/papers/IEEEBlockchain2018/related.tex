@@ -1,0 +1,52 @@
+%\section{Related Research}
+%Section 2
+%Related Work
+%- PETra
+%- other papers
+
+\ifExtended
+Our paper is related to three concepts (a) online information management platform for scheduling transactions, (b) managing trust and integrity using distributed consensus mechanisms provided by block-chains and (c) correctness of architecture. 
+%\ifExtended
+Since smart contracts are the basis for providing trust and integrity, their correctness is very important. Thus, we discuss related work in correctness checks and auto-generation of smart contracts in this section as well.
+\fi
+
+\textbf{Online Information Management Platforms:}
+Smart and connected community systems are designed to collect, process, transmit, and analyze data. In this context, data collection usually happens at the edge because that is where edge devices with sensors are deployed to monitor surrounding environments. \Platform does not suggest a specific data collection methodology. Rather, it follows an actor-driven design pattern where ``prosumer'' actors can integrate their own agents into \Platform by using the provided APIs.  Another concern of these platforms is the cost of processing. Traditionally, this problem was solved using scalable cloud resources in-house~\cite{schmidt2014elastic}. However, \Platform enables a decentralized ecosystem, where components of the platform can run directly on edge nodes, which is one of the reasons why we designed it to be asynchronous in nature.
+
+To an extent, the information architecture of \Platform can be compared to  dataflow engines~\cite{Storm, Spark, neumeyer2010s4}. All of these existing dataflow engines use some form of a computation graph, comprising computation nodes and dataflow edges. These engines are designed for batch-processing and/or stream-processing high volumes of data in resource intensive nodes, and do not necessarily provide additional ``platform services'' like trust management or solver nodes. 
+\ifExtended
+There are solutions that build upon middleware mechanisms like FIWARE, for example \cite{lopez2017software}. However, they do not provide mechanisms to manage trust by allowing the community architecture to operate without intermediaries. 
+\fi
+%Our architecture uses the concept of a ``directory'' actor, however, as discussed earlier it can also be decentralized \cite{riaps1}. 
+
+\textbf{Integration with Blockchains:}
+\Platform integrates a blockchain because it enables the digital representation of resources, such as energy and financial assets, and their secure transfer from one  party to another. Further, blockchains constitute an immutable, complete, and fully auditable record of all transactions that have ever occurred in the  system. This is in line with the increased interest and commercial adoption of blockchains~\cite{TheTruthAdoption:online}, which %. For example, blockchain adoption %in the financial industry 
+has yielded market capitalization surpassing \$75 billion USD~\cite{BitcoinPrices:online} for Bitcoin and \$36 billion USD for Ethereum ~\cite{EthereumPrices:online}. Prior work has also considered the security and privacy of IoT and Blockchain integrations~\cite{dorri2017blockchain,ouaddah2017towards,christidis2016blockchains}. 
+
+The biggest challenge  in these integrated systems comes from computational-complexity limitations and from the complexity of the consensus algorithms. 
+In particular, their transaction-confirmation time is relatively long and variable, primarily due to the widely-used proof-of-work algorithm. % and most of the communication occurring via the ledger. 
+Further, blockchain-based  computation is relatively expensive, which is the main reason why we  separated finding a solution and validating the solution into two separate components in \Platform.
+
+
+
+
+\textbf{Correctness of Smart Contracts:}
+% \ad{Anastasia can you please 
+% - write about possible bugs and problems
+% - what are other mechanisms
+% - what is special about our approach}
+% \Anastasia{Partly done. I am not sure we should write about typical bugs (e.g. reentrancy) since our contract does not exploit any.}
+% \ad{No that is okay. I agree with your comment.}
+%work has focused on formal verification of smart contracts~\cite{kumaresan2014use}, and how to write smart contracts ``defensively''~\cite{delmolino2016step} to avoid exceptions when multiple contracts interact. 
+Both verification and automated vulnerability discovery are considered in the literature for identifying smart-contract vulnerabilities. 
+For example, Hirai performs a formal verification of a smart contract that is used by the Ethereum Name Service~\cite{hirai2016formal}.
+However, this verification proves only one particular property and it involves relatively large amount of manual analysis.
+In later work, Hirai defines the complete instruction set of the Ethereum Virtual Machine in Lem, a language that can be compiled for interactive theorem provers~\cite{hirai2017defining}.
+Using this definition, certain safety properties can be proven for existing contracts.
+
+Bhargavan et al.\ outline a framework for verifying the safety and correctness of Ethereum smart contracts~\cite{bhargavan2016short}.
+The framework is built on tools for translating Solidity and Ethereum Virtual Machine bytecode contracts into $F^*$, a functional programming language aimed
+at program verification.
+Using the~$F^*$ representations, the framework can verify the correctness of the Solidity-to-bytecode compilation as well as detect certain vulnerable patterns. Luu et al.\ provide a tool called \textsc{Oyente}, which can analyze smart contracts and detect certain typical security vulnerabilities~\cite{luu2016making}. The main difference between prior work and the approach that we are using (i.e., verifying FSolidM models with NuSMV) is that the former can prevent a set of typical vulnerabilities, but they are not effective against vulnerabilities that are atypical or belong to types which have not been identified yet.
+
+
