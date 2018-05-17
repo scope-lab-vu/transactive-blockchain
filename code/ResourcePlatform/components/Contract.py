@@ -35,21 +35,6 @@ class Contract:
       return False
     raise Exception("Unexpected boolean value {}".format(uint))
 
-
-  def decode_string(data, pos):
-    n = 64
-    arrays = [data[i:i+n] for i in range(0, len(data), n)]
-    for array in arrays:
-        out = unhexlify(array)
-        try:
-            utf8 = out.decode('utf-8')
-            if 'str' in utf8:
-                print("line")
-                string = utf8.strip("\x00")
-        except UnicodeDecodeError:
-            print("not utf-8")
-    return string
-
   def generate_topics(self, events):
     self.topics = {}
     for event in events:
@@ -92,6 +77,8 @@ class Contract:
     for i in range(len(arg_types)):
       if arg_types[i] == "uint64":
         data += Contract.encode_uint(arg_values[i])
+      if arg_types[i] == "uint256":
+        data += Contract.encode_uint(arg_values[i])
       elif arg_types[i] == "int64":
         data += Contract.encode_int(arg_values[i])
       elif arg_types[i] == "address":
@@ -123,8 +110,6 @@ class Contract:
               params[pname] = Contract.decode_address(data, data_pos)
             elif ptype == "bool":
               params[pname] = Contract.decode_bool(data, data_pos)
-            elif ptype == "string":
-              params[pname] = Contract.decode_string(data, data_pos)
             data_pos += 1
           event['params'] = params
           events.append(event)
