@@ -7,3 +7,5 @@ docs/**/*.log
 docs/**/*.out
 *.out
 *.pyc
+*.json
+*.log
