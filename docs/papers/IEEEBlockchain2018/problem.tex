@@ -1,0 +1,246 @@
+
+
+
+We first introduce a base formulation of an abstract resource allocation problem (Section~\ref{sec:ResAllPro}), which captures the core functionality of a transactive platform for SCC.
+Then, we describe two  examples of applying this formulation to solving practical problems in SCC (Section~\ref{sec:ExaApp}).
+We conclude the section by introducing various extensions to the base problem formulation, in the form of alternative objectives and additional constraints (Section~\ref{sec:ProForExt}).
+A list of the key symbols used in the resource allocation problem can be found in Table~\ref{tab:symbols}.
+%\ad{we need to include validity interval (described wrt to a global time base) as a property for the offers.}
+%\Aron{maybe as an extension in Section~\ref{sec:ProForExt}}
+
+\begin{table}[t]
+    \centering
+    \caption{List of Symbols}
+    \label{tab:symbols}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|p{6.86cm}|}
+        \hline
+        Symbol & Description \\
+        \hline
+        \rowcolor{Gray} $P$ & set of resource providers \\
+        $C$ & set of resource consumers \\
+        \rowcolor{Gray} $T$ & set of resource types \\
+        $O\!P$ & set of providing offers \\
+        \rowcolor{Gray} $OC$ & set of consumption offers \\
+        $o_P$ & resource provider who posted offer $\vo \in O\!P$ \\
+        \rowcolor{Gray} $o_C$ & resource consumer who posted offer $\vo \in OC$ \\
+        $o_Q(t)$ & amount of resources of type $t \in T$ provided or requested by offer $\vo$ \\
+        \rowcolor{Gray} $o_V(t)$ & unit reservation price of offer $\vo$ for resource type $t \in T$ \\
+        $a_{O\!P}$ & providing offer from which assignment $\va$ allocates resources \\
+        \rowcolor{Gray} $a_{OC}$ & consuming offer to which assignment $\va$ allocates resources \\
+        $a_Q$ & amount of resources allocated by assignment $\va$ \\
+        \rowcolor{Gray} $a_T$ & type of resources allocated by assignment $\va$ \\
+        $a_V$ & unit price for the resources allocated by assignment $\va$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+
+
+\subsection{Resource Allocation Problem}
+\label{sec:ResAllPro}
+
+In essence, the objective of the transactive platform is to allocate resources from users who provide resources to users who consume them.
+The sets of \emph{resource providers} and \emph{resource consumers} are denoted by $P$ and $C$, respectively.
+Note that a user may act both as a resource provider and as a resource consumer at the same time, in which case the user is a member of both $P$ and~$C$. 
+Resources that are provided or consumed belong to a set of \emph{resource types}, which are denoted by $T$.
+A resource type is an abstract concept, which captures not only the inherent characteristics of a resource, but all aspects related to providing or consuming resources.
+For example, a resource type could correspond to energy production and consumption in a specific time interval, or it could correspond to a ride between certain location at a certain time.
+
+Each provider $p \in P$ may post a set of \emph{providing offers}. % $O_p$.
+Each providing offer $\vo$ % \in O_p$ 
+is a tuple $\vo = \langle o_P, o_Q, o_V \rangle$, where $o_P \in P$ is the provider who posted the offer, $o_Q \in T \mapsto \Natural$ is the amount of resources offered from each type (i.e., $o_Q(t)$ is the amount of resources offered from type $t \in T$), and $o_V \in T \mapsto \Natural$ is the unit reservation price asked for each resource type (i.e., $o_V(t)$ is the value asked for providing a unit resource of type $t \in T$).
+Each offer $\vo = \langle o_P, o_Q, o_V \rangle$ defines a set of alternatives: provider $o_p$ offers to provide either $o_Q(t_1)$ resources of type $t_1 \in T$ or $o_Q(t_2)$ resources of type $t_2 \in T$, but not at the same time.
+However, convex linear combinations, such as providing $\lfloor \alpha \cdot o_Q(t_1)  \rfloor$ resources of type $t_1 \in T$ and $\lfloor (1 - \alpha) \cdot o_Q(t_2) \rfloor$ resources of type $t_2 \in T$ at the same time (where $\alpha \in [0, 1]$), are allowed.
+For example, an offer $\vo$ providing $o_Q(t_1)$ units of energy in time interval~$t_1$ or $o_Q(t_2)$ units of energy in time interval $t_2$ may provide $\lfloor 0.5 \cdot o_Q(t_1) \rfloor$ energy in time interval $t_1$ and $\lfloor 0.5 \cdot o_Q(t_2) \rfloor$ energy in time interval $t_2$.
+The set of all offers posted by all the providers is denoted by $O\!P$. % = \bigcup_{p \in P} O_p$.
+
+Each consumer $c \in C$ posts a set of \emph{consumption offers}. % $O_c$.
+Each consumption offer $\vo$ % \in O_c$ 
+is a tuple $\vo = \langle o_C, o_Q, o_V \rangle$, where $o_C \in C$ is the consumer who posted the offer, $o_Q \in T \mapsto \Natural$ is the amount of resources requested from each type (i.e., $o_Q(t)$ is the amount of resources requested from type $t \in T$), and $o_V \in T \mapsto \Natural$ is the unit reservation price offered for each resource type (i.e., $o_V(t)$ is the value offered for a unit resource of type $t \in T$).
+Similar to providing offers, consumption offers also define a set of alternatives.
+The set of all offers posted by all the consumers is denoted by $OC$. % = \bigcup_{c \in C} O_c$.
+
+A \emph{resource allocation} $A$ is a set of resource assignments.
+Each resource assignment $\va \in A$ is a tuple $\va = \langle a_{O\!P}, a_{OC}, a_Q, a_T, a_V \rangle$, where $a_{O\!P} \in O\!P$ is a providing offer posted by a provider, $a_{OC} \in OC$ is a consumption offer posted by a consumer, $a_Q \in \Natural$ and $a_T \in T$ are the amount and type of resources allocated from offer $a_{O\!P}$ to $a_{OC}$, and $a_V \in \Natural$ is the unit price for the assignment.
+
+A resource allocation $A$ is \emph{feasible} if
+\begin{align}
+\forall \vo \in O\!P: ~ & \sum_{t \in T} ~ \sum_{\substack{\va \in A:\\a_{O\!P} = \vo \,\wedge\, a_T = t}} \frac{a_Q}{o_Q(t)} \leq 1 \label{eq:feasable1} \\
+\forall \vo \in OC: ~ & \sum_{t \in T} ~ \sum_{\substack{\va \in A:\\a_{OC} = \vo \,\wedge\, a_T = t}} \frac{a_Q}{o_Q(t)} \leq 1 \\
+%\end{align}
+%\begin{align}
+\forall \va \in A: ~ & {\left(a_{O\!P}\right)}_V(a_T) \leq a_V \\
+\forall \va \in A: ~ & {\left(a_{OC}\right)}_V(a_T) \geq a_V \label{eq:feasable4} .
+\end{align}
+
+In other words, a resource allocation is feasible if the resources assigned from each providing offer (or consuming offer) is a convex linear combination of the offered (or requested) resources, and if the value in each assignment is higher than (or lower than) the reservation price of the providing offer (or consuming offer).
+%\begin{align}
+%\forall op = \langle p, q, v \rangle \in O\!P: & \sum_{t \in T} ~ \sum_{\langle op, oc, q', t, v' \rangle \in A} \frac{q'}{q(t)} \leq 1 \\
+%\forall oc = \langle c, q, v \rangle \in OC: & \sum_{t \in T} ~ \sum_{\langle op, oc, q', t, v' \rangle \in A} \frac{q'}{q(t)} \leq 1 
+%\end{align}
+%\begin{align}
+%\forall op = \langle p, q, v \rangle \in O\!P, \, \forall \langle op, oc, q', t, v' \rangle \in A: \, & v(t) \leq v' \\
+%\forall op = \langle p, q, v \rangle \in O\!P, \, \forall \langle op, oc, q', t, v' \rangle \in A: \, & v(t) \geq v' .
+%\end{align}
+
+The objective of the base formulation of the \emph{resource allocation problem} is to maximize the amount of resources assigned from providers to consumers.
+We define the base formulation of the problem as follows.
+
+\begin{definition}[Resource Allocation Problem]
+Given sets of providing and consumption offers $O\!P$ and $OC$, find a feasible resource allocation $A$ that attains the maximum
+\begin{equation}
+\max_{A:\, A \textnormal{ is feasible}} \, 
+\sum_{\va \in A} a_Q . \label{eq:objective}
+\end{equation}
+\end{definition}
+
+
+\subsection{Example Applications}
+\label{sec:ExaApp}
+
+To illustrate how the Resource Allocation Problem (RAP) may be applied in smart and connected communities, we now describe two example problems that can be expressed using RAP.
+
+\subsubsection{Energy Futures Market}
+\label{sec:energyFuturesMarket}
+
+\newcommand{\etime}[0]{\ensuremath{t}}
+
+We consider a residential energy-futures market in a transactive microgrid.
+In this application, resource consumers model residential energy consumers (i.e., households), while resource providers model the subset of consumers who have energy providing capabilities (e.g., solar panels, batteries).
+We divide time into fixed-length intervals (e.g., 15 minutes),
+%\ad{we should include time as a first class concept in the problem formulation itself}
+ and let each resource type correspond to providing or consuming a unit amount of power (e.g., 1 W) in a particular time interval.
+
+Based on their predicted energy supply and demand, residential consumers (or smart homes acting on their behalf) post offers to provide or consume energy in future time intervals.
+For instance, a provider may predict that it will be able to generate a certain amount of power $\pi$ using its solar panel during time intervals $\etime_1, \etime_2, \ldots, \etime_N \in T$.
+Then, it will submit a \emph{set of $N$ offers}: for each time interval~$\etime \in \{\etime_1, \ldots, \etime_N\}$ in which energy may be produced, it posts an offer specifying % to provide the predicted amount $o_Q(t)$ of power (and setting all other intervals $t' \neq t$ to $o_Q(t') = 0$ in the offer for interval $t$):
+\begin{equation}
+    o_Q(t) = \begin{cases}
+    \pi & \textnormal{ if } t = \etime \\
+    0 & \textnormal{ otherwise.}
+    \end{cases}
+\end{equation}
+Alternatively, the provider may have a fully charged battery, which could be discharged in any of the next $N$ intervals $\etime_1, \etime_2 \ldots, \etime_N$.
+Let $\pi$ denote the amount of power that could be provided if the battery was fully discharged in a single time interval.
+Then, the provider will submit a \emph{single offer} specifying
+%with $o_Q(t), o_Q(t+1), \ldots, o_Q(t+9)$ all being equal to the battery capacity over interval length (and setting all other intervals $t' < t$ or $t' > t+9$ to $o_Q(t') = 0$).
+\begin{equation}
+    o_Q(t) = \begin{cases}
+    \pi & \textnormal{ if } t \in \left\{ \etime_1, \etime_2, \ldots, \etime_N \right\} \\
+    0 & \textnormal{ otherwise.}
+    \end{cases}
+\end{equation}
+
+The reservation prices of the offers should consider the energy prices of the utility company (i.e., the alternative to local trading) and %, the flexibility of the residents' demand (e.g., some appliances, such as a dishwasher, may be rescheduled), and 
+the cost of providing energy (e.g., cost of battery depreciation due to charging and discharging).
+
+
+% Example Problem: Energy Trading
+% - each commodity corresponds to a unit amount of energy production in a given time interval
+% - objective: maximize total amount of energy traded
+% - constraint: clearing price set by a DSO
+
+\subsubsection{Carpooling Assignment}
+\label{sec:carpoolingprob}
+We consider the problem of assigning carpooling riders to drivers with empty seats in their cars.
+In this application, resource consumers model riders, while resource providers model drivers.
+We again divide time into fixed-length intervals, and we divide the space of pick-up locations into a set of areas (e.g., city blocks).
+Then, we let a resource type correspond to a ride from a particular area in a particular time interval to a particular area. 
+A unit of a resource is a single seat for a ride.
+
+A provider (i.e., driver) who has $\pi$ empty seats in its car will post a providing offer. 
+Let $\Pi \subseteq T$ denote the set of   combinations of pick-up and drop-off areas and pick-up times that are feasible for the provider.
+Then, the provider's offer specifies
+\begin{equation}
+    o_Q(t) = \begin{cases}
+    \pi & \textnormal{ if } t \in \Pi \\
+    0 & \textnormal{ otherwise.}
+    \end{cases}
+\end{equation}
+Similarly, a consumer (i.e., rider) who needs 1 seat will post a consuming offer, specifying
+\begin{equation}
+    o_Q(t) = \begin{cases}
+    1 & \textnormal{ if } t \in \Pi \\
+    0 & \textnormal{ otherwise,}
+    \end{cases}
+\end{equation}
+where $\Pi$ is the set of combinations (i.e., pick-up and drop-off areas and pick-up times) that are feasible for the rider.
+
+\subsection{Problem Formulation Extensions}
+\label{sec:ProForExt}
+
+\Aron{Note to self: review this subsection!}
+The Resource Allocation Problem that we introduced in Section~\ref{sec:ResAllPro} can capture a wide range of real-world problems.
+However, some problems may not be easily expressed using the constraints (Equations \eqref{eq:feasable1} to \eqref{eq:feasable4}) and the objective (Equation \eqref{eq:objective}) of the base problem formulation.
+For this reason, here we introduce a set of alternative objective formulations and additional constraints for resource allocation. 
+
+\subsubsection{Objectives}
+\label{sec:extObj}
+
+We first introduce alternative objective formulations, which quantify the utility of a resource allocation based on alternative goals.
+
+\textbf{Resource Type Preferences:}
+Equation \eqref{eq:objective} assumes that exchanging a unit of any resource type is equally beneficial.
+In some practical scenarios, exchanging certain resource types may be more beneficial than exchanging others.
+For each resource type~$t \in T$, let $\beta_t$ denote the utility derived from exchanging a unit of resources of type $t$.
+Then, the utility of a resource allocation~$A$ can be expressed as
+\begin{equation}
+    \sum_{\va \in A} \beta_{\left(a_T\right)} \cdot a_Q .
+\end{equation}
+
+\textbf{Provider and Consumer Benefit:}
+The reservation price~$o_V(t)$ of a providing offer $\vo$ means that provider $o_P$ is indifferent to (i.e., derives zero benefit from) exchanging resources of type $t$ at unit price $o_V(t)$.
+Hence, the unit benefit derived by the provider from exchanging at a higher price $a_V \geq o_V(t)$ is equal to $a_V - o_V(t)$.
+Similarly, the unit benefit derived by a consumer, who posted an offer $\vo$, from exchanging resources of type $t$ at price $a_V$ is equal to $o_V(t) - a_V$.
+Therefore, the total benefit created by an assignment $\va$ for provider $a_{O\!P}$ and consumer $a_{OC}$ is
+\begin{align}
+    & a_Q \cdot \left[ a_V - \left(a_{O\!P}\right)_V(a_T) \right] + a_Q \cdot \left[ \left(a_{OC}\right)_V(a_T) - a_V \right] \nonumber \\
+    = & a_Q \cdot \left[ \left(a_{OC}\right)_V(a_T) - \left(a_{O\!P}\right)_V(a_T) \right] ,
+\end{align}
+and the total benefit created by a resource allocation $A$ for all the providers and consumers is
+\begin{equation}
+    \sum_{\va \in A}  a_Q \cdot \left[ \left(a_{OC}\right)_V(a_T) - \left(a_{O\!P}\right)_V(a_T) \right] .
+\end{equation}
+
+\subsubsection{Constraints}
+\label{sec:extConstr}
+
+Next, we introduce additional feasibility constraints that may be imposed on the resource allocations.
+
+\textbf{Price Constraints:}
+A regulator (e.g., utility company in a transactive energy platform) may impose constraints on the prices at which resources may be exchanged (e.g., based on bulk-market prices).
+If the minimum and maximum unit prices for resource type $t \in T$ are $min_t$ and $max_t$, respectively, then we can express price constraints as
+\begin{equation}
+    \forall \va \in A: ~ min_{\left( a_T \right)} \leq a_V \leq max_{\left( a_T \right)} . 
+\end{equation}
+
+\textbf{Pairwise Constraints:}
+Due to physical constraints, exchanging resources of certain types between certain pairs of prosumers may be impossible.
+If the set of prosumer pairs that may exchange resources of type $t \in T$ is denoted by~$E_t \subseteq P \times C$,  we can express pairwise constraints as
+\begin{equation}
+    \forall \va \in A: \left( a_{O\!P} , a_{OC} \right) \in E_{\left( a_T \right)} .
+\end{equation}
+
+\textbf{System-wide Constraints:}
+Similar to pairs of providers and consumers, the system itself may be subject to physical limitations on exchanging resources.
+For instance, if the total amount of resources that may be exchanged for type $t \in T$ is at most $limit_t$, then we can impose the following system-wide constraint on resource allocations:
+\begin{equation}
+\forall t \in T: ~
+    \sum_{\va \in A: \, a_T = t} a_Q \leq {limit}_t .
+\end{equation}
+
+\textbf{Real-Valued Offers and Allocations:}
+Finally, we may also relax some of the constraints of the base formulation.
+In particular, we may allow real-valued quantities in offers and allocations (i.e., $o_Q: T \mapsto \Real_+$ and $a_Q \in \Real_+$) as well as real-valued prices (i.e., $o_V: T \mapsto \Real_+$ and $a_V \in \Real_+$).
+
+
+
+
+
+
+
+
+
+% - market must be cleared according to some schedule (e.g., every hour)
+% - may be computationally hard due to additional constraints (basic problem is a simple matching)
