@@ -42,9 +42,10 @@ class Contract:
       topic = {'name': name}
       params = []
       for param in [s.strip() for s in event.split("(")[1].replace(")", "").split(",")]:
-        ptype = param.split(" ")[0]
-        pname = param.split(" ")[-1]
-        params.append((ptype, pname))
+        if param != "":
+          ptype = param.split(" ")[0]
+          pname = param.split(" ")[-1]
+          params.append((ptype, pname))
       topic['params'] = params
       signature = "{}({})".format(name, ",".join([ptype for (ptype, pname) in params]))
       keccak256 = self.client.keccak256(signature)

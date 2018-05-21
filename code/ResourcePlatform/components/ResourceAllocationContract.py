@@ -3,6 +3,7 @@ from Contract import Contract
 class ResourceAllocationContract(Contract):
   def __init__(self, client, address):
     super(ResourceAllocationContract, self).__init__(client, address, [
+      "Closed()",
       "ResourceOfferPosted(uint64 offerID, uint64 actorID, uint64 architecture, uint64 capCPU, uint64 capRAM, uint64 capStorage, uint64 price)",
       "ResourceOfferCanceled(uint64 offerID)",
       "JobOfferCreated(uint64 offerID, uint64 actorID, uint64 timeLimit, uint64 price)",
@@ -50,6 +51,9 @@ class ResourceAllocationContract(Contract):
     self.call_func(from_account, "postJobCanceled" ,
       "uint64", offerID)
 
+  def close(self, from_account, ):
+    self.call_func(from_account, "close" )
+
   def createSolution(self, from_account, actorID):
     self.call_func(from_account, "createSolution" ,
       "uint64", actorID)
@@ -59,4 +63,7 @@ class ResourceAllocationContract(Contract):
       "uint64", solutionID,
       "uint64", jobOfferID,
       "uint64", resourceOfferID)
+
+  def finalize(self, from_account, ):
+    self.call_func(from_account, "finalize" )
 

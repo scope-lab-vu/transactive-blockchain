@@ -52,7 +52,7 @@ class ResourceOffer:
         and (jobOffer.price >= self.price * archJob.reqCPU * jobOffer.timeLimit))
 
 class ResourceAllocationLP:
-  def solve(self, job_offers: Iterable[JobOffer], resource_offers: Iterable[ResourceOffer], lp_solver: LinearProgram=LinearProgramCplex) -> Tuple[Dict,float]:
+  def solve(self, job_offers: Iterable[JobOffer], resource_offers: Iterable[ResourceOffer], lp_solver: LinearProgram=LinearProgramCplex) -> Tuple[List[Dict],float]:
     program = lp_solver()
     variables = []
     resource_vars = defaultdict(lambda : [])
