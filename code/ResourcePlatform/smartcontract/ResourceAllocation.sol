@@ -187,7 +187,7 @@ contract ResourceAllocation {
         JobOffer storage jobOffer = jobOffers[jobOfferID];
         ArchitectureJob storage description = jobOffer.desc[resourceOffer.architecture];
         require(description.reqCPU > 0); // check if architecture specific job description exists
-        require(jobOffer.price > resourceOffer.price * description.reqCPU * jobOffer.timeLimit);
+        require(jobOffer.price >= resourceOffer.price * description.reqCPU * jobOffer.timeLimit);
         solution.assignedCapCPU[resourceOfferID] += description.reqCPU;
         solution.assignedCapRAM[resourceOfferID] += description.reqRAM;
         solution.assignedCapStorage[resourceOfferID] += description.reqStorage;
