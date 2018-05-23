@@ -8,6 +8,8 @@ from config import *
 from EthereumClient import EthereumClient
 from ResourceAllocationContract import ResourceAllocationContract
 
+import pprint
+
 class Directory:
   def __init__(self, ip, port):
     self.client = EthereumClient(ip=ip, port=port)
@@ -45,6 +47,7 @@ class Directory:
 
   def deploy_contract(self):
     logging.info("Deploying contract...")
+    #pprint.pprint(BYTECODE)
     # use command function because we need to get the contract address later
     receiptID = self.client.command("eth_sendTransaction", params=[{'data': BYTECODE, 'from': self.account, 'gas': TRANSACTION_GAS}])
     logging.info("Transaction receipt: " + receiptID)
@@ -56,7 +59,6 @@ class Directory:
         self.contract_address = receipt['contractAddress']
         break
     self.contract = ResourceAllocationContract(self.client, self.contract_address)
-    self.contract.setup(self.account, NUM_TYPES, PRECISION, MAX_QUANTITY)
     logging.info("Contract address: " + self.contract_address)
 
 if __name__ == "__main__":

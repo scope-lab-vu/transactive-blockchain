@@ -5,7 +5,7 @@ from io import BytesIO
 from time import time, sleep
 from threading import Thread, RLock
 
-from config import * 
+from config import *
 
 CHECK_INTERVAL = 1 # check for receipts every second
 PENDING_TIMEOUT = 120 # if a transaction has been pending for more than 120 seconds, submit it again
@@ -20,7 +20,7 @@ class EthereumClient:
     self.lock = RLock()
     thread = Thread(target=self.__run)
     thread.start()
-    
+
   def __run(self):
     while True:
       sleep(CHECK_INTERVAL) # wait one second
@@ -33,7 +33,7 @@ class EthereumClient:
           receipt = self.command("eth_getTransactionReceipt", params=[trans['hash']])
           if receipt is not None: # transaction receipt is available
             self.pending.remove(trans)
-            logging.debug("Transaction {} has been mined.".format(trans['data']))
+            logging.info("Transaction {} has been mined.".format(trans['data']))
           elif current_time > trans['submission_time'] + PENDING_TIMEOUT: # timeout for pending transaction
             self.pending.remove(trans)
             logging.info("Pending transaction {} has timed out, resubmitting...".format(trans['data']))
@@ -42,24 +42,24 @@ class EthereumClient:
         for trans in list(self.waiting): # iterate over a copy so that we can remove items
           self.waiting.remove(trans)
           self.__submit_trans(trans) # resubmit
-          
+
   def __restart_client(self):
     logging.info("Restarting the client...")
     # TODO: writeme
     # TODO: handle filter re-creation?
-            
+
   def __submit_trans(self, trans):
     try:
       trans_hash = self.command("eth_sendTransaction", params=[{
-        'from': trans['from'], 
-        'data': trans['data'], 
-        'to': trans['to'], 
+        'from': trans['from'],
+        'data': trans['data'],
+        'to': trans['to'],
         'gas': TRANSACTION_GAS
       }])
       if trans_hash.startswith("0x"): # this looks like a transaction hash (this check could be more thorough of course...)
         trans['hash'] = trans_hash
         trans['submission_time'] = time()
-        logging.debug("Transaction {} has been submitted...".format(trans['data']))
+        logging.info("Transaction {} has been submitted...".format(trans['data']))
         self.pending.append(trans) # keep track of pending transactions
         return # nothing else to do
     except BaseException as e:
@@ -80,16 +80,16 @@ class EthereumClient:
 
   def accounts(self):
     return self.command("eth_accounts")
-    
+
   def keccak256(self, string):
     return self.command("web3_sha3", params=["0x" + bytes(string, 'ascii').hex()])
-    
+
   def new_filter(self):
     filter_id = self.command("eth_newFilter", params=[{"fromBlock": "0x1"}])
     logging.info("Created filter (ID = {}).".format(filter_id))
     return filter_id
 
-  def get_filter_changes(self, filter_id):    
+  def get_filter_changes(self, filter_id):
     block = self.command("eth_blockNumber")
     log = self.command("eth_getFilterChanges", params=[filter_id])
     logging.debug("Log: {} items (block number: {})".format(len(log), block))
@@ -124,7 +124,7 @@ class EthereumClient:
     results = str(buffer.getvalue().decode('iso-8859-1'))
     if verbose:
       print(results)
- 
+
     # convert result to json object for parsing
     data = json.loads(results)
     # return appropriate result
@@ -135,5 +135,3 @@ class EthereumClient:
         raise Exception('rpc_communication_error', data)
       else:
         raise Exception('rpc_communication_error', "unknown error: possibly method/parameter(s) were wrong and/or networking issue.")
-
-
