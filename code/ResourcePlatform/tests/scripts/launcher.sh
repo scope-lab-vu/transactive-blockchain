@@ -15,15 +15,15 @@ JOBS=$DIR/$PROJECT/"jobs"
 i=1
 #for i in $(seq 0 99);
 #for i in $(seq 0 74)
-if true ; then
+if false ; then
 for i in $(seq 0 0)
 do
   echo "launch actor$i"
   tmux new -d -s actor$i
-  tmux send -t actor$i.0 "sudo python3 $DIR/$PROJECT/components/Actor.py $i $GETHCLIENT $PORT 0 $JOBS" ENTER
+  tmux send -t actor$i.0 "sudo python3 $DIR/$PROJECT/components/JobCreator.py $i $GETHCLIENT $PORT 0 $JOBS" ENTER
 done
 fi
 
-if false; then
-  sudo python3 $DIR/$PROJECT/components/JobCreatorDev.py $i $GETHCLIENT $PORT 0 $JOBS
+if true; then
+  sudo python3 $DIR/$PROJECT/components/JobCreator.py 101 $GETHCLIENT $PORT $JOBS
 fi

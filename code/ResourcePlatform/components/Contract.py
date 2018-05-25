@@ -1,5 +1,6 @@
 import logging
-from binascii import unhexlify
+from binascii import unhexlify, hexlify
+import pprint
 
 
 class Contract:
@@ -7,6 +8,9 @@ class Contract:
     return "000000000000000000000000" + address[2:]
 
   def encode_uint(value):
+    logging.info("ENCODE UINT")
+    logging.info(value)
+    logging.info(format(value, "064x"))
     return format(value, "064x")
 
   def encode_int(value):
@@ -14,6 +18,17 @@ class Contract:
 
   def encode_bool(value):
     return Contract.encode_uint(1 if value else 0)
+
+  def encode_string(value):
+      logging.info("ENCODE STRING")
+      bytesvalue = value.encode('utf-8')
+      logging.info("bytesvalue: %s" %bytesvalue)
+      hexstr = hexlify(bytesvalue).decode("utf-8")
+      p1 = "00000000000000000000000000000000000000000000000000000000000000c0"
+      p2 = "0000000000000000000000000000000000000000000000000000000000000040"
+      p3 = hexstr.ljust(64, '0')
+      logging.info("encodedString: %s" %(p1+p2+p3))
+      return(p1+p2+p3)
 
   def decode_address(data, pos):
     return "0x" + data[pos * 64 + 24 : (pos + 1) * 64]
@@ -34,6 +49,37 @@ class Contract:
     elif uint == 0:
       return False
     raise Exception("Unexpected boolean value {}".format(uint))
+
+  def decode_string(data, pos):
+      '''no clue what pos is for'''
+      n = 64
+      logging.info("decode raw string")
+      # Split the data into 64 bit arrays
+      arrays = [data[i:i+n] for i in range(0, len(data), n)]
+      string = "" #the string
+
+      for array in arrays:
+          if array[0] is not "0":
+              string += unhexlify(array).decode('utf-8')
+
+      #-----------Below doesn't get the dubug string---------------
+    #   start = False #tracks start staring 64 chars ending with c0
+    #   size = 0 #tracks value after start value, which is the size of the string
+      #
+    #   #iterate through the arrays
+    #   for array in arrays:
+    #       print("Contract.py")
+    #       print(unhexlify(array))
+    #       #check if the size of the string is known, because if it is then this array is part of it
+    #       if size:
+    #           string += unhexlify(array).decode('utf-8')
+    #       #check if the start array has passed, because if it has this is the size array
+    #       if start and not size:
+    #           size = int(array,32)
+    #       # Check if this is the start array
+    #       if "c0".zfill(64) in array:
+    #           start = True
+      return string.strip('\x00')
 
   def generate_topics(self, events):
     self.topics = {}
@@ -62,6 +108,7 @@ class Contract:
 
   def call_func(self, from_account, name, *args):
     # generate signature
+    logging.debug(args)
     arg_types = []
     arg_values = []
     for i in range(len(args) >> 1):
@@ -76,18 +123,20 @@ class Contract:
     data = self.func_hash[signature]
     # encode arguments
     for i in range(len(arg_types)):
-      if arg_types[i] == "uint64":
-        data += Contract.encode_uint(arg_values[i])
-      if arg_types[i] == "uint256":
-        data += Contract.encode_uint(arg_values[i])
-      elif arg_types[i] == "int64":
-        data += Contract.encode_int(arg_values[i])
-      elif arg_types[i] == "address":
-        data += Contract.encode_address(arg_values[i])
-      elif arg_types[i] == "bool":
-        data += Contract.encode_bool(arg_values[i])
-      else:
-        raise Exception("Unknown type {}!".format(arg_types[i]))
+        if arg_types[i] == "uint64":
+            data += Contract.encode_uint(arg_values[i])
+        elif arg_types[i] == "uint256":
+            data += Contract.encode_uint(arg_values[i])
+        elif arg_types[i] == "int64":
+            data += Contract.encode_int(arg_values[i])
+        elif arg_types[i] == "address":
+            data += Contract.encode_address(arg_values[i])
+        elif arg_types[i] == "bool":
+            data += Contract.encode_bool(arg_values[i])
+        elif arg_types[i] == "string":
+            data += Contract.encode_string(arg_values[i])
+        else:
+            raise Exception("Unknown type {}!".format(arg_types[i]))
     # send transaction
     self.client.transaction(from_account, data, self.address)
 
@@ -95,6 +144,7 @@ class Contract:
     log = self.client.get_filter_changes(self.filter_id)
     events = []
     for item in log:
+      logging.debug("ITEM: %s" %item)
       if self.address == item['address']:
         if item['topics'][0] in self.topics:
           topic = self.topics[item['topics'][0]]
@@ -111,6 +161,8 @@ class Contract:
               params[pname] = Contract.decode_address(data, data_pos)
             elif ptype == "bool":
               params[pname] = Contract.decode_bool(data, data_pos)
+            elif ptype == "string":
+              params[pname] = Contract.decode_string(data, data_pos)
             data_pos += 1
           event['params'] = params
           events.append(event)

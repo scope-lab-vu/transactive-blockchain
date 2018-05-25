@@ -6,13 +6,14 @@ class ResourceAllocationContract(Contract):
       "Closed()",
       "ResourceOfferPosted(uint64 offerID, uint64 actorID, uint64 architecture, uint64 capCPU, uint64 capRAM, uint64 capStorage, uint64 price)",
       "ResourceOfferCanceled(uint64 offerID)",
-      "JobOfferCreated(uint64 offerID, uint64 actorID, uint64 timeLimit, uint64 price)",
-      "JobOfferUpdated(uint64 offerID, uint64 architecture, uint64 reqCPU, uint64 reqRAM, uint64 reqStorage, uint256 imageHash)",
+      "JobOfferCreated(uint64 offerID, uint64 actorID, uint64 timeLimit, uint64 price, uint64 iid)",
+      "JobOfferUpdated(uint64 offerID, uint64 architecture, uint64 reqCPU, uint64 reqRAM, uint64 reqStorage, string imageHash)",
       "JobOfferPosted(uint64 offerID)",
       "JobOfferCanceled(uint64 offerID)",
       "SolutionCreated(uint64 solutionID, uint64 actorID)",
       "AssignmentAdded(uint64 solutionID, uint64 jobOfferID, uint64 resourceOfferID)",
       "AssignmentFinalized(uint64 jobOfferID, uint64 resourceOfferID)",
+      "Debug(string Description, uint64 value, bool boolean, uint64 state)",
     ])
 
   def postResourceOffer(self, from_account, actorID, architecture, capCPU, capRAM, capStorage, price):
@@ -28,11 +29,12 @@ class ResourceAllocationContract(Contract):
     self.call_func(from_account, "cancelResourceOffer" ,
       "uint64", offerID)
 
-  def createJobOffer(self, from_account, actorID, timeLimit, price):
-    self.call_func(from_account, "createJobOffer" ,
-      "uint64", actorID,
-      "uint64", timeLimit,
-      "uint64", price)
+  def createJobOffer(self, from_account, actorID, timeLimit, price, iid):
+      self.call_func(from_account, "createJobOffer" ,
+                                   "uint64", actorID,
+                                   "uint64", timeLimit,
+                                   "uint64", price,
+                                   "uint64", iid)
 
   def updateJobOffer(self, from_account, offerID, architecture, reqCPU, reqRAM, reqStorage, imageHash):
     self.call_func(from_account, "updateJobOffer" ,
@@ -41,7 +43,7 @@ class ResourceAllocationContract(Contract):
       "uint64", reqCPU,
       "uint64", reqRAM,
       "uint64", reqStorage,
-      "uint256", imageHash)
+      "string", imageHash)
 
   def postJobOffer(self, from_account, offerID):
     self.call_func(from_account, "postJobOffer" ,
