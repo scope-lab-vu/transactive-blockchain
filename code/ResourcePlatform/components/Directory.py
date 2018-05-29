@@ -22,11 +22,16 @@ class Directory:
     next_interval = START_INTERVAL # must be in sync with the starting interval of the smart contract
     next_finalization = time() + INTERVAL_LENGTH
     while True:
-      sleep(next_finalization - time())
-      next_finalization += INTERVAL_LENGTH
-      logging.info("Finalizing interval {}".format(next_interval))
-      self.contract.close(self.account)
-      next_interval += 1
+    #   sleep(next_finalization - time())
+    #   next_finalization += INTERVAL_LENGTH
+      print("Press c ENTER to close or f ENTER to finlize")
+      cmd = input("Press Enter to continue")
+      if cmd == "c":
+          self.contract.close(self.account)
+      if cmd =="f":
+          logging.info("Finalizing interval {}".format(next_interval))
+          self.contract.finalize(self.account)
+          next_interval += 1
 
   def run(self):
     logging.info("Entering main function...")

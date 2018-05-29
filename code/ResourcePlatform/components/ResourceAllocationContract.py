@@ -6,7 +6,7 @@ class ResourceAllocationContract(Contract):
       "Closed()",
       "ResourceOfferPosted(uint64 offerID, uint64 actorID, uint64 architecture, uint64 capCPU, uint64 capRAM, uint64 capStorage, uint64 price)",
       "ResourceOfferCanceled(uint64 offerID)",
-      "JobOfferCreated(uint64 offerID, uint64 actorID, uint64 timeLimit, uint64 price, uint64 iid)",
+      "JobOfferCreated(uint64 offerID, uint64 actorID, uint64 timeLimit, uint64 price, uint64 ioid)",
       "JobOfferUpdated(uint64 offerID, uint64 architecture, uint64 reqCPU, uint64 reqRAM, uint64 reqStorage, string imageHash)",
       "JobOfferPosted(uint64 offerID)",
       "JobOfferCanceled(uint64 offerID)",
@@ -29,12 +29,12 @@ class ResourceAllocationContract(Contract):
     self.call_func(from_account, "cancelResourceOffer" ,
       "uint64", offerID)
 
-  def createJobOffer(self, from_account, actorID, timeLimit, price, iid):
+  def createJobOffer(self, from_account, actorID, timeLimit, price, ioid):
       self.call_func(from_account, "createJobOffer" ,
                                    "uint64", actorID,
                                    "uint64", timeLimit,
                                    "uint64", price,
-                                   "uint64", iid)
+                                   "uint64", ioid)
 
   def updateJobOffer(self, from_account, offerID, architecture, reqCPU, reqRAM, reqStorage, imageHash):
     self.call_func(from_account, "updateJobOffer" ,
@@ -68,4 +68,3 @@ class ResourceAllocationContract(Contract):
 
   def finalize(self, from_account, ):
     self.call_func(from_account, "finalize" )
-

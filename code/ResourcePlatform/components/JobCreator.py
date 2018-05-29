@@ -21,15 +21,17 @@ import copy
 import docker
 
 class Offer():
-    def __init__(self,image_dict, iid, timeLimit, price):
+    def __init__(self,image_dict, ioid, timeLimit, price):
         self.repoDigestSha = image_dict["RepoDigests"][0]
         self.IDsha = image_dict["Id"].split(":")[1]
-        self.storage = image_dict["Size"]
+        self.storage = image_dict["Size"] #in bytes
         self.os = image_dict["Os"]
         self.arch = image_dict["Architecture"]
-        self.iid = iid
+        self.ioid = ioid
         self.timeLimit = timeLimit
         self.price = price
+        logging.info("job arch is %s" %self.arch)
+
 
 class JobCreator(Actor):
     def __init__(self):
@@ -55,7 +57,7 @@ class JobCreator(Actor):
         image_dict = self.APIclient.inspect_image(jobname)
         offer = Offer(image_dict, self.next_offer, timeLimit, price)
         self.pending_offers[self.next_offer] = offer
-        self.contract.createJobOffer(self.account, self.prosumer_id, offer.timeLimit, offer.price, offer.iid)
+        self.contract.createJobOffer(self.account, self.prosumer_id, offer.timeLimit, offer.price, offer.ioid)
         self.next_offer += 1 #defined in Prosumer.py
 
     def run(self):
@@ -80,14 +82,14 @@ class JobCreator(Actor):
                     pass
 
                 elif (name == "JobOfferCreated") and (params['actorID'] == self.prosumer_id):
-                    '''JobOfferCreated(uint64 offerID, uint64 actorID, uint64 timeLimit, uint64 price, uint iid)'''
+                    '''JobOfferCreated(uint64 offerID, uint64 actorID, uint64 timeLimit, uint64 price, uint ioid)'''
                     stopWatch = {"start":time(), "running" : 1} #USING THIS TO MEASURE TIME UNTIL OFFER IS POSTED
                     self.logger.info("{}({}).".format(name, params))
-                    offer = self.pending_offers.pop(params['offerID']) #post_offer in Actor.py adds offers to pending_offers.
+                    offer = self.pending_offers.pop(params['ioid']) #post_offer in Actor.py adds offers to pending_offers.
                     self.created_offers[params['offerID']] = offer
                     '''updateJobOffer(self, from_account, offerID, architecture, reqCPU, reqRAM, reqStorage, imageHash)'''
                     self.contract.updateJobOffer(from_account=self.account, offerID=params['offerID'],
-                                                 architecture=self.archTypes[offer.arch], reqCPU=50,
+                                                 architecture=self.archTypes[offer.arch], reqCPU=50, #MIPS
                                                  reqRAM=50, reqStorage=offer.storage, imageHash = offer.IDsha)
 
                 elif (name == "JobOfferUpdated") and (params['offerID'] in self.created_offers):
@@ -103,23 +105,13 @@ class JobCreator(Actor):
                     print("Offer Posted: %s \n Post Duration: %s" %(params['offerID'],stopWatch["split"]))
                     self.logger.info("{}({}).".format(name, params))
 
-                elif (name == "AssignmentAdded") and (params['providingOfferID'] in self.created_offers):
-                    self.logger.info("providing offer : {}({}).".format(name, params))
+                elif (name == "AssignmentAdded") and (params['jobOfferID'] in self.created_offers):
+                    '''AssignmentAdded(uint64 solutionID, uint64 jobOfferID, uint64 resourceOfferID)'''
+                    self.logger.info("job offer : {}({}).".format(name, params))
 
-                elif (name == "AssignmentAdded") and (params['consumingOfferID'] in self.created_offers):
-                    self.logger.info("consuming offer : {}({}).".format(name, params))
-
-                elif (name == "AssignmentFinalized") and (params['providingOfferID'] in self.created_offers):
-                    self.logger.info("Finalized Providing Offer : {}({}).".format(name,params))
-
-                elif (name == "AssignmentFinalized") and (params['consumingOfferID'] in self.created_offers):
-                  self.logger.info("Finalized Consuming Offer : {}({}).".format(name,params))
-
-                elif (name == "FinalizeRequested"):
-                    logging.info("{}({}).".format(name, params))
-
-                elif(name == "FinalizeComplete"):
-                    logging.info("{}({}).".format(name, params))
+                elif (name == "AssignmentFinalized") and (params['jobOfferID'] in self.created_offers):
+                    '''AssignmentFinalized(uint64 jobOfferID, uint64 resourceOfferID)'''
+                    self.logger.info("Finalized job Offer : {}({}).".format(name,params))
 
           sleep(max(next_polling - time(), 0)) # Sleep until the next time to check for events from the blockchain
 
@@ -151,5 +143,5 @@ if __name__ == "__main__":
         print (line)
 
 
-    A.post_offer(jobname=jobname, timeLimit=60, price=100 )
+    A.post_offer(jobname=jobname, timeLimit=60, price=10000 )#price units will have to be small, cents or less probably.
     A.run()

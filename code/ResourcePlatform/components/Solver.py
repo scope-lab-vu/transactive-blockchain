@@ -40,31 +40,48 @@ class Solver(ResourceAllocationLP):
       for event in self.contract.poll_events():
         params = event['params']
         name = event['name']
-        logging.debug("{}({}).".format(name, params))
+        logging.info("{}({}).".format(name, params))
         if name == "ResourceOfferPosted":
           posted_ro[params['offerID']] = ResourceOffer(params['offerID'], params['actorID'], params['architecture'], params['capCPU'], params['capRAM'], params['capStorage'], params['price'])
+
         elif name == "ResourceOfferCanceled":
           unposted_ro[params['offerID']] = posted_ro.pop(params['offerID'])
+
         elif name == "JobOfferCreated":
           unposted_jo[params['offerID']] = JobOffer(params['offerID'], params['actorID'], params['timeLimit'], params['price'])
+
         elif name == "JobOfferUpdated":
           unposted_jo[params['offerID']].update(params['architecture'], ArchitectureJob(params['reqCPU'], params['reqRAM'], params['reqStorage'], params['imageHash']))
+
         elif name == "JobOfferPosted":
           posted_jo[params['offerID']] = unposted_jo.pop(params['offerID'])
+
         elif name == "JobOfferCanceled":
           unposted_jo[params['offerID']] = posted_jo.pop(params['offerID'])
+
         elif name == "Closed":
           # initiate creating a solution as soon as possible
+          logging.info("{}({}).".format(name, params))
+
           self.contract.createSolution(self.account, self.solverID)
           # solve allocation and store solution
           logging.info("Solving job allocation problem with {len(posted_jo)} job offers and {len(posted_ro)} resource offers...")
+          logging.info("JOS")
+          logging.info(type(posted_jo))
+          logging.info(posted_jo)
+          logging.info(posted_jo.values())
+          logging.info(type(posted_jo.values()))
+          logging.info("ROS")
+          logging.info(posted_ro)
+          logging.info(posted_ro.values())
           (solution, objective) = self.solve(posted_jo.values(), posted_ro.values())
           self.solution = solution
           logging.info(f"Job allocation problem solved, objective = {objective}")
-        elif name == "SolutionCreated" and actorID == self.solverID:
+
+        elif name == "SolutionCreated" and params['actorID'] == self.solverID:
           logging.info("Solution {params['solutionID']} created, adding assignments...")
           for assign in self.solution:
-            if assign['a'] > 0: 
+            if assign['a'] > 0:
               self.contract.addAssignment(self.account, params['solutionID'], assign['jo'].offerID, assign['ro'].offerID)
           logging.info("Assignments added")
         elif name == "AssignmentFinalized":
@@ -73,8 +90,8 @@ class Solver(ResourceAllocationLP):
           unposted_ro = {}
           posted_ro = {}
           unposted_jo = {}
-          posted_jo = {}    
-      sleep(max(next_polling - time(), 0))  
+          posted_jo = {}
+      sleep(max(next_polling - time(), 0))
 
   def query_contract_address(self):
     msg = {
@@ -97,4 +114,3 @@ if __name__ == "__main__":
   solverID = os.getpid()
   solver = Solver(ip, port, solverID)
   solver.run()
-  

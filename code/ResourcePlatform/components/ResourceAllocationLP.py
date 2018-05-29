@@ -12,7 +12,7 @@ class ArchitectureJob:
     self.reqRAM = reqRAM
     self.reqStorage = reqStorage
     self.imageHash = imageHash
-    
+
   def __repr__(self):
     return f"<{self.reqCPU}, {self.reqRAM}, {self.reqStorage}, {self.imageHash}>"
 
@@ -25,8 +25,8 @@ class JobOffer:
     self.desc = {}
 
   def __repr__(self):
-    return f"<{self.offerID}, {self.actorID}, {self.timeLimit}, {self.price}, {self.desc}>"    
-    
+    return f"<{self.offerID}, {self.actorID}, {self.timeLimit}, {self.price}, {self.desc}>"
+
   def update(self, architecture: int, archJob: ArchitectureJob):
     self.desc[architecture] = archJob
 
@@ -42,14 +42,22 @@ class ResourceOffer:
 
   def __repr__(self):
     return f"<{self.offerID}, {self.actorID}, {self.architecture}, {self.capCPU}, {self.capRAM}, {self.capStorage}, {self.price}>"
-    
+
   def supports(self, jobOffer: JobOffer) -> bool:
+    print(f"jobOffer: {jobOffer}")
+    print(f"jobOffer.desc: {jobOffer.desc}")
+    print(self.architecture)
     if self.architecture not in jobOffer.desc:
       return False
     archJob = jobOffer.desc[self.architecture]
-    return ((self.capCPU >= archJob.reqCPU) 
-        and (self.capRAM >= archJob.reqRAM) 
-        and (self.capStorage >= archJob.reqStorage) 
+    print(f"capCPU:{self.capCPU} >= reqCPU:{archJob.reqCPU}")
+    print(f"capRAM:{self.capRAM} >= reqRAM:{archJob.reqRAM}")
+    print(f"capStorage: {self.capStorage} >= reqStorage:{archJob.reqStorage}")
+    print(f"jobOffer.price: {jobOffer.price} >= resourcePrice:{self.price * archJob.reqCPU * jobOffer.timeLimit}")
+
+    return ((self.capCPU >= archJob.reqCPU)
+        and (self.capRAM >= archJob.reqRAM)
+        and (self.capStorage >= archJob.reqStorage)
         and (jobOffer.price >= self.price * archJob.reqCPU * jobOffer.timeLimit))
 
 class ResourceAllocationLP:
@@ -63,13 +71,13 @@ class ResourceAllocationLP:
         if ro.supports(jo):
           varname = 'a_{ro.offerID}_{jo.offerID}'
           var = {'name': varname, 'ro': ro, 'jo': jo}
-          variables.append(var) 
+          variables.append(var)
           resource_vars[ro].append(var)
           job_vars[jo].append(var)
     if not len(variables):
       logging.info("No matchable offers, skipping solver.")
       return ([], 0)
-      
+
     program.set_objective({v['name']: -v['jo'].price for v in variables})
     for jo in job_offers:
       program.add_constraint({v['name']: 1 for v in job_vars[jo]}, 1) # each job may be assigned to only one resource offer
@@ -83,4 +91,3 @@ class ResourceAllocationLP:
     for v in variables:
       v['a'] = solution[v['name']]
     return (variables, -objective)
-
