@@ -1,0 +1,7 @@
+host ede8{
+	net ede8 address 192.168.88.241
+}
+
+app TransactiveEnergy{
+	on ede8 DSO;
+}

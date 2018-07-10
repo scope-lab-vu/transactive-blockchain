@@ -1,0 +1,48 @@
+// RIAPS WeatherMonitor
+struct ReqAddr {
+	request : String;
+}
+
+struct RepAddr{
+	contract: String;
+	time: Int32;	
+}
+
+app TransactiveEnergy {
+    message Query_contract_address :ReqAddr
+    message Contract_address : RepAddr 
+
+	// Distributed System Operator
+    component DSO {
+      rep contractAddr : (Query_contract_address,Contract_address) ;	// 
+    }
+
+    // Traders, and Solvers
+    component Trader {
+      req contractAddr : (Query_contract_address,Contract_address) ;	// Subscriber port to trigger component with Temperature messages
+    }
+    
+    component Solver {
+    	req contractAddr : (Query_contract_address,Contract_address) ;	// Subscriber port to trigger component with Temperature messages   	
+    }
+    
+    // Energy Traders
+    actor Prosumer{
+    	{
+    		trader : Trader;
+    	}
+    }
+    
+    // Energy Solvers
+    actor Solver{
+    	{
+    		solver : Solver;
+    	}
+    }
+    
+    actor DSO{
+    	{
+    		dso : DSO
+    	}
+    }
+}

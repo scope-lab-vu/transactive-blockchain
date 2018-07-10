@@ -1,0 +1,15 @@
+app TransactiveEnergy{
+	on (172.21.20.9)  Trader(ID=101);
+	on (172.21.20.10) Trader(ID=102);
+	on (172.21.20.11) Trader(ID=103);
+	on (172.21.20.12) Trader(ID=104);
+//	on (172.21.20.13) Trader(ID=105);
+	on (172.21.20.14) Trader(ID=201);
+	on (172.21.20.15) Trader(ID=202);
+	on (172.21.20.16) Trader(ID=203);
+	on (172.21.20.17) Trader(ID=204);
+//	on (172.21.20.18) Trader(ID=205);
+	on (172.21.20.13) DSO;
+	on (172.21.20.34) Solver;
+	on (172.21.20.18) Recorder	;
+}
