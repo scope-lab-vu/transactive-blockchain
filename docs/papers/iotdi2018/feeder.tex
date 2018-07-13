@@ -269,12 +269,12 @@ grid=both,
   xtick={0, 16, 32, 48, 64, 80, 95},
   xticklabels={0:00, 4:00, 8:00, 12:00, 16:00,  20:00, 23:45},
 ]
-\addplot[no markers, solid, greenline, semithick] table[x expr=\coordindex, y=WithoutBattery,  comment chars={\%}, col sep=comma] {diagrams/interval-energy-traded.csv};
-\addlegendentry{Total energy traded (Test A)};
-\addplot[no markers, solid, blackLine, semithick] table[x expr=\coordindex, y=WithBattery5,  comment chars={\%}, col sep=comma] {diagrams/interval-energy-traded.csv};
-\addlegendentry{Total energy traded (Test C)};
-\addplot[no markers, solid, goldLine, semithick] table[x expr=\coordindex, y=WithBattery12,  comment chars={\%}, col sep=comma] {diagrams/interval-energy-traded.csv};
-\addlegendentry{Total energy traded (Test D)};
+%\addplot[no markers, solid, greenline, semithick] table[x expr=\coordindex, y=WithoutBattery,  comment chars={\%}, col sep=comma] {diagrams/interval-energy-traded.csv};
+%\addlegendentry{Total energy traded (Test A)};
+%\addplot[no markers, solid, blackLine, semithick] table[x expr=\coordindex, y=WithBattery5,  comment chars={\%}, col sep=comma] {diagrams/interval-energy-traded.csv};
+%\addlegendentry{Total energy traded (Test C)};
+%\addplot[no markers, solid, goldLine, semithick] table[x expr=\coordindex, y=WithBattery12,  comment chars={\%}, col sep=comma] {diagrams/interval-energy-traded.csv};
+%\addlegendentry{Total energy traded (Test D)};
 \addplot[no markers, solid, blueLine, semithick] table[x expr=\coordindex, y=TotalProduction, comment chars={\%}] {diagrams/TotalProductionConsumption.csv};
 \addlegendentry{Total production};
 \addplot[no markers, solid, redLine, semithick] table[x expr=\coordindex, y=TotalConsumption, comment chars={\%}] {diagrams/TotalProductionConsumption.csv};
