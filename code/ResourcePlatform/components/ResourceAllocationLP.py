@@ -1,109 +1,93 @@
 import logging
 
-from LinearProgramCplex import LinearProgramCplex
-import pprint
-import json
+from collections import defaultdict
+from typing import Dict, Tuple, List, Iterable
 
-class Offer:
-  def __init__(self, ID, providing, prosumer, quantity=None, value=None):
-      self.ID = ID
-      self.providing = providing
-      self.prosumer = prosumer
-      if quantity is None:
-          self.quantity = {}
-      else:
-          self.quantity = quantity
-      if value is None:
-          self.value = {}
-      else:
-          self.value = value
+from LinearProgram import LinearProgram
+from LinearProgramCplex import LinearProgramCplex
+
+class ArchitectureJob:
+  def __init__(self, reqCPU: int, reqRAM: int, reqStorage: int, imageHash: str):
+    self.reqCPU = reqCPU
+    self.reqRAM = reqRAM
+    self.reqStorage = reqStorage
+    self.imageHash = imageHash
 
   def __repr__(self):
-    return "<{}, {}, {}, {}, {}>".format(self.ID, self.providing, self.prosumer, self.quantity, self.value)
+    return f"<{self.reqCPU}, {self.reqRAM}, {self.reqStorage}, {self.imageHash}>"
 
-  def matchable(self, offer):
-    for res_type in self.quantity:
-      if res_type in offer.quantity:
-        if (self.providing and (not offer.providing) and (self.value[res_type] <= offer.value[res_type])) or ((not self.providing) and offer.providing and (self.value[res_type] >= offer.value[res_type])):
-          return True
-    return False
+class JobOffer:
+  def __init__(self, offerID: int, actorID: int, timeLimit: int, price: int):
+    self.offerID = offerID
+    self.actorID = actorID
+    self.timeLimit = timeLimit
+    self.price = price
+    self.desc = {}
 
-  def intersection(self, offer):
-    res_types = []
-    for res_type in self.quantity:
-      if res_type in offer.quantity:
-        if (self.providing and (not offer.providing) and (self.value[res_type] <= offer.value[res_type])) or ((not self.providing) and offer.providing and (self.value[res_type] >= offer.value[res_type])):
-          res_types.append(res_type)
-    return res_types
+  def __repr__(self):
+    return f"<{self.offerID}, {self.actorID}, {self.timeLimit}, {self.price}, {self.desc}>"
+
+  def update(self, architecture: int, archJob: ArchitectureJob):
+    self.desc[architecture] = archJob
+
+class ResourceOffer:
+  def __init__(self, offerID: int, actorID: int, architecture: int, capCPU: int, capRAM: int, capStorage: int, price: int):
+    self.offerID = offerID
+    self.actorID = actorID
+    self.architecture = architecture
+    self.capCPU = capCPU
+    self.capRAM = capRAM
+    self.capStorage = capStorage
+    self.price = price
+
+  def __repr__(self):
+    return f"<{self.offerID}, {self.actorID}, {self.architecture}, {self.capCPU}, {self.capRAM}, {self.capStorage}, {self.price}>"
+
+  def supports(self, jobOffer: JobOffer) -> bool:
+    print(f"jobOffer: {jobOffer}")
+    print(f"jobOffer.desc: {jobOffer.desc}")
+    print(self.architecture)
+    if self.architecture not in jobOffer.desc:
+      return False
+    archJob = jobOffer.desc[self.architecture]
+    print(f"capCPU:{self.capCPU} >= reqCPU:{archJob.reqCPU}")
+    print(f"capRAM:{self.capRAM} >= reqRAM:{archJob.reqRAM}")
+    print(f"capStorage: {self.capStorage} >= reqStorage:{archJob.reqStorage}")
+    print(f"jobOffer.price: {jobOffer.price} >= resourcePrice:{self.price * archJob.reqCPU * jobOffer.timeLimit}")
+
+    return ((self.capCPU >= archJob.reqCPU)
+        and (self.capRAM >= archJob.reqRAM)
+        and (self.capStorage >= archJob.reqStorage)
+        and (jobOffer.price >= self.price * archJob.reqCPU * jobOffer.timeLimit))
 
 class ResourceAllocationLP:
-  def __init__(self, precision):
-    self.precision = precision
-
-  def solve(self, providing_offers, consuming_offers, lp_solver=LinearProgramCplex):
+  def solve(self, job_offers: Iterable[JobOffer], resource_offers: Iterable[ResourceOffer], lp_solver: LinearProgram=LinearProgramCplex) -> Tuple[List[Dict],float]:
     program = lp_solver()
-    variables = {}
-    export_vars = {}
-    prov_vars = {}
-    cons_vars = {}
-    export_pos = {}
-    export_cos = {}
-    for po in providing_offers:
-      export_pos["p_{}".format(po.ID)] = po.__repr__()
-      for co in consuming_offers:
-        export_cos["c_{}".format(co.ID)] = co.__repr__()
-        for t in po.intersection(co):
-          variable = {'po': po, 'co': co, 't': t}
-          export_var = {'po': po.__repr__(), 'co': co.__repr__(), 't': t}
-          varname = 'q_{}_{}_{}'.format(po.ID, co.ID, t)
-          variables[varname] = variable
-          export_vars[varname] = export_var
-          if po in prov_vars:
-            prov_vars[po][varname] = po.quantity[t]
-          else:
-            prov_vars[po] = {varname: po.quantity[t]}
-          if co in cons_vars:
-            cons_vars[co][varname] = co.quantity[t]
-          else:
-            cons_vars[co] = {varname: co.quantity[t]}
-    with open('input.json', 'w') as fp:
-        json.dump(export_vars, fp)
-    with open("inputpo.json", 'w') as fp:
-        json.dump(export_pos, fp)
-    with open("inputco.json", 'w') as fp:
-        json.dump(export_cos, fp)
+    variables = []
+    resource_vars = defaultdict(lambda : [])
+    job_vars = defaultdict(lambda : [])
+    for ro in resource_offers:
+      for jo in job_offers:
+        if ro.supports(jo):
+          varname = 'a_{ro.offerID}_{jo.offerID}'
+          var = {'name': varname, 'ro': ro, 'jo': jo}
+          variables.append(var)
+          resource_vars[ro].append(var)
+          job_vars[jo].append(var)
     if not len(variables):
       logging.info("No matchable offers, skipping solver.")
       return ([], 0)
 
-    # TODO: add integer constraints based on precision
-    program.set_objective({varname: -1.0 for varname in variables})
-    for po in prov_vars:
-      program.add_constraint(
-        {varname: 1.0 / float(prov_vars[po][varname]) for varname in prov_vars[po]}, 1.0)
-    for co in cons_vars:
-      program.add_constraint(
-        {varname: 1.0 / float(cons_vars[co][varname]) for varname in cons_vars[co]}, 1.0)
+    program.set_objective({v['name']: -v['jo'].price for v in variables})
+    for jo in job_offers:
+      program.add_constraint({v['name']: 1 for v in job_vars[jo]}, 1) # each job may be assigned to only one resource offer
+    for ro in resource_offers:
+      program.add_constraint({v['name']: v['jo'].desc[ro.architecture].reqCPU for v in resource_vars[ro]}, ro.capCPU)
+      program.add_constraint({v['name']: v['jo'].desc[ro.architecture].reqRAM for v in resource_vars[ro]}, ro.capRAM)
+      program.add_constraint({v['name']: v['jo'].desc[ro.architecture].reqStorage for v in resource_vars[ro]}, ro.capStorage)
 
     (solution, objective) = program.solve()
-    print("SOLUTION1")
-    with open('solutions.json', 'w') as fp:
-        json.dump(solution, fp)
-    print("OBJECTIVE1")
-    print(objective)
-    export_out = {}
-    for varname in variables:
-      variables[varname]['q'] = solution[varname]
-      if not solution[varname] == 0:
-        #   print("SOLUTION VARIABLES")
-        #   pprint.pprint(variables[varname])
-          export_out[varname]=variables[varname]
-    #pprint.pprint(variables)
-    # with open('output.json', 'w') as fp:
-    #     json.dump(variables, fp)
-    return (variables.values(), -objective)
 
-if __name__ == "__main__":
-  solver = ResourceAllocationLP(1)
-  (assignments, objective) = solver.solve()
-  print("Success: objective = {}".format(objective))
+    for v in variables:
+      v['a'] = solution[v['name']]
+    return (variables, -objective)

@@ -3,8 +3,9 @@
 #Setup
 MINER=localhost
 PORT=10000
+solverID=999
 DIR="~/projects/transactive-blockchain/code"
-PROJECT="TransactivePlatform"
+PROJECT="ResourcePlatform"
 echo $DIR
 x=(700 1300 700 1300)
 y=(150 150 600 600)
@@ -36,13 +37,13 @@ tmux send -t miner.0 "cd $DIR/miner; pwd" ENTER
 tmux send -t miner.0 "pwd ; geth-linux-amd64/geth --datadir eth/  init genesis-data.json" ENTER
 tmux send -t miner.0 "geth-linux-amd64/geth account new --password password.txt --datadir eth/" ENTER
 sleep 5 #Wait for account address
-tmux send -t miner.0 "geth-linux-amd64/geth --datadir eth/ --rpc --rpcport $PORT --rpcaddr localhost --nodiscover --rpcapi "eth,web3,admin,miner,net,db" --password password.txt --verbosity 3 --unlock 0 --networkid 15 --mine | tee miner.out" ENTER
+tmux send -t miner.0 "geth-linux-amd64/geth --datadir eth/ --rpc --rpcport $PORT --rpcaddr localhost --nodiscover --rpcapi "eth,web3,admin,miner,net,db" --password password.txt --verbosity 3 --unlock 0 --networkid 15 --mine |& tee miner.log" ENTER
 
 # Start market
 read -p "Wait for at least 15 blocks to be mined. Then press enter to start Market"
-tmux send -t Directory.0 "python3 $DIR/$PROJECT/components/Directory.py $MINER $PORT  | tee logs/miner.log" ENTER
-tmux send -t Solver.0 "python3 $DIR/$PROJECT/components/Solver.py $MINER $PORT | tee logs/solver.log" ENTER
-tmux send -t Recorder.0 "python3 $DIR/$PROJECT/components/EventRecorder.py $MINER $PORT  | tee logs/recorder.log" ENTER
+tmux send -t Directory.0 "python3 $DIR/$PROJECT/components/Directory.py $MINER $PORT  |& tee logs/directory.log" ENTER
+tmux send -t Solver.0 "python3.6 $DIR/$PROJECT/components/Solver.py $MINER $PORT $solverID |& tee logs/solver.log" ENTER
+tmux send -t Recorder.0 "python3 $DIR/$PROJECT/components/EventRecorder.py $MINER $PORT  |& tee logs/recorder.log" ENTER
 
 
 # sleep 10s #Wait for Market to connect so they can get events

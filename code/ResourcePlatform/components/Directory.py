@@ -8,6 +8,8 @@ from config import *
 from EthereumClient import EthereumClient
 from ResourceAllocationContract import ResourceAllocationContract
 
+import pprint
+
 class Directory:
   def __init__(self, ip, port):
     self.client = EthereumClient(ip=ip, port=port)
@@ -20,11 +22,16 @@ class Directory:
     next_interval = START_INTERVAL # must be in sync with the starting interval of the smart contract
     next_finalization = time() + INTERVAL_LENGTH
     while True:
-      sleep(next_finalization - time())
-      next_finalization += INTERVAL_LENGTH
-      logging.info("Finalizing interval {}".format(next_interval))
-      #self.contract.finalize(self.account)
-      next_interval += 1
+    #   sleep(next_finalization - time())
+    #   next_finalization += INTERVAL_LENGTH
+      print("Press c ENTER to close or f ENTER to finlize")
+      cmd = input("Press Enter to continue")
+      if cmd == "c":
+          self.contract.close(self.account)
+      if cmd =="f":
+          logging.info("Finalizing interval {}".format(next_interval))
+          self.contract.finalize(self.account)
+          next_interval += 1
 
   def run(self):
     logging.info("Entering main function...")
@@ -45,6 +52,7 @@ class Directory:
 
   def deploy_contract(self):
     logging.info("Deploying contract...")
+    #pprint.pprint(BYTECODE)
     # use command function because we need to get the contract address later
     receiptID = self.client.command("eth_sendTransaction", params=[{'data': BYTECODE, 'from': self.account, 'gas': TRANSACTION_GAS}])
     logging.info("Transaction receipt: " + receiptID)
@@ -56,7 +64,6 @@ class Directory:
         self.contract_address = receipt['contractAddress']
         break
     self.contract = ResourceAllocationContract(self.client, self.contract_address)
-    self.contract.setup(self.account, NUM_TYPES, PRECISION, MAX_QUANTITY)
     logging.info("Contract address: " + self.contract_address)
 
 if __name__ == "__main__":

@@ -1,0 +1,72 @@
+// RIAPS WeatherMonitor
+app TransactiveEnergy {
+    message Query_contract_address;
+    message Contract_address;
+    
+    library libs;
+
+	// Distributed System Operator
+    component DSO {
+      rep contractAddr : (Query_contract_address,Contract_address) ;	// 
+      timer finalizer 60000;
+      
+    }
+
+    // Traders, and Solvers
+    component Trader(ID=101) {
+      req contractAddr : (Query_contract_address,Contract_address) ;	// Subscriber port to trigger component with Temperature messages
+      timer poller 1000;
+      timer post 60000;
+    }
+    
+    component Solver() {
+    	req contractAddr : (Query_contract_address,Contract_address) ;	// Subscriber port to trigger component with Temperature messages   
+    	timer poller 1000;	
+    	timer solve 5000;
+    }
+    
+    component Recorder{
+    	req contractAddr : (Query_contract_address,Contract_address) ;	// Subscriber port to trigger component with Temperature messages   
+    	timer poller 1000;	
+    }
+    
+    // Energy Traders
+    actor Trader(ID=101){
+    	uses {
+//    		cpu max 10 % over 1;
+//    		cpu max 30 % over 1;
+    		
+//    		mem 200 mb;    		
+//    		mem 256 mb;
+    		net rate 10 kbps ceil 12 kbps burst 1.2 k; // Net limits
+//    		net rate 100 kbps ceil 200 kbps;
+    	}
+    	{
+    		trader : Trader(ID=ID);
+    	}
+    }
+    
+    // Energy Solvers
+    actor Solver{
+    	uses {
+    		space 100 mb;   
+    		mem 100 mb; 	
+//    		cpu max 50% over 4; 	
+    	}
+    	{
+    		solver : Solver;
+    	}
+    }
+    
+    actor DSO{
+    	{
+    		dso : DSO;
+    	}
+    }
+    
+    actor Recorder{
+    	{
+    		recorder : Recorder;
+    	}
+    }   
+}
