@@ -1,10 +1,11 @@
 #!/bin/bash
 
-GETHCLIENT=localhost
+GETHCLIENT=172.21.20.34
 PORT=10000
 DIR=~/projects/transactive-blockchain/code
 PROJECT=ResourcePlatform
 JOBS=$DIR/$PROJECT/"jobs"
+DIRECTORY_IP=172.21.20.34
 # ID=1
 #
 #
@@ -19,8 +20,8 @@ if true ; then
 for i in $(seq 0 0)
 do
   echo "launch Resource Provder $i"
-  tmux new -d -s rp$i
-  tmux send -t rp$i.0 "sudo python3 $DIR/$PROJECT/components/ResourceProvider.py $(($i*2)) $GETHCLIENT $PORT $JOBS" ENTER
+  tmux new-window -d -n rp$i
+  tmux send -t rp$i.0 "sudo python3 $DIR/$PROJECT/components/ResourceProvider.py $(($i*2)) $GETHCLIENT $PORT $DIRECTORY_IP" ENTER
 done
 fi
 
@@ -28,12 +29,11 @@ if true ; then
 for i in $(seq 0 0)
 do
   echo "launch Job Creator $i"
-  tmux new -d -s jc$i
-  tmux send -t jc$i.0 "sudo python3 $DIR/$PROJECT/components/JobCreator.py $(($i*2+1)) $GETHCLIENT $PORT $JOBS" ENTER
+  tmux new-window -d -n jc$i
+  tmux send -t jc$i.0 "sudo python3 $DIR/$PROJECT/components/JobCreator.py $(($i*2+1)) $GETHCLIENT $PORT $JOBS $DIRECTORY_IP" ENTER
 done
 fi
 
-tmux attach -t rp0.0
 
 # if true; then
 #   sudo python3 $DIR/$PROJECT/components/JobCreator.py 101 $GETHCLIENT $PORT $JOBS
