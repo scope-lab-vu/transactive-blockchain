@@ -9,7 +9,7 @@ class Contract:
 
   def encode_uint(value):
     logging.info("ENCODE UINT")
-    logging.info(value)
+    logging.info("type: %s; value:%s" %(type(value),value))
     logging.info(format(value, "064x"))
     return format(value, "064x")
 
@@ -59,8 +59,12 @@ class Contract:
       string = "" #the string
 
       for array in arrays:
+          print(array)
           if array[0] is not "0":
-              string += unhexlify(array).decode('utf-8')
+              try:
+                  string += unhexlify(array).decode('utf-8')
+              except UnicodeDecodeError as e:
+                  logging.debug("Not a string")
 
       #-----------Below doesn't get the dubug string---------------
     #   start = False #tracks start staring 64 chars ending with c0
@@ -154,6 +158,8 @@ class Contract:
           data_pos = 0
           for (ptype, pname) in topic['params']:
             if ptype == "uint64":
+              params[pname] = Contract.decode_uint(data, data_pos)
+            elif ptype == "uint256":
               params[pname] = Contract.decode_uint(data, data_pos)
             elif ptype == "int64":
               params[pname] = Contract.decode_int(data, data_pos)

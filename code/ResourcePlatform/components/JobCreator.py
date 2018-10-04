@@ -24,10 +24,11 @@ class Offer():
     def __init__(self,image_dict, ioid, timeLimit, price):
         self.repoDigestSha = image_dict["RepoDigests"][0]
         self.IDsha = image_dict["Id"].split(":")[1]
+        self.IDint = int(self.IDsha, 16)
         self.storage = image_dict["Size"] #in bytes
         self.os = image_dict["Os"]
         self.arch = image_dict["Architecture"]
-        self.ioid = ioid
+        self.ioid = ioid #internal offer ID?
         self.timeLimit = timeLimit
         self.price = price
         logging.info("job arch is %s" %self.arch)
@@ -45,7 +46,7 @@ class JobCreator(Actor):
                           "arm" :1}
         self.APIclient = docker.APIClient(base_url='unix://var/run/docker.sock')
         #self.randomSetup()
-        super(JobCreator, self).__init__(prosumer_id, ip, port) #command line arguments, specifying ip and port of geth client
+        super(JobCreator, self).__init__(prosumer_id, ip, port, DIRECTORY_IP) #command line arguments, specifying ip and port of geth client
 
         # THIS IS TO HELP GRAFANA PUT IDs IN ASSCENDING ORDER
         if self.prosumer_id < 100 :
@@ -90,7 +91,7 @@ class JobCreator(Actor):
                     '''updateJobOffer(self, from_account, offerID, architecture, reqCPU, reqRAM, reqStorage, imageHash)'''
                     self.contract.updateJobOffer(from_account=self.account, offerID=params['offerID'],
                                                  architecture=self.archTypes[offer.arch], reqCPU=50, #MIPS
-                                                 reqRAM=50, reqStorage=offer.storage, imageHash = offer.IDsha)
+                                                 reqRAM=50, reqStorage=offer.storage, imageHash = offer.IDint)
 
                 elif (name == "JobOfferUpdated") and (params['offerID'] in self.created_offers):
                     '''JobOfferUpdated(uint64 offerID, uint64 architecture, uint64 reqCPU, uint64 reqRAM, uint64 reqStorage, string imageHash)'''
@@ -128,6 +129,8 @@ if __name__ == "__main__":
         port = sys.argv[3]
     if len(sys.argv) > 4 :
         jobspath = sys.argv[4]
+    if len(sys.argv) > 5:
+        DIRECTORY_IP = sys.argv[5]
     A = JobCreator()
 
     jobpath = "/home/riaps/projects/transactive-blockchain/code/ResourcePlatform/jobs/job0"

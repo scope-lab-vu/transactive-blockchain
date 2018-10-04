@@ -12,12 +12,12 @@ from ResourceAllocationContract import ResourceAllocationContract
 POLLING_INTERVAL = 1 # seconds
 
 class Actor:
-  def __init__(self, prosumer_id, ip, port):
+  def __init__(self, prosumer_id, ip, port,DIRECTORY_IP):
     self.logger = logging.getLogger(__name__)
     self.prosumer_id = prosumer_id
     self.logger.info("Connecting to directory...")
     self.directory = zmq.Context().socket(zmq.REQ)
-    self.directory.connect(DIRECTORY_ADDRESS)
+    self.directory.connect("tcp://%s:10001" %DIRECTORY_IP)
     self.logger.info("Directory connected ({}).".format(self.directory))
     contract_address = self.query_contract_address()
     self.logger.info("Setting up connection to Ethereum client...")
@@ -83,5 +83,5 @@ if __name__ == "__main__":
   if len(sys.argv) > 3:
     port = sys.argv[3]
   logging.basicConfig(format='%(asctime)s / prosumer {} / %(levelname)s: %(message)s'.format(prosumer_id), level=logging.INFO)
-  trader = Actor(prosumer_id, ip, port)
+  trader = Actor(prosumer_id, ip, port,DIRECTORY_IP)
   trader.run()

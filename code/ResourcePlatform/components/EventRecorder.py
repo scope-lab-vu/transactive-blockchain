@@ -14,10 +14,10 @@ import datetime
 POLLING_INTERVAL = 1 # seconds
 
 class EventRecorder():
-  def __init__(self, ip, port):
+  def __init__(self, ip, port,DIRECTORY_IP):
     logging.info("Connecting to directory...")
     self.directory = zmq.Context().socket(zmq.REQ)
-    self.directory.connect(DIRECTORY_ADDRESS)
+    self.directory.connect("tcp://%s:10001" %DIRECTORY_IP)
     logging.info("Directory connected ({}).".format(self.directory))
     contract_address = self.query_contract_address()
     logging.info("Setting up connection to Ethereum client...")
@@ -72,5 +72,7 @@ if __name__ == "__main__":
     ip = sys.argv[1]
   if len(sys.argv) > 2:
     port = sys.argv[2]
-  recorder = EventRecorder(ip, port)
+  if len(sys.argv) > 3:
+      DIRECTORY_IP = sys.argv[3]  
+  recorder = EventRecorder(ip, port,DIRECTORY_IP)
   recorder.run()

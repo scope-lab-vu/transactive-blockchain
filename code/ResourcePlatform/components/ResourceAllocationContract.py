@@ -7,13 +7,13 @@ class ResourceAllocationContract(Contract):
       "ResourceOfferPosted(uint64 offerID, uint64 actorID, uint64 architecture, uint64 capCPU, uint64 capRAM, uint64 capStorage, uint64 price)",
       "ResourceOfferCanceled(uint64 offerID)",
       "JobOfferCreated(uint64 offerID, uint64 actorID, uint64 timeLimit, uint64 price, uint64 ioid)",
-      "JobOfferUpdated(uint64 offerID, uint64 architecture, uint64 reqCPU, uint64 reqRAM, uint64 reqStorage, string imageHash)",
+      "JobOfferUpdated(uint64 offerID, uint64 architecture, uint64 reqCPU, uint64 reqRAM, uint64 reqStorage, uint256 imageHash)",
       "JobOfferPosted(uint64 offerID)",
       "JobOfferCanceled(uint64 offerID)",
       "SolutionCreated(uint64 solutionID, uint64 actorID)",
       "AssignmentAdded(uint64 solutionID, uint64 jobOfferID, uint64 resourceOfferID)",
       "AssignmentFinalized(uint64 jobOfferID, uint64 resourceOfferID)",
-      "Debug(string Description, uint64 value, bool boolean, uint64 state)",
+      "Debug(string Description, uint64 value, bool boolean, uint64 state, uint256 e256)",
     ])
 
   def postResourceOffer(self, from_account, actorID, architecture, capCPU, capRAM, capStorage, price):
@@ -43,7 +43,7 @@ class ResourceAllocationContract(Contract):
       "uint64", reqCPU,
       "uint64", reqRAM,
       "uint64", reqStorage,
-      "string", imageHash)
+      "uint256", imageHash)
 
   def postJobOffer(self, from_account, offerID):
     self.call_func(from_account, "postJobOffer" ,

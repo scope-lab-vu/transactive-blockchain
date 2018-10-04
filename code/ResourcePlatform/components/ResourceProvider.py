@@ -40,7 +40,7 @@ class ResourceProvider(Actor):
                      "amd64" : 0}
         self.APIclient = docker.APIClient(base_url='unix://var/run/docker.sock')
         #self.randomSetup()
-        super(ResourceProvider, self).__init__(prosumer_id, ip, port) #command line arguments, specifying ip and port of geth client
+        super(ResourceProvider, self).__init__(prosumer_id, ip, port,DIRECTORY_IP) #command line arguments, specifying ip and port of geth client
 
         # THIS IS TO HELP GRAFANA PUT IDs IN ASSCENDING ORDER
         if self.prosumer_id < 100 :
@@ -103,6 +103,8 @@ if __name__ == "__main__":
         ip = sys.argv[2]
     if len(sys.argv) > 3:
         port = sys.argv[3]
+    if len(sys.argv) > 4:
+        DIRECTORY_IP = sys.argv[4]
 
     RP = ResourceProvider()
     cpuSpeed = 990 #MHz sudo ./perf stat ls

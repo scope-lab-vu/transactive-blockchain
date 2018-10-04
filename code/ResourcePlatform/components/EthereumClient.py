@@ -5,8 +5,6 @@ from io import BytesIO
 from time import time, sleep
 from threading import Thread, RLock
 
-from config import *
-
 CHECK_INTERVAL = 1 # check for receipts every second
 PENDING_TIMEOUT = 120 # if a transaction has been pending for more than 120 seconds, submit it again
 CLIENT_TIMEOUT = 600 # if a transaction has been stuck for more than 600 seconds, restart the client
@@ -18,11 +16,14 @@ class EthereumClient:
     self.waiting = [] # transactions which have not been submitted
     self.pending = [] # transactions which have been submitted but not yet mined
     self.lock = RLock()
-    thread = Thread(target=self.__run)
-    thread.start()
+    self.quit = False
+    self.thread = Thread(target=self.__run)
+    self.thread.start()
+
+    # print("self.quit %s" %self.quit)
 
   def __run(self):
-    while True:
+    while not self.quit:
       sleep(CHECK_INTERVAL) # wait one second
       current_time = time()
       with self.lock:
@@ -47,6 +48,12 @@ class EthereumClient:
     logging.info("Restarting the client...")
     # TODO: writeme
     # TODO: handle filter re-creation?
+
+  def exit(self):
+      logging.info("exit thread")
+      self.quit = True
+      self.thread.join()
+
 
   def __submit_trans(self, trans):
     try:
@@ -92,7 +99,7 @@ class EthereumClient:
   def get_filter_changes(self, filter_id):
     block = self.command("eth_blockNumber")
     log = self.command("eth_getFilterChanges", params=[filter_id])
-    logging.debug("Log: {} items (block number: {})".format(len(log), block))
+    # logging.debug("Log: {} items (block number: {})".format(len(log), block))
     return log
 
   def command(self, method, params=[], id=1, jsonrpc="2.0", verbose=False):

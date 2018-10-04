@@ -12,11 +12,11 @@ from ResourceAllocationContract import ResourceAllocationContract
 POLLING_INTERVAL = 1 # seconds
 
 class Solver(ResourceAllocationLP):
-  def __init__(self, ip, port, solverID):
+  def __init__(self, ip, port, solverID,DIRECTORY_IP):
     self.solverID = solverID
     logging.info("Connecting to directory...")
     self.directory = zmq.Context().socket(zmq.REQ)
-    self.directory.connect(DIRECTORY_ADDRESS)
+    self.directory.connect("tcp://%s:10001" %DIRECTORY_IP)
     logging.info("Directory connected ({}).".format(self.directory))
     self.query_contract_address()
     logging.info("Setting up connection to Ethereum client...")
@@ -111,6 +111,10 @@ if __name__ == "__main__":
     ip = sys.argv[1]
   if len(sys.argv) > 2:
     port = sys.argv[2]
+  if len(sys.argv) > 3:
+    solverID = sys.argv[3]
+  if len(sys.argv) > 4:
+      DIRECTORY_IP = sys.argv[4]
   solverID = os.getpid()
-  solver = Solver(ip, port, solverID)
+  solver = Solver(ip, port, solverID,DIRECTORY_IP)
   solver.run()
