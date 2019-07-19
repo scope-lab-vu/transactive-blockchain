@@ -18,7 +18,7 @@ def partition(collection):
         # put `first` in its own subset 
         yield [ [ first ] ] + smaller
 
-network = {
+network = {   #defines placement of prosumers on feeders
 0: 0,
 1: 0,
 2: 1,
@@ -30,10 +30,10 @@ network = {
 8: 4,
 9: 4
 }
-C_ext=[3.0,4.0,3.0,4.0,3.0]
+C_ext=[3.0,4.0,3.0,4.0,3.0] #constraints on each feeder
 C_int=[3.0,4.0,3.0,4.0,3.0]
 
-feeders=[0, 1, 2, 3, 4]
+feeders=[0, 1, 2, 3, 4] #list of feeders in network
 microgrid = Microgrid(interval_length=1.0, C_ext=C_ext, C_int=C_int, feeders=feeders, prosumer_feeder=network)
 solver = MatchingSolver(microgrid)
 buying_offers = [
