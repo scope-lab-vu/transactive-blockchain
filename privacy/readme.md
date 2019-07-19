@@ -42,3 +42,8 @@ Sigma (pi,pj..) <= c
 |(c-Sigma(pi,pj…))| is min
 The groups that can satisfy these properties are better. In cases where the first condition cannot be satisfied, the second still holds 
 Multiple groups: While making multiple groups, each group should satisfy the first heuristic as closely as possible. However having a more groups that fall under that heuristic is more important than having a single group follow it perfectly
+
+
+
+LINK FOR GRAPHS AND RESULTS:
+https://docs.google.com/document/d/1ASQstO6uznvNw_wub2mIpCD1AokTb4IsiPDejxKM_Mc/edit?usp=sharing
