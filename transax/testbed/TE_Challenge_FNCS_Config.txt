@@ -1,0 +1,48 @@
+publish "commit:network_node.distribution_load -> distribution_load; 1000";
+
+subscribe "precommit:b1m2_batt_inv.P_Out <- agent/b1m2_batt_P_Out";
+subscribe "precommit:b1m3_batt_inv.P_Out <- agent/b1m3_batt_P_Out";
+subscribe "precommit:b1m4_batt_inv.P_Out <- agent/b1m4_batt_P_Out";
+subscribe "precommit:b2m1_batt_inv.P_Out <- agent/b2m1_batt_P_Out";
+subscribe "precommit:b2m2_batt_inv.P_Out <- agent/b2m2_batt_P_Out";
+subscribe "precommit:b2m4_batt_inv.P_Out <- agent/b2m4_batt_P_Out";
+subscribe "precommit:b3m2_batt_inv.P_Out <- agent/b3m2_batt_P_Out";
+subscribe "precommit:b3m3_batt_inv.P_Out <- agent/b3m3_batt_P_Out";
+subscribe "precommit:b3m4_batt_inv.P_Out <- agent/b3m4_batt_P_Out";
+
+publish "commit:b1m2_batt.state_of_charge -> b1m2_batt_charge";
+publish "commit:b1m3_batt.state_of_charge -> b1m3_batt_charge";
+publish "commit:b1m4_batt.state_of_charge -> b1m4_batt_charge";
+publish "commit:b2m1_batt.state_of_charge -> b2m1_batt_charge";
+publish "commit:b2m2_batt.state_of_charge -> b2m2_batt_charge";
+publish "commit:b2m4_batt.state_of_charge -> b2m4_batt_charge";
+publish "commit:b3m2_batt.state_of_charge -> b3m2_batt_charge";
+publish "commit:b3m3_batt.state_of_charge -> b3m3_batt_charge";
+publish "commit:b3m4_batt.state_of_charge -> b3m4_batt_charge";
+
+publish "commit:b1m2_solar_meter.measured_real_power -> b1m2_solar_power";
+publish "commit:b1m3_solar_meter.measured_real_power -> b1m3_solar_power";
+publish "commit:b1m4_solar_meter.measured_real_power -> b1m4_solar_power";
+publish "commit:b2m1_solar_meter.measured_real_power -> b2m1_solar_power";
+publish "commit:b2m2_solar_meter.measured_real_power -> b2m2_solar_power";
+publish "commit:b2m4_solar_meter.measured_real_power -> b2m4_solar_power";
+publish "commit:b3m2_solar_meter.measured_real_power -> b3m2_solar_power";
+publish "commit:b3m3_solar_meter.measured_real_power -> b3m3_solar_power";
+publish "commit:b3m4_solar_meter.measured_real_power -> b3m4_solar_power";
+
+publish "commit:b1m2_batt_meter.measured_real_power -> b1m2_batt_power";
+publish "commit:b1m3_batt_meter.measured_real_power -> b1m3_batt_power";
+publish "commit:b1m4_batt_meter.measured_real_power -> b1m4_batt_power";
+publish "commit:b2m1_batt_meter.measured_real_power -> b2m1_batt_power";
+publish "commit:b2m2_batt_meter.measured_real_power -> b2m2_batt_power";
+publish "commit:b2m4_batt_meter.measured_real_power -> b2m4_batt_power";
+publish "commit:b3m2_batt_meter.measured_real_power -> b3m2_batt_power";
+publish "commit:b3m3_batt_meter.measured_real_power -> b3m3_batt_power";
+publish "commit:b3m4_batt_meter.measured_real_power -> b3m4_batt_power";
+
+publish "commit:b1m1_house.total_load -> b1m1_house_load";
+publish "commit:b1m5_house.total_load -> b1m5_house_load";
+publish "commit:b2m3_house.total_load -> b2m3_house_load";
+publish "commit:b2m5_house.total_load -> b2m5_house_load";
+publish "commit:b3m1_house.total_load -> b3m1_house_load";
+publish "commit:b3m5_house.total_load -> b3m5_house_load";
