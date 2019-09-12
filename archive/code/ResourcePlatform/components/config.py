@@ -1,0 +1,13 @@
+# deployment
+#DIRECTORY_ADDRESS = 'tcp://127.0.0.1:10001'
+TRANSACTION_GAS = "0x100000000"
+from bytecode import *
+#           2615231942001
+NUM_TYPES =9999999999999;
+PRECISION = 4294967296;
+MAX_QUANTITY = 100;
+START_INTERVAL = 1;
+END_INTERVAL = 100;
+INTERVAL_LENGTH = 60;
+SOLVING_INTERVAL = 5;
+POLLING_INTERVAL = 1 # seconds Used in actor to determin how often to check for events

@@ -1,0 +1,33 @@
+// RIAPS TransactiveMicrogrid
+
+app WeatherMonitor {
+  message Withdrawal; 
+     
+	// DSO component
+  component DSO {
+    rep withdrawAssets : Withdrawal;	
+  }
+    
+  // SmartHomeTrader component
+  component SmartHomeTrader {
+    timer clock (10 * 60 * 1000); 							
+    req withdrawAssets : Withdrawal;	
+  }
+
+  // DSO actor
+  actor DSO {
+    {  
+      dso : DSO;				
+    }
+  }
+    
+  // SmartHomeTrader actors
+  actor SmartHomeTrader {
+    {  
+      trader1 : SmartHomeTrader("trader1");	
+      trader2 : SmartHomeTrader("trader2");	
+      trader3 : SmartHomeTrader("trader3");	
+      trader4 : SmartHomeTrader("trader4");	
+    }
+  }
+}

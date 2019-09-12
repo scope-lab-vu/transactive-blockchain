@@ -1,0 +1,3 @@
+app TransactiveEnergy{
+	on (bbb-ede8.local) DSO;
+}
