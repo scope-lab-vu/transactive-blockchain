@@ -1,0 +1,2169 @@
+#set double_format=%+.12lg
+#set profiler=1
+#set randomseed=10
+#set relax_naming_rules=1
+#set savefile=test.xml
+#set minimum_timestep=15
+
+clock {
+	timezone PST+8PDT;
+	starttime '2013-07-01 08:00:00';
+	stoptime '2013-07-01 20:00:00';
+};
+
+module climate;
+module market;
+module connection; // FNCS
+module powerflow {
+	solver_method FBS;
+	NR_iteration_limit 100;
+}
+module residential{
+	implicit_enduses NONE;
+}
+module tape;
+module generators;
+#include "./schedules/water_and_setpoint_schedule_v3.glm"
+#include "./schedules/appliance_schedules.glm"
+
+// summer
+#define FIXED_PRICE=0.127
+// winter
+//#define FIXED_PRICE=0.088
+
+object climate {
+     name "RegionalWeather";
+     tmyfile "./weather/AZ-Tucson_International_Ap.tmy3";
+     interpolate QUADRATIC;
+};
+
+
+object fncs_msg {
+     name gridlabdSimulator1;
+     parent network_node;
+     configure TE_Challenge_FNCS_Config.txt;
+     option "transport:hostname localhost, port 5570";
+}
+
+//#######################################################################
+//                        --Configurations--
+//#######################################################################
+
+//Overhead Lines
+object line_configuration {
+      name line_configuration;
+      conductor_A overhead_line_conductor;
+      conductor_B overhead_line_conductor;
+      conductor_C overhead_line_conductor;
+      conductor_N overhead_line_conductor;
+      spacing line_spacing;
+}
+
+object line_spacing {
+      name line_spacing;
+      distance_AB 57.6 in;
+      distance_BC 57.6 in;
+      distance_AC 57.6 in;
+      distance_AN 51.6 in;
+      distance_BN 51.6 in;
+      distance_CN 51.6 in;
+}
+
+object overhead_line_conductor {
+      name overhead_line_conductor;
+      rating.summer.continuous 256.0;
+      geometric_mean_radius 0.01200 ft;
+      resistance 0.1;
+}
+
+//Triplex Lines
+object triplex_line_conductor {
+	name Name_1_0_AA_triplex;
+	resistance 0.57;
+	geometric_mean_radius 0.011;
+}
+
+object triplex_line_configuration {
+	name TLCFG;
+	conductor_1 Name_1_0_AA_triplex;
+	conductor_2 Name_1_0_AA_triplex;
+	conductor_N Name_1_0_AA_triplex;
+	insulation_thickness 0.08;
+	diameter 0.368;
+}
+
+//Transformers
+object transformer_configuration {
+     name house_transformer;
+     connect_type SINGLE_PHASE_CENTER_TAPPED;
+     install_type POLETOP;
+     primary_voltage 7200 V;
+     secondary_voltage 120 V;
+     power_rating 250;
+     impedance 0.015+0.0675j;
+}
+
+object transformer_configuration {
+	name substation_config;
+	connect_type WYE_WYE;
+	install_type PADMOUNT;
+	power_rating 450;
+	powerA_rating 150 kVA;
+	powerB_rating 150;
+	powerC_rating 150;
+	primary_voltage 133000;
+	secondary_voltage 7200;
+	impedance +0.0015+0.00675j;
+}
+
+//#######################################################################
+//                        --Feeder Setup--
+//#######################################################################
+object substation {
+	name network_node;
+	phases ABCN;
+	nominal_voltage 133000;
+	positive_sequence_voltage 133000;
+	bustype SWING;
+  base_power 12MVA;
+  power_convergence_value 100VA;
+  object metrics_collector {
+    interval 900;
+  };
+}
+
+object meter {
+	name substation_meter;
+	phases ABCN;
+	nominal_voltage 7200;
+}
+
+object transformer {
+	name F1_Transformer1;
+	groupid F1_Network_Trans;
+	phases ABCN;
+	from network_node;
+	to substation_meter;
+	configuration substation_config;
+}
+
+//#######################################################################
+//                        --Line Setup--
+//#######################################################################
+
+object overhead_line {
+      name branch_1_line_1;
+      phases ABCN;
+      from substation_meter;
+      to branch_1_meter_1;
+      length 10000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_1;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_2;
+      phases ABCN;
+      from branch_1_meter_1;
+      to branch_1_meter_2;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_2;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_3;
+      phases ABCN;
+      from branch_1_meter_2;
+      to branch_1_meter_3;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_3;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_4;
+      phases ABCN;
+      from branch_1_meter_3;
+      to branch_1_meter_4;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_4;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_5;
+      phases ABCN;
+      from branch_1_meter_4;
+      to branch_1_meter_5;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_5;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_6;
+      phases ABCN;
+      from branch_1_meter_5;
+      to branch_1_meter_6;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_6;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_7;
+      phases ABCN;
+      from branch_1_meter_6;
+      to branch_1_meter_7;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_7;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_8;
+      phases ABCN;
+      from branch_1_meter_7;
+      to branch_1_meter_8;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_8;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_9;
+      phases ABCN;
+      from branch_1_meter_8;
+      to branch_1_meter_9;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_9;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_10;
+      phases ABCN;
+      from branch_1_meter_9;
+      to branch_1_meter_10;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_10;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_1;
+      phases ABCN;
+      from branch_1_meter_10;
+      to branch_2_meter_1;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_1;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_2;
+      phases ABCN;
+      from branch_2_meter_1;
+      to branch_2_meter_2;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_2;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_3;
+      phases ABCN;
+      from branch_2_meter_2;
+      to branch_2_meter_3;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_3;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_4;
+      phases ABCN;
+      from branch_2_meter_3;
+      to branch_2_meter_4;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_4;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_5;
+      phases ABCN;
+      from branch_2_meter_4;
+      to branch_2_meter_5;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_5;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_6;
+      phases ABCN;
+      from branch_2_meter_5;
+      to branch_2_meter_6;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_6;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_7;
+      phases ABCN;
+      from branch_2_meter_6;
+      to branch_2_meter_7;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_7;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_8;
+      phases ABCN;
+      from branch_2_meter_7;
+      to branch_2_meter_8;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_8;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_9;
+      phases ABCN;
+      from branch_2_meter_8;
+      to branch_2_meter_9;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_9;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_10;
+      phases ABCN;
+      from branch_2_meter_9;
+      to branch_2_meter_10;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_10;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_1;
+      phases ABCN;
+      from branch_2_meter_10;
+      to branch_3_meter_1;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_1;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_2;
+      phases ABCN;
+      from branch_3_meter_1;
+      to branch_3_meter_2;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_2;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_3;
+      phases ABCN;
+      from branch_3_meter_2;
+      to branch_3_meter_3;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_3;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_4;
+      phases ABCN;
+      from branch_3_meter_3;
+      to branch_3_meter_4;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_4;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_5;
+      phases ABCN;
+      from branch_3_meter_4;
+      to branch_3_meter_5;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_5;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_6;
+      phases ABCN;
+      from branch_3_meter_5;
+      to branch_3_meter_6;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_6;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_7;
+      phases ABCN;
+      from branch_3_meter_6;
+      to branch_3_meter_7;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_7;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_8;
+      phases ABCN;
+      from branch_3_meter_7;
+      to branch_3_meter_8;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_8;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_9;
+      phases ABCN;
+      from branch_3_meter_8;
+      to branch_3_meter_9;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_9;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_10;
+      phases ABCN;
+      from branch_3_meter_9;
+      to branch_3_meter_10;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_10;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+//#######################################################################
+//                        --Load Setup--
+//#######################################################################
+//branch_1_meter_1
+object transformer {
+     name b1m1_house_trans;
+     phases BS;
+     from branch_1_meter_1;
+     to b1m1_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b1m1_house_node;
+  phases BS;
+  nominal_voltage 120;
+}
+
+object house {
+	name b1m1_house;
+	parent b1m1_house_node;
+	schedule_skew 577;
+	Rroof 17.618;
+	Rwall 6.872;
+	Rfloor 4.818;
+	Rdoors 3;
+	Rwindows 1.315;
+	airchange_per_hour 1.288;
+	hvac_power_factor 0.97;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	fan_type ONE_SPEED;
+	hvac_breaker_rating 200;
+	total_thermal_mass_per_floor_area 4.311;
+	motor_efficiency AVERAGE;
+	motor_model BASIC;
+	cooling_COP 2.502;
+	floor_area 637.886;
+	number_of_doors 1;
+	air_temperature 68.886;
+	mass_temperature 68.886;
+	heating_setpoint heating5*1.043+1.41;
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.889;
+	base_power LIGHTS*1.7284;
+	power_pf 0;
+	power_fraction 0;
+	current_pf 0;
+	current_fraction 0;
+	impedance_pf 1;
+	impedance_fraction 1;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.732;
+	base_power CLOTHESWASHER*0.9135;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.853;
+	base_power REFRIGERATOR*0.8837;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.875;
+	base_power DRYER*0.5453;
+	power_pf 0.9;
+	power_fraction 0.1;
+	current_pf 0.9;
+	current_fraction 0.1;
+	impedance_pf 1;
+	impedance_fraction 0.8;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.76;
+	base_power RANGE*0.6705;
+	power_pf 0;
+	power_fraction 0;
+	current_pf 0;
+	current_fraction 0;
+	impedance_pf 1;
+	impedance_fraction 1;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.951;
+	base_power MICROWAVE*0.7977;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+}
+
+//branch_1_meter_2
+object transformer {
+     name b1m2_house_trans;
+     phases CS;
+     from branch_1_meter_2;
+     to b1m2_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b1m2_house_node;
+  phases CS;
+  nominal_voltage 120;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases CS;
+	from b1m2_house_node;
+	to b1m2_batt_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases CS;
+	from b1m2_house_node;
+	to b1m2_solar_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_meter {
+  name b1m2_solar_meter;
+	phases CS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b1m2_solar_inv;
+		phases CS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		//maximum_dc_power 5000;
+		four_quadrant_control_mode CONSTANT_PF;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+
+		object solar {
+			name b1m2_solar;
+			generator_mode SUPPLY_DRIVEN;
+			generator_status ONLINE;
+			panel_type SINGLE_CRYSTAL_SILICON;
+			orientation FIXED_AXIS;
+			rated_power 7500;
+		};
+	};
+}
+
+object triplex_meter {
+  name b1m2_batt_meter;
+	phases CS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b1m2_batt_inv;
+		phases CS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		four_quadrant_control_mode CONSTANT_PQ;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+		P_Out 0; //VA
+
+		object battery {
+			name b1m2_batt;
+			parent b1m2_batt_inv;
+			use_internal_battery_model TRUE;
+			battery_type LI_ION;
+			rated_power 7500;
+			nominal_voltage 120;
+			battery_capacity 14 kWh;
+			round_trip_efficiency 0.9;
+			state_of_charge 0.2;
+			generator_mode SUPPLY_DRIVEN;
+		};
+	};
+}
+
+//branch_1_meter_3
+object transformer {
+     name b1m3_house_trans;
+     phases CS;
+     from branch_1_meter_3;
+     to b1m3_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b1m3_house_node;
+  phases CS;
+  nominal_voltage 120;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases CS;
+	from b1m3_house_node;
+	to b1m3_batt_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases CS;
+	from b1m3_house_node;
+	to b1m3_solar_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_meter {
+  name b1m3_solar_meter;
+	phases CS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b1m3_solar_inv;
+		phases CS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		//maximum_dc_power 5000;
+		four_quadrant_control_mode CONSTANT_PF;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+
+		object solar {
+			name b1m3_solar;
+			generator_mode SUPPLY_DRIVEN;
+			generator_status ONLINE;
+			panel_type SINGLE_CRYSTAL_SILICON;
+			orientation FIXED_AXIS;
+			rated_power 7500;
+		};
+	};
+}
+
+object triplex_meter {
+  name b1m3_batt_meter;
+	phases CS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b1m3_batt_inv;
+		phases CS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		four_quadrant_control_mode CONSTANT_PQ;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+		P_Out 0; //VA
+
+		object battery {
+			name b1m3_batt;
+			parent b1m3_batt_inv;
+			use_internal_battery_model TRUE;
+			battery_type LI_ION;
+			rated_power 7500;
+			nominal_voltage 120;
+			battery_capacity 14 kWh;
+			round_trip_efficiency 0.9;
+			state_of_charge 0.2;
+			generator_mode SUPPLY_DRIVEN;
+		};
+	};
+}
+
+//branch_1_meter_4
+object transformer {
+     name b1m4_house_trans;
+     phases BS;
+     from branch_1_meter_4;
+     to b1m4_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b1m4_house_node;
+  phases BS;
+  nominal_voltage 120;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases BS;
+	from b1m4_house_node;
+	to b1m4_batt_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases BS;
+	from b1m4_house_node;
+	to b1m4_solar_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_meter {
+  name b1m4_solar_meter;
+	phases BS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b1m4_solar_inv;
+		phases BS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		//maximum_dc_power 5000;
+		four_quadrant_control_mode CONSTANT_PF;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+
+		object solar {
+			name b1m4_solar;
+			generator_mode SUPPLY_DRIVEN;
+			generator_status ONLINE;
+			panel_type SINGLE_CRYSTAL_SILICON;
+			orientation FIXED_AXIS;
+			rated_power 7500;
+		};
+	};
+}
+
+object triplex_meter {
+  name b1m4_batt_meter;
+	phases BS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b1m4_batt_inv;
+		phases BS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		four_quadrant_control_mode CONSTANT_PQ;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+		P_Out 0; //VA
+
+		object battery {
+			name b1m4_batt;
+			parent b1m4_batt_inv;
+			use_internal_battery_model TRUE;
+			battery_type LI_ION;
+			rated_power 7500;
+			nominal_voltage 120;
+			battery_capacity 14 kWh;
+			round_trip_efficiency 0.9;
+			state_of_charge 0.2;
+			generator_mode SUPPLY_DRIVEN;
+		};
+	};
+}
+
+//branch_1_meter_5
+object transformer {
+     name b1m5_house_trans;
+     phases BS;
+     from branch_1_meter_5;
+     to b1m5_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b1m5_house_node;
+  phases BS;
+  nominal_voltage 120;
+}
+
+object house {
+	name b1m5_house;
+	parent b1m5_house_node;
+	schedule_skew 577;
+	Rroof 17.618;
+	Rwall 6.872;
+	Rfloor 4.818;
+	Rdoors 3;
+	Rwindows 1.315;
+	airchange_per_hour 1.288;
+	hvac_power_factor 0.97;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	fan_type ONE_SPEED;
+	hvac_breaker_rating 200;
+	total_thermal_mass_per_floor_area 4.311;
+	motor_efficiency AVERAGE;
+	motor_model BASIC;
+	cooling_COP 2.502;
+	floor_area 637.886;
+	number_of_doors 1;
+	air_temperature 68.886;
+	mass_temperature 68.886;
+	heating_setpoint heating5*1.043+1.41;
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.889;
+	base_power LIGHTS*1.7284;
+	power_pf 0;
+	power_fraction 0;
+	current_pf 0;
+	current_fraction 0;
+	impedance_pf 1;
+	impedance_fraction 1;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.732;
+	base_power CLOTHESWASHER*0.9135;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.853;
+	base_power REFRIGERATOR*0.8837;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.875;
+	base_power DRYER*0.5453;
+	power_pf 0.9;
+	power_fraction 0.1;
+	current_pf 0.9;
+	current_fraction 0.1;
+	impedance_pf 1;
+	impedance_fraction 0.8;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.76;
+	base_power RANGE*0.6705;
+	power_pf 0;
+	power_fraction 0;
+	current_pf 0;
+	current_fraction 0;
+	impedance_pf 1;
+	impedance_fraction 1;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.951;
+	base_power MICROWAVE*0.7977;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+}
+
+//branch_2_meter_1
+object transformer {
+     name b2m1_house_trans;
+     phases CS;
+     from branch_2_meter_1;
+     to b2m1_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b2m1_house_node;
+  phases CS;
+  nominal_voltage 120;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases CS;
+	from b2m1_house_node;
+	to b2m1_batt_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases CS;
+	from b2m1_house_node;
+	to b2m1_solar_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_meter {
+  name b2m1_solar_meter;
+	phases CS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b2m1_solar_inv;
+		phases CS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		//maximum_dc_power 5000;
+		four_quadrant_control_mode CONSTANT_PF;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+
+		object solar {
+			name b2m1_solar;
+			generator_mode SUPPLY_DRIVEN;
+			generator_status ONLINE;
+			panel_type SINGLE_CRYSTAL_SILICON;
+			orientation FIXED_AXIS;
+			rated_power 7500;
+		};
+	};
+}
+
+object triplex_meter {
+  name b2m1_batt_meter;
+	phases CS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b2m1_batt_inv;
+		phases CS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		four_quadrant_control_mode CONSTANT_PQ;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+		P_Out 0; //VA
+
+		object battery {
+			name b2m1_batt;
+			parent b2m1_batt_inv;
+			use_internal_battery_model TRUE;
+			battery_type LI_ION;
+			rated_power 7500;
+			nominal_voltage 120;
+			battery_capacity 14 kWh;
+			round_trip_efficiency 0.9;
+			state_of_charge 0.2;
+			generator_mode SUPPLY_DRIVEN;
+		};
+	};
+}
+
+//branch_2_meter_2
+object transformer {
+     name b2m2_house_trans;
+     phases AS;
+     from branch_2_meter_2;
+     to b2m2_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b2m2_house_node;
+  phases AS;
+  nominal_voltage 120;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases AS;
+	from b2m2_house_node;
+	to b2m2_batt_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases AS;
+	from b2m2_house_node;
+	to b2m2_solar_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_meter {
+  name b2m2_solar_meter;
+	phases AS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b2m2_solar_inv;
+		phases AS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		//maximum_dc_power 5000;
+		four_quadrant_control_mode CONSTANT_PF;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+
+		object solar {
+			name b2m2_solar;
+			generator_mode SUPPLY_DRIVEN;
+			generator_status ONLINE;
+			panel_type SINGLE_CRYSTAL_SILICON;
+			orientation FIXED_AXIS;
+			rated_power 7500;
+		};
+	};
+}
+
+object triplex_meter {
+  name b2m2_batt_meter;
+	phases AS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b2m2_batt_inv;
+		phases AS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		four_quadrant_control_mode CONSTANT_PQ;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+		P_Out 0; //VA
+
+		object battery {
+			name b2m2_batt;
+			parent b2m2_batt_inv;
+			use_internal_battery_model TRUE;
+			battery_type LI_ION;
+			rated_power 7500;
+			nominal_voltage 120;
+			battery_capacity 14 kWh;
+			round_trip_efficiency 0.9;
+			state_of_charge 0.2;
+			generator_mode SUPPLY_DRIVEN;
+		};
+	};
+}
+
+//branch_2_meter_3
+object transformer {
+     name b2m3_house_trans;
+     phases AS;
+     from branch_2_meter_3;
+     to b2m3_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b2m3_house_node;
+  phases AS;
+  nominal_voltage 120;
+}
+
+object house {
+	name b2m3_house;
+	parent b2m3_house_node;
+	schedule_skew 577;
+	Rroof 17.618;
+	Rwall 6.872;
+	Rfloor 4.818;
+	Rdoors 3;
+	Rwindows 1.315;
+	airchange_per_hour 1.288;
+	hvac_power_factor 0.97;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	fan_type ONE_SPEED;
+	hvac_breaker_rating 200;
+	total_thermal_mass_per_floor_area 4.311;
+	motor_efficiency AVERAGE;
+	motor_model BASIC;
+	cooling_COP 2.502;
+	floor_area 637.886;
+	number_of_doors 1;
+	air_temperature 68.886;
+	mass_temperature 68.886;
+	heating_setpoint heating5*1.043+1.41;
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.889;
+	base_power LIGHTS*1.7284;
+	power_pf 0;
+	power_fraction 0;
+	current_pf 0;
+	current_fraction 0;
+	impedance_pf 1;
+	impedance_fraction 1;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.732;
+	base_power CLOTHESWASHER*0.9135;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.853;
+	base_power REFRIGERATOR*0.8837;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.875;
+	base_power DRYER*0.5453;
+	power_pf 0.9;
+	power_fraction 0.1;
+	current_pf 0.9;
+	current_fraction 0.1;
+	impedance_pf 1;
+	impedance_fraction 0.8;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.76;
+	base_power RANGE*0.6705;
+	power_pf 0;
+	power_fraction 0;
+	current_pf 0;
+	current_fraction 0;
+	impedance_pf 1;
+	impedance_fraction 1;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.951;
+	base_power MICROWAVE*0.7977;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+}
+
+//branch_2_meter_4
+object transformer {
+     name b2m4_house_trans;
+     phases AS;
+     from branch_2_meter_4;
+     to b2m4_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b2m4_house_node;
+  phases AS;
+  nominal_voltage 120;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases AS;
+	from b2m4_house_node;
+	to b2m4_batt_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases AS;
+	from b2m4_house_node;
+	to b2m4_solar_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_meter {
+  name b2m4_solar_meter;
+	phases AS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b2m4_solar_inv;
+		phases AS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		//maximum_dc_power 5000;
+		four_quadrant_control_mode CONSTANT_PF;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+
+		object solar {
+			name b2m4_solar;
+			generator_mode SUPPLY_DRIVEN;
+			generator_status ONLINE;
+			panel_type SINGLE_CRYSTAL_SILICON;
+			orientation FIXED_AXIS;
+			rated_power 7500;
+		};
+	};
+}
+
+object triplex_meter {
+  name b2m4_batt_meter;
+	phases AS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b2m4_batt_inv;
+		phases AS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		four_quadrant_control_mode CONSTANT_PQ;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+		P_Out 0; //VA
+
+		object battery {
+			name b2m4_batt;
+			parent b2m4_batt_inv;
+			use_internal_battery_model TRUE;
+			battery_type LI_ION;
+			rated_power 7500;
+			nominal_voltage 120;
+			battery_capacity 14 kWh;
+			round_trip_efficiency 0.9;
+			state_of_charge 0.2;
+			generator_mode SUPPLY_DRIVEN;
+		};
+	};
+}
+
+//branch_2_meter_5
+object transformer {
+     name b2m5_house_trans;
+     phases AS;
+     from branch_2_meter_7;
+     to b2m5_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b2m5_house_node;
+  phases AS;
+  nominal_voltage 120;
+}
+
+object house {
+	name b2m5_house;
+	parent b2m5_house_node;
+	schedule_skew 577;
+	Rroof 17.618;
+	Rwall 6.872;
+	Rfloor 4.818;
+	Rdoors 3;
+	Rwindows 1.315;
+	airchange_per_hour 1.288;
+	hvac_power_factor 0.97;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	fan_type ONE_SPEED;
+	hvac_breaker_rating 200;
+	total_thermal_mass_per_floor_area 4.311;
+	motor_efficiency AVERAGE;
+	motor_model BASIC;
+	cooling_COP 2.502;
+	floor_area 637.886;
+	number_of_doors 1;
+	air_temperature 68.886;
+	mass_temperature 68.886;
+	heating_setpoint heating5*1.043+1.41;
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.889;
+	base_power LIGHTS*1.7284;
+	power_pf 0;
+	power_fraction 0;
+	current_pf 0;
+	current_fraction 0;
+	impedance_pf 1;
+	impedance_fraction 1;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.732;
+	base_power CLOTHESWASHER*0.9135;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.853;
+	base_power REFRIGERATOR*0.8837;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.875;
+	base_power DRYER*0.5453;
+	power_pf 0.9;
+	power_fraction 0.1;
+	current_pf 0.9;
+	current_fraction 0.1;
+	impedance_pf 1;
+	impedance_fraction 0.8;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.76;
+	base_power RANGE*0.6705;
+	power_pf 0;
+	power_fraction 0;
+	current_pf 0;
+	current_fraction 0;
+	impedance_pf 1;
+	impedance_fraction 1;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.951;
+	base_power MICROWAVE*0.7977;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+}
+
+//branch_3_meter_1
+object transformer {
+     name b3m1_house_trans;
+     phases BS;
+     from branch_3_meter_1;
+     to b3m1_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b3m1_house_node;
+  phases BS;
+  nominal_voltage 120;
+}
+
+object house {
+	name b3m1_house;
+	parent b3m1_house_node;
+	schedule_skew 577;
+	Rroof 17.618;
+	Rwall 6.872;
+	Rfloor 4.818;
+	Rdoors 3;
+	Rwindows 1.315;
+	airchange_per_hour 1.288;
+	hvac_power_factor 0.97;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	fan_type ONE_SPEED;
+	hvac_breaker_rating 200;
+	total_thermal_mass_per_floor_area 4.311;
+	motor_efficiency AVERAGE;
+	motor_model BASIC;
+	cooling_COP 2.502;
+	floor_area 637.886;
+	number_of_doors 1;
+	air_temperature 68.886;
+	mass_temperature 68.886;
+	heating_setpoint heating5*1.043+1.41;
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.889;
+	base_power LIGHTS*1.7284;
+	power_pf 0;
+	power_fraction 0;
+	current_pf 0;
+	current_fraction 0;
+	impedance_pf 1;
+	impedance_fraction 1;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.732;
+	base_power CLOTHESWASHER*0.9135;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.853;
+	base_power REFRIGERATOR*0.8837;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.875;
+	base_power DRYER*0.5453;
+	power_pf 0.9;
+	power_fraction 0.1;
+	current_pf 0.9;
+	current_fraction 0.1;
+	impedance_pf 1;
+	impedance_fraction 0.8;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.76;
+	base_power RANGE*0.6705;
+	power_pf 0;
+	power_fraction 0;
+	current_pf 0;
+	current_fraction 0;
+	impedance_pf 1;
+	impedance_fraction 1;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.951;
+	base_power MICROWAVE*0.7977;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+}
+
+//branch_3_meter_2
+object transformer {
+     name b3m2_house_trans;
+     phases CS;
+     from branch_3_meter_2;
+     to b3m2_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b3m2_house_node;
+  phases CS;
+  nominal_voltage 120;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases CS;
+	from b3m2_house_node;
+	to b3m2_batt_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases CS;
+	from b3m2_house_node;
+	to b3m2_solar_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_meter {
+  name b3m2_solar_meter;
+	phases CS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b3m2_solar_inv;
+		phases CS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		//maximum_dc_power 5000;
+		four_quadrant_control_mode CONSTANT_PF;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+
+		object solar {
+			name b3m2_solar;
+			generator_mode SUPPLY_DRIVEN;
+			generator_status ONLINE;
+			panel_type SINGLE_CRYSTAL_SILICON;
+			orientation FIXED_AXIS;
+			rated_power 7500;
+		};
+	};
+}
+
+object triplex_meter {
+  name b3m2_batt_meter;
+	phases CS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b3m2_batt_inv;
+		phases CS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		four_quadrant_control_mode CONSTANT_PQ;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+		P_Out 0; //VA
+
+		object battery {
+			name b3m2_batt;
+			parent b3m2_batt_inv;
+			use_internal_battery_model TRUE;
+			battery_type LI_ION;
+			rated_power 7500;
+			nominal_voltage 120;
+			battery_capacity 14 kWh;
+			round_trip_efficiency 0.9;
+			state_of_charge 0.2;
+			generator_mode SUPPLY_DRIVEN;
+		};
+	};
+}
+
+//branch_3_meter_3
+object transformer {
+     name b3m3_house_trans;
+     phases BS;
+     from branch_3_meter_3;
+     to b3m3_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b3m3_house_node;
+  phases BS;
+  nominal_voltage 120;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases BS;
+	from b3m3_house_node;
+	to b3m3_batt_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases BS;
+	from b3m3_house_node;
+	to b3m3_solar_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_meter {
+  name b3m3_solar_meter;
+	phases BS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b3m3_solar_inv;
+		phases BS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		//maximum_dc_power 5000;
+		four_quadrant_control_mode CONSTANT_PF;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+
+		object solar {
+			name b3m3_solar;
+			generator_mode SUPPLY_DRIVEN;
+			generator_status ONLINE;
+			panel_type SINGLE_CRYSTAL_SILICON;
+			orientation FIXED_AXIS;
+			rated_power 7500;
+		};
+	};
+}
+
+object triplex_meter {
+  name b3m3_batt_meter;
+	phases BS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b3m3_batt_inv;
+		phases BS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		four_quadrant_control_mode CONSTANT_PQ;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+		P_Out 0; //VA
+
+		object battery {
+			name b3m3_batt;
+			parent b3m3_batt_inv;
+			use_internal_battery_model TRUE;
+			battery_type LI_ION;
+			rated_power 7500;
+			nominal_voltage 120;
+			battery_capacity 14 kWh;
+			round_trip_efficiency 0.9;
+			state_of_charge 0.2;
+			generator_mode SUPPLY_DRIVEN;
+		};
+	};
+}
+
+//branch_3_meter_4
+object transformer {
+     name b3m4_house_trans;
+     phases BS;
+     from branch_3_meter_4;
+     to b3m4_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b3m4_house_node;
+  phases BS;
+  nominal_voltage 120;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases BS;
+	from b3m4_house_node;
+	to b3m4_batt_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_line {
+	groupid F1_Triplex_Line;
+	phases BS;
+	from b3m4_house_node;
+	to b3m4_solar_meter;
+	length 10 ft;
+	configuration TLCFG;
+}
+
+object triplex_meter {
+  name b3m4_solar_meter;
+	phases BS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b3m4_solar_inv;
+		phases BS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		//maximum_dc_power 5000;
+		four_quadrant_control_mode CONSTANT_PF;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+
+		object solar {
+			name b3m4_solar;
+			generator_mode SUPPLY_DRIVEN;
+			generator_status ONLINE;
+			panel_type SINGLE_CRYSTAL_SILICON;
+			orientation FIXED_AXIS;
+			rated_power 7500;
+		};
+	};
+}
+
+object triplex_meter {
+  name b3m4_batt_meter;
+	phases BS;
+	nominal_voltage 120;
+	groupid inverter_meter;
+
+	object inverter {
+		name b3m4_batt_inv;
+		phases BS;
+		inverter_type FOUR_QUADRANT;
+		power_factor 1;
+		//use_multipoint_efficiency TRUE;
+		//inverter_manufacturer XANTREX;
+		four_quadrant_control_mode CONSTANT_PQ;
+		generator_status ONLINE;
+		rated_power 7500;
+		inverter_efficiency 0.90;
+		P_Out 0; //VA
+
+		object battery {
+			name b3m4_batt;
+			parent b3m4_batt_inv;
+			use_internal_battery_model TRUE;
+			battery_type LI_ION;
+			rated_power 7500;
+			nominal_voltage 120;
+			battery_capacity 14 kWh;
+			round_trip_efficiency 0.9;
+			state_of_charge 0.2;
+			generator_mode SUPPLY_DRIVEN;
+		};
+	};
+}
+
+//branch_3_meter_5
+object transformer {
+     name b3m5_house_trans;
+     phases BS;
+     from branch_3_meter_5;
+     to b3m5_house_node;
+     configuration house_transformer;
+}
+
+object triplex_node {
+  name b3m5_house_node;
+  phases BS;
+  nominal_voltage 120;
+}
+
+object house {
+	name b3m5_house;
+	parent b3m5_house_node;
+	schedule_skew 577;
+	Rroof 17.618;
+	Rwall 6.872;
+	Rfloor 4.818;
+	Rdoors 3;
+	Rwindows 1.315;
+	airchange_per_hour 1.288;
+	hvac_power_factor 0.97;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	fan_type ONE_SPEED;
+	hvac_breaker_rating 200;
+	total_thermal_mass_per_floor_area 4.311;
+	motor_efficiency AVERAGE;
+	motor_model BASIC;
+	cooling_COP 2.502;
+	floor_area 637.886;
+	number_of_doors 1;
+	air_temperature 68.886;
+	mass_temperature 68.886;
+	heating_setpoint heating5*1.043+1.41;
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.889;
+	base_power LIGHTS*1.7284;
+	power_pf 0;
+	power_fraction 0;
+	current_pf 0;
+	current_fraction 0;
+	impedance_pf 1;
+	impedance_fraction 1;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.732;
+	base_power CLOTHESWASHER*0.9135;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.853;
+	base_power REFRIGERATOR*0.8837;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.875;
+	base_power DRYER*0.5453;
+	power_pf 0.9;
+	power_fraction 0.1;
+	current_pf 0.9;
+	current_fraction 0.1;
+	impedance_pf 1;
+	impedance_fraction 0.8;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.76;
+	base_power RANGE*0.6705;
+	power_pf 0;
+	power_fraction 0;
+	current_pf 0;
+	current_fraction 0;
+	impedance_pf 1;
+	impedance_fraction 1;
+};
+object ZIPload {
+	schedule_skew 577;
+	heat_fraction 0.951;
+	base_power MICROWAVE*0.7977;
+	power_pf 0.97;
+	power_fraction 1;
+	current_pf 0.97;
+	current_fraction 0;
+	impedance_pf 0.97;
+	impedance_fraction 0;
+};
+}
+
+object multi_recorder{
+	name solar_recorder;
+	file outputs/solar_output.csv;
+	interval 60;
+	property b1m2_solar_meter:measured_real_power,b1m3_solar_meter:measured_real_power,b1m4_solar_meter:measured_real_power,b2m1_solar_meter:measured_real_power,b2m2_solar_meter:measured_real_power,b2m4_solar_meter:measured_real_power,b3m2_solar_meter:measured_real_power,b3m3_solar_meter:measured_real_power,b3m4_solar_meter:measured_real_power;
+};
+
+object multi_recorder{
+	name batt_recorder;
+	file outputs/battery_output.csv;
+	interval 60;
+	property b1m2_batt_meter:measured_real_power,b1m3_batt_meter:measured_real_power,b1m4_batt_meter:measured_real_power,b2m1_batt_meter:measured_real_power,b2m2_batt_meter:measured_real_power,b2m4_batt_meter:measured_real_power,b3m2_batt_meter:measured_real_power,b3m3_batt_meter:measured_real_power,b3m4_batt_meter:measured_real_power, b1m2_batt:state_of_charge,b1m3_batt:state_of_charge,b1m4_batt:state_of_charge,b2m1_batt:state_of_charge,b2m2_batt:state_of_charge,b2m4_batt:state_of_charge,b3m2_batt:state_of_charge,b3m3_batt:state_of_charge,b3m4_batt:state_of_charge;
+};
+
+object multi_recorder{
+	name power_recorder;
+	file outputs/power_output.csv;
+	interval 60;
+	property network_node:distribution_load,branch_1_meter_1:measured_real_power,branch_1_meter_2:measured_real_power,branch_1_meter_3:measured_real_power,branch_1_meter_4:measured_real_power,branch_1_meter_5:measured_real_power,branch_2_meter_1:measured_real_power,branch_2_meter_2:measured_real_power,branch_2_meter_3:measured_real_power,branch_2_meter_4:measured_real_power,branch_2_meter_5:measured_real_power,branch_3_meter_1:measured_real_power,branch_3_meter_2:measured_real_power,branch_3_meter_3:measured_real_power,branch_3_meter_4:measured_real_power,branch_3_meter_5:measured_real_power;
+};
+
+object multi_recorder{
+	name current_recorder_1;
+	file outputs/current_output_1.csv;
+	interval 60;
+	property branch_1_meter_1:measured_current_A,branch_1_meter_1:measured_current_B,branch_1_meter_1:measured_current_C,branch_1_meter_2:measured_current_A,branch_1_meter_2:measured_current_B,branch_1_meter_2:measured_current_C,branch_1_meter_3:measured_current_A,branch_1_meter_3:measured_current_B,branch_1_meter_3:measured_current_C,branch_1_meter_4:measured_current_A,branch_1_meter_4:measured_current_B,branch_1_meter_4:measured_current_C,branch_1_meter_5:measured_current_A,branch_1_meter_5:measured_current_B,branch_1_meter_5:measured_current_C;
+};
+
+object multi_recorder{
+	name current_recorder_2;
+	file outputs/current_output_2.csv;
+	interval 60;
+	property branch_2_meter_1:measured_current_A,branch_2_meter_1:measured_current_B,branch_2_meter_1:measured_current_C,branch_2_meter_2:measured_current_A,branch_2_meter_2:measured_current_B,branch_2_meter_2:measured_current_C,branch_2_meter_3:measured_current_A,branch_2_meter_3:measured_current_B,branch_2_meter_3:measured_current_C,branch_2_meter_4:measured_current_A,branch_2_meter_4:measured_current_B,branch_2_meter_4:measured_current_C,branch_2_meter_5:measured_current_A,branch_2_meter_5:measured_current_B,branch_2_meter_5:measured_current_C;
+};
+
+object multi_recorder{
+	name current_recorder_3;
+	file outputs/current_output_3.csv;
+	interval 60;
+	property branch_3_meter_1:measured_current_A,branch_1_meter_1:measured_current_B,branch_1_meter_1:measured_current_C,branch_1_meter_2:measured_current_A,branch_1_meter_2:measured_current_B,branch_1_meter_2:measured_current_C,branch_1_meter_3:measured_current_A,branch_1_meter_3:measured_current_B,branch_1_meter_3:measured_current_C,branch_1_meter_4:measured_current_A,branch_1_meter_4:measured_current_B,branch_1_meter_4:measured_current_C,branch_1_meter_5:measured_current_A,branch_1_meter_5:measured_current_B,branch_1_meter_5:measured_current_C;
+};
+
+object multi_recorder{
+	name house_recorder;
+	file outputs/house_output.csv;
+	interval 60;
+	property b1m1_house:total_load, b1m5_house:total_load, b2m3_house:total_load, b2m5_house:total_load, b3m1_house:total_load, b3m5_house:total_load;
+};
