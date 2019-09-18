@@ -1,7 +1,0 @@
-Typical Deployment Traffic Patterns
-
-- How 100 Hz / 10 bytes
-- Real-time (how many real-time)
-- Is there a separate network for real-time communication or not.
-- First test bench will be based on network.
-- Consider durability in the measurement.
