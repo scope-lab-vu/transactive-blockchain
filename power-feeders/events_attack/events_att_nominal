@@ -1,0 +1,66 @@
+
+# read the bids of the controllers 
+object: ^bidder_control_.*
+option: repeat
+delay: 60
+attribute: price, quantity
++5m; control_.*/bid_price, control_.*/bid_quantity
+
+object: ^att_bidder_control_.*
+option: repeat
+delay: 60
+attribute: price, quantity
++5m; control_.*/bid_price, control_.*/bid_quantity
+
+
+# calculate the total load and total quantity 
+object: total_load
+option: virtual_object, save, repeat
+delay: 120
+attribute: val
++5m; multiply(substation_transformer/power_out_real, 0.001)
+
+object: total_q_nom
+option: virtual_object, save, repeat
+delay: 120
+attribute: val
++5m; stats(^bidder_control_.*/quantity)
+
+object: total_q_att
+option: virtual_object, save, repeat
+delay: 120
+attribute: val
++5m; stats(^att_bidder_control_.*/quantity)
+
+
+# calculate the bids of unresponsive loads 
+object: unresp_bidder_nom
+option: repeat
+attribute: quantity, price
+delay: 240
++5m; subtract(total_load/val, total_q_nom/val), 0.63
+
+
+object: unresp_bidder_att
+option: repeat
+attribute: quantity, price
+delay: 240
++5m; subtract(total_load/val, total_q_att/val), 0.63
+
+
+
+# send the bid of offer for the market_ctrl
+object: seller_bid
+option: repeat
+attribute: price
+delay: 240
++5m; Market_att/current_market.clearing_price
+
+
+
+
+
+
+
+
+

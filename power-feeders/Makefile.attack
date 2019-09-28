@@ -1,0 +1,110 @@
+
+# model's name
+MODEL = $(shell grep 'MODEL[ ]*=[ ]*.*' ./Makefile | grep -o '[RG].*')
+
+
+# Script to customize the GLM model
+create_attack = config_model_attack.py
+
+DIR=$(shell pwd)/
+
+# model's folders
+TAXONOMY_DIR = Taxonomy_feeders
+TAXONOMY_NEW_DIR = modified_taxonomy
+
+MODEL_DIR = $(DIR)/$(TAXONOMY_NEW_DIR)/$(MODEL)
+
+# GLM files
+ORIGINAL_GLM = $(DIR)/$(TAXONOMY_DIR)/$(MODEL).glm
+NEW_GLM = $(MODEL_DIR)/$(MODEL)_custom.glm
+ATT_GLM = $(MODEL_DIR)/$(MODEL)_attack.glm
+
+# simulation's folder
+SIM_DIR = simulations
+
+SIM_ATT_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/attack
+SIM_NOM_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/nominal
+SIM_NOM_TEST_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/nominal_test
+SIM_DELAY_ATT_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/delay_attack
+
+port=$(shell port=6267; \
+	while [ "$$port" -lt "65535" ]; do \
+		gld_clk=$$(wget http://localhost:$$port/raw/clock -q -O - ); \
+		if [ -z "$$gld_clk" ]; then \
+			echo "$$port"; \
+			break ; \
+		else \
+			port=$$( echo "($$port + 1)" | bc -l ) ; \
+		fi ; \
+	done  \
+)
+
+options=$(port)
+
+
+# Simulate the system without attacks
+simulate_nominal:
+	cp ./events_attack/events_att_nominal ./events_att
+	$(MAKE) -s -f ./Makefile.attack simulate
+	rm -rf $(SIM_NOM_DIR)
+	mv $(SIM_ATT_DIR) $(SIM_NOM_DIR)
+
+
+# simulate the system with the external function that calculates the market's equilibria
+simulate_nominal_ext:
+	cp ./events_attack/bids_header.csv bids.csv
+	rm -f bids_log.csv
+	cp ./events_attack/events_att_nominal_ext ./events_att
+	$(MAKE) -s -f ./Makefile.attack simulate
+	rm -rf $(SIM_NOM_TEST_DIR)
+	mv $(SIM_ATT_DIR) $(SIM_NOM_TEST_DIR)
+	mv bids_log.csv ./records/bids_log.csv
+
+# simulate the system using the events_att file, which is configures in other rules
+simulate:
+	$(MAKE) -s -f ./Makefile custom
+	python  $(create_attack) -i  $(NEW_GLM) -o $(ATT_GLM)
+	${MAKE} -s -f ./Makefile.attack list_objects_att
+	cp events_att $(DIR)/events
+	if [ ! -d $(SIM_ATT_DIR) ]; then mkdir -p $(SIM_ATT_DIR); fi
+	options=$(port)
+	# python event_manager.py --port $(port) &
+	sh run_gridlab.sh $(ATT_GLM) $(SIM_ATT_DIR) $(options) &
+	python event_manager.py --port $(port) 
+
+
+# Simlate delay attacks defined in form of events
+simulate_attack:
+	cat ./events_attack/events_att_nominal ./delay_attacks/plot-scripts/events_delay_att > ./events_att
+	$(MAKE) -s -f ./Makefile.attack simulate
+	rm -rf $(SIM_DELAY_ATT_DIR)
+	mv $(SIM_ATT_DIR) $(SIM_DELAY_ATT_DIR)
+
+
+# Simlate delay attacks using an external function
+simulate_attack_ext:
+	cp ./events_attack/bids_header.csv bids.csv
+	rm -f bids_log.csv
+	cp ./events_attack/events_att_ext ./events_att	
+	$(MAKE) -s -f ./Makefile.attack simulate
+	rm -rf $(SIM_DELAY_ATT_DIR)
+	mv $(SIM_ATT_DIR) $(SIM_DELAY_ATT_DIR)
+	mv bids_log.csv ./records/bids_log_att.csv
+
+
+list_objects_att: $(ATT_GLM)
+	grep '^\s*name' $(ATT_GLM) | sed 's/[ ]*name//' | sed 's/;//' > list_gl_objects
+
+
+
+
+
+
+.SILENT: all multiple_attack simulate_attack ${intensity_sims} list_objects_att attack_nominal
+
+
+
+
+
+
+

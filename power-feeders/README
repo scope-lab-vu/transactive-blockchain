@@ -1,0 +1,97 @@
+Scripts designed to simulate distribution system with GridLAB-D.
+
+
+
+1) Description of the files
+
+The folder 'taxonomy_feeders' contains some distribution feeder models that include commercial and residential loads. The folder also contains files to configure the weather and the behavior of loads. The models are provided by the GridLAB-D team at https://github.com/gridlab-d/Taxonomy_Feeders
+
+The available models are:
+
+	R1_1247_3_t6; houses: 118
+	R4_2500_1_t6; houses: 170
+	R1_2500_1_t6; houses: 222
+	R3_1247_2_t6; houses: 251
+	R4_1247_2_t6; houses: 384
+	GC_1247_1_t6_r2; houses: 495
+	GC_1247_1_t6_r3; houses: 495
+	GC_1247_1_t6_r4; houses: 495
+	GC_1247_1_t6_r5; houses: 495
+	GC_1247_1_t6_r6; houses: 495
+	R2_1247_1_t6; houses: 558
+	R1_1247_2_t6; houses: 570
+	R5_1247_2_t6; houses: 579
+	R4_1247_1_t6; houses: 641
+	R1_1247_4_t6; houses: 793
+	R3_1247_1_t6; houses: 884
+	R2_1247_2_t6; houses: 898
+	R2_3500_1_t6; houses: 1050
+	R5_1247_4_t6; houses: 1138
+	R5_1247_1_t6; houses: 1346
+	R3_1247_3_t6; houses: 1405
+	R2_1247_3_t6; houses: 1549
+	R1_1247_1_t6; houses: 1635
+	R5_1247_5_t6; houses: 1677
+	R2_2500_1_t6; houses: 1825
+	R5_1247_3_t6; houses: 2081
+	R5_2500_1_t6; houses: 2276
+	R5_3500_1_t6; houses: 2367
+
+
+We modify the models for our simulations. Some of the main changes are:
+
+	Define the simulation time
+	Enable the server mode of GridLAB-D
+	Configure the auction object 
+	Introduce bidders that offer energy
+	Adjust the controllers to allow interactions with the market
+	Add recorders in some components (e.g., houses' meters)
+
+
+We make these changes with the script 'config_model.py', which reads the simulation's configuration from 'parameters.py'. The script 'config_model.py' uses the class defined in 'parser_GLM.py' to manipulate the feeder models. We store the resulting models in 'modified_taxonomy'.
+
+
+The file 'events_normal' defines events that occur during the execution of the simulation. The script 'event_manager.py' communicates with GridLAB-D to carry out the events. The file 'README_events' has more information about the structure of the events.
+
+
+We use the script 'run_gridlab.sh' to execute GridLAB-D. We store the simulation's log in '/tmp/simulation.log'
+
+
+The folder 'simulations' contains the simulation results. Some of the files are
+
+	'bid_curve.csv', 'log_file.csv', 'market.csv': Market related files
+	'meter_*.csv': load measurements from the houses' meters
+	'total_power_network_node.csv': Total demand of the system
+	'model.xml': System's final state
+
+
+The folder 'graph-feeders' contains some scripts to plot the distribution system (the plots are stores in the folder 'simulations'). We modify the scripts available at http://emac.berkeley.edu/gridlabd/taxonomy_graphs/
+
+
+
+2) Usage
+
+The Makefile defines the rules to modify the models and to run the simulations.
+
+
+Customize the models with 
+	make custom
+
+Run the simulations with (the simulation files are stored in 'simulations/model/normal'):
+	make simulate 
+
+Plot the distribution system's structure (the files are stored in simulations/model/plot):
+	make plot
+
+Remove all the simulation files
+	make clean
+
+Extract data from the simulations (extract data from 'hvac.csv' and 'total_power_network_node.csv' and stores it in 'data_load.cvs'):
+	make extract_data
+
+
+
+
+
+
+

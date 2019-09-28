@@ -1,0 +1,120 @@
+An event allows us to read or modify the attributes of objects during the execution of GridLAB-D. The following event opens and closes a fuse:
+
+	object: fuse_2
+	attribute: status
+	+30m; OPEN
+	+1h; CLOSED
+
+We need three basic components to define the events, namely the object's name (fuse_2), its attribute (status), and the action that will occur. 
+
+
+
+1) Actions
+
+The action '+30m; OPEN' indicates that 30 minutes after the last event we change the status to 'OPEN'. If '+30m; OPEN' is the first action, then it occurs 30 minutes after the simulation starts. 
+
+The script accepts the following time units: 's' seconds, 'm' minutes, 'h' hours, 'd' days.
+
+
+
+2) Regular expressions
+
+We can define multiple objects listing them separated by ',' or using regular expressions. For example, the event 
+
+	object: bidder_control_.*
+	option: repeat
+	delay: 270
+	attribute: quantity
+	+5m; control_.*/bid_quantity
+
+affects objects whose name match the regular expression 'bidder_control_.*' (e.g., bidder_control_1). The event manager creates an event for each object that matches the regular expression. Furthermore, we set 'quantity' equal to the attribute 'bid_quantity' of another object. We determine the external object applying the regular expression control_.* on the object's name. For example, if we define the event on the object 'bidder_control_1', them we read the attribute from the object 'control_1'.
+
+
+
+3) Virtual objects
+
+The script accepts two types of objects, namely GridLAB-D's objects and virtual objects. Virtual objects allow the definition of auxiliary variables that store variables during the simulation. GridLAB-D has fixed object names and attributes; however, the user has freedom to define the name and the attributes of the virtual objects.
+
+The following event creates a virtual object 'v1' that has the attribute 'indicator' that takes values 1 or 0. 
+
+	object: v1
+	option: virtual_object
+	attribute: indicator
+	+0; 1
+	+2h; 0
+	+3h; 1
+
+Other events can use the attributes of 'v1', as in the next example.
+
+
+
+4) Functions
+
+The object's attribute can be the computed using some basic functions. The script accepts the following functions:
+
+	'sum': Computes the addition of two or more elements
+	'subtract': Computes the subtraction of two elements
+	'multiply': Computes the product of two or more elements
+	'select': Chooses among two values
+
+For example,
+
+	object: ^bidder_control_.*
+	option: repeat
+	delay: 270
+	attribute: price
+	+5m; select(v1/indicator, control_.*/bid_price, sum(control_.*/bid_price, multiply( 0.2, Market_controllers/current_market.clearing_price) ) )
+
+assigns 'control_.*/bid_price' if 'v1/indicator' > 0.5, otherwise, it selects 'sum(control_.*/bid_price, multiply( 0.2, Market_controllers/current_market.clearing_price) )'.
+
+
+
+
+5) Additional properties:
+
+The script ignores lines that start with '#'. 
+
+Each event accepts the following parameters:
+
+	'delay': Defines the delay in applying the actions (seconds)
+
+	'fraction': selects randomly a fraction of the objects to act on. 
+
+For example, the following event only selects 50% of the objects that match the regular expression 'aux_block_.*'. Also, the actions occur with a delay of 270 seconds
+
+		object: aux_block_.*
+		fraction: 0.5
+		delay: 270
+		attribute: price
+		+2h; Market_1/price_cap
+		+2h; 0
+		+1h; default
+
+'default' assigns the the initial value of the object.
+
+The events also allow the following options (can be defined separated by ','
+or in different lines):
+
+	virtual_object: creates a virtual object 
+
+	save: Saves the actions (pairs of time and attribute)
+
+	repeat: Repeats the last actions 
+
+
+For example, 
+
+	object: v2
+	option: virtual_object, save, repeat
+	attribute: price
+	+5m; Market_1/current_market.clearing_price
+
+
+
+
+
+
+
+
+
+

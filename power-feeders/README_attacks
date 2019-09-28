@@ -1,0 +1,19 @@
+This repository simulates attacks that delay (or drop) bids. We implement the attack in two ways. First, we simulate the market using an auction in GridLAB-D:
+
+make -s -f Makefile.attack simulate_nominal
+
+
+Sencond, we use an external function to simulate the market:
+
+make -s -f Makefile.attack simulate_nominal_ext
+
+We define events in 'events_attack/events_att_nominal_ext' that write the bids in an external file and call a function that returns the market's equilibrium price. The file 'ext_functions.py' contains the functions of the external file.
+
+
+The file 'bids_header.csv' has some headers needed to record the bids in GridLAB-D's format.
+
+The file 'functions_auction.py' has functions to calculate the market's equilibrium price form a file with bids.
+
+'config_model_att.py' is the script that we use to configure thee GLM model for this experiment.
+
+'Makefile.attack' has the rules to make the simulations.
