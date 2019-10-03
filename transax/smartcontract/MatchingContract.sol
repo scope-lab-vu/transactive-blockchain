@@ -17,7 +17,7 @@ contract MatchingContract {
     
     function registerProsumer(uint64 prosumer, uint64 feeder) public { // TODO: function addProsumer(address prosumer, uint64 feeder) public {
         prosumerFeeder[prosumer] = feeder;
-        ProsumerRegistered(prosumer, feeder);
+        emit ProsumerRegistered(prosumer, feeder);
     }
     
     struct Offer {
@@ -37,7 +37,7 @@ contract MatchingContract {
     
     function postBuyingOffer(uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy) public { // TODO: function postBuyingOffer(uint64 startTime, uint64 endTime, uint64 energy) public {
         require(startTime <= endTime);
-        BuyingOfferPosted(numBuyingOffers, prosumer, startTime, endTime, energy);
+        emit BuyingOfferPosted(numBuyingOffers, prosumer, startTime, endTime, energy);
         buyingOffers[numBuyingOffers++] = Offer({
             prosumer: prosumer, // TODO: msg.sender
             startTime: startTime,
@@ -48,7 +48,7 @@ contract MatchingContract {
     
     function postSellingOffer(uint64 prosumer, uint64 startTime, uint64 endTime, uint64 energy) public { // TODO: function postSellingOffer(uint64 startTime, uint64 endTime, uint64 energy) public {
         require(startTime <= endTime);
-        SellingOfferPosted(numSellingOffers, prosumer, startTime, endTime, energy);
+        emit SellingOfferPosted(numSellingOffers, prosumer, startTime, endTime, energy);
         sellingOffers[numSellingOffers++] = Offer({
             prosumer: prosumer, // TODO: msg.sender
             startTime: startTime,
@@ -85,63 +85,65 @@ contract MatchingContract {
             numTrades: 0,
             objective: 0
         });
-        SolutionCreated(numSolutions, solverID);
+        emit SolutionCreated(numSolutions, solverID);
         numSolutions += 1;
     }
     
     event TradeAdded(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power, uint64 objective);
+    event Test(uint64 an_int);
     
     function addTrade(uint64 solutionID, uint64 sellerID, uint64 buyerID, uint64 time, uint64 power) public {
+        emit Test(1);
         require(solutionID < numSolutions);
         require(sellerID < numSellingOffers);
         require(buyerID < numBuyingOffers);
         
         require(time >= nextInterval);
         
-        // check if buyer and seller are matchable
-        require(time >= sellingOffers[sellerID].startTime);
-        require(time <= sellingOffers[sellerID].endTime);
-        require(time >= buyingOffers[buyerID].startTime);
-        require(time <= buyingOffers[buyerID].endTime);
+    //     // check if buyer and seller are matchable
+    //     require(time >= sellingOffers[sellerID].startTime);
+    //     require(time <= sellingOffers[sellerID].endTime);
+    //     require(time >= buyingOffers[buyerID].startTime);
+    //     require(time <= buyingOffers[buyerID].endTime);
 
-        // notation        
-        Solution storage solution = solutions[solutionID];
-        uint64 energy = power; // assume interval to be unit length for power to energy conversion
-        uint64 sellingFeeder = prosumerFeeder[sellingOffers[sellerID].prosumer];
-        uint64 buyingFeeder = prosumerFeeder[buyingOffers[buyerID].prosumer];
+    //     // notation        
+    //     Solution storage solution = solutions[solutionID];
+    //     uint64 energy = power; // assume interval to be unit length for power to energy conversion
+    //     uint64 sellingFeeder = prosumerFeeder[sellingOffers[sellerID].prosumer];
+    //     uint64 buyingFeeder = prosumerFeeder[buyingOffers[buyerID].prosumer];
         
-        // update seller, buyer, seller feeder, and buyer feeder production and consumption
-        solution.sellerProduction[sellerID] += energy;
-        solution.buyerConsumption[buyerID] += energy;
-        solution.feederProduction[sellingFeeder][time] += power;
-        solution.feederConsumption[buyingFeeder][time] += power;
+    //     // update seller, buyer, seller feeder, and buyer feeder production and consumption
+    //     solution.sellerProduction[sellerID] += energy;
+    //     solution.buyerConsumption[buyerID] += energy;
+    //     solution.feederProduction[sellingFeeder][time] += power;
+    //     solution.feederConsumption[buyingFeeder][time] += power;
 
-        // eq:constrEnergyProd        
-        require(solution.sellerProduction[sellerID] <= sellingOffers[sellerID].energy);
-        // eq:constrEnergyCons       
-        require(solution.buyerConsumption[buyerID] <= buyingOffers[buyerID].energy);
-        // eq:constrIntProd
-        require(solution.feederProduction[sellingFeeder][time] <= Cint);
-        // eq:constrIntCons
-        require(solution.feederConsumption[buyingFeeder][time] <= Cint);
-        // eq:constrExtProd
-        require(solution.feederProduction[sellingFeeder][time] - solution.feederConsumption[sellingFeeder][time] <= Cext);
-        // eq:constrExtCons
-        require(solution.feederConsumption[buyingFeeder][time] - solution.feederConsumption[buyingFeeder][time] <= Cext);
+    //     // eq:constrEnergyProd        
+    //     require(solution.sellerProduction[sellerID] <= sellingOffers[sellerID].energy);
+    //     // eq:constrEnergyCons       
+    //     require(solution.buyerConsumption[buyerID] <= buyingOffers[buyerID].energy);
+    //     // eq:constrIntProd
+    //     require(solution.feederProduction[sellingFeeder][time] <= Cint);
+    //     // eq:constrIntCons
+    //     require(solution.feederConsumption[buyingFeeder][time] <= Cint);
+    //     // eq:constrExtProd
+    //     require(solution.feederProduction[sellingFeeder][time] - solution.feederConsumption[sellingFeeder][time] <= Cext);
+    //     // eq:constrExtCons
+    //     require(solution.feederConsumption[buyingFeeder][time] - solution.feederConsumption[buyingFeeder][time] <= Cext);
         
-        // add trade to solution
-        solution.trades[solution.numTrades++] = Trade({
-           sellerID: sellerID,
-           buyerID: buyerID,
-           time: time,
-           power: power
-        });
+    //     // add trade to solution
+    //     solution.trades[solution.numTrades++] = Trade({
+    //        sellerID: sellerID,
+    //        buyerID: buyerID,
+    //        time: time,
+    //        power: power
+    //     });
         
-        solution.objective += power;
-        if ((bestSolution < 0) || (solution.objective > solutions[uint64(bestSolution)].objective))
-            bestSolution = int64(solutionID);
+    //     solution.objective += power;
+    //     if ((bestSolution < 0) || (solution.objective > solutions[uint64(bestSolution)].objective))
+    //         bestSolution = int64(solutionID);
 
-        TradeAdded(solutionID, sellerID, buyerID, time, power, solution.objective);
+    //     emit TradeAdded(solutionID, sellerID, buyerID, time, power, solution.objective);
     }
     
     event Finalized(uint64 interval, int64 bestSolution);
@@ -150,7 +152,7 @@ contract MatchingContract {
     function finalize(uint64 interval) public {
         require(interval == nextInterval);
       
-        Finalized(interval, bestSolution);
+        emit Finalized(interval, bestSolution);
       
         if (bestSolution >= 0) {
             Solution storage solution = solutions[uint64(bestSolution)];
@@ -161,7 +163,7 @@ contract MatchingContract {
                     uint64 energy = trade.power; // assume interval to be unit length for power to energy conversion
                     sellingOffers[trade.sellerID].energy -= energy;
                     buyingOffers[trade.buyerID].energy -= energy;
-                    TradeFinalized(trade.sellerID, trade.buyerID, trade.time, trade.power);
+                    emit TradeFinalized(trade.sellerID, trade.buyerID, trade.time, trade.power);
                 }
             }
         
