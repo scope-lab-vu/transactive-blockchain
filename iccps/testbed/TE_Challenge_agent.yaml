@@ -1,0 +1,245 @@
+name: agent
+time_delta: 15s
+broker: tcp://localhost:5570
+values:
+  step:
+    topic: player/step
+  refload:
+    topic: gridlabdSimulator1/distribution_load
+    default: 0
+    type: complex
+    list: false
+  b1m1_batt_charge:
+    topic: gridlabdSimulator1/b1m1_batt_charge
+    default: 0
+  b1m2_batt_charge:
+    topic: gridlabdSimulator1/b1m2_batt_charge
+    default: 0
+  b1m3_batt_charge:
+    topic: gridlabdSimulator1/b1m3_batt_charge
+    default: 0
+  b1m4_batt_charge:
+    topic: gridlabdSimulator1/b1m4_batt_charge
+  b1m5_batt_charge:
+    topic: gridlabdSimulator1/b1m5_batt_charge
+    default: 0
+  b1m6_batt_charge:
+    topic: gridlabdSimulator1/b1m6_batt_charge
+    default: 0
+  b1m7_batt_charge:
+    topic: gridlabdSimulator1/b1m7_batt_charge
+    default: 0
+  b1m8_batt_charge:
+    topic: gridlabdSimulator1/b1m8_batt_charge
+  b1m9_batt_charge:
+    topic: gridlabdSimulator1/b1m9_batt_charge
+  b1m10_batt_charge:
+    topic: gridlabdSimulator1/b1m10_batt_charge
+  b2m1_batt_charge:
+    topic: gridlabdSimulator1/b2m1_batt_charge
+    default: 0
+  b2m2_batt_charge:
+    topic: gridlabdSimulator1/b2m2_batt_charge
+    default: 0
+  b2m3_batt_charge:
+    topic: gridlabdSimulator1/b2m3_batt_charge
+    default: 0
+  b2m4_batt_charge:
+    topic: gridlabdSimulator1/b2m4_batt_charge
+  b2m5_batt_charge:
+    topic: gridlabdSimulator1/b2m5_batt_charge
+    default: 0
+  b2m6_batt_charge:
+    topic: gridlabdSimulator1/b2m6_batt_charge
+    default: 0
+  b2m7_batt_charge:
+    topic: gridlabdSimulator1/b2m7_batt_charge
+    default: 0
+  b2m8_batt_charge:
+    topic: gridlabdSimulator1/b2m8_batt_charge
+  b2m9_batt_charge:
+    topic: gridlabdSimulator1/b2m9_batt_charge
+  b2m10_batt_charge:
+    topic: gridlabdSimulator1/b2m10_batt_charge
+  b3m1_batt_charge:
+    topic: gridlabdSimulator1/b3m1_batt_charge
+    default: 0
+  b3m2_batt_charge:
+    topic: gridlabdSimulator1/b3m2_batt_charge
+    default: 0
+  b3m3_batt_charge:
+    topic: gridlabdSimulator1/b3m3_batt_charge
+    default: 0
+  b3m4_batt_charge:
+    topic: gridlabdSimulator1/b3m4_batt_charge
+  b3m5_batt_charge:
+    topic: gridlabdSimulator1/b3m5_batt_charge
+    default: 0
+  b3m6_batt_charge:
+    topic: gridlabdSimulator1/b3m6_batt_charge
+    default: 0
+  b3m7_batt_charge:
+    topic: gridlabdSimulator1/b3m7_batt_charge
+    default: 0
+  b3m8_batt_charge:
+    topic: gridlabdSimulator1/b3m8_batt_charge
+  b3m9_batt_charge:
+    topic: gridlabdSimulator1/b3m9_batt_charge
+  b3m10_batt_charge:
+    topic: gridlabdSimulator1/b3m10_batt_charge
+  b1m1_batt_power:
+    topic: gridlabdSimulator1/b1m1_batt_power
+    default: 0
+  b1m2_batt_power:
+    topic: gridlabdSimulator1/b1m2_batt_power
+    default: 0
+  b1m3_batt_power:
+    topic: gridlabdSimulator1/b1m3_batt_power
+    default: 0
+  b1m4_batt_power:
+    topic: gridlabdSimulator1/b1m4_batt_power
+  b1m5_batt_power:
+    topic: gridlabdSimulator1/b1m5_batt_power
+    default: 0
+  b1m6_batt_power:
+    topic: gridlabdSimulator1/b1m6_batt_power
+    default: 0
+  b1m7_batt_power:
+    topic: gridlabdSimulator1/b1m7_batt_power
+    default: 0
+  b1m8_batt_power:
+    topic: gridlabdSimulator1/b1m8_batt_power
+  b1m9_batt_power:
+    topic: gridlabdSimulator1/b1m9_batt_power
+  b1m10_batt_power:
+    topic: gridlabdSimulator1/b1m10_batt_power
+  b2m1_batt_power:
+    topic: gridlabdSimulator1/b2m1_batt_power
+    default: 0
+  b2m2_batt_power:
+    topic: gridlabdSimulator1/b2m2_batt_power
+    default: 0
+  b2m3_batt_power:
+    topic: gridlabdSimulator1/b2m3_batt_power
+    default: 0
+  b2m4_batt_power:
+    topic: gridlabdSimulator1/b2m4_batt_power
+  b2m5_batt_power:
+    topic: gridlabdSimulator1/b2m5_batt_power
+    default: 0
+  b2m6_batt_power:
+    topic: gridlabdSimulator1/b2m6_batt_power
+    default: 0
+  b2m7_batt_power:
+    topic: gridlabdSimulator1/b2m7_batt_power
+    default: 0
+  b2m8_batt_power:
+    topic: gridlabdSimulator1/b2m8_batt_power
+  b2m9_batt_power:
+    topic: gridlabdSimulator1/b2m9_batt_power
+  b2m10_batt_power:
+    topic: gridlabdSimulator1/b2m10_batt_power
+  b3m1_batt_power:
+    topic: gridlabdSimulator1/b3m1_batt_power
+    default: 0
+  b3m2_batt_power:
+    topic: gridlabdSimulator1/b3m2_batt_power
+    default: 0
+  b3m3_batt_power:
+    topic: gridlabdSimulator1/b3m3_batt_power
+    default: 0
+  b3m4_batt_power:
+    topic: gridlabdSimulator1/b3m4_batt_power
+  b3m5_batt_power:
+    topic: gridlabdSimulator1/b3m5_batt_power
+    default: 0
+  b3m6_batt_power:
+    topic: gridlabdSimulator1/b3m6_batt_power
+    default: 0
+  b3m7_batt_power:
+    topic: gridlabdSimulator1/b3m7_batt_power
+    default: 0
+  b3m8_batt_power:
+    topic: gridlabdSimulator1/b3m8_batt_power
+  b3m9_batt_power:
+    topic: gridlabdSimulator1/b3m9_batt_power
+  b3m10_batt_power:
+    topic: gridlabdSimulator1/b3m10_batt_power
+  b1m1_solar_power:
+    topic: gridlabdSimulator1/b1m1_solar_power
+    default: 0
+  b1m2_solar_power:
+    topic: gridlabdSimulator1/b1m2_solar_power
+    default: 0
+  b1m3_solar_power:
+    topic: gridlabdSimulator1/b1m3_solar_power
+    default: 0
+  b1m4_solar_power:
+    topic: gridlabdSimulator1/b1m4_solar_power
+  b1m5_solar_power:
+    topic: gridlabdSimulator1/b1m5_solar_power
+    default: 0
+  b1m6_solar_power:
+    topic: gridlabdSimulator1/b1m6_solar_power
+    default: 0
+  b1m7_solar_power:
+    topic: gridlabdSimulator1/b1m7_solar_power
+    default: 0
+  b1m8_solar_power:
+    topic: gridlabdSimulator1/b1m8_solar_power
+  b1m9_solar_power:
+    topic: gridlabdSimulator1/b1m9_solar_power
+  b1m10_solar_power:
+    topic: gridlabdSimulator1/b1m10_solar_power
+  b2m1_solar_power:
+    topic: gridlabdSimulator1/b2m1_solar_power
+    default: 0
+  b2m2_solar_power:
+    topic: gridlabdSimulator1/b2m2_solar_power
+    default: 0
+  b2m3_solar_power:
+    topic: gridlabdSimulator1/b2m3_solar_power
+    default: 0
+  b2m4_solar_power:
+    topic: gridlabdSimulator1/b2m4_solar_power
+  b2m5_solar_power:
+    topic: gridlabdSimulator1/b2m5_solar_power
+    default: 0
+  b2m6_solar_power:
+    topic: gridlabdSimulator1/b2m6_solar_power
+    default: 0
+  b2m7_solar_power:
+    topic: gridlabdSimulator1/b2m7_solar_power
+    default: 0
+  b2m8_solar_power:
+    topic: gridlabdSimulator1/b2m8_solar_power
+  b2m9_solar_power:
+    topic: gridlabdSimulator1/b2m9_solar_power
+  b2m10_solar_power:
+    topic: gridlabdSimulator1/b2m10_solar_power
+  b3m1_solar_power:
+    topic: gridlabdSimulator1/b3m1_solar_power
+    default: 0
+  b3m2_solar_power:
+    topic: gridlabdSimulator1/b3m2_solar_power
+    default: 0
+  b3m3_solar_power:
+    topic: gridlabdSimulator1/b3m3_solar_power
+    default: 0
+  b3m4_solar_power:
+    topic: gridlabdSimulator1/b3m4_solar_power
+  b3m5_solar_power:
+    topic: gridlabdSimulator1/b3m5_solar_power
+    default: 0
+  b3m6_solar_power:
+    topic: gridlabdSimulator1/b3m6_solar_power
+    default: 0
+  b3m7_solar_power:
+    topic: gridlabdSimulator1/b3m7_solar_power
+    default: 0
+  b3m8_solar_power:
+    topic: gridlabdSimulator1/b3m8_solar_power
+  b3m9_solar_power:
+    topic: gridlabdSimulator1/b3m9_solar_power
+  b3m10_solar_power:
+    topic: gridlabdSimulator1/b3m10_solar_power
