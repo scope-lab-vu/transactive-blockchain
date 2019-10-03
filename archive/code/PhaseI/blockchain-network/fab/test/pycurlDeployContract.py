@@ -1,0 +1,192 @@
+#!/usr/bin/python3
+
+##############################################################################
+#
+# Sample program to interact with ethereum RPC "2.0" with python.
+#
+#    Uses pycurl to HTTP POST query and returns json data.
+#
+# @Author   Michael A. Walker
+# @Date     2017-08-06
+#
+##############################################################################
+
+import pycurl
+import json
+import sys
+from io import BytesIO
+
+def rpcCommand(method,params=[],ip='localhost',port='9012',id=1,jsonrpc="2.0",verbose=False,exceptions=False):
+    """ Method to abstract away 'curl' usage to interact with RPC of geth clients. """
+    # the <ip:port> to connect to
+    ipPort = str(ip) + ":" + str(port)
+    # buffer to capture output
+    buffer = BytesIO()
+    # start building curl command to process
+    try:
+        c = pycurl.Curl()
+        c.setopt(pycurl.URL, ipPort)
+        c.setopt(pycurl.HTTPHEADER, ['Accept:application/json'])
+        c.setopt(pycurl.WRITEFUNCTION, buffer.write)
+        data2 = {"jsonrpc":str(jsonrpc),"method": str(method),"params":params,"id":str(id)}
+        data = json.dumps(data2)
+        c.setopt(pycurl.POST, 1)
+        c.setopt(pycurl.POSTFIELDS, data)
+        if verbose:
+            c.setopt(pycurl.VERBOSE, 1)
+        #perform pycurl
+        c.perform()
+
+        # check response code (HTTP codes)
+        if (c.getinfo(pycurl.RESPONSE_CODE) != 200):
+            if exceptions:
+                raise Exception('rpc_communication_error', 'return_code_not_200')
+            return {'error':'rpc_comm_error','desc':'return_code_not_200','error_num':None}
+        #close pycurl object
+        c.close()
+    except pycurl.error as e:
+        c.close()
+        errno, message = e.args
+        if exceptions:
+            raise Exception('rpc_communication_error', 'Error No: ' + errno + ", message: " + message)
+        return {'error':'rpc_comm_error','desc':message,'error_num':errno}
+
+
+    # decode result
+    results = str(buffer.getvalue().decode('iso-8859-1'))
+    if verbose:
+        print (results)
+
+    # convert result to json object for parsing
+    data = json.loads(results)
+    # return appropriate result
+    if 'result' in data.keys():
+        return data["result"]
+    else:
+        if 'error' in data.keys():
+            if exceptions:
+                raise Exception('rpc_communication_error', data)
+            return data
+        else:
+            if exceptions:
+                raise Exception('rpc_communication_error', "Unknown Error: possible method/parameter(s) were wrong and/or networking issue.")
+            return {"error":"Unknown Error: possible method/parameter(s) were wrong and/or networking issue."}
+
+
+##############################################################################
+# Simple helper method to simplify getting peer count of a client.
+##############################################################################
+
+def getPeerCount(ip,port):
+    results = rpcCommand(ip=ip,port=port,method="net_peerCount",params=[])
+    print (results)
+
+##############################################################################
+# Methods left in as demonstrations of how to use rpcCommand only.
+##############################################################################
+
+def demonstration():
+    data = rpcCommand(port=9012,method="net_peerCount",params=[])
+    if isinstance(data, dict):
+        if 'error' in data.keys():
+            print (data['error'])
+        else:
+            print (data)
+    else:
+        print (data)
+
+    print (str(int(results,16)))
+
+def listAccounts(ip,port):
+    #get accounts
+    results = rpcCommand(ip=ip,port=port,method="eth_accounts",params=[])
+    # get balance for each account
+#    print (results[0])
+    return results
+#    for account in results:
+#        results = rpcCommand(port=9012,method="eth_getBalance",params=[account,"latest"])
+#        print( "Account:" +account + ", latest balance: " + str(int(results,16)))
+
+def getBalance(ip,port,account=None):
+    if account == None:
+        account = rpcCommand(ip=ip,port=port,method='eth_accounts')
+    results = rpcCommand(ip=ip,port=port,method="eth_getBalance",params=[account,"latest"])
+    print( "Account:" +account + ", latest balance: " + str(int(results,16)))
+    return results
+
+def addPeer(ip,port,enode):
+    results = rpcCommand(ip=ip,port=port,method="admin_addPeer",params=[enode])
+    print (results)
+
+def getEnodeInfo(ip,port):
+    results = rpcCommand(ip=ip,port=port,method="admin_nodeInfo",params=[])
+    print (results)
+
+def deployContract(ip,port):
+    address = listAccounts(ip,port)
+    contractBytecode = '0x6060604052341561000f57600080fd5b6040516103a83803806103a8833981016040528080518201919050505b5b336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505b806001908051906020019061008492919061008c565b505b50610131565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f106100cd57805160ff19168380011785556100fb565b828001600101855582156100fb579182015b828111156100fa5782518255916020019190600101906100df565b5b509050610108919061010c565b5090565b61012e91905b8082111561012a576000816000905550600101610112565b5090565b90565b610268806101406000396000f30060606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806341c0e1b514610049578063cfae32171461005e575b600080fd5b341561005457600080fd5b61005c6100ed565b005b341561006957600080fd5b61007161017f565b6040518080602001828103825283818151815260200191508051906020019080838360005b838110156100b25780820151818401525b602081019050610096565b50505050905090810190601f1680156100df5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141561017c576000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16ff5b5b565b610187610228565b60018054600181600116156101000203166002900480601f01602080910402602001604051908101604052809291908181526020018280546001816001161561010002031660029004801561021d5780601f106101f25761010080835404028352916020019161021d565b820191906000526020600020905b81548152906001019060200180831161020057829003601f168201915b505050505090505b90565b6020604051908101604052806000815250905600a165627a7a72305820eb1ef872c83a8a4be410d07b7f787ac52c0f054aa24b7f6d0173bb0ed486a09f0029'
+#    contractBytecode = '0x60606040526000600360006101000a81548167ffffffffffffffff021916908367ffffffffffffffff1602179055506000600560006101000a81548167ffffffffffffffff021916908367ffffffffffffffff160217905550341561006357600080fd5b5b336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505b5b6123eb806100b56000396000f3006060604052361561008c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806323b87507146100915780633436bd0c146101245780633b719dc014610151578063cb791be91461019d578063cbfd042f146101ca578063ed7272e2146101f7578063f1edd7e21461025f578063f8a8fd6d1461029f575b600080fd5b341561009c57600080fd5b6100fa600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190803560070b90602001909190803567ffffffffffffffff1690602001909190803567ffffffffffffffff169060200190919050506102b4565b604051808267ffffffffffffffff1667ffffffffffffffff16815260200191505060405180910390f35b341561012f57600080fd5b61014f600480803567ffffffffffffffff16906020019091905050610352565b005b341561015c57600080fd5b61019b600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190803567ffffffffffffffff169060200190919050506104ca565b005b34156101a857600080fd5b6101c8600480803567ffffffffffffffff16906020019091905050610628565b005b34156101d557600080fd5b6101f5600480803567ffffffffffffffff16906020019091905050610894565b005b341561020257600080fd5b610235600480803567ffffffffffffffff1690602001909190803567ffffffffffffffff16906020019091905050610b9f565b604051808267ffffffffffffffff1667ffffffffffffffff16815260200191505060405180910390f35b341561026a57600080fd5b61029d600480803567ffffffffffffffff1690602001909190803567ffffffffffffffff169060200190919050506111cc565b005b34156102aa57600080fd5b6102b2611b92565b005b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561031157600080fd5b6103478560008660070b1361032757600161032a565b60005b60008760070b1361033e5786600003610340565b865b8686611c4d565b90505b949350505050565b8067ffffffffffffffff16600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900467ffffffffffffffff1667ffffffffffffffff16101515156103c857600080fd5b80600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282829054906101000a900467ffffffffffffffff160392506101000a81548167ffffffffffffffff021916908367ffffffffffffffff1602179055507f6ea1dc127cb431ed30f9518c083ebb1afd5fef492456dea55227403a46e025fb3382604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018267ffffffffffffffff1667ffffffffffffffff1681526020019250505060405180910390a15b50565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561052557600080fd5b80600160008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282829054906101000a900467ffffffffffffffff160192506101000a81548167ffffffffffffffff021916908367ffffffffffffffff1602179055507f4a4bcdba1fdd3486b8dad947841b692814e16275e05e493465222f13287e779a8282604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018267ffffffffffffffff1667ffffffffffffffff1681526020019250505060405180910390a15b5050565b600080600360009054906101000a900467ffffffffffffffff1667ffffffffffffffff168367ffffffffffffffff1610151561066357600080fd5b600260008467ffffffffffffffff1667ffffffffffffffff16815260200190815260200160002091508160000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156106ea57600080fd5b308260000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506000600181111561073a57fe5b8260000160149054906101000a900460ff16600181111561075757fe5b1461077d578160000160159054906101000a900467ffffffffffffffff16600003610797565b8160000160159054906101000a900467ffffffffffffffff165b90507f6efbe3bb6c0a76bcd5d282b89fd10c1462d449b514f73f7393039485f770bfd53384838560010160009054906101000a900467ffffffffffffffff168660010160089054906101000a900467ffffffffffffffff16604051808673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018567ffffffffffffffff1667ffffffffffffffff1681526020018460070b60070b81526020018367ffffffffffffffff1667ffffffffffffffff1681526020018267ffffffffffffffff1667ffffffffffffffff1681526020019550505050505060405180910390a15b505050565b600080600460008467ffffffffffffffff1667ffffffffffffffff1681526020019081526020016000209150600260008360000160159054906101000a900467ffffffffffffffff1667ffffffffffffffff1667ffffffffffffffff1681526020019081526020016000209050600560009054906101000a900467ffffffffffffffff1667ffffffffffffffff168367ffffffffffffffff1610151561093957600080fd5b3373ffffffffffffffffffffffffffffffffffffffff168260000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1614151561099757600080fd5b600060028111156109a457fe5b8260010160089054906101000a900460ff1660028111156109c157fe5b1415156109cd57600080fd5b60018260010160086101000a81548160ff021916908360028111156109ee57fe5b0217905550338160000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550600180811115610a4257fe5b8260000160149054906101000a900460ff166001811115610a5f57fe5b1415610b4e578060010160009054906101000a900467ffffffffffffffff1660018260010160089054906101000a900467ffffffffffffffff1601038160000160159054906101000a900467ffffffffffffffff168360010160009054906101000a900467ffffffffffffffff160202600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282829054906101000a900467ffffffffffffffff160192506101000a81548167ffffffffffffffff021916908367ffffffffffffffff1602179055505b7fae4ff21dfe29840d9ecf23fcfa2dadbe7fed7bebb0aecc06e047f6bb0a30200b83604051808267ffffffffffffffff1667ffffffffffffffff16815260200191505060405180910390a15b505050565b6000806000806000600260008867ffffffffffffffff1667ffffffffffffffff16815260200190815260200160002093508360010160009054906101000a900467ffffffffffffffff1660018560010160089054906101000a900467ffffffffffffffff1601038460000160159054906101000a900467ffffffffffffffff168702029250600360009054906101000a900467ffffffffffffffff1667ffffffffffffffff168767ffffffffffffffff16101515610c5c57600080fd5b3373ffffffffffffffffffffffffffffffffffffffff168460000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16141515610cba57600080fd5b600180811115610cc657fe5b8460000160149054906101000a900460ff166001811115610ce357fe5b1415610d60578267ffffffffffffffff16600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900467ffffffffffffffff1667ffffffffffffffff1610151515610d5f57600080fd5b5b308460000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550600180811115610daf57fe5b8460000160149054906101000a900460ff166001811115610dcc57fe5b1415610e5a5782600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282829054906101000a900467ffffffffffffffff160392506101000a81548167ffffffffffffffff021916908367ffffffffffffffff16021790555060019150610e5f565b600091505b60a0604051908101604052803373ffffffffffffffffffffffffffffffffffffffff168152602001836001811115610e9357fe5b81526020018867ffffffffffffffff1681526020018767ffffffffffffffff16815260200160006002811115610ec557fe5b81525060046000600560009054906101000a900467ffffffffffffffff1667ffffffffffffffff1667ffffffffffffffff16815260200190815260200160002060008201518160000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555060208201518160000160146101000a81548160ff02191690836001811115610f7057fe5b021790555060408201518160000160156101000a81548167ffffffffffffffff021916908367ffffffffffffffff16021790555060608201518160010160006101000a81548167ffffffffffffffff021916908367ffffffffffffffff16021790555060808201518160010160086101000a81548160ff02191690836002811115610ff757fe5b02179055509050506000600181111561100c57fe5b8460000160149054906101000a900460ff16600181111561102957fe5b1461104f578360000160159054906101000a900467ffffffffffffffff16600003611069565b8360000160159054906101000a900467ffffffffffffffff165b90507ece43d5445de1586c54d6b80a0c597a8ffdd10c34fc77857a59cbfbb8eee97d600560009054906101000a900467ffffffffffffffff1688838760010160009054906101000a900467ffffffffffffffff168860010160089054906101000a900467ffffffffffffffff168b604051808767ffffffffffffffff1667ffffffffffffffff1681526020018667ffffffffffffffff1667ffffffffffffffff1681526020018560070b60070b81526020018467ffffffffffffffff1667ffffffffffffffff1681526020018367ffffffffffffffff1667ffffffffffffffff1681526020018267ffffffffffffffff1667ffffffffffffffff168152602001965050505050505060405180910390a16005600081819054906101000a900467ffffffffffffffff168092919060010191906101000a81548167ffffffffffffffff021916908367ffffffffffffffff16021790555094505b5050505092915050565b6000806000806000806000600460008a67ffffffffffffffff1667ffffffffffffffff1681526020019081526020016000209650600260008860000160159054906101000a900467ffffffffffffffff1667ffffffffffffffff1667ffffffffffffffff1681526020019081526020016000209550600260008967ffffffffffffffff1667ffffffffffffffff16815260200190815260200160002094508460010160009054906101000a900467ffffffffffffffff1667ffffffffffffffff168660010160009054906101000a900467ffffffffffffffff1667ffffffffffffffff16116112d3578460010160009054906101000a900467ffffffffffffffff166112ed565b8560010160009054906101000a900467ffffffffffffffff165b93508460010160089054906101000a900467ffffffffffffffff1667ffffffffffffffff168660010160089054906101000a900467ffffffffffffffff1667ffffffffffffffff1610611358578460010160089054906101000a900467ffffffffffffffff16611372565b8560010160089054906101000a900467ffffffffffffffff165b92508460000160159054906101000a900467ffffffffffffffff1667ffffffffffffffff168660000160159054906101000a900467ffffffffffffffff1667ffffffffffffffff16106113dd578460000160159054906101000a900467ffffffffffffffff166113f7565b8560000160159054906101000a900467ffffffffffffffff165b9150836001840103828860010160009054906101000a900467ffffffffffffffff1602029050600560009054906101000a900467ffffffffffffffff1667ffffffffffffffff168967ffffffffffffffff1610151561145557600080fd5b600360009054906101000a900467ffffffffffffffff1667ffffffffffffffff168867ffffffffffffffff1610151561148d57600080fd5b6000600281111561149a57fe5b8760010160089054906101000a900460ff1660028111156114b757fe5b1415156114c357600080fd5b3373ffffffffffffffffffffffffffffffffffffffff168560000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1614151561152157600080fd5b8460010160009054906101000a900467ffffffffffffffff1667ffffffffffffffff168660010160089054906101000a900467ffffffffffffffff1667ffffffffffffffff161080156115b757508460010160089054906101000a900467ffffffffffffffff1667ffffffffffffffff168660010160009054906101000a900467ffffffffffffffff1667ffffffffffffffff16115b1515156115c357600080fd5b600060018111156115d057fe5b8760000160149054906101000a900460ff1660018111156115ed57fe5b14156116a3576001808111156115ff57fe5b8560000160149054906101000a900460ff16600181111561161c57fe5b14151561162857600080fd5b8067ffffffffffffffff16600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900467ffffffffffffffff1667ffffffffffffffff161015151561169e57600080fd5b6116da565b600060018111156116b057fe5b8660000160149054906101000a900460ff1660018111156116cd57fe5b1415156116d957600080fd5b5b8660000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff168660000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506117638760000160159054906101000a900467ffffffffffffffff1685612023565b61176d8885612023565b61178f8760000160159054906101000a900467ffffffffffffffff1684612162565b6117998884612162565b6117bb8760000160159054906101000a900467ffffffffffffffff16836122a1565b6117c588836122a1565b600060018111156117d257fe5b8760000160149054906101000a900460ff1660018111156117ef57fe5b141561191c5780600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282829054906101000a900467ffffffffffffffff160392506101000a81548167ffffffffffffffff021916908367ffffffffffffffff16021790555080600160008960000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282829054906101000a900467ffffffffffffffff160192506101000a81548167ffffffffffffffff021916908367ffffffffffffffff16021790555061199c565b80600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008282829054906101000a900467ffffffffffffffff160192506101000a81548167ffffffffffffffff021916908367ffffffffffffffff1602179055505b8660000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff168560000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550338660000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555060028760010160086101000a81548160ff02191690836002811115611a6757fe5b02179055507f0af11ecfa0ce9284e22f65068ff6043b4ffabbcf5eeeace0f315d1e1ea5d1b70898960006001811115611a9c57fe5b8960000160149054906101000a900460ff166001811115611ab957fe5b14611ac75784600003611ac9565b845b87878c60010160009054906101000a900467ffffffffffffffff16604051808767ffffffffffffffff1667ffffffffffffffff1681526020018667ffffffffffffffff1667ffffffffffffffff1681526020018560070b60070b81526020018467ffffffffffffffff1667ffffffffffffffff1681526020018367ffffffffffffffff1667ffffffffffffffff1681526020018267ffffffffffffffff1667ffffffffffffffff168152602001965050505050505060405180910390a15b505050505050505050565b600080600080611ba4336103e86104ca565b611baf6101f4610352565b611bbb336107d06104ca565b611bc66103e8610352565b611bd53360646008600a6102b4565b9350611c05337fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff386009600b6102b4565b9250611c1284600a610b9f565b9150611c1d82610894565b611c28846005610b9f565b9050611c3481846111cc565b611c3d84610628565b611c4683610628565b5b50505050565b600060a0604051908101604052808773ffffffffffffffffffffffffffffffffffffffff168152602001866001811115611c8357fe5b81526020018567ffffffffffffffff1681526020018467ffffffffffffffff1681526020018367ffffffffffffffff1681525060026000600360009054906101000a900467ffffffffffffffff1667ffffffffffffffff1667ffffffffffffffff16815260200190815260200160002060008201518160000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555060208201518160000160146101000a81548160ff02191690836001811115611d5e57fe5b021790555060408201518160000160156101000a81548167ffffffffffffffff021916908367ffffffffffffffff16021790555060608201518160010160006101000a81548167ffffffffffffffff021916908367ffffffffffffffff16021790555060808201518160010160086101000a81548167ffffffffffffffff021916908367ffffffffffffffff16021790555090505060006001811115611e0057fe5b856001811115611e0c57fe5b1415611ef2577fc2b1f94b59151b30c16e3d9672f8b2128b809750f3edd22efa3d49d8ad245b1886600360009054906101000a900467ffffffffffffffff16868686604051808673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018567ffffffffffffffff1667ffffffffffffffff1681526020018460070b60070b81526020018367ffffffffffffffff1667ffffffffffffffff1681526020018267ffffffffffffffff1667ffffffffffffffff1681526020019550505050505060405180910390a1611fd1565b7fc2b1f94b59151b30c16e3d9672f8b2128b809750f3edd22efa3d49d8ad245b1886600360009054906101000a900467ffffffffffffffff16866000038686604051808673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018567ffffffffffffffff1667ffffffffffffffff1681526020018460070b60070b81526020018367ffffffffffffffff1667ffffffffffffffff1681526020018267ffffffffffffffff1667ffffffffffffffff1681526020019550505050505060405180910390a15b6003600081819054906101000a900467ffffffffffffffff168092919060010191906101000a81548167ffffffffffffffff021916908367ffffffffffffffff16021790555090505b95945050505050565b6000600260008467ffffffffffffffff1667ffffffffffffffff16815260200190815260200160002090508167ffffffffffffffff168160010160009054906101000a900467ffffffffffffffff1667ffffffffffffffff161080156120b557508167ffffffffffffffff168160010160089054906101000a900467ffffffffffffffff1667ffffffffffffffff1610155b1561215c5761212f8160000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff168260000160149054906101000a900460ff168360000160159054906101000a900467ffffffffffffffff168460010160009054906101000a900467ffffffffffffffff1660018703611c4d565b50818160010160006101000a81548167ffffffffffffffff021916908367ffffffffffffffff1602179055505b5b505050565b6000600260008467ffffffffffffffff1667ffffffffffffffff16815260200190815260200160002090508167ffffffffffffffff168160010160009054906101000a900467ffffffffffffffff1667ffffffffffffffff16111580156121f457508167ffffffffffffffff168160010160089054906101000a900467ffffffffffffffff1667ffffffffffffffff16115b1561229b5761226e8160000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff168260000160149054906101000a900460ff168360000160159054906101000a900467ffffffffffffffff16600186018560010160089054906101000a900467ffffffffffffffff16611c4d565b50818160010160086101000a81548167ffffffffffffffff021916908367ffffffffffffffff1602179055505b5b505050565b6000600260008467ffffffffffffffff1667ffffffffffffffff16815260200190815260200160002090508167ffffffffffffffff168160000160159054906101000a900467ffffffffffffffff1667ffffffffffffffff1611156123b95761238c8160000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff168260000160149054906101000a900460ff16848460000160159054906101000a900467ffffffffffffffff16038460010160089054906101000a900467ffffffffffffffff168560010160089054906101000a900467ffffffffffffffff16611c4d565b50818160000160156101000a81548167ffffffffffffffff021916908367ffffffffffffffff1602179055505b5b5050505600a165627a7a72305820732a9f8e2f85faa6b0d7272a5af04386224cdf5a9f9a1831302a4f921f4cd34e0029'
+#    rpcCommand("eth_sendTransaction", params=[{'from': address, 'data': bytecode}])
+    results1 = listAccounts(ip,port)
+    print (results1)
+    results2 = getBalance(ip,port,results1[0])
+    print (int(results2,16))
+    results3 = rpcCommand(ip=ip,port=port,method="eth_sendTransaction",params=[{'from':address[0], 'data': contractBytecode,'gas': '0x200000'}])
+    print (results3)
+    results4 = getBalance(ip,port,results1[0])
+    print (int(results4,16))
+
+def getBlockNumber(ip,port):
+    results = rpcCommand(ip=ip,port=port,method="eth_blockNumber",params=[])
+    print (results)
+
+def getTransactionByHash(ip,port,hash='0x688e6d531a2e6cc46f014fc5028bc41387459158379dc87f4cb58e5a36f79f31'):
+    results = rpcCommand(ip=ip,port=port,method='eth_getTransactionByHash',params=[hash])
+    print (results)
+
+def callMethodLocally(ip,port):
+    address = listAccounts(ip,port)
+    print (address)
+    zeroInt32= "1".rjust(64,'0')
+    print (zeroInt32)
+    paramValues = {'to':address[0], 'gas':'0x20000', 'data':"0xcfae3217"+zeroInt32}
+#    paramValues = {'to':address[0], 'gas':'0x20000', 'data':"0x23b87507" +zeroInt32+zeroInt32+zeroInt32+zeroInt32}
+    results = rpcCommand(ip=ip,port=port,method='eth_call',params=[paramValues,"latest"])
+    print (results)
+
+def callMethod(ip,port):
+    address = listAccounts(ip,port)
+    print (address)
+    paramValues = {'from':address[0],'to':address[0], 'gas':'0x20000', 'data':'0xf8a8fd6d'}
+    results = rpcCommand(ip=ip,port=port,method='eth_sendTransaction',params=[paramValues])
+    print (results)
+
+def callMethod2(ip,port):
+    address = listAccounts(ip,port)
+    print (address)
+    zeroInt32= "".rjust(64,'0')
+    print (zeroInt32)
+    paramValues = {'from':address[0],'to':address[0], 'gas':'0x20000', 'data':"0x23b87507" +zeroInt32+zeroInt32+zeroInt32+zeroInt32}
+    results = rpcCommand(ip=ip,port=port,method='eth_sendTransaction',params=[paramValues])
+    print (results)
+
+
+def getHash(ip,port):
+    paramValues = {"test()"}
+    results = rpcCommand( ip=ip, port=port, method='eth_call', params=["test()"] )
+    print (results)
+
+
+##############################################################################
+# 'main' entrypoint of script
+##############################################################################
+
+if __name__ == '__main__':
+#    demoAccounts(ip=sys.argv[1],port=sys.argv[2])
+#    getBalance(ip=sys.argv[1],port=sys.argv[2])
+#    deployContract(ip=sys.argv[1],port=sys.argv[2])
+#    getBlockNumber(ip=sys.argv[1],port=sys.argv[2])
+#    getTransactionByHash(ip=sys.argv[1],port=sys.argv[2])
+    callMethodLocally(ip=sys.argv[1],port=sys.argv[2])
+#    getHash(ip=sys.argv[1],port=sys.argv[2])
+

@@ -1,0 +1,29 @@
+
+object: v1
+option: virtual_object, save, repeat
+attribute: load
++15m; meter_22/measured_real_power
+
+
+
+object: v2
+option: virtual_object, save, repeat
+delay: 30
+attribute: price
++15m; Market_1/current_market.clearing_price
+
+object: Market_1
+option: repeat
+attribute: fixed_price
++0m; 0.2
++15m; 0.3
++15m; 0.4
++15m; 0.5
++15m; 0.6
+
+object: Market_1
+option: repeat
+attribute: fixed_quantity
++5m; substation_transformer/power_out_real
+
+

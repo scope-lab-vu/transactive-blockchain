@@ -1,0 +1,440 @@
+object meter {
+      name branch_1_meter_1;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_2;
+      phases ABCN;
+      from branch_1_meter_1;
+      to branch_1_meter_2;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_2;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_3;
+      phases ABCN;
+      from branch_1_meter_2;
+      to branch_1_meter_3;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_3;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_4;
+      phases ABCN;
+      from branch_1_meter_3;
+      to branch_1_meter_4;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_4;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_5;
+      phases ABCN;
+      from branch_1_meter_4;
+      to branch_1_meter_5;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_5;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_6;
+      phases ABCN;
+      from branch_1_meter_5;
+      to branch_1_meter_6;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_6;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_7;
+      phases ABCN;
+      from branch_1_meter_6;
+      to branch_1_meter_7;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_7;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_8;
+      phases ABCN;
+      from branch_1_meter_7;
+      to branch_1_meter_8;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_8;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_9;
+      phases ABCN;
+      from branch_1_meter_8;
+      to branch_1_meter_9;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_9;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_1_line_10;
+      phases ABCN;
+      from branch_1_meter_9;
+      to branch_1_meter_10;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_1_meter_10;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_1;
+      phases ABCN;
+      from branch_1_meter_10;
+      to branch_2_meter_1;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_1;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_2;
+      phases ABCN;
+      from branch_2_meter_1;
+      to branch_2_meter_2;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_2;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_3;
+      phases ABCN;
+      from branch_2_meter_2;
+      to branch_2_meter_3;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_3;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_4;
+      phases ABCN;
+      from branch_2_meter_3;
+      to branch_2_meter_4;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_4;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_5;
+      phases ABCN;
+      from branch_2_meter_4;
+      to branch_2_meter_5;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_5;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_6;
+      phases ABCN;
+      from branch_2_meter_5;
+      to branch_2_meter_6;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_6;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_7;
+      phases ABCN;
+      from branch_2_meter_6;
+      to branch_2_meter_7;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_7;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_8;
+      phases ABCN;
+      from branch_2_meter_7;
+      to branch_2_meter_8;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_8;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_9;
+      phases ABCN;
+      from branch_2_meter_8;
+      to branch_2_meter_9;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_9;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_2_line_10;
+      phases ABCN;
+      from branch_2_meter_9;
+      to branch_2_meter_10;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_2_meter_10;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_1;
+      phases ABCN;
+      from branch_2_meter_10;
+      to branch_3_meter_1;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_1;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_2;
+      phases ABCN;
+      from branch_3_meter_1;
+      to branch_3_meter_2;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_2;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_3;
+      phases ABCN;
+      from branch_3_meter_2;
+      to branch_3_meter_3;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_3;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_4;
+      phases ABCN;
+      from branch_3_meter_3;
+      to branch_3_meter_4;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_4;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_5;
+      phases ABCN;
+      from branch_3_meter_4;
+      to branch_3_meter_5;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_5;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_6;
+      phases ABCN;
+      from branch_3_meter_5;
+      to branch_3_meter_6;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_6;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_7;
+      phases ABCN;
+      from branch_3_meter_6;
+      to branch_3_meter_7;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_7;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_8;
+      phases ABCN;
+      from branch_3_meter_7;
+      to branch_3_meter_8;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_8;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_9;
+      phases ABCN;
+      from branch_3_meter_8;
+      to branch_3_meter_9;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_9;
+      phases ABCN;
+      nominal_voltage 7200;
+}
+
+object overhead_line {
+      name branch_3_line_10;
+      phases ABCN;
+      from branch_3_meter_9;
+      to branch_3_meter_10;
+      length 1000;
+      configuration line_configuration;
+}
+
+object meter {
+      name branch_3_meter_10;
+      phases ABCN;
+      nominal_voltage 7200;
+}
