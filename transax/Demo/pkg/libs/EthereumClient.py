@@ -61,12 +61,13 @@ class EthereumClient:
         trans['submission_time'] = time()
         logging.debug("Transaction {} has been submitted...".format(trans['data']))
         self.pending.append(trans) # keep track of pending transactions
-        return # nothing else to do
+        return trans_hash
     except BaseException as e:
       logging.error(str(e))
     # something went wrong
     logging.info("Failed to submit transaction {}...".format(trans['data']))
     self.waiting.append(trans) # keep track of transaction which have not been submitted
+    return 1
 
   def transaction(self, from_address, data, to_address):
     trans = {
@@ -76,7 +77,8 @@ class EthereumClient:
       'data': data
     }
     with self.lock:
-      self.__submit_trans(trans)
+      txHash = self.__submit_trans(trans)
+    return txHash
 
   def accounts(self):
     return self.command("eth_accounts")
