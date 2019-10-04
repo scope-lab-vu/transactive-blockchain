@@ -66,14 +66,17 @@ print("Contract address: " + contract_address)
 #################################################################
 # load the list of bidders
 file_bidders = './power-feeders/bidders'
-list_bidders = []
+list_bidders = {}
 with open(file_bidders, 'r') as f_bidders:
-	for x in f_bidders:
-		list_bidders.append(x)
+    prosumer_id = 0
+	for x in f_bidders:        
+		list_bidders[x]=prosumer_id
+        prosumer_id = prosumer_id + 1
 
 
 # register prosumers
-for prosumer_id in list_bidders:
+for bidder in list_bidders:
+    prosumer_id = list_bidders[bidder]
 	txHash = contract.registerProsumer(account, prosumer_id, cfg.PROSUMER_FEEDER[prosumer_id])
 	receipt = wait4receipt(ethclient, txHash, "registerProsumer")
 

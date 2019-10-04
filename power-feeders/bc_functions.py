@@ -22,6 +22,13 @@ ethclient = EthereumClient(ip='localhost', port=10000, TXGAS=cfg.TRANSACTION_GAS
 
 account = ethclient.accounts()[0] # use the first owned address
 
+# get the contract address
+with open('contract_address', 'r') as f:
+	contract_address = f.readline()
+
+# define the contract
+contract = MatchingContract(ethclient, contract_address)
+
 code = '1234321'
 
 def encode(price, quantity):
@@ -53,19 +60,11 @@ def post(parameters):
 	f.write( ','.join(data) + '\n' )
 	f.close()
 
-
-	# get the contract address
-	with open('contract_address', 'r') as f:
-		contract_address = f.readline()
-
-	# define the contract
-	contract = MatchingContract(ethclient, contract_address)
-
 	# get the current period
 	for event in contract.poll_events():
 	    name = event['name']
 	    if (name == "StartOffering"):
-		nextInterval = params['interval']
+			nextInterval = params['interval']
 
 	start_time = nextInterval
 	end_time = start_time+1
@@ -77,10 +76,10 @@ def post(parameters):
 
 	if bid_quantity < 0:
 		txHash = contract.postBuyingOffer(account, bidder_name, start_time, end_time, energy)
-		receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
+		# receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
 	else:
 		txHash = contract.postSellingOffer(account, bidder_name, start_time, end_time, energy)
-		receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
+		# receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
 
 	return '1'
 
@@ -89,12 +88,7 @@ def post(parameters):
 
 def get_solution(parameters):
 
-	# get the contract address
-	with open('contract_address', 'r') as f:
-		contract_address = f.readline()
 
-	# define the contract
-	contract = MatchingContract(ethclient, contract_address)
 	
 	# get the bids
 	bids = dict()
@@ -104,6 +98,7 @@ def get_solution(parameters):
 	for event in contract.poll_events():
 	    params = event['params']
 	    name = event['name']
+		interval = event['startTime']
 
 	    if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
 		new_offers = True
@@ -115,7 +110,7 @@ def get_solution(parameters):
 		bids[bidder] = [p, q]
 
 		if name == "BuyingOfferPosted":
-			bids_demand.append( [p, q] )
+			bids_offer.append( [p, q] )
 		else:
 			bids_demand.append( [p, q] )
 
@@ -168,5 +163,8 @@ def get_solution(parameters):
 	f.close()
 
 	#return str(market_eq_nom['p'][0])
+	
+	txHash = contract.submitClearingPrice(account, interval, price=p_eq)
+
 	return str(p_eq)
 	
