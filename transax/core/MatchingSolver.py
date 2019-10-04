@@ -7,12 +7,13 @@ from core.LinearProgramCplex import LinearProgramCplex
 # from LinearProgramCplex import LinearProgramCplex
 
 class Offer:
-  def __init__(self, ID, prosumer, startTime, endTime, energy):
+  def __init__(self, ID, prosumer, startTime, endTime, energy, value):
     self.ID = ID
     self.prosumer = prosumer
     self.startTime = startTime
     self.endTime = endTime
     self.energy = energy
+    self.value = value
 
   def matchable(self, offer):
     return (self.endTime >= offer.startTime) and (self.startTime <= offer.endTime)
