@@ -5,7 +5,7 @@ import config as cfg
 import time
 
 
-ethclient = EthereumClient(ip='172.21.20.40', port=10000, TXGAS=cfg.TRANSACTION_GAS)
+ethclient = EthereumClient(ip='localhost', port=10000, TXGAS=cfg.TRANSACTION_GAS)
 
 account = ethclient.accounts()[0] # use the first owned address
 
@@ -53,7 +53,7 @@ def deploy_contract(BYTECODE, TXGAS):
 
 
 contract = None
-contractBYTECODE = '/home/riaps/projects/transactive-blockchain/transax/smartcontract/output/MatchingContract.bin'
+contractBYTECODE = '/home/riaps/projects/transactive-blockchain/transax/smartcontract/output/Matching.bin'
 with open(contractBYTECODE) as f:
     BYTECODE = "0x"+f.read()
     contract_address = deploy_contract(BYTECODE, cfg.TRANSACTION_GAS)
@@ -72,10 +72,11 @@ receipt = wait4receipt(ethclient, txHash, "registerProsumer")
 start_time = 1
 end_time = 1
 energy = 10
-txHash = contract.postBuyingOffer(account, prosumer_id, start_time, end_time, energy)
+value = 5
+txHash = contract.postBuyingOffer(account, prosumer_id, start_time, end_time, energy, value)
 receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
 
-txHash = contract.postSellingOffer(account, 103, start_time, end_time, energy)
+txHash = contract.postSellingOffer(account, 103, start_time, end_time, energy, value)
 receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
 
 
@@ -89,30 +90,37 @@ for event in contract.poll_events():
 
     if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
         new_offers = True
-        offer = Offer(params['ID'], params['prosumer'], params['startTime'], params['endTime'], params['energy'])
+        offer = Offer(params['ID'], params['prosumer'], params['startTime'], params['endTime'], params['energy'], params['value'])
         if name == "BuyingOfferPosted":
             buying_offers.append(offer)
         else:
             selling_offers.append(offer)
 
-solverID = 1
-txHash = contract.createSolution(account, solverID)
-receipt = wait4receipt(ethclient, txHash, "createSolution")
+#SOLVE - Double Auction
+txHash = contract.startSolve(account, interval=1)
+receipt = wait4receipt(ethclient, txHash, "solving")
+
 
 for event in contract.poll_events():
     params = event['params']
     name = event['name']
     print("{}({}).".format(name, params))
 
-    if (name == "SolutionCreated") and (params['solverID'] == solverID):
-        solutionID = params['solutionID']
-        txHash = contract.addTrade(account, solutionID, sellerID=0, buyerID=0, time=1, power=10)
-        receipt = wait4receipt(ethclient, txHash, "addTrade")
+    if (name == "Solve") :
+        solveInterval = params['interval']
+        txHash = contract.submitClearingPrice(account, solveInterval, price=10)
+        receipt = wait4receipt(ethclient, txHash, "clearingPrice")
 
 for event in contract.poll_events():
     params = event['params']
     name = event['name']
     print("{}({}).".format(name, params))
 
-    if (name == "Test"):
-        print ("test")
+    if (name == "ClearingPrice"):
+        interval = params['interval']
+        price = params['price']
+        print ("price in interval %s = %s" %(interval, price))
+
+    if (name == "StartOffering"):
+        nextInterval = params['interval']
+        print ("next interval: %s" %nextInterval)
