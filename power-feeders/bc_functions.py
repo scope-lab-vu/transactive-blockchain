@@ -31,6 +31,11 @@ contract = MatchingContract(ethclient, contract_address)
 
 code = '1234321'
 
+txHash = None
+type_bid = None
+
+
+
 def encode(price, quantity):
 	bid_price = int(float(price)*1000)
 	bid_quantity = int(abs(float(quantity)*1000))
@@ -48,6 +53,9 @@ def decode(n1):
 
 # send the bids to the block chain
 def post(parameters):
+	global txHash
+	global type_bid
+
 	bidder_name, price, quantity, period, time = parameters
 
 	# write the bids in logs
@@ -60,11 +68,16 @@ def post(parameters):
 	f.write( ','.join(data) + '\n' )
 	f.close()
 
+	# get list of bidders
+	list_bidders = np.load('id_bidders.npy', ).item()
+
 	# get the current period
 	for event in contract.poll_events():
 	    name = event['name']
 	    if (name == "StartOffering"):
 			nextInterval = params['interval']
+
+	bidder_id = list_bidders[bidder_name]
 
 	start_time = nextInterval
 	end_time = start_time+1
@@ -75,11 +88,13 @@ def post(parameters):
 	energy = encode(price, quantity)
 
 	if bid_quantity < 0:
-		txHash = contract.postBuyingOffer(account, bidder_name, start_time, end_time, energy)
+		txHash = contract.postBuyingOffer(account, bidder_id, start_time, end_time, energy)
 		# receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
+		type_bid = "postBuyingOffer"
 	else:
-		txHash = contract.postSellingOffer(account, bidder_name, start_time, end_time, energy)
+		txHash = contract.postSellingOffer(account, bidder_id, start_time, end_time, energy)
 		# receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
+		type_bid = "postSellingOffer"
 
 	return '1'
 
@@ -88,7 +103,7 @@ def post(parameters):
 
 def get_solution(parameters):
 
-
+	receipt = wait4receipt(ethclient, txHash, type_bid)
 	
 	# get the bids
 	bids = dict()

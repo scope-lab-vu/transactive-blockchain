@@ -3,7 +3,7 @@ from core.MatchingContract import MatchingContract
 from core.MatchingSolver import MatchingSolver, Offer
 import config as cfg
 import time
-
+import numpy as np
 
 ethclient = EthereumClient(ip='localhost', port=10000, TXGAS=cfg.TRANSACTION_GAS)
 
@@ -73,6 +73,9 @@ with open(file_bidders, 'r') as f_bidders:
 		list_bidders[x]=prosumer_id
         prosumer_id = prosumer_id + 1
 
+# save the dictionary
+np.save('id_bidders.npy', list_bidders)
+
 
 # register prosumers
 for bidder in list_bidders:
@@ -91,6 +94,8 @@ except:
 f = open(file_name, 'w')
 f.write( contract_address )
 f.close()
+
+
 
 
 
