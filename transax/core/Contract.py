@@ -25,13 +25,20 @@ class Contract:
   def generate_topics(self, events):
     self.topics = {}
     for event in events:
-      name = event.split("(")[0].strip()
+      # name = event.split("(")[0].strip()
+      name = event
       topic = {'name': name}
       params = []
-      for param in [s.strip() for s in event.split("(")[1].replace(")", "").split(",")]:
-        ptype = param.split(" ")[0]
-        pname = param.split(" ")[-1]
+
+      for param in events[event]:
+        pname = param[0]
+        ptype = param[1]
         params.append((ptype, pname))
+
+      # for param in [s.strip() for s in event.split("(")[1].replace(")", "").split(",")]:
+      #   ptype = param.split(" ")[0]
+      #   pname = param.split(" ")[-1]
+      #   params.append((ptype, pname))
       topic['params'] = params
       signature = "{}({})".format(name, ",".join([ptype for (ptype, pname) in params]))
       keccak256 = self.client.keccak256(signature)

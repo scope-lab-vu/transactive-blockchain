@@ -98,10 +98,11 @@ for event in contract.poll_events():
 
 #SOLVE - Double Auction
 txHash = contract.startSolve(account, interval=1)
-receipt = wait4receipt(ethclient, txHash, "solving")
+receipt = wait4receipt(ethclient, txHash, "startSolve")
 
 
 for event in contract.poll_events():
+    print("poll events")
     params = event['params']
     name = event['name']
     print("{}({}).".format(name, params))
@@ -110,6 +111,7 @@ for event in contract.poll_events():
         solveInterval = params['interval']
         txHash = contract.submitClearingPrice(account, solveInterval, price=10)
         receipt = wait4receipt(ethclient, txHash, "clearingPrice")
+
 
 for event in contract.poll_events():
     params = event['params']
