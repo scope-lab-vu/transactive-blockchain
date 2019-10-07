@@ -1,7 +1,7 @@
 import logging
 
 # import libs.cplex as cplex
-from core.LinearProgram import LinearProgram
+from transax.LinearProgram import LinearProgram
 
 import cplex as cplex
 # from LinearProgram import LinearProgram

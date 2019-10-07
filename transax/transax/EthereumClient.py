@@ -17,11 +17,13 @@ class EthereumClient:
     self.waiting = [] # transactions which have not been submitted
     self.pending = [] # transactions which have been submitted but not yet mined
     self.lock = RLock()
+    self.active = True
     thread = Thread(target=self.__run)
     thread.start()
+    
 
   def __run(self):
-    while True:
+    while self.active:
       sleep(CHECK_INTERVAL) # wait one second
       current_time = time()
       with self.lock:
@@ -137,3 +139,7 @@ class EthereumClient:
         raise Exception('rpc_communication_error', data)
       else:
         raise Exception('rpc_communication_error', "unknown error: possibly method/parameter(s) were wrong and/or networking issue.")
+
+  def terminate(self):
+    self.active = False
+

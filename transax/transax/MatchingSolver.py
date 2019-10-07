@@ -1,7 +1,7 @@
 import logging
 
-from core.Microgrid import Microgrid
-from core.LinearProgramCplex import LinearProgramCplex
+from transax.Microgrid import Microgrid
+from transax.LinearProgramCplex import LinearProgramCplex
 
 # from Microgrid import Microgrid
 # from LinearProgramCplex import LinearProgramCplex

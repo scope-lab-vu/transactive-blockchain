@@ -1,6 +1,6 @@
 import logging
 
-from core.Contract import Contract
+from transax.Contract import Contract
 #from Contract import Contract
 
 class MatchingContract(Contract):

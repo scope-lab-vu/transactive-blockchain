@@ -1,6 +1,9 @@
-from core.EthereumClient import EthereumClient
-from core.MatchingContract import MatchingContract
-from core.MatchingSolver import MatchingSolver, Offer
+# from core.EthereumClient import EthereumClient
+# from core.MatchingContract import MatchingContract
+# from core.MatchingSolver import MatchingSolver, Offer
+from transax.EthereumClient import EthereumClient
+from transax.MatchingContract import MatchingContract
+from transax.MatchingSolver import MatchingSolver, Offer
 import config as cfg
 import time
 
