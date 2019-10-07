@@ -4,86 +4,126 @@ from core.MatchingSolver import MatchingSolver, Offer
 import config as cfg
 import time
 import numpy as np
+import pdb
 
-ethclient = EthereumClient(ip='localhost', port=10000, TXGAS=cfg.TRANSACTION_GAS)
+import csv
+import os
+from functions_auction import build_curves, find_equilibrium_auction, extract_bids, order_bids_descending, order_bids_ascending, find_market_equilibrium, surplus_f, ideal_eq_attack, maer, avg_total_surplus, stats
+from functions_read_data import read_data, rolling_statistics, get_avg_data
 
-account = ethclient.accounts()[0] # use the first owned address
 
+ethclient = None
+account = None
+contract = None
+poll1 = None
+
+txHash = None
+type_bid = None
+
+nextInterval = 1
 
 def wait4receipt(ethclient,txHash,name,getReceipt=True):
 
-    if not getReceipt:
-        receipt = {}
-        receipt['gasUsed'] = -1
-        receipt['cumulativeGasUsed'] = -1
-        print("Did not wait for receipt")
-        return receipt
+	if not getReceipt:
+		receipt = {}
+		receipt['gasUsed'] = -1
+		receipt['cumulativeGasUsed'] = -1
+		print("Did not wait for receipt")
+		return receipt
 
-    if txHash.startswith("0x"): 
+	if txHash.startswith("0x"): 
 
-        receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])       
-        while receipt is None or "ERROR" in receipt:
-            
-            print("Waiting for tx to be mined... (block number: {})".format(ethclient.command("eth_blockNumber", params=[])))
-            time.sleep(5) 
+		receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])       
+		while receipt is None or "ERROR" in receipt:
+			
+			print("Waiting for tx to be mined... (block number: {})".format(ethclient.command("eth_blockNumber", params=[])))
+			time.sleep(5) 
 
-            receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
+			receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
 
-        if receipt['gasUsed'] == cfg.TRANSACTION_GAS:
-            print("Transaction may have failed. gasUsed = gasLimit")
+		if receipt['gasUsed'] == cfg.TRANSACTION_GAS:
+			print("Transaction may have failed. gasUsed = gasLimit")
 
-        print("%s gasUsed: %s" %(name,receipt['gasUsed']))
-        print("%s cumulativeGasUsed: %s" %(name,receipt['cumulativeGasUsed']))
+		print("%s gasUsed: %s" %(name,receipt['gasUsed']))
+		print("%s cumulativeGasUsed: %s" %(name,receipt['cumulativeGasUsed']))
 
-        return receipt
+		return receipt
 
 
 def deploy_contract(BYTECODE, TXGAS):
-    print("Deploying contract...")
-    # use command function because we need to get the contract address later
-    txHash = ethclient.command("eth_sendTransaction", params=[{'data': BYTECODE, 'from': account, 'gas': TXGAS}])
-    print("Transaction hash: " + txHash)
+	print("Deploying contract...")
+	# use command function because we need to get the contract address later
+	txHash = ethclient.command("eth_sendTransaction", params=[{'data': BYTECODE, 'from': account, 'gas': TXGAS}])
+	print("Transaction hash: " + txHash)
 
-    receipt = wait4receipt(ethclient, txHash, "deployContract")
+	receipt = wait4receipt(ethclient, txHash, "deployContract")
 
-    contract_address = receipt['contractAddress']
+	contract_address = receipt['contractAddress']
 
-    return contract_address
+	return contract_address
 
+def initialize(input_):
+	global contract
+	global ethclient
+	global account
+	global poll1
+	global nextInterval
 
-contract = None
-contractBYTECODE = '/home/riaps/projects/transactive-blockchain/transax/smartcontract/output/MatchingContract.bin'
-with open(contractBYTECODE) as f:
-    BYTECODE = "0x"+f.read()
-    contract_address = deploy_contract(BYTECODE, cfg.TRANSACTION_GAS)
-    contract = MatchingContract(ethclient, contract_address)
+	print('***initializing****')
 
-contract.setup(account, cfg.MICROGRID.C_ext, cfg.MICROGRID.C_int, cfg.START_INTERVAL)
-print("Contract address: " + contract_address)
-
-
-
-#################################################################
-# load the list of bidders
-file_bidders = './power-feeders/bidders'
-list_bidders = {}
-with open(file_bidders, 'r') as f_bidders:
-    prosumer_id = 0
-	for x in f_bidders:        
-		list_bidders[x]=prosumer_id
-        prosumer_id = prosumer_id + 1
-
-# save the dictionary
-np.save('id_bidders.npy', list_bidders)
+	ethclient = EthereumClient(ip='localhost', port=10000, TXGAS=cfg.TRANSACTION_GAS)
+	print(ethclient)
+	account = ethclient.accounts()[0] # use the first owned address
 
 
-# register prosumers
-for bidder in list_bidders:
-    prosumer_id = list_bidders[bidder]
-	txHash = contract.registerProsumer(account, prosumer_id, cfg.PROSUMER_FEEDER[prosumer_id])
+	contractBYTECODE = '/home/riaps/projects/transactive-blockchain/transax/smartcontract/output/Matching.bin'
+	with open(contractBYTECODE) as f:
+		BYTECODE = "0x"+f.read()
+		contract_address = deploy_contract(BYTECODE, cfg.TRANSACTION_GAS)
+		contract = MatchingContract(ethclient, contract_address)
+
+	txHash = contract.setup(account, cfg.MICROGRID.C_ext, cfg.MICROGRID.C_int, cfg.START_INTERVAL)
+	receipt = wait4receipt(ethclient, txHash, "setup")
+	print("Contract address: " + contract_address)
+
+	poll1 = contract.poll_events()
+	for event in poll1:
+		params = event['params']
+		name = event['name']
+		print("{}({}).".format(name, params))
+
+		if (name == "StartOffering"):
+			nextInterval = params['interval']
+			print ("next interval: %s" %nextInterval)
+
+
+
+	#################################################################
+	# load the list of bidders
+	file_bidders = './bidders'
+	list_bidders = {}
+	with open(file_bidders, 'r') as f_bidders:
+		prosumer_id = 101
+		for x in f_bidders:
+			list_bidders[x.strip()]=prosumer_id
+			prosumer_id = prosumer_id + 1
+
+	# save the dictionary
+	np.save('id_bidders.npy', list_bidders)
+
+
+	# register prosumers
+	for bidder in list_bidders:
+		prosumer_id = list_bidders[bidder]
+		# print(cfg.PROSUMER_FEEDER)
+		#print(prosumer_id)
+		txHash = contract.registerProsumer(account, prosumer_id, cfg.PROSUMER_FEEDER[prosumer_id])
+		#print(txHash)
+	print(txHash)
 	receipt = wait4receipt(ethclient, txHash, "registerProsumer")
+	return 
 
-
+'''
 # write the address of the contract
 file_name = 'contract_address'
 try:
@@ -94,6 +134,178 @@ except:
 f = open(file_name, 'w')
 f.write( contract_address )
 f.close()
+
+ethclient.terminate()
+'''
+
+
+# send the bids to the block chain
+#def post(bidder_name, price, quantity, period, time):
+def post(parameters):
+	global txHash
+	global type_bid
+	global contract
+
+	bidder_name, price, quantity, period, time = parameters
+
+	# write the bids in logs
+	data = [period, time, bidder_name, price, quantity, 'unknown']
+	f = open('bids.csv', 'a')
+	f.write( ','.join(data) + '\n' )
+	f.close()
+
+	f = open('bids_log.csv', 'a')
+	f.write( ','.join(data) + '\n' )
+	f.close()
+
+	# get list of bidders
+	list_bidders = np.load('id_bidders.npy', allow_pickle=True).item()
+	'''
+	print(ethclient)
+	# get the current period
+	poll = contract.poll_events()
+	for event in poll:
+		name = event['name']
+		if (name == "StartOffering"):
+			nextInterval = params['interval']
+	'''		
+	bidder_id = list_bidders[bidder_name]
+	try:
+		start_time = nextInterval
+	except:
+		pdb.set_trace()
+	end_time = start_time+1
+
+	# send the bids
+	bid_quantity = int(float(quantity)*1000)
+	bid_price = int(float(price)*1000)
+
+	# energy = encode(price, quantity)
+
+	if bid_quantity < 0:
+		txHash = contract.postBuyingOffer(account, bidder_id, start_time, end_time, -bid_quantity, bid_price)
+		# receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
+		type_bid = "postBuyingOffer"
+	else:
+		txHash = contract.postSellingOffer(account, bidder_id, start_time, end_time, bid_quantity, bid_price)
+		# receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
+		type_bid = "postSellingOffer"
+
+	#pdb.set_trace()
+
+	return '1'
+
+
+
+
+def get_solution(parameters):
+	global txHash
+	global type_bid
+	global contract
+	global poll
+	receipt = wait4receipt(ethclient, txHash, type_bid)
+	
+	#pdb.set_trace()
+	# get the bids
+	bids = dict()
+	bids_demand = []
+	bids_offer = []
+
+	poll = contract.poll_events()
+	for event in poll:
+		params = event['params']
+		name = event['name']
+		print("{}({}).".format(name, params))
+		
+
+		if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
+			#pdb.set_trace()
+
+			new_offers = True
+			interval = params['startTime']
+
+			q = params['energy']/1000.0
+			p = params['value']/1000.0
+			# p, q = decode(energy)
+			bidder = params['prosumer'] 
+
+			bids[bidder] = [p, q]
+
+			if name == "BuyingOfferPosted":
+				bids_demand.append( [p, q] )
+			else:
+				bids_offer.append( [p, q] )
+
+
+	# transform into an array
+	bids_demand = np.array(bids_demand)
+	bids_offer = np.array(bids_offer)
+
+	# order the bids
+	bids_demand = order_bids_descending(bids_demand)
+	bids_offer = order_bids_ascending(bids_offer)
+
+	# find the equilibria
+	number_offers = len(bids_offer)
+	number_demand = len(bids_demand)
+
+	if number_demand<=0 or number_offers<=0:
+		q_eq = 0
+		p_eq = 0
+
+	else:
+		q_eq, p_eq = find_equilibrium_auction(bids_offer, bids_demand)
+
+	
+
+	# get the equilibrium and the bids in each time period
+	file_name = 'bids.csv'
+	try:
+		eq_time_nom, market_eq_nom, bids_nom, curves_nom = find_market_equilibrium(file_name)
+	except:
+		print('error')
+		pdb.set_trace()
+
+	# rewrite the bid file
+	try:
+		os.remove(file_name)
+	except:
+		pass
+
+	# initialize the file for the bids of the next period
+	f = open(file_name, 'w')
+	f.write( 'market_id,timestamp,bidder_name,bid_price,bid_quantity,bid_state\n' )
+	f.close()
+
+
+	# write the equilibria price
+	prices = [str(market_eq_nom['p'][0]), str(p_eq)]
+	f = open('eq_price.csv', 'a')
+	f.write( ','.join(prices) + '\n' )
+	f.close()
+
+	#return str(market_eq_nom['p'][0])
+	
+	txHash = contract.submitClearingPrice(account, interval, price=int(p_eq*1000))
+
+	for event in contract.poll_events():
+		params = event['params']
+		name = event['name']
+		print("{}({}).".format(name, params))
+
+		if (name == "ClearingPrice"):
+			interval = params['interval']
+			price = params['price']
+			print ("price in interval %s = %s" %(interval, price))
+
+		if (name == "StartOffering"):
+			nextInterval = params['interval']
+			print ("next interval: %s" %nextInterval)
+
+	return str(p_eq)
+	
+
+
 
 
 

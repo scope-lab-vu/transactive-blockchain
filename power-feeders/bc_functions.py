@@ -1,5 +1,5 @@
 import csv
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import pdb
 from datetime import datetime, date, time, timedelta
@@ -53,6 +53,7 @@ def decode(n1):
 
 # send the bids to the block chain
 def post(parameters):
+#def post(bidder_name, price, quantity, period, time):
 	global txHash
 	global type_bid
 
@@ -69,30 +70,33 @@ def post(parameters):
 	f.close()
 
 	# get list of bidders
-	list_bidders = np.load('id_bidders.npy', ).item()
+	list_bidders = np.load('id_bidders.npy', allow_pickle=True).item()
 
 	# get the current period
 	for event in contract.poll_events():
-	    name = event['name']
-	    if (name == "StartOffering"):
+		name = event['name']
+		if (name == "StartOffering"):
 			nextInterval = params['interval']
-
+			
 	bidder_id = list_bidders[bidder_name]
-
-	start_time = nextInterval
+	try:
+		start_time = nextInterval
+	except:
+		pdb.set_trace()
 	end_time = start_time+1
 
 	# send the bids
 	bid_quantity = float(quantity)
+	bid_price = float(price)
 
-	energy = encode(price, quantity)
+	# energy = encode(price, quantity)
 
 	if bid_quantity < 0:
-		txHash = contract.postBuyingOffer(account, bidder_id, start_time, end_time, energy)
+		txHash = contract.postBuyingOffer(account, bidder_id, start_time, end_time, -bid_quantity, bid_price)
 		# receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
 		type_bid = "postBuyingOffer"
 	else:
-		txHash = contract.postSellingOffer(account, bidder_id, start_time, end_time, energy)
+		txHash = contract.postSellingOffer(account, bidder_id, start_time, end_time, bid_quantity, bid_price)
 		# receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
 		type_bid = "postSellingOffer"
 
@@ -111,15 +115,16 @@ def get_solution(parameters):
 	bids_offer = []
 
 	for event in contract.poll_events():
-	    params = event['params']
-	    name = event['name']
+		params = event['params']
+		name = event['name']
 		interval = event['startTime']
 
-	    if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
-		new_offers = True
+		if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
+			new_offers = True
 
-		energy = params['energy']
-		p, q = decode(energy)
+		q = params['energy']
+		p = params['value']
+		# p, q = decode(energy)
 		bidder = params['prosumer'] 
 
 		bids[bidder] = [p, q]

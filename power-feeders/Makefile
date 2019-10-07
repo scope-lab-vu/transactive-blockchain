@@ -50,7 +50,7 @@ custom: $(ORIGINAL_GLM) $(create_custom)
 	sed -i 's/$(LABEL)[_]//g' $(NEW_GLM)
 	sed -i 's/my_avg/current_price_mean_1h/g' $(NEW_GLM)
 	sed -i 's/my_std/current_price_stdev_1h/g' $(NEW_GLM)
-	python $(create_custom) -i  $(NEW_GLM)
+	python3 $(create_custom) -i  $(NEW_GLM)
 
 
 
@@ -59,7 +59,7 @@ simulate:
 	${MAKE} -s list_objects
 	cp events_normal events
 	if [ ! -d $(SIM_NORMAL_DIR) ]; then mkdir -p $(SIM_NORMAL_DIR); fi
-	python event_manager.py --port $(port) &
+	python3 event_manager.py --port $(port) &
 	sh run_gridlab.sh $(NEW_GLM) $(SIM_NORMAL_DIR) $(options)
 
 
@@ -70,7 +70,7 @@ list_objects: $(NEW_GLM)
 
 
 extract_data: 
-	python extract_data.py
+	python3 extract_data.py
 
 
 plot:

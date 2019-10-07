@@ -180,6 +180,7 @@ def parse_value(line):
 						dict_functions[function] = func
 					except:
 						print('Error importing the function ' + function)
+						pdb.set_trace()
 					
 
 		arguments_raw = match[1:-1]
@@ -188,6 +189,7 @@ def parse_value(line):
 		list_args = []
 		count_parenthesis = 0
 		j = 0
+		i = 0
 		for i in range(len(arguments_raw)):
 			if arguments_raw[i] == '(':
 				count_parenthesis += 1
@@ -742,10 +744,12 @@ def get_value(op_tree, attr, obj, event_id):
 			if func == f_delay:
 				val = func ( arguments, attr, obj, event_id )
 			else:
+				#pdb.set_trace()
 				val = func ( arguments )
-		except:
+		except Exception as err:
+			print(err)
 			pdb.set_trace()
-			val = func ( arguments, attr, obj, event_id )
+			val = func ( arguments )
 		return val
 
 
