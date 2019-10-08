@@ -11,14 +11,16 @@ from functions_auction import build_curves, find_equilibrium_auction, extract_bi
 
 from functions_read_data import read_data, rolling_statistics, get_avg_data
 
-from core.EthereumClient import EthereumClient
-from core.MatchingContract import MatchingContract
-from core.MatchingSolver import MatchingSolver, Offer
+from transax.EthereumClient import EthereumClient
+from transax.MatchingContract import MatchingContract
+from transax.MatchingSolver import MatchingSolver, Offer
 import config as cfg
 import time
 
 
 ethclient = EthereumClient(ip='localhost', port=10000, TXGAS=cfg.TRANSACTION_GAS)
+ethclient1 = EthereumClient(ip='localhost', port=10001, TXGAS=cfg.TRANSACTION_GAS)
+ethclient2 = EthereumClient(ip='localhost', port=10002, TXGAS=cfg.TRANSACTION_GAS)
 
 account = ethclient.accounts()[0] # use the first owned address
 
