@@ -72,7 +72,7 @@ simulate_bc:
 	grep -io '[^\w_]bidder_control_.*' list_gl_objects > bidders
 	grep -io '[^\w_]block_nom_.*' list_gl_objects >> bidders 
 	echo 'unresp_bidder_nom' >> bidders 
-	cp ../transax/config.py config.py
+	#cp ../transax/config.py config.py
 	#python3 register_bidders.py
 	$(MAKE) -s -f ./Makefile.attack simulate
 	rm -rf $(SIM_NOM_TEST_DIR)

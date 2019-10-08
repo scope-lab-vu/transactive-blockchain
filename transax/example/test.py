@@ -8,7 +8,7 @@ import time
 ethclient = EthereumClient(ip='localhost', port=10001, TXGAS=cfg.TRANSACTION_GAS)
 
 # account = ethclient.accounts()[0] # use the first owned address
-account = "0xeda6ac0af59e5b09a22e39b64a31af674bd87b03"
+account = "0x23a00db3c4d956abf86f2ca73a6d906910f3782f"
 
 
 def wait4receipt(ethclient,txHash,name,getReceipt=True):
