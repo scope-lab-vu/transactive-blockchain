@@ -5,10 +5,12 @@ export NODE2="/home/riaps/projects/geth/node2"
 startBC:
 	tmux new -d -s node1
 	tmux new -d -s node2
-	tmux send -t node1 "cd $(NODE1); ./geth --keystore $(KEYSTORE) --port 30301 --datadir eth/ --rpc --rpcport 10001 --rpcaddr localhost --nodiscover --rpcapi 'eth,web3,admin,net,db' --password password.txt --unlock 0 console 2>node1.log"
-	tmux send -t node2 "cd $(NODE2); ./geth --keystore $(KEYSTORE) --port 30302 --datadir eth/ --rpc --rpcport 10002 --rpcaddr localhost --nodiscover --rpcapi 'eth,web3,admin,net,db' --password password.txt --unlock 0 console 2>node2.log"
-	cd $(GETH); ./geth --port 30300 --datadir eth/ --rpc --rpcport 10000 --rpcaddr localhost --nodiscover --rpcapi 'eth,web3,admin,miner,net,db' --password password.txt --unlock 0 --networkid 15 --mine --minerthreads=1 --etherbase=0 --targetgaslimit 200000000000000000 console 2>node1.log"
+	tmux send -t node1 "cd $(NODE1); ./geth --keystore $(KEYSTORE) --port 30301 --datadir eth/ --rpc --rpcport 10001 --rpcaddr localhost --nodiscover --rpcapi 'eth,web3,admin,net,db' --password password.txt --networkid 15 --unlock 0 console 2>node1.log" ENTER
+	tmux send -t node2 "cd $(NODE2); ./geth --keystore $(KEYSTORE) --port 30302 --datadir eth/ --rpc --rpcport 10002 --rpcaddr localhost --nodiscover --rpcapi 'eth,web3,admin,net,db' --password password.txt --networkid 15 --unlock 0 console 2>node2.log" ENTER
+	cd $(GETH); ./geth --port 30300 --datadir eth/ --rpc --rpcport 10000 --rpcaddr localhost --nodiscover --rpcapi 'eth,web3,admin,miner,net,db' --password password.txt --unlock 0 --networkid 15 --mine --minerthreads=1 --etherbase=0 --targetgaslimit 200000000000000000 console 2>miner.log
 	
+	# ./geth --keystore ~/projects/geth/geth-linux-amd64-1.8.22-7fa3509e/eth/keystore/ --port 30301 --datadir eth/ --rpc --rpcport 10001 --rpcaddr localhost --nodiscover --rpcapi 'eth,web3,admin,net,db' --password password.txt --unlock 0 console 2>node1.log
+
 
 initBC:
 	tmux new -d -s geth
