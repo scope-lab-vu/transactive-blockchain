@@ -29,6 +29,16 @@ initBC:
 	tmux send -t node2 "./geth --datadir eth/  init genesis.json" ENTER
 
 
+	tmux send -t node1 "exit" ENTER
+
+	tmux send -t node2 "exit" ENTER
+
+	echo "update static-nodes.json" 
+
+test:
+	echo "update static-nodes.json" 
+
+
 setupWrapper:
 	sudo pip3 install antlr4-python3-runtime
 
