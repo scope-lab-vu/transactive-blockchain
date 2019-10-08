@@ -1,6 +1,3 @@
-# from core.EthereumClient import EthereumClient
-# from core.MatchingContract import MatchingContract
-# from core.MatchingSolver import MatchingSolver, Offer
 from transax.EthereumClient import EthereumClient
 from transax.MatchingContract import MatchingContract
 from transax.MatchingSolver import MatchingSolver, Offer
@@ -8,9 +5,10 @@ import config as cfg
 import time
 
 
-ethclient = EthereumClient(ip='localhost', port=10000, TXGAS=cfg.TRANSACTION_GAS)
+ethclient = EthereumClient(ip='localhost', port=10001, TXGAS=cfg.TRANSACTION_GAS)
 
-account = ethclient.accounts()[0] # use the first owned address
+# account = ethclient.accounts()[0] # use the first owned address
+account = "0xeda6ac0af59e5b09a22e39b64a31af674bd87b03"
 
 
 def wait4receipt(ethclient,txHash,name,getReceipt=True):
