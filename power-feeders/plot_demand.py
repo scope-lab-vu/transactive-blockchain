@@ -212,126 +212,49 @@ time_format_b = "%Y-%m-%d %H:%M:%S.%f"
 # name of the model
 model = 'R1_1247_3_t6'
 
-folder = './simulations/' + model + '/normal/'
+
+model = 'R1_1247_3_t6_small'
+#folder = './simulations/' + model + '/nominal/'
+#stats = 'current_price_mean_24h'
+
+
+folder = './simulations/' + model + '/nominal_24h/'
+stats = 'current_price_mean_24h'
+
+#folder = './simulations/' + model + '/nominal_1h/'
+#stats = 'current_price_mean_1h'
+
+
+
 
 
 # name of the data files
 load = 'total_power_network_node.csv'
 
-market = 'market.csv'
-
-hvac = 'hvac.csv'
+market = 'market_nom.csv'
 
 # extract the total load
 data_substation = read_data( folder + load)
-hourly_load = rolling_statistics(data_substation['time'], data_substation['measured_real_power'], 60)
-
-# data with the normal simulations
-#data_substation = read_data( folder + load)
-#hourly_load_b = periodic_data(data_substation['time'], data_substation['measured_real_power'], 60)
-hourly_load = periodic_data(hourly_load['time'], hourly_load['mean'], 60)
-
-
 
 data_market = read_data( folder + market)
-hourly_prices = rolling_statistics(data_market['time'], data_market['current_market.clearing_price'], 60)
-hourly_prices = periodic_data(hourly_prices['time'], hourly_prices['mean'], 60)
-
-data_hvac = read_data( folder + hvac)
-
-# calculate the reserves
-reserves = hourly_load['data']*1.1
 
 
-
-# define the time interval
-t_1 = datetime.strptime( '2009-06-01 00:00:00', time_format)
-t_2 = datetime.strptime( '2009-06-01 23:00:00', time_format)
-
-
-n = len(reserves)
-z1 = 0
-z2 = 0
-for i in range(n):
-	if hourly_load['time'][i] == t_1:
-		z1 = i
-	if hourly_load['time'][i] == t_2:
-		z2 = i
-
-axis_time = hourly_load['time'][z1:z2+1]
-axis_hour = []
-for t in axis_time:
-	axis_hour.append( t.strftime("%H") )
-
-x = [i for i in range(len(axis_time))]
-
-
-
-
-######################################################
-# plot the total demand
-
-days = mdates.DayLocator()
-hours = mdates.HourLocator()
-minute = mdates.MinuteLocator()
-hoursFmt = mdates.DateFormatter('%H')
-
-step = 6
-
-#fig, ax = plt.subplots()
-#fig, ax = plt.subplots()
 
 plt.figure(1)
 plt.clf()
-
-#plt.plot(data_substation['time'], data_substation['measured_real_power'], label='Demand')
-#ax.plot(hourly_load['time'], hourly_load['data']/1000, label='Demand')
-#ax.plot(hourly_load['time'], reserves/1000, label='Total generation available')
-
-plt.plot(x, hourly_load['data'][z1:z2+1]/1000, label='Total demand')
-#plt.plot(x, hourly_load['data'][z1:z2+1]/1000, '.-', label='Estimated demand')
-#plt.plot(x, reserves[z1:z2+1]/1000, '--', label='Available generation')
-
-#ax.xaxis.set_major_locator(hours)
-#ax.xaxis.set_major_formatter(hoursFmt)
-#ax.xaxis.set_minor_locator(minutes)
-
-#plt.title('Total Demand')
-plt.xlabel('Time')
-plt.ylabel('Load (kVA)')
-plt.subplots_adjust(left=0.15)
-#plt.legend()
-plt.xticks(x[0::step], axis_hour[0::step])
-#plt.xlim([t_1, t_2])
+plt.plot(data_market['time'], data_market['current_market.clearing_price'], label='clearing price')
+plt.plot(data_market['time'], data_market[stats], label='mean price')
+plt.legend()
 plt.show()
-plt.savefig('load.png', bbox_inches='tight')
+
+
 
 
 plt.figure(2)
 plt.clf()
-
-plt.plot(x, hourly_prices['data'][z1:z2+1]/1000, label='Prices')
-plt.xlabel('Time')
-plt.ylabel('Price')
-plt.subplots_adjust(left=0.15)
-#plt.legend()
-plt.xticks(x[0::step], axis_hour[0::step])
-#plt.xlim([t_1, t_2])
-plt.show()
-plt.savefig('prices.png', bbox_inches='tight')
-
-
-
-samples = int(len(data_hvac['time'])/3)
-
-plt.figure(3)
-plt.clf()
-plt.step(data_hvac['time'][0:samples], data_hvac['cooling_setpoint'][0:samples], label='Cooling setpoint')
-plt.plot(data_hvac['time'][0:samples], data_hvac['air_temperature'][0:samples], label='Indoor Temp.')
-plt.plot(data_hvac['time'][0:samples], data_hvac['outdoor_temperature'][0:samples], label='Outdoor Temp.')
-plt.xlabel('Time')
-plt.ylabel('Temperature (F)')
+plt.plot(data_market['time'], data_market['current_market.clearing_quantity'], label='clearing quantity')
+plt.plot(data_substation['time'], data_substation['measured_real_power']/1000, label='Real load')
 plt.legend()
 plt.show()
-plt.savefig('hvac.png', bbox_inches='tight')
+
 

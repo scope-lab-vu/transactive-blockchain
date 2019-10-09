@@ -15,6 +15,7 @@ start_t = '2009-06-01 00:00:00'
 #finish_t = '2009-07-01 18:00:00'
 #finish_t = '2009-06-05 00:00:00'
 finish_t = '2009-06-03 00:00:00'
+#finish_t = '2009-06-06 00:00:00'
 
 
 t_0 = datetime.strptime( start_t, time_format)

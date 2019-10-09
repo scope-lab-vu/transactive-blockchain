@@ -1,6 +1,6 @@
 
 # model's name
-MODEL = R1_1247_3_t6
+MODEL = R1_1247_3_t6_small
 
 
 # Script to customize the
@@ -48,8 +48,8 @@ custom: $(ORIGINAL_GLM) $(create_custom)
 	if [ ! -d $(MODEL_DIR) ]; then mkdir -p $(MODEL_DIR); fi
 	grep -v '^[/]*#' $(ORIGINAL_GLM) > $(NEW_GLM)
 	sed -i 's/$(LABEL)[_]//g' $(NEW_GLM)
-	sed -i 's/my_avg/current_price_mean_1h/g' $(NEW_GLM)
-	sed -i 's/my_std/current_price_stdev_1h/g' $(NEW_GLM)
+	sed -i 's/my_avg/current_price_mean_24h/g' $(NEW_GLM)
+	sed -i 's/my_std/current_price_stdev_24h/g' $(NEW_GLM)
 	python3 $(create_custom) -i  $(NEW_GLM)
 
 

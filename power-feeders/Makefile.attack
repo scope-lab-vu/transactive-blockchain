@@ -81,9 +81,11 @@ simulate_bc:
 
 # simulate the system using the events_att file, which is configures in other rules
 simulate:
-	#$(MAKE) -s -f ./Makefile custom
-	#python3  $(create_attack) -i  $(NEW_GLM) -o $(ATT_GLM)
-	#${MAKE} -s -f ./Makefile.attack list_objects_att
+	$(MAKE) -s -f ./Makefile custom
+	python3  $(create_attack) -i  $(NEW_GLM) -o $(ATT_GLM)
+	sed -i 's/current_price_mean_[0-9]*h/current_price_mean_1h/g' $(ATT_GLM)
+	sed -i 's/current_price_stdev_[0-9]*h/current_price_stdev_1h/g' $(ATT_GLM)
+	${MAKE} -s -f ./Makefile.attack list_objects_att
 	cp events_att $(DIR)/events
 	if [ ! -d $(SIM_ATT_DIR) ]; then mkdir -p $(SIM_ATT_DIR); fi
 	options=$(port)

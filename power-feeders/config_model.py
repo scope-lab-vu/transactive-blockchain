@@ -206,6 +206,7 @@ glm.create_list_elements(model_input)
 # remove elements
 glm.find_and_remove([['class', ['auction', 'collector', 'billdump', 'player', 'recorder']]])
 glm.find_and_remove([['type', ['class', 'clock']]])
+glm.find_and_remove([['class', ['climate']]])
 
 passive_c = glm.find_objects([['class', 'passive_controller'], ['control_mode', 'ELASTICITY_MODEL']])
 glm.remove_objects(passive_c)
