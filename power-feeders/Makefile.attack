@@ -26,6 +26,8 @@ SIM_ATT_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/attack
 SIM_NOM_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/nominal
 SIM_NOM_TEST_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/nominal_test
 SIM_DELAY_ATT_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/delay_attack
+SIM_IDEAL_DELAY_ATT_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/delay_attack_ideal
+SIM_DYN_DELAY_ATT_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/delay_attack_dyn
 
 port=$(shell port=6267; \
 	while [ "$$port" -lt "65535" ]; do \
@@ -53,12 +55,65 @@ simulate_nominal:
 # simulate the system with the external function that calculates the market's equilibria
 simulate_nominal_ext:
 	cp ./events_attack/bids_header.csv bids.csv
-	rm -f bids_log.csv
+	cp ./events_attack/bids_header.csv bids_log.csv
+	cp ./events_attack/bids_header.csv bids_log_nom.csv
 	cp ./events_attack/events_att_nominal_ext ./events_att
 	$(MAKE) -s -f ./Makefile.attack simulate
 	rm -rf $(SIM_NOM_TEST_DIR)
 	mv $(SIM_ATT_DIR) $(SIM_NOM_TEST_DIR)
-	mv bids_log.csv ./records/bids_log.csv
+	cp bids_log.csv $(SIM_NOM_TEST_DIR)
+	cp bids_log_nom.csv $(SIM_NOM_TEST_DIR)
+	#mv bids_log.csv ./records/bids_log.csv
+	#mv bids_log_nom.csv ./records/bids_log.csv
+
+
+# Simlate delay attacks using an external function
+simulate_attack_ext:
+	cp ./events_attack/bids_header.csv bids.csv
+	cp ./events_attack/bids_header.csv bids_log.csv
+	cp ./events_attack/bids_header.csv bids_log_nom.csv
+	cp ./events_attack/events_att_ext ./events_att
+	$(MAKE) -s -f ./Makefile.attack simulate
+	rm -rf $(SIM_DELAY_ATT_DIR)
+	mv $(SIM_ATT_DIR) $(SIM_DELAY_ATT_DIR)
+	cp bids_log.csv $(SIM_DELAY_ATT_DIR)
+	cp bids_log_nom.csv $(SIM_DELAY_ATT_DIR)
+	#mv bids_log.csv ./records/bids_log_att.csv
+
+
+# Simlate delay attacks using an external function
+simulate_ideal_attack_ext:
+	cp ./events_attack/bids_header.csv bids.csv
+	cp ./events_attack/bids_header.csv bids_log.csv
+	cp ./events_attack/bids_header.csv bids_log_nom.csv
+	cp ./events_attack/bids_header.csv bids_log_att.csv
+	cp ./events_attack/events_ideal_att_ext ./events_att
+	$(MAKE) -s -f ./Makefile.attack simulate
+	rm -rf $(SIM_IDEAL_DELAY_ATT_DIR)
+	mv $(SIM_ATT_DIR) $(SIM_IDEAL_DELAY_ATT_DIR)
+	#cp bids_log.csv $(SIM_IDEAL_DELAY_ATT_DIR)
+	cp bids_log_nom.csv $(SIM_IDEAL_DELAY_ATT_DIR)
+	cp bids_log_att.csv $(SIM_IDEAL_DELAY_ATT_DIR)/bids_log.csv
+	#mv bids_log.csv ./records/bids_log_att.csv
+
+
+
+# Simlate delay attacks using an external function
+simulate_dyn_attack_ext:
+	cp ./events_attack/bids_header.csv bids.csv
+	cp ./events_attack/bids_header.csv bids_log.csv
+	cp ./events_attack/bids_header.csv bids_log_nom.csv
+	#cp ./events_attack/bids_header.csv bids_log_att.csv
+	cp ./events_attack/events_dyn_att_ext ./events_att
+	$(MAKE) -s -f ./Makefile.attack simulate
+	rm -rf $(SIM_DYN_DELAY_ATT_DIR)
+	mv $(SIM_ATT_DIR) $(SIM_DYN_DELAY_ATT_DIR)
+	cp bids_log.csv $(SIM_DYN_DELAY_ATT_DIR)
+	cp bids_log_nom.csv $(SIM_DYN_DELAY_ATT_DIR)
+	#cp bids_log_att.csv $(SIM_DYN_DELAY_ATT_DIR)/bids_log.csv
+	#mv bids_log.csv ./records/bids_log_att.csv
+
+
 
 simulate_bc:
 	cp ./events_attack/bids_header.csv bids.csv
@@ -100,17 +155,6 @@ simulate_attack:
 	$(MAKE) -s -f ./Makefile.attack simulate
 	rm -rf $(SIM_DELAY_ATT_DIR)
 	mv $(SIM_ATT_DIR) $(SIM_DELAY_ATT_DIR)
-
-
-# Simlate delay attacks using an external function
-simulate_attack_ext:
-	cp ./events_attack/bids_header.csv bids.csv
-	rm -f bids_log.csv
-	cp ./events_attack/events_att_ext ./events_att	
-	$(MAKE) -s -f ./Makefile.attack simulate
-	rm -rf $(SIM_DELAY_ATT_DIR)
-	mv $(SIM_ATT_DIR) $(SIM_DELAY_ATT_DIR)
-	mv bids_log.csv ./records/bids_log_att.csv
 
 
 list_objects_att: $(ATT_GLM)

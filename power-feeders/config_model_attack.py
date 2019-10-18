@@ -219,6 +219,9 @@ name_meter = glm.read_attr( id_meter, 'name')
 
 glm.add_recorder(id_meter, 'total_power_network_node.csv', period, ['measured_power','measured_real_power'])
 
+# added this to force updates every minute
+glm.add_recorder(id_meter, 'total_load.csv', '60', ['measured_real_power'])
+
 
 
 # configure the controllers
@@ -256,7 +259,7 @@ object stub_bidder{
 
 bidder_id, pos = glm.add_object(sell_bidder)
 
-
+glm.add_recorder(bidder_id, 'price_offer.csv', '-1', ['price'])
 
 
 

@@ -77,8 +77,7 @@ object: seller_bid
 option: repeat
 attribute: price
 delay: 240
-+5m; ext_functions.market_clearing(bids.csv, counter/val)
-
++5m; ext_functions.market_clearing_ideal_att(bids.csv, counter/val, timer/val)
 
 
 

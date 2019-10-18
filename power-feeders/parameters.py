@@ -4,19 +4,36 @@ from datetime import datetime, date, time, timedelta
 # define the time of the simulation
 time_format = "%Y-%m-%d %H:%M:%S"
 
+# create historical data
 # start time
 start_t = '2009-06-01 00:00:00'
+
+# finish time
+finish_t = '2009-07-01 00:00:00'
+
+
+# Test data
+# start time
+start_t = '2009-06-25 00:00:00'
+
+# finish time
+finish_t = '2009-07-10 00:00:00'
+
+
+
+# regular sims
+# start time
+#start_t = '2009-06-01 00:00:00'
 #start_t = '2009-07-01 00:00:00'
 
 # finish time
 #finish_t = '2009-06-01 05:00:00'
 #finish_t = '2009-06-01 20:00:00'
-#finish_t = '2009-07-01 00:00:00'
 #finish_t = '2009-07-01 18:00:00'
-#finish_t = '2009-06-05 00:00:00'
-finish_t = '2009-06-03 00:00:00'
+#finish_t = '2009-06-10 00:00:00'
+#finish_t = '2009-06-03 00:00:00'
 #finish_t = '2009-06-06 00:00:00'
-
+#finish_t = '2009-06-01 15:50:00'
 
 t_0 = datetime.strptime( start_t, time_format)
 t_f = datetime.strptime( finish_t, time_format)
@@ -26,8 +43,10 @@ period_min = 5
 
 
 # parameters of the generators
+#blocks = 25
+#max_capacity = 1500
 blocks = 50
-max_capacity = 3000
+max_capacity = 1500
 max_price = .63
 
 
@@ -41,4 +60,6 @@ use_servermode = True
 
 use_generator = False
 
+
+attack_impact = 0.5
 

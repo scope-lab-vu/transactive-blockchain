@@ -55,21 +55,21 @@ object: ^bidder_control_.*
 option: repeat, virtual_object
 delay: 200
 attribute: val
-+5m; ext_functions.write_nom(bids.csv, counter/val, timer/val, ^bidder_control_.*/name, ^bidder_control_.*/price, multiply(-1, ^bidder_control_.*/quantity), unknown)
++5m; ext_functions.write_att(bids.csv, counter/val, timer/val, ^bidder_control_.*/name, ^bidder_control_.*/price, multiply(-1, ^bidder_control_.*/quantity), unknown)
 
 # bis for the unresponsive load
 object: unresp_bidder_nom
 option: repeat, virtual_object
 delay: 200
 attribute: val
-+5m; ext_functions.write_nom(bids.csv, counter/val, timer/val, unresp_bidder_nom/name, unresp_bidder_nom/price, multiply(-1, unresp_bidder_nom/quantity), unknown)
++5m; ext_functions.write_att(bids.csv, counter/val, timer/val, unresp_bidder_nom/name, unresp_bidder_nom/price, multiply(-1, unresp_bidder_nom/quantity), unknown)
 
 # bids for the offer
 object: ^block_nom_.*
 option: repeat, virtual_object
 delay: 200
 attribute: val
-+5m; ext_functions.write_nom(bids.csv, counter/val, timer/val, ^block_nom_.*/name, ^block_nom_.*/price, ^block_nom_.*/quantity, unknown)
++5m; ext_functions.write_att(bids.csv, counter/val, timer/val, ^block_nom_.*/name, ^block_nom_.*/price, ^block_nom_.*/quantity, unknown)
 
 
 # calculate the clearing price and send an offer for the market_ctrl
@@ -78,7 +78,6 @@ option: repeat
 attribute: price
 delay: 240
 +5m; ext_functions.market_clearing(bids.csv, counter/val)
-
 
 
 

@@ -881,8 +881,10 @@ while simulation_runs:
 		events = list_future_events[0][1]
 		if event_time <= current_time:
 			'''
-			if current_time > t_0 +  timedelta( hours = 11 ): 
+			if current_time > t_0 +  timedelta( hours = 15 ) + timedelta( minutes = 30 ): 
+				print(current_time)
 				print(np.array(list_future_events))
+				print()
 				pdb.set_trace()
 			'''
 			for event_id in events:
@@ -895,7 +897,12 @@ while simulation_runs:
 
 		else:
 			updating=False
-	
+	'''
+	if current_time > t_0 +  timedelta( hours = 15 ) + timedelta( minutes = 30 ):
+		print('Next pause') 
+		print(list_future_events[0][0])
+		print('')
+	'''
 	continue_simulation()
 
 
