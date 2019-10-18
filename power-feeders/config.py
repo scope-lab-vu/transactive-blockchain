@@ -8,7 +8,7 @@ for (feeder, num_prosumers) in [(1,159)]:
         PROSUMERS.append(prosumer_id)
         PROSUMER_FEEDER[prosumer_id] = feeder
 
-from core.Microgrid import Microgrid
+from transax.Microgrid import Microgrid
 MICROGRID = Microgrid(
     interval_length=1.0,
     C_ext=20000000,
