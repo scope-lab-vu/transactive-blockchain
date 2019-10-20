@@ -23,6 +23,7 @@ contract1 = None
 contract2 = None
 poll1 = None
 target_gw = None
+targets = {}
 rate_delay = None
 
 txHash = None
@@ -84,12 +85,10 @@ def initialize(input_):
 	global poll1
 	global nextInterval
 	global target_gw
+	global targets
 	global rate_delay
 
 	try: 
-		# Select attack target
-		distribution = [0] + [1] + [2]
-		target_gw = random.choice(distribution)
 
 		print('***initializing****')
 
@@ -138,8 +137,10 @@ def initialize(input_):
 		np.save('id_bidders.npy', list_bidders)
 
 
-		# read rate of delay
-		rate_delay = np.load('rate_delay.npy')
+		# read targets
+		targets = np.load('targets.npy', allow_pickle=True)
+		target_gw = np.load('target_gw.npy', allow_pickle=True)
+
 
 
 		# Assign prosumers to gateways
@@ -253,9 +254,19 @@ def post(parameters):
 
 		# ATTACK GOES HERE
 
-		is_delayed = random.random() <= rate_delay[tau]
+		if bidder_name in targets[tau] :
+			rand = random.random()
+			if rand <= targets[tau][bidder_name]:
+				#change the bids of the victims
+				is_targeted = True 
+			else : 
+				is_targeted = False
+		else: 
+			is_targeted = False
+
+
 		is_detected = random.random() <= 1
-		if gw_assignment[bidder_id] == target_gw and is_delayed and not is_detected:
+		if gw_assignment[bidder_id] == target_gw and is_targeted and not is_detected:
 			pass
 			# attacked_bids[bidder_id] = data #Make this global # don't need it if we use is_detected
 		else:
