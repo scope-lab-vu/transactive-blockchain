@@ -7,5 +7,5 @@ setup(
    author='Scott Eisele',
    author_email='scott.r.eisele@vanderbilt.edu',
    packages=['transax'],  #same as name
-   install_requires=['scipy'], #external packages as dependencies
+   install_requires=['scipy','pycurl'], #external packages as dependencies
 )
