@@ -188,7 +188,7 @@ for t in range(periods):
 	q_avg.append( total_load / n_periods_train )
 
 	# desired average load with an attack at time t
-	total_load_a = q_op[ k*periods + t ] * ((1+lambda_)**.5 - 1)
+	total_load_a = total_load * ((1+lambda_)**.5 - 1)
 	delta_q_a_avg.append( total_load_a / n_periods_train )
 
 
@@ -412,7 +412,7 @@ def equilibria_delay_attacks(rho):
 
 
 # find the impact's attack in each gateway
-rho = []
+rho_gw = []
 error = []
 for i in range(n_gw):
 
@@ -424,7 +424,7 @@ for i in range(n_gw):
 
 	
 	rho_i = select_agents(rank_agents, exp_impact_gw[i], delta_q_a_avg)
-	rho.append( rho_i )
+	rho_gw.append( rho_i )
 
 
 	p_a_real, q_a_real, bids_att = equilibria_delay_attacks(rho_i)
@@ -438,12 +438,15 @@ target_gw = np.argmin( error )
 
 
 # save the bids that we need to delay
-np.save('../targets.npy', rho[target_gw] )
+np.save('../targets.npy', rho_gw[target_gw] )
 np.save('../target_gw.npy', target_gw )
 
 
-exit
+#exit
 
+
+#exp_impact = exp_impact_gw[ target_gw ]
+rho = rho_gw[target_gw]
 
 
 # define the number of bids that we should compromise
@@ -468,24 +471,13 @@ for tau in range(periods):
 	rho_rand[tau] = rho_tau
 
 	
-
+'''
 # save the number of bids that we need to delay
 np.save('../targets_rand.npy', rho_rand)
 
 np.save('../num_rand_targets.npy', num_victims)
 
 np.save('../rate_delay.npy', rate_delay)
-
-#exit
-
-
-#exit
-
-'''
-for tau in range(periods):
-	rho_tau = rho[tau]
-	if  'unresp_bidder_nom' in rho_tau.keys():
-		print('warning')
 '''
 
 
@@ -506,18 +498,32 @@ for tau in range(periods):
 	
 plt.figure(1)
 plt.clf()
-plt.plot(n)
-plt.plot(num_victims, '--', label='with random selection')
+plt.plot(n, label='case 2')
+plt.plot(num_victims, '--', label='case 3')
 plt.title('Number of victims')
+plt.legend()
 plt.show()
 
 
 plt.figure(2)
 plt.clf()
 #plt.plot(eq_time_nom[0:periods], delta_q_a_avg, label='')
+#plt.plot(q_avg, label='q opt')
 plt.plot(delta_q_a_avg, label='delta q')
 plt.plot(impact, '--', label='impact')
 plt.title('Impact')
+plt.legend()
+plt.show()
+
+
+
+p_a_real, q_a_real, bids_att = equilibria_delay_attacks(rho)
+
+plt.figure(3)
+plt.clf()
+plt.plot(q_op, label='q_op')
+plt.plot(q_a, label='q_a ideal')
+plt.plot(q_a_real, label='q_a real')
 plt.legend()
 plt.show()
 
