@@ -327,6 +327,8 @@ def get_solution(parameters):
 		bids_demand = []
 		bids_offer = []
 
+		total_demand = 0
+
 		poll = contract.poll_events()
 		for event in poll:
 			params = event['params']
@@ -349,13 +351,14 @@ def get_solution(parameters):
 
 				if name == "BuyingOfferPosted":
 					bids_demand.append( [p, q] )
+					total_demand += q
 				else:
 					bids_offer.append( [p, q] )
 
 
 
 		# calculate unresponsive load
-		quantity_unresponsive = -1 * (float(total_load) - np.sum(bids_demand[:, 1]))
+		quantity_unresponsive = -1 * (float(total_load) - total_demand)
 		bidder_name = 'unresp_bidder_nom'
 		price_cap = '0.63'
 	
