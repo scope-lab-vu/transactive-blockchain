@@ -92,12 +92,12 @@ def initialize(input_):
 
 	try: 
 
-		print('***initializing****')
+		print('***initializing blockchain****')
 
 		ethclient = EthereumClient(ip='localhost', port=10000, TXGAS=cfg.TRANSACTION_GAS)
 		ethclient1 = EthereumClient(ip='localhost', port=10001, TXGAS=cfg.TRANSACTION_GAS)
 		ethclient2 = EthereumClient(ip='localhost', port=10002, TXGAS=cfg.TRANSACTION_GAS)
-		print(ethclient)
+		#print(ethclient)
 		account = ethclient.accounts()[0] # use the first owned address
 
 
@@ -111,17 +111,17 @@ def initialize(input_):
 
 		txHash = contract.setup(account, cfg.MICROGRID.C_ext, cfg.MICROGRID.C_int, cfg.START_INTERVAL)
 		receipt = wait4receipt(ethclient, txHash, "setup")
-		print("Contract address: " + contract_address)
+		#print("Contract address: " + contract_address)
 
 		poll1 = contract.poll_events()
 		for event in poll1:
 			params = event['params']
 			name = event['name']
-			print("{}({}).".format(name, params))
+			#print("{}({}).".format(name, params))
 
 			if (name == "StartOffering"):
 				nextInterval = params['interval']
-				print ("next interval: %s" %nextInterval)
+				#print ("next interval: %s" %nextInterval)
 
 
 
@@ -161,11 +161,15 @@ def initialize(input_):
 			#print(prosumer_id)
 			txHash = contract.registerProsumer(account, prosumer_id, cfg.PROSUMER_FEEDER[prosumer_id])
 			#print(txHash)
-		print(txHash)
+		#print(txHash)
+
+		print('***initialized blockchain****')
+
 		receipt = wait4receipt(ethclient, txHash, "registerProsumer")
 		return 
-	except Exception as err: 
-		print (err)
+	except Exception as err:
+		print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+		print(err)
 		pdb.set_trace()
 
 '''
@@ -299,7 +303,9 @@ def post(parameters):
 
 
 		return '1'
+
 	except Exception as err:
+		print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
 		print(err)
 		pdb.set_trace()
 
@@ -333,7 +339,7 @@ def get_solution(parameters):
 		for event in poll:
 			params = event['params']
 			name = event['name']
-			print("{}({}).".format(name, params))
+			#print("{}({}).".format(name, params))
 		
 
 			if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
@@ -444,16 +450,16 @@ def get_solution(parameters):
 	for event in contract.poll_events():
 		params = event['params']
 		name = event['name']
-		print("{}({}).".format(name, params))
+		#print("{}({}).".format(name, params))
 
 		if (name == "ClearingPrice"):
 			interval = params['interval']
 			price = params['price']
-			print ("price in interval %s = %s" %(interval, price))
+			#print ("price in interval %s = %s" %(interval, price))
 
 		if (name == "StartOffering"):
 			nextInterval = params['interval']
-			print ("next interval: %s" %nextInterval)
+			#print ("next interval: %s" %nextInterval)
 
 	return str(p_eq)
 	
