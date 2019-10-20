@@ -9,6 +9,8 @@ import random
 
 import csv
 import os
+import sys 
+
 from functions_auction import build_curves, find_equilibrium_auction, extract_bids, order_bids_descending, order_bids_ascending, find_market_equilibrium, surplus_f, ideal_eq_attack, maer, avg_total_surplus, stats
 from functions_read_data import read_data, rolling_statistics, get_avg_data
 
@@ -311,118 +313,126 @@ def get_solution(parameters):
 	global poll
 	receipt = wait4receipt(ethclient, txHash, type_bid)
 	
-	# input data
-	total_load, period, time = parameters
 
-	# calculate the current period
-	t = int(float(period))
-	tau = t % periods
+	try:
+		# input data
+		total_load, period, time = parameters
 
-	# extract the bids of responsive loads
-	bids = dict()
-	bids_demand = []
-	bids_offer = []
+		# calculate the current period
+		t = int(float(period))
+		tau = t % periods
 
-	poll = contract.poll_events()
-	for event in poll:
-		params = event['params']
-		name = event['name']
-		print("{}({}).".format(name, params))
+		# extract the bids of responsive loads
+		bids = dict()
+		bids_demand = []
+		bids_offer = []
+
+		poll = contract.poll_events()
+		for event in poll:
+			params = event['params']
+			name = event['name']
+			print("{}({}).".format(name, params))
 		
 
-		if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
-			#pdb.set_trace()
+			if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
+				#pdb.set_trace()
 
-			new_offers = True
-			interval = params['startTime']
+				new_offers = True
+				interval = params['startTime']
 
-			q = params['energy']/1000.0
-			p = params['value']/1000.0
-			# p, q = decode(energy)
-			bidder = params['prosumer'] 
+				q = params['energy']/1000.0
+				p = params['value']/1000.0
+				# p, q = decode(energy)
+				bidder = params['prosumer'] 
 
-			bids[bidder] = [p, q]
+				bids[bidder] = [p, q]
 
-			if name == "BuyingOfferPosted":
-				bids_demand.append( [p, q] )
-			else:
-				bids_offer.append( [p, q] )
+				if name == "BuyingOfferPosted":
+					bids_demand.append( [p, q] )
+				else:
+					bids_offer.append( [p, q] )
 
 
 
-	# calculate unresponsive load
-	quantity_unresponsive = -1 * (float(total_load) - np.sum(bids_demand[:, 1]))
-	bidder_name = 'unresp_bidder_nom'
-	price_cap = '0.63'
+		# calculate unresponsive load
+		quantity_unresponsive = -1 * (float(total_load) - np.sum(bids_demand[:, 1]))
+		bidder_name = 'unresp_bidder_nom'
+		price_cap = '0.63'
 	
-	# write the bid unresponsive load in logs
-	data = [period, time, bidder_name, price_cap, str(quantity_unresponsive), 'unknown']
-	f = open('bids.csv', 'a')
-	f.write( ','.join(data) + '\n' )
-	f.close()
+		# write the bid unresponsive load in logs
+		data = [period, time, bidder_name, price_cap, str(quantity_unresponsive), 'unknown']
+		f = open('bids.csv', 'a')
+		f.write( ','.join(data) + '\n' )
+		f.close()
 
-	f = open('bids_log_nom.csv', 'a')
-	f.write( ','.join(data) + '\n' )
-	f.close()
+		f = open('bids_log_nom.csv', 'a')
+		f.write( ','.join(data) + '\n' )
+		f.close()
 
-	f = open('bids_log_att.csv', 'a')
-	f.write( ','.join(data) + '\n' )
-	f.close()
+		f = open('bids_log_att.csv', 'a')
+		f.write( ','.join(data) + '\n' )
+		f.close()
 
 
-	# add bid unresopnsive loads
-	bids_demand.append( [float(price_cap), -1*quantity_unresponsive] ) 
+		# add bid unresopnsive loads
+		bids_demand.append( [float(price_cap), -1*quantity_unresponsive] ) 
 
-	# transform into an array
-	bids_demand = np.array(bids_demand)
-	bids_offer = np.array(bids_offer)
+		# transform into an array
+		bids_demand = np.array(bids_demand)
+		bids_offer = np.array(bids_offer)
 
-	# order the bids
-	bids_demand = order_bids_descending(bids_demand)
-	bids_offer = order_bids_ascending(bids_offer)
+		# order the bids
+		bids_demand = order_bids_descending(bids_demand)
+		bids_offer = order_bids_ascending(bids_offer)
 
-	# find the equilibria
-	number_offers = len(bids_offer)
-	number_demand = len(bids_demand)
+		# find the equilibria
+		number_offers = len(bids_offer)
+		number_demand = len(bids_demand)
 
-	if number_demand<=0 or number_offers<=0:
-		q_eq = 0
-		p_eq = 0
+		if number_demand<=0 or number_offers<=0:
+			q_eq = 0
+			p_eq = 0
 
-	else:
-		q_eq, p_eq = find_equilibrium_auction(bids_offer, bids_demand)
+		else:
+			q_eq, p_eq = find_equilibrium_auction(bids_offer, bids_demand)
 
 	
-	# the following is only necessary to verify that the market works well
-	'''
-	# get the equilibrium and the bids in each time period
-	file_name = 'bids.csv'
-	try:
-		eq_time_nom, market_eq_nom, bids_nom, curves_nom = find_market_equilibrium(file_name)
-	except:
-		print('error')
+		# the following is only necessary to verify that the market works well
+		'''
+		# get the equilibrium and the bids in each time period
+		file_name = 'bids.csv'
+		try:
+			eq_time_nom, market_eq_nom, bids_nom, curves_nom = find_market_equilibrium(file_name)
+		except:
+			print('error')
+			pdb.set_trace()
+
+		# rewrite the bid file
+		try:
+			os.remove(file_name)
+		except:
+			pass
+
+
+		# write the equilibria price
+		prices = [str(market_eq_nom['p'][0]), str(p_eq)]
+		f = open('eq_price.csv', 'a')
+		f.write( ','.join(prices) + '\n' )
+		f.close()
+
+
+		'''
+
+		# initialize the file for the bids of the next period
+		f = open('bids.csv', 'w')
+		f.write( 'market_id,timestamp,bidder_name,bid_price,bid_quantity,bid_state\n' )
+		f.close()
+
+
+	except Exception as err:
+		print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+		print(err)
 		pdb.set_trace()
-
-	# rewrite the bid file
-	try:
-		os.remove(file_name)
-	except:
-		pass
-
-
-	# write the equilibria price
-	prices = [str(market_eq_nom['p'][0]), str(p_eq)]
-	f = open('eq_price.csv', 'a')
-	f.write( ','.join(prices) + '\n' )
-	f.close()
-
-
-	'''
-
-	# initialize the file for the bids of the next period
-	f = open('bids.csv', 'w')
-	f.write( 'market_id,timestamp,bidder_name,bid_price,bid_quantity,bid_state\n' )
-	f.close()
 
 	#return str(market_eq_nom['p'][0])
 	
