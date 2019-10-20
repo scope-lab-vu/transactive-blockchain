@@ -167,7 +167,7 @@ simulate_2:
 
 
 
-simulate_bc:
+simulate_bc_no_attack:
 	cp ./events_attack/bids_header.csv bids.csv
 	rm -f bids_log.csv eq_price.csv
 	cp ./events_attack/events_bc_nominal ./events_att

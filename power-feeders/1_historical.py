@@ -265,7 +265,7 @@ def post(parameters):
 			is_targeted = False
 
 
-		is_detected = random.random() <= 1
+		is_detected = random.random() <= 0
 		if gw_assignment[bidder_id] == target_gw and is_targeted and not is_detected:
 			pass
 			# attacked_bids[bidder_id] = data #Make this global # don't need it if we use is_detected
@@ -360,7 +360,6 @@ def get_solution(parameters):
 	# add bid unresopnsive loads
 	bids_demand.append( [float(price_cap), -1*quantity_unresponsive] ) 
 
-
 	# transform into an array
 	bids_demand = np.array(bids_demand)
 	bids_offer = np.array(bids_offer)
@@ -382,6 +381,7 @@ def get_solution(parameters):
 
 	
 	# the following is only necessary to verify that the market works well
+	'''
 	# get the equilibrium and the bids in each time period
 	file_name = 'bids.csv'
 	try:
@@ -397,16 +397,18 @@ def get_solution(parameters):
 		pass
 
 
-	# initialize the file for the bids of the next period
-	f = open(file_name, 'w')
-	f.write( 'market_id,timestamp,bidder_name,bid_price,bid_quantity,bid_state\n' )
-	f.close()
-
-
 	# write the equilibria price
 	prices = [str(market_eq_nom['p'][0]), str(p_eq)]
 	f = open('eq_price.csv', 'a')
 	f.write( ','.join(prices) + '\n' )
+	f.close()
+
+
+	'''
+
+	# initialize the file for the bids of the next period
+	f = open(file_name, 'w')
+	f.write( 'market_id,timestamp,bidder_name,bid_price,bid_quantity,bid_state\n' )
 	f.close()
 
 	#return str(market_eq_nom['p'][0])
