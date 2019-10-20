@@ -218,13 +218,8 @@ def post(parameters):
 		t = int(float(period))
 		tau = t % periods
 
-		# write the bids in logs
 		data = [period, time, bidder_name, price, quantity, 'unknown']
-		f = open('bids.csv', 'a')
-		f.write( ','.join(data) + '\n' )
-		f.close()
-
-		f = open('bids_log.csv', 'a')
+		f = open('bids_log_nom.csv', 'a')
 		f.write( ','.join(data) + '\n' )
 		f.close()
 
@@ -286,7 +281,20 @@ def post(parameters):
 				# receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
 				type_bid = "postSellingOffer"
 
-		#pdb.set_trace()
+			#pdb.set_trace()
+			# write bids in the log that we use to cumpute the equilibria
+			#
+			f = open('bids.csv', 'a')
+			f.write( ','.join(data) + '\n' )
+			f.close()
+
+			f = open('bids_log_att.csv', 'a')
+			f.write( ','.join(data) + '\n' )
+			f.close()
+
+
+
+
 
 		return '1'
 	except Exception as err:
@@ -344,7 +352,7 @@ def get_solution(parameters):
 
 	# calculate unresponsive load
 	quantity_unresponsive = -1 * (float(total_load) - np.sum(bids_demand[:, 1]))
-	bidder_name = 'unresponsive_load'
+	bidder_name = 'unresp_bidder_nom'
 	price_cap = '0.63'
 	
 	# write the bid unresponsive load in logs
@@ -353,9 +361,14 @@ def get_solution(parameters):
 	f.write( ','.join(data) + '\n' )
 	f.close()
 
-	f = open('bids_log.csv', 'a')
+	f = open('bids_log_nom.csv', 'a')
 	f.write( ','.join(data) + '\n' )
 	f.close()
+
+	f = open('bids_log_att.csv', 'a')
+	f.write( ','.join(data) + '\n' )
+	f.close()
+
 
 	# add bid unresopnsive loads
 	bids_demand.append( [float(price_cap), -1*quantity_unresponsive] ) 
@@ -407,7 +420,7 @@ def get_solution(parameters):
 	'''
 
 	# initialize the file for the bids of the next period
-	f = open(file_name, 'w')
+	f = open('bids.csv', 'w')
 	f.write( 'market_id,timestamp,bidder_name,bid_price,bid_quantity,bid_state\n' )
 	f.close()
 

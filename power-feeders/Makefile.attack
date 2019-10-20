@@ -29,6 +29,8 @@ SIM_DELAY_ATT_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/delay_attack
 SIM_IDEAL_DELAY_ATT_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/delay_attack_ideal
 SIM_DYN_DELAY_ATT_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/delay_attack_dyn
 
+SIM_1_DIR = $(DIR)/$(SIM_DIR)/$(MODEL)/attack_1
+
 port=$(shell port=6267; \
 	while [ "$$port" -lt "65535" ]; do \
 		gld_clk=$$(wget http://localhost:$$port/raw/clock -q -O - ); \
@@ -133,20 +135,20 @@ simulate_0:
 
 simulate_1:
 	cp ./events_attack/bids_header.csv bids.csv
-	rm -f bids_log.csv eq_price.csv
+	cp ./events_attack/bids_header.csv bids_log_nom.csv
+	cp ./events_attack/bids_header.csv bids_log_att.csv
 	cp ./events_attack/events_1 ./events_att
-
 	$(MAKE) -s -f ./Makefile custom
 	python3  $(create_attack) -i  $(NEW_GLM) -o $(ATT_GLM)
 	${MAKE} -s -f ./Makefile.attack list_objects_att
-
 	grep -io '[^\w_]bidder_control_.*' list_gl_objects > bidders
 	grep -io '[^\w_]block_nom_.*' list_gl_objects >> bidders 
 	echo 'unresp_bidder_nom' >> bidders 
 	$(MAKE) -s -f ./Makefile.attack simulate
-	rm -rf $(SIM_NOM_TEST_DIR)
-	mv $(SIM_ATT_DIR) $(SIM_NOM_TEST_DIR)
-	mv bids_log.csv ./records/bids_log.csv
+	rm -rf $(SIM_1_DIR)
+	mv $(SIM_ATT_DIR) $(SIM_1_DIR)
+	cp bids_log_att.csv $(SIM_1_DIR)
+	cp bids_log_nom.csv $(SIM_1_DIR)
 
 simulate_2:
 	cp ./events_attack/bids_header.csv bids.csv
