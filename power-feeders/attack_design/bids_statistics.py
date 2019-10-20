@@ -18,7 +18,7 @@ time_format_b = "%Y-%m-%d %H:%M:%S.%f"
 # name of the model
 model = 'R1_1247_3_t6_small'
 
-folder_nom = '../simulations/' + model + '/nominal_1h_1month/'
+folder_nom = '../simulations/' + model + '/nominal_1h_1month_b/'
 
 # name of the data files
 substation = 'total_power_network_node.csv'
@@ -49,7 +49,7 @@ def count(t, freq):
 def demand(t, bids_q):
 	bidders_t = bids[t].keys()
 	for i in bidders_t:
-		if i in buyers:
+		if i in agents:
 			p, q = bids[t][i]
 			bids_q[i].append( q )
 	return bids_q
@@ -75,14 +75,14 @@ def sort_bidders(stats):
 
 
 ####################################
-def select_buyers(rank_buyers, exp_impact, delta_q_a_avg):
+def select_agents(rank_agents, exp_impact, delta_q_a_avg):
 
 	rho = []
 	for tau in range(periods):
 
 
 		desired_impact_tau = delta_q_a_avg[tau]
-		rank_buyers_tau = rank_buyers[tau]
+		rank_agents_tau = rank_agents[tau]
 		exp_impact_tau = exp_impact[tau]
 
 		impact = 0
@@ -91,12 +91,12 @@ def select_buyers(rank_buyers, exp_impact, delta_q_a_avg):
 		# dictionary with the selection probability of the targets
 		rho_tau = dict()
 
-		while m < len( rank_buyers_tau ) and impact < desired_impact_tau:
-			i = rank_buyers_tau[m]
+		while m < len( rank_agents_tau ) and impact < desired_impact_tau:
+			i = rank_agents_tau[m]
 
 			#pdb.set_trace()
 
-			# check if adding more buyers increase the impact
+			# check if adding more agents increase the impact
 			if exp_impact_tau[i] == 0:
 				break
 
@@ -130,7 +130,7 @@ def select_targets(rank, exp_impact, goal):
 	while m < len( rank ):
 		i = rank[m]
 
-		# check if adding more buyers increase the impact
+		# check if adding more agents increase the impact
 		if exp_impact[i] == 0:
 			break
 
@@ -152,8 +152,6 @@ eq_time_nom, market_eq_nom, bids_nom, curves_nom = find_market_equilibrium(folde
 
 time, bids = extract_bids(folder_nom + market_bids_nom)
 
-#exit
-
 # total samples
 T = len(time)
 
@@ -162,38 +160,48 @@ periods = int(24*60/5)
 
 total_periods = int(T/periods)
 
-n_periods_train = int( total_periods * 0.8)
+n_periods_train = int( total_periods * 0.9)
 T_train = n_periods_train * periods
 
 
+
+
 ################# parameters of the attack
+
 # get the desired equilibrium quantity
 #lambda_ = attack_impact
-lambda_ = 1.5
+lambda_ = 0.5
 q_op = market_eq_nom['q']
-q_a = q_op * lambda_**0.5
+q_a = q_op * (1+lambda_) ** 0.5
 
+
+
+# get the average demand in the equilibria for each time period and the attack's goal
 q_avg = []
-
-# get the average goal of the attack
 delta_q_a_avg = []
 for t in range(periods):
-	total_val = 0
 	total_load = 0
 	for k in range(n_periods_train):
-		total_val += q_op[ k*periods + t ] * (lambda_**.5 - 1)
 		total_load += q_op[ k*periods + t ]
-	delta_q_a_avg.append( total_val / n_periods_train )
+
+	# average load at time t
 	q_avg.append( total_load / n_periods_train )
+
+	# desired average load with an attack at time t
+	total_load_a = q_op[ k*periods + t ] * ((1+lambda_)**.5 - 1)
+	delta_q_a_avg.append( total_load_a / n_periods_train )
+
+
 delta_q_a_avg = np.array(delta_q_a_avg)
 q_avg = np.array( q_avg )
-q_a_avg = q_avg * lambda_**0.5
-
+q_a_avg = q_avg * (1+lambda_)**0.5
 
 np.save('../desired_q.npy', q_a_avg)
 
+
 # get the list of buyers
 buyers = set()
+sellers = set()
 for t in range(T):
 	bidders_t = bids[t].keys()
 	for i in bidders_t:
@@ -203,23 +211,28 @@ for t in range(T):
 		if q <= 0:
 			if i not in buyers:
 				buyers.add(i)
-# Do we also consoider the unresponsive loads?
+		else:
+			if i not in sellers:
+				sellers.add(i)
+
+#agents = buyers.union( sellers )
+agents = buyers
 
 # construct an empty dictionary for the bid frquency of events
 freq_void = dict()
-for i in buyers:
+for i in agents:
 	freq_void[i] = []
 
 
-# construct an empty dictionary for the bidders state
+# construct an empty dictionary for the bidder's state
 state_void = dict()
-for i in buyers:
+for i in agents:
 	state_void[i] = False
 
 
 # construct an empty array to count events
 count_void = dict()
-for i in buyers:
+for i in agents:
 	count_void[i] = 0.0
 
 
@@ -264,6 +277,7 @@ for tau in range(periods):
 
 	# number of times that we see a bid at a particular period
 	count_events = copy.deepcopy( count_void  )
+
 	# impact that we would observe if we delay a valid bid
 	aggregate_impact = copy.deepcopy( count_void  )
 
@@ -273,7 +287,7 @@ for tau in range(periods):
 
 		bidders_t = bids[t].keys()
 		for i in bidders_t:
-			if i in buyers:
+			if i in agents:
 				p, q = bids[t][i]
 				x_t = state_buyer[t][i]
 
@@ -281,32 +295,162 @@ for tau in range(periods):
 				count_events[i] += 1.0
 
 	# calculate the prob of sending a bid
-	for i in buyers:
+	for i in agents:
 		prob_submit_bid[tau][i] = count_events[i] / n_periods_train
 
 	# calculate the average impact
-	for i in buyers:
+	for i in agents:
 		if count_events[i]>0:
 			exp_impact[tau][i] = aggregate_impact[i] / count_events[i] * prob_submit_bid[tau][i]
 
 
 
 
-rank_buyers = []
-for tau in range(periods):
-	stats_t = exp_impact[tau]
-	rank_buyers_tau = sort_bidders( stats_t )
-	rank_buyers.append( rank_buyers_tau )
+# get list of bidders in each gateway
+id_bidders = np.load('../id_bidders.npy').item()
 
-rho = select_buyers(rank_buyers, exp_impact, delta_q_a_avg)
+# number of gateways 
+n_gw = 3
+
+bidders_gw = {}
+for i in range(n_gw):
+	bidders_gw[i] = set()
+
+for bidder, id in id_bidders.items():
+	gw = id % n_gw
+	bidders_gw[gw].add( bidder )
+
+
+
+# get the expected impact for the bids in each gw
+
+exp_impact_gw = {}
+for i in range(n_gw):
+	set_bidders = bidders_gw[i]
+
+	# create an empty data structure to store the expected impact
+	exp_impact_i = []
+	for tau in range(periods):
+		exp_impact_i.append( {key: 0.0 for key in set_bidders} )
+
+	exp_impact_gw[i] = copy.deepcopy( exp_impact_i ) 
+
+# fill the data structure with the expected impact
+for tau in range(periods):
+	for bidder in exp_impact[tau].keys():
+		id = id_bidders[bidder]
+		gw = id % n_gw
+		if bidder in bidders_gw[gw]:
+			exp_impact_gw[gw][tau][bidder] = exp_impact[tau][bidder]
+
+
+
+
+def equilibria_delay_attacks(rho):
+	p_eq_att = []
+	q_eq_att = []
+	bids_att = []
+	for t in range(T):
+		tau = t % periods
+		rho_tau = rho[tau]
+
+		victims = rho_tau.keys()
+
+		# get the bids for this period
+		bids_a_t = copy.deepcopy( bids[t] )
+
+		for i in bids_a_t.keys():
+			if i in victims:
+				rand = random.random()
+				if rand <= rho_tau[i]:
+					# change the bids of the victims
+					bids_a_t[i][0] = 0.63
+
+					'''
+					if tau == 150:
+						print( bids[tau][i][0] )
+						print( bids_tau[i][0] )
+						print()
+					'''
+
+		bids_att.append( bids_a_t )
+		#if tau == 150:
+		#	pdb.set_trace()
+
+
+		# calculate the equilibrium with the new bids
+		# select bids of offer and demand
+		offer = []
+		asks = []
+		for i in bids_a_t.keys():
+			p, q = bids_a_t[i]
+			if q > 0:
+				offer.append( [p, q] )
+			else:
+				asks.append( [p, -q] )
+
+		asks = order_bids_descending( np.array( asks ) )
+		offer = order_bids_ascending( np.array( offer ) )
+
+		number_offers = len(offer)
+		number_demand = len(asks)
+
+		if number_demand<=0 or number_offers<=0:
+			q_eq = 0
+			p_eq = 0
+		else:
+			# order the bids according to the price
+			q_eq, p_eq = find_equilibrium_auction(offer, asks)
+
+		q_eq_att.append( q_eq )
+		p_eq_att.append( p_eq )
+
+	return p_eq_att, q_eq_att, bids_att
+
+
+
+
+
+# find the impact's attack in each gateway
+rho = []
+error = []
+for i in range(n_gw):
+
+	rank_agents = []
+	for tau in range(periods):
+		stats_t = exp_impact_gw[i][tau]
+		rank_agents_tau = sort_bidders( stats_t )
+		rank_agents.append( rank_agents_tau )
+
+	
+	rho_i = select_agents(rank_agents, exp_impact_gw[i], delta_q_a_avg)
+	rho.append( rho_i )
+
+
+	p_a_real, q_a_real, bids_att = equilibria_delay_attacks(rho_i)
+	error_i = np.mean(q_a[T_train:T] - q_a_real[T_train:T])
+	error.append( error_i )
+
+	print('Error in the attack`s goal gw='+str(i))
+	print(error_i)
+
+target_gw = np.argmin( error )
+
 
 # save the bids that we need to delay
-np.save('../targets.npy', rho)
+np.save('../targets.npy', rho[target_gw] )
+np.save('../target_gw.npy', target_gw )
+
+
+exit
+
+
 
 # define the number of bids that we should compromise
 total_impact = []
 num_victims = []
 rho_rand = copy.deepcopy(rho)
+rate_delay = []
 for tau in range(periods):
 	impact = 0
 	bidders_tau = exp_impact[tau].keys()
@@ -315,13 +459,22 @@ for tau in range(periods):
 	total_impact.append( impact )
 	rho_single = min(1, delta_q_a_avg[tau]/impact)
 	num_victims.append( len(bidders_tau) * rho_single )
+
+	rate_delay.append( min(1, rho_single * 3) )
+
 	rho_tau = rho_rand[tau]
 	for i in rho_tau.keys():
 		rho_tau[i] = rho_single
 	rho_rand[tau] = rho_tau
 
+	
+
 # save the number of bids that we need to delay
 np.save('../targets_rand.npy', rho_rand)
+
+np.save('../num_rand_targets.npy', num_victims)
+
+np.save('../rate_delay.npy', rate_delay)
 
 #exit
 
@@ -371,7 +524,7 @@ plt.show()
 exit
 
 # approx cost function = 
-blocks = 50
+blocks = 25
 max_capacity = 1500
 max_price = .63
 
@@ -830,7 +983,7 @@ for k in range(periods):
 # find list of periods to attack each bidder
 def find_attack_periods(list_victims):
 	attack_periods = copy.deepcopy( freq_void )
-	for i in buyers:
+	for i in agents:
 		for tau in range(periods):
 			if i in list_victims[tau]:
 				attack_periods[i].append( tau )
@@ -856,7 +1009,7 @@ for tau in range(periods):
 attack_periods = find_attack_periods(list_victims)
 
 selectors = ''
-for i in buyers:
+for i in agents:
 	if len(attack_periods[i]) > 0:
 		periods_att_i = ', '.join([ 'delay_'+str(j)+'/state' for j in attack_periods[i] ])
 		selectors += selector_obj.replace('name**', i).replace('list_periods**', periods_att_i)
@@ -876,7 +1029,7 @@ attribute: price, quantity
 '''
 
 bidders_att = ''
-for i in buyers:
+for i in agents:
 	if len(attack_periods[i]) > 0:
 		bidders_att += delay_obj.replace('name**', i).replace('list_periods**', periods_att_i)
 
