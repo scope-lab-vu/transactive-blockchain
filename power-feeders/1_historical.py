@@ -303,8 +303,14 @@ def get_solution(parameters):
 	global poll
 	receipt = wait4receipt(ethclient, txHash, type_bid)
 	
-	#pdb.set_trace()
-	# get the bids
+	# input data
+	total_load, period, time = parameters
+
+	# calculate the current period
+	t = int(float(period))
+	tau = t % periods
+
+	# extract the bids of responsive loads
 	bids = dict()
 	bids_demand = []
 	bids_offer = []
@@ -335,6 +341,26 @@ def get_solution(parameters):
 				bids_offer.append( [p, q] )
 
 
+
+	# calculate unresponsive load
+	quantity_unresponsive = -1 * (float(total_load) - np.sum(bids_demand[:, 1]))
+	bidder_name = 'unresponsive_load'
+	price_cap = '0.63'
+	
+	# write the bid unresponsive load in logs
+	data = [period, time, bidder_name, price_cap, str(quantity_unresponsive), 'unknown']
+	f = open('bids.csv', 'a')
+	f.write( ','.join(data) + '\n' )
+	f.close()
+
+	f = open('bids_log.csv', 'a')
+	f.write( ','.join(data) + '\n' )
+	f.close()
+
+	# add bid unresopnsive loads
+	bids_demand.append( [float(price_cap), -1*quantity_unresponsive] ) 
+
+
 	# transform into an array
 	bids_demand = np.array(bids_demand)
 	bids_offer = np.array(bids_offer)
@@ -355,7 +381,7 @@ def get_solution(parameters):
 		q_eq, p_eq = find_equilibrium_auction(bids_offer, bids_demand)
 
 	
-
+	# the following is only necessary to verify that the market works well
 	# get the equilibrium and the bids in each time period
 	file_name = 'bids.csv'
 	try:
@@ -369,6 +395,7 @@ def get_solution(parameters):
 		os.remove(file_name)
 	except:
 		pass
+
 
 	# initialize the file for the bids of the next period
 	f = open(file_name, 'w')

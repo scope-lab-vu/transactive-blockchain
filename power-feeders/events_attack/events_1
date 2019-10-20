@@ -15,19 +15,19 @@ attribute: val
 +5m; multiply(substation_transformer/power_out_real, 0.001)
 
 
-object: total_q_nom
-option: virtual_object, save, repeat
-delay: 120
-attribute: val
-+5m; stats(^bidder_control_.*/quantity)
+#object: total_q_nom
+#option: virtual_object, save, repeat
+#delay: 120
+#attribute: val
+#+5m; stats(^bidder_control_.*/quantity)
 
 
-# calculate the bids of unresponsive loads 
-object: unresp_bidder_nom
-option: repeat
-attribute: quantity, price
-delay: 180
-+5m; subtract(total_load/val, total_q_nom/val), 0.63
+## calculate the bids of unresponsive loads 
+#object: unresp_bidder_nom
+#option: repeat
+#attribute: quantity, price
+#delay: 180
+#+5m; subtract(total_load/val, total_q_nom/val), 0.63
 
 
 
@@ -65,11 +65,11 @@ attribute: val
 +5m; 1_historical.post(^bidder_control_.*/name, ^bidder_control_.*/price, multiply(-1, ^bidder_control_.*/quantity), counter/val, timer/val)
 
 # bis for the unresponsive load
-object: unresp_bidder_nom
-option: repeat, virtual_object
-delay: 200
-attribute: val
-+5m; 1_historical.post(unresp_bidder_nom/name, unresp_bidder_nom/price, multiply(-1, unresp_bidder_nom/quantity), counter/val, timer/val)
+#object: unresp_bidder_nom
+#option: repeat, virtual_object
+#delay: 200
+#attribute: val
+#+5m; 1_historical.post(unresp_bidder_nom/name, unresp_bidder_nom/price, multiply(-1, unresp_bidder_nom/quantity), counter/val, timer/val)
 
 # bids for the offer
 object: ^block_nom_.*
@@ -84,7 +84,7 @@ object: seller_bid
 option: repeat
 attribute: price
 delay: 240
-+5m; 1_historical.get_solution()
++5m; 1_historical.get_solution(total_load/val, counter/val, timer/val)
 
 
 
