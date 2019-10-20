@@ -1,7 +1,7 @@
-export GETH="/home/riaps/projects/geth/geth-linux-amd64-1.8.22-7fa3509e"
-export KEYSTORE="/home/riaps/projects/geth/geth-linux-amd64-1.8.22-7fa3509e/eth/keystore/"
-export NODE1="/home/riaps/projects/geth/node1"
-export NODE2="/home/riaps/projects/geth/node2"
+export GETH="/home/ubuntu/projects/geth/geth-linux-amd64-1.8.22-7fa3509e"
+export KEYSTORE="/home/ubuntu/projects/geth/geth-linux-amd64-1.8.22-7fa3509e/eth/keystore/"
+export NODE1="/home/ubuntu/projects/geth/node1"
+export NODE2="/home/ubuntu/projects/geth/node2"
 startBC:
 	tmux new -d -s node1
 	tmux new -d -s node2
@@ -45,9 +45,9 @@ test:
 setupWrapper:
 	sudo pip3 install antlr4-python3-runtime
 
-export tool="/home/riaps/projects/transactive-blockchain/transax/solidity-wrapper/main.py"
-export contract="/home/riaps/projects/transactive-blockchain/transax/smartcontract/Matching.sol"
-export output="/home/riaps/projects/transactive-blockchain/transax/core"
+export tool="/home/ubuntu/projects/transactive-blockchain/transax/solidity-wrapper/main.py"
+export contract="/home/ubuntu/projects/transactive-blockchain/transax/smartcontract/Matching.sol"
+export output="/home/ubuntu/projects/transactive-blockchain/transax/core"
 wrap:
 	python3 $(tool) $(contract) $(output)
 
@@ -55,7 +55,7 @@ wrap:
 #------------------------------------------------------------------------------
 #    Docker compile contract
 #------------------------------------------------------------------------------
-solc : INPUT = /home/riaps/projects/transactive-blockchain/transax/smartcontract
+solc : INPUT = /home/ubuntu/projects/transactive-blockchain/transax/smartcontract
 solc:
 	echo $(INPUT)
 	mkdir -p $(INPUT)/output
