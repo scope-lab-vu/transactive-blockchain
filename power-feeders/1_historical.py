@@ -94,6 +94,7 @@ def initialize(input_):
 	global poll1
 	global nextInterval
 	global target_gw
+	global targets
 	global rate_delay
 
 	try: 
@@ -248,7 +249,7 @@ def post(parameters):
 			is_targeted = False
 
 
-		is_detected = random.random() <= 0
+		is_detected = random.random() <= .2
 		bidder_is_seller = bid_quantity > 0
 		# sellers (attackers always detect the attack)
 		if is_targeted and not (is_detected or bidder_is_seller):
