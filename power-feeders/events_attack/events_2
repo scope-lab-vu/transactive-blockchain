@@ -53,7 +53,7 @@ object: init
 option: virtual_object
 delay: 0
 attribute: val
-+0m; 1_DoS.initialize()
++0m; 2_DoS.initialize()
 
 
 
@@ -62,21 +62,21 @@ object: ^bidder_control_.*
 option: repeat, virtual_object
 delay: 200
 attribute: val
-+5m; 1_DoS.post(^bidder_control_.*/name, ^bidder_control_.*/price, multiply(-1, ^bidder_control_.*/quantity), counter/val, timer/val)
++5m; 2_DoS.post(^bidder_control_.*/name, ^bidder_control_.*/price, multiply(-1, ^bidder_control_.*/quantity), counter/val, timer/val)
 
 # bis for the unresponsive load
 #object: unresp_bidder_nom
 #option: repeat, virtual_object
 #delay: 200
 #attribute: val
-#+5m; 1_DoS.post(unresp_bidder_nom/name, unresp_bidder_nom/price, multiply(-1, unresp_bidder_nom/quantity), counter/val, timer/val)
+#+5m; 2_DoS.post(unresp_bidder_nom/name, unresp_bidder_nom/price, multiply(-1, unresp_bidder_nom/quantity), counter/val, timer/val)
 
 # bids for the offer
 object: ^block_nom_.*
 option: repeat, virtual_object
 delay: 200
 attribute: val
-+5m; 1_DoS.post(^block_nom_.*/name, ^block_nom_.*/price, ^block_nom_.*/quantity, counter/val, timer/val)
++5m; 2_DoS.post(^block_nom_.*/name, ^block_nom_.*/price, ^block_nom_.*/quantity, counter/val, timer/val)
 
 
 # calculate the clearing price and send an offer for the market_ctrl
@@ -84,7 +84,7 @@ object: seller_bid
 option: repeat
 attribute: price
 delay: 240
-+5m; 1_DoS.get_solution(total_load/val, counter/val, timer/val)
++5m; 2_DoS.get_solution(total_load/val, counter/val, timer/val)
 
 
 

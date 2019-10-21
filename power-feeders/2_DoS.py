@@ -145,7 +145,7 @@ def initialize(input_):
 
 
 		# read targets
-		rate_delay = np.load('reate_delay.npy', allow_pickle=True)
+		rate_delay = np.load('rate_delay.npy', allow_pickle=True)
 		target_gw = np.load('target_gw.npy', allow_pickle=True)
 
 
