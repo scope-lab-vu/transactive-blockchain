@@ -30,6 +30,7 @@ rate_delay = None
 
 txHash = None
 type_bid = None
+last_bid = []
 
 nextInterval = 1
 periods = int(24*60/5)
@@ -47,11 +48,11 @@ def wait4receipt(ethclient,txHash,name,getReceipt=True):
 
 		receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
 		i = 0    
-		k = 36
+		k = 360
 		while (receipt is None or "ERROR" in receipt) and i<=k:
 			
 			print("Waiting for tx {} to be mined... (block number: {})".format(txHash, ethclient.command("eth_blockNumber", params=[])))
-			time.sleep(10) 
+			time.sleep(1) 
 			i+=1
 
 			receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
@@ -93,7 +94,6 @@ def initialize(input_):
 	global poll1
 	global nextInterval
 	global target_gw
-	global targets
 	global rate_delay
 
 	try: 
@@ -105,6 +105,7 @@ def initialize(input_):
 		ethclient2 = EthereumClient(ip='localhost', port=10002, TXGAS=cfg.TRANSACTION_GAS)
 		#print(ethclient)
 		account = ethclient.accounts()[0] # use the first owned address
+
 
 		HOME = os.path.expanduser('~')
 		contractBYTECODE = '%s/projects/transactive-blockchain/transax/smartcontract/output/Matching.bin' %(HOME)
@@ -162,36 +163,20 @@ def initialize(input_):
 			else:
 				gw_assignment[prosumer_id] = 2
 
-			# register prosumers
-			# print(cfg.PROSUMER_FEEDER)
-			#print(prosumer_id)
 			txHash = contract.registerProsumer(account, prosumer_id, cfg.PROSUMER_FEEDER[prosumer_id])
-			#print(txHash)
-		#print(txHash)
 
 		print('***initialized blockchain****')
 
 		receipt = wait4receipt(ethclient, txHash, "registerProsumer")
 		return 
+
+
 	except Exception as err:
 		print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
 		print(err)
 		pdb.set_trace()
 
-'''
-# write the address of the contract
-file_name = 'contract_address'
-try:
-	os.remove(file_name)
-except:
-	pass
 
-f = open(file_name, 'w')
-f.write( contract_address )
-f.close()
-
-ethclient.terminate()
-'''
 
 class prosumer():
 	def __init__(self):
@@ -222,7 +207,8 @@ def mitigate(attacked_bids):
 def post(parameters):
 	global txHash
 	global type_bid
-	global rate_delay
+	global last_bid
+	#global rate_delay
 	
 	try :
 		bidder_name, price, quantity, period, time = parameters
@@ -237,16 +223,8 @@ def post(parameters):
 
 		# get list of bidders
 		list_bidders = np.load('id_bidders.npy', allow_pickle=True).item()
-		'''
-		print(ethclient)
-		# get the current period
-		poll = contract.poll_events()
-		for event in poll:
-			name = event['name']
-			if (name == "StartOffering"):
-				nextInterval = params['interval']
-		'''		
-		bidder_id = list_bidders[bidder_name]
+
+		bidder_id = int(list_bidders[bidder_name])
 		try:
 			start_time = nextInterval
 		except:
@@ -257,10 +235,8 @@ def post(parameters):
 		bid_quantity = int(float(quantity)*1000)
 		bid_price = int(float(price)*1000)
 
-		# energy = encode(price, quantity)
 
 		# ATTACK GOES HERE
-
 		if bidder_name in targets[tau] :
 			rand = random.random()
 			if rand <= targets[tau][bidder_name]:
@@ -273,7 +249,9 @@ def post(parameters):
 
 
 		is_detected = random.random() <= 0
-		if gw_assignment[bidder_id] == target_gw and is_targeted and not is_detected:
+		bidder_is_seller = bid_quantity > 0
+		# sellers (attackers always detect the attack)
+		if is_targeted and not (is_detected or bidder_is_seller):
 			pass
 			# attacked_bids[bidder_id] = data #Make this global # don't need it if we use is_detected
 		else:
@@ -285,10 +263,14 @@ def post(parameters):
 				c = contract2
 
 			if bid_quantity < 0:
+				# last_bid = [bidder_id, start_time, end_time, bid_quantity, bid_price]
+				last_bid.append(bidder_id)
 				txHash = c.postBuyingOffer(account, bidder_id, start_time, end_time, -bid_quantity, bid_price)
 				# receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
 				type_bid = "postBuyingOffer"
 			else:
+				# last_bid = [bidder_id, start_time, end_time, bid_quantity, bid_price]
+				last_bid.append(bidder_id)
 				txHash = c.postSellingOffer(account, bidder_id, start_time, end_time, bid_quantity, bid_price)
 				# receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
 				type_bid = "postSellingOffer"
@@ -323,13 +305,31 @@ def get_solution(parameters):
 	global type_bid
 	global contract
 	global poll
-	receipt = wait4receipt(ethclient, txHash, type_bid)
+
+	
+	# receipt = wait4receipt(ethclient, txHash, type_bid)
 
 
-	if receipt == None:
-		print('Failed check transaction')
-		pdb.set_trace()
-		return '0.0'
+	# if receipt == None:
+	# 	print('Failed check transaction')
+	# 	print("last_bid: %s" %last_bid)
+
+	# 	if type_bid == "postBuyingOffer":
+	# 		bidder_id, start_time, end_time, bid_quantity, bid_price = last_bid
+	# 		txHash = contract.postBuyingOffer(account, bidder_id, start_time, end_time, -bid_quantity, bid_price)
+	# 		receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
+	# 		type_bid = "postBuyingOffer"
+	# 	elif type_bid == "postSellingOffer":
+	# 		bidder_id, start_time, end_time, bid_quantity, bid_price = last_bid
+	# 		txHash = contract.postSellingOffer(account, bidder_id, start_time, end_time, bid_quantity, bid_price)
+	# 		receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
+	# 		type_bid = "postSellingOffer"
+	# 	else:
+	# 		print("Then what is it?")
+	# 		print(type_bid)
+
+	# 	pdb.set_trace()
+		
 
 	try:
 		# input data
@@ -346,31 +346,33 @@ def get_solution(parameters):
 
 		total_demand = 0
 
-		poll = contract.poll_events()
-		for event in poll:
-			params = event['params']
-			name = event['name']
-			#print("{}({}).".format(name, params))
 		
+		while last_bid: 
+			poll = contract.poll_events()
+			for event in poll:
+				params = event['params']
+				name = event['name']
+				#print("{}({}).".format(name, params))
 
-			if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
-				#pdb.set_trace()
+				if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
 
-				new_offers = True
-				interval = params['startTime']
+					bidder = params['prosumer']
+					last_bid.remove(int(bidder))
+					# print(len(last_bid))
 
-				q = params['energy']/1000.0
-				p = params['value']/1000.0
-				# p, q = decode(energy)
-				bidder = params['prosumer'] 
+					interval = params['startTime']
 
-				bids[bidder] = [p, q]
+					q = params['energy']/1000.0
+					p = params['value']/1000.0
+					# p, q = decode(energy)
+					
+					bids[bidder] = [p, q]
 
-				if name == "BuyingOfferPosted":
-					bids_demand.append( [p, q] )
-					total_demand += q
-				else:
-					bids_offer.append( [p, q] )
+					if name == "BuyingOfferPosted":
+						bids_demand.append( [p, q] )
+						total_demand += q
+					else:
+						bids_offer.append( [p, q] )
 
 
 
@@ -471,6 +473,9 @@ def get_solution(parameters):
 		if (name == "StartOffering"):
 			nextInterval = params['interval']
 			#print ("next interval: %s" %nextInterval)
+
+	print("period: {}".format(period))
+	print("price: {}".format(p_eq))
 
 	return str(p_eq)
 	
