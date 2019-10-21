@@ -45,13 +45,18 @@ def wait4receipt(ethclient,txHash,name,getReceipt=True):
 
 	if txHash.startswith("0x"): 
 
-		receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])       
-		while receipt is None or "ERROR" in receipt:
+		receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
+		i = 0       
+		while receipt is None or "ERROR" in receipt or i<=12:
 			
 			print("Waiting for tx {} to be mined... (block number: {})".format(txHash, ethclient.command("eth_blockNumber", params=[])))
 			time.sleep(5) 
+			i+=1
 
 			receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
+
+		if i >= 12:
+			return None
 
 		if receipt['gasUsed'] == cfg.TRANSACTION_GAS:
 			print("Transaction may have failed. gasUsed = gasLimit")
@@ -318,7 +323,12 @@ def get_solution(parameters):
 	global contract
 	global poll
 	receipt = wait4receipt(ethclient, txHash, type_bid)
-	
+
+
+	if receipt == None:
+		print('Failed check transaction')
+		pdb.set_trace()
+		return '0.0'
 
 	try:
 		# input data
