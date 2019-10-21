@@ -92,11 +92,33 @@ class EthereumClient:
     logging.info("Created filter (ID = {}).".format(filter_id))
     return filter_id
 
+  # def get_filter_changes(self, filter_id):
+  #   block = self.command("eth_blockNumber")
+  #   log = self.command("eth_getFilterChanges", params=[filter_id])
+  #   logging.debug("Log: {} items (block number: {})".format(len(log), block))
+  #   return log
+
   def get_filter_changes(self, filter_id):
-    block = self.command("eth_blockNumber")
-    log = self.command("eth_getFilterChanges", params=[filter_id])
-    logging.debug("Log: {} items (block number: {})".format(len(log), block))
-    return log
+        block = self.command("eth_blockNumber")
+        
+        try:
+            log = self.command("eth_getFilterChanges", params=[self.filter_id])
+            if len(log) > 0:
+                self.logger.debug("Log: {} items (block number: {})".format(len(log), block))
+            return log
+        except Exception as inst:
+            '''Added this try/except becuase occassionally would get 
+            error: "filter not found", apparently geth throws them away after some time. 
+            The web3.py middleware (https://github.com/ethereum/web3.py/blob/master/docs/middleware.rst#locally-managed-log-and-block-filters) handles it. 
+            The problem was discussed here (https://github.com/ethereum/web3.py/pull/732). 
+            I'm not sure if what is here will work'''
+
+            self.logger.info("EXCEPTION MESSAGE: %s" %inst)
+            if inst.args[1]['error']['message'] == 'filter not found':
+                self.filter_id = self.new_filter()
+                log = self.get_filter_changes(self.filter_id)
+                self.logger.info("LOG: %s" %log)
+                return log
 
   def command(self, method, params=[], id=1, jsonrpc="2.0", verbose=False):
     """ Send command (method with given parameters) to geth client over RPC using PycURL """

@@ -100,7 +100,8 @@ def initialize(input_):
 		account = ethclient.accounts()[0] # use the first owned address
 
 
-		contractBYTECODE = '/home/ubuntu/projects/transactive-blockchain/transax/smartcontract/output/Matching.bin'
+		HOME = os.path.expanduser('~')
+		contractBYTECODE = '%s/projects/transactive-blockchain/transax/smartcontract/output/Matching.bin' %(HOME)
 		with open(contractBYTECODE) as f:
 			BYTECODE = "0x"+f.read()
 			contract_address = deploy_contract(BYTECODE, cfg.TRANSACTION_GAS)

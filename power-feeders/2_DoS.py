@@ -30,6 +30,7 @@ rate_delay = None
 
 txHash = None
 type_bid = None
+last_bid = None
 
 nextInterval = 1
 periods = int(24*60/5)
@@ -106,7 +107,8 @@ def initialize(input_):
 		account = ethclient.accounts()[0] # use the first owned address
 
 
-		contractBYTECODE = '/home/ubuntu/projects/transactive-blockchain/transax/smartcontract/output/Matching.bin'
+		HOME = os.path.expanduser('~')
+		contractBYTECODE = '%s/projects/transactive-blockchain/transax/smartcontract/output/Matching.bin' %(HOME)
 		with open(contractBYTECODE) as f:
 			BYTECODE = "0x"+f.read()
 			contract_address = deploy_contract(BYTECODE, cfg.TRANSACTION_GAS)
@@ -205,6 +207,7 @@ def mitigate(attacked_bids):
 def post(parameters):
 	global txHash
 	global type_bid
+	global last_bid
 	#global rate_delay
 	
 	try :
@@ -259,10 +262,12 @@ def post(parameters):
 				c = contract2
 
 			if bid_quantity < 0:
+				last_bid = [bidder_id, start_time, end_time, bid_quantity, bid_price]
 				txHash = c.postBuyingOffer(account, bidder_id, start_time, end_time, -bid_quantity, bid_price)
 				# receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
 				type_bid = "postBuyingOffer"
 			else:
+				last_bid = [bidder_id, start_time, end_time, bid_quantity, bid_price]
 				txHash = c.postSellingOffer(account, bidder_id, start_time, end_time, bid_quantity, bid_price)
 				# receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
 				type_bid = "postSellingOffer"
@@ -302,8 +307,23 @@ def get_solution(parameters):
 
 	if receipt == None:
 		print('Failed check transaction')
+
+		if type_bid == "postBuyingOffer":
+			bidder_id, start_time, end_time, bid_quantity, bid_price = last_bid
+			txHash = contract1.postBuyingOffer(account, bidder_id, start_time, end_time, -bid_quantity, bid_price)
+			receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
+			type_bid = "postBuyingOffer"
+		elif type_bid == "postSellingOffer":
+			bidder_id, start_time, end_time, bid_quantity, bid_price = last_bid
+			txHash = contract.postSellingOffer(account, bidder_id, start_time, end_time, bid_quantity, bid_price)
+			receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
+			type_bid = "postSellingOffer"
+		else:
+			print("Then what is it?")
+			print(type_bid)
+
 		pdb.set_trace()
-		return '0.0'
+		
 
 	try:
 		# input data
