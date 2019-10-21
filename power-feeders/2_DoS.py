@@ -30,7 +30,7 @@ rate_delay = None
 
 txHash = None
 type_bid = None
-last_bid = None
+last_bid = []
 
 nextInterval = 1
 periods = int(24*60/5)
@@ -224,7 +224,7 @@ def post(parameters):
 		# get list of bidders
 		list_bidders = np.load('id_bidders.npy', allow_pickle=True).item()
 
-		bidder_id = list_bidders[bidder_name]
+		bidder_id = int(list_bidders[bidder_name])
 		try:
 			start_time = nextInterval
 		except:
@@ -262,12 +262,14 @@ def post(parameters):
 				c = contract2
 
 			if bid_quantity < 0:
-				last_bid = [bidder_id, start_time, end_time, bid_quantity, bid_price]
+				# last_bid = [bidder_id, start_time, end_time, bid_quantity, bid_price]
+				last_bid.append(bidder_id)
 				txHash = c.postBuyingOffer(account, bidder_id, start_time, end_time, -bid_quantity, bid_price)
 				# receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
 				type_bid = "postBuyingOffer"
 			else:
-				last_bid = [bidder_id, start_time, end_time, bid_quantity, bid_price]
+				# last_bid = [bidder_id, start_time, end_time, bid_quantity, bid_price]
+				last_bid.append(bidder_id)
 				txHash = c.postSellingOffer(account, bidder_id, start_time, end_time, bid_quantity, bid_price)
 				# receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
 				type_bid = "postSellingOffer"
@@ -302,28 +304,30 @@ def get_solution(parameters):
 	global type_bid
 	global contract
 	global poll
-	receipt = wait4receipt(ethclient, txHash, type_bid)
+
+	
+	# receipt = wait4receipt(ethclient, txHash, type_bid)
 
 
-	if receipt == None:
-		print('Failed check transaction')
-		print("last_bid: %s" %last_bid)
+	# if receipt == None:
+	# 	print('Failed check transaction')
+	# 	print("last_bid: %s" %last_bid)
 
-		if type_bid == "postBuyingOffer":
-			bidder_id, start_time, end_time, bid_quantity, bid_price = last_bid
-			txHash = contract.postBuyingOffer(account, bidder_id, start_time, end_time, -bid_quantity, bid_price)
-			receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
-			type_bid = "postBuyingOffer"
-		elif type_bid == "postSellingOffer":
-			bidder_id, start_time, end_time, bid_quantity, bid_price = last_bid
-			txHash = contract.postSellingOffer(account, bidder_id, start_time, end_time, bid_quantity, bid_price)
-			receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
-			type_bid = "postSellingOffer"
-		else:
-			print("Then what is it?")
-			print(type_bid)
+	# 	if type_bid == "postBuyingOffer":
+	# 		bidder_id, start_time, end_time, bid_quantity, bid_price = last_bid
+	# 		txHash = contract.postBuyingOffer(account, bidder_id, start_time, end_time, -bid_quantity, bid_price)
+	# 		receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
+	# 		type_bid = "postBuyingOffer"
+	# 	elif type_bid == "postSellingOffer":
+	# 		bidder_id, start_time, end_time, bid_quantity, bid_price = last_bid
+	# 		txHash = contract.postSellingOffer(account, bidder_id, start_time, end_time, bid_quantity, bid_price)
+	# 		receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
+	# 		type_bid = "postSellingOffer"
+	# 	else:
+	# 		print("Then what is it?")
+	# 		print(type_bid)
 
-		pdb.set_trace()
+	# 	pdb.set_trace()
 		
 
 	try:
@@ -341,31 +345,37 @@ def get_solution(parameters):
 
 		total_demand = 0
 
-		poll = contract.poll_events()
-		for event in poll:
-			params = event['params']
-			name = event['name']
-			#print("{}({}).".format(name, params))
 		
+		while last_bid: 
+			poll = contract.poll_events()
+			for event in poll:
+				params = event['params']
+				name = event['name']
+				#print("{}({}).".format(name, params))
 
-			if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
-				#pdb.set_trace()
 
-				new_offers = True
-				interval = params['startTime']
+				bidder = int(params['prosumer'])
+				last_bid.remove(bidder)
+				pdb.set_trace()
 
-				q = params['energy']/1000.0
-				p = params['value']/1000.0
-				# p, q = decode(energy)
-				bidder = params['prosumer'] 
+				if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
+					#pdb.set_trace()
 
-				bids[bidder] = [p, q]
+					new_offers = True
+					interval = params['startTime']
 
-				if name == "BuyingOfferPosted":
-					bids_demand.append( [p, q] )
-					total_demand += q
-				else:
-					bids_offer.append( [p, q] )
+					q = params['energy']/1000.0
+					p = params['value']/1000.0
+					# p, q = decode(energy)
+					bidder = params['prosumer'] 
+
+					bids[bidder] = [p, q]
+
+					if name == "BuyingOfferPosted":
+						bids_demand.append( [p, q] )
+						total_demand += q
+					else:
+						bids_offer.append( [p, q] )
 
 
 
