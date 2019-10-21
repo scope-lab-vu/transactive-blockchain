@@ -48,10 +48,10 @@ def wait4receipt(ethclient,txHash,name,getReceipt=True):
 		receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
 		i = 0    
 		k = 36
-		while receipt is None or "ERROR" in receipt or i<=k:
+		while (receipt is None or "ERROR" in receipt) and i<=k:
 			
 			print("Waiting for tx {} to be mined... (block number: {})".format(txHash, ethclient.command("eth_blockNumber", params=[])))
-			time.sleep(5) 
+			time.sleep(10) 
 			i+=1
 
 			receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
