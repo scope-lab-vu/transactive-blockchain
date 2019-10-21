@@ -9,6 +9,8 @@ import random
 
 import csv
 import os
+import sys 
+
 from functions_auction import build_curves, find_equilibrium_auction, extract_bids, order_bids_descending, order_bids_ascending, find_market_equilibrium, surplus_f, ideal_eq_attack, maer, avg_total_surplus, stats
 from functions_read_data import read_data, rolling_statistics, get_avg_data
 
@@ -23,6 +25,7 @@ contract1 = None
 contract2 = None
 poll1 = None
 target_gw = None
+targets = {}
 rate_delay = None
 
 txHash = None
@@ -42,13 +45,19 @@ def wait4receipt(ethclient,txHash,name,getReceipt=True):
 
 	if txHash.startswith("0x"): 
 
-		receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])       
-		while receipt is None or "ERROR" in receipt:
+		receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
+		i = 0    
+		k = 360
+		while (receipt is None or "ERROR" in receipt) and i<=k:
 			
-			print("Waiting for tx to be mined... (block number: {})".format(ethclient.command("eth_blockNumber", params=[])))
-			time.sleep(5) 
+			print("Waiting for tx {} to be mined... (block number: {})".format(txHash, ethclient.command("eth_blockNumber", params=[])))
+			time.sleep(1) 
+			i+=1
 
 			receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
+
+		if i >= k:
+			return None
 
 		if receipt['gasUsed'] == cfg.TRANSACTION_GAS:
 			print("Transaction may have failed. gasUsed = gasLimit")
@@ -87,16 +96,13 @@ def initialize(input_):
 	global rate_delay
 
 	try: 
-		# Select attack target
-		distribution = [0] + [1] + [2]
-		target_gw = random.choice(distribution)
 
-		print('***initializing****')
+		print('***initializing blockchain****')
 
 		ethclient = EthereumClient(ip='localhost', port=10000, TXGAS=cfg.TRANSACTION_GAS)
 		ethclient1 = EthereumClient(ip='localhost', port=10001, TXGAS=cfg.TRANSACTION_GAS)
 		ethclient2 = EthereumClient(ip='localhost', port=10002, TXGAS=cfg.TRANSACTION_GAS)
-		print(ethclient)
+		#print(ethclient)
 		account = ethclient.accounts()[0] # use the first owned address
 
 
@@ -110,17 +116,17 @@ def initialize(input_):
 
 		txHash = contract.setup(account, cfg.MICROGRID.C_ext, cfg.MICROGRID.C_int, cfg.START_INTERVAL)
 		receipt = wait4receipt(ethclient, txHash, "setup")
-		print("Contract address: " + contract_address)
+		#print("Contract address: " + contract_address)
 
 		poll1 = contract.poll_events()
 		for event in poll1:
 			params = event['params']
 			name = event['name']
-			print("{}({}).".format(name, params))
+			#print("{}({}).".format(name, params))
 
 			if (name == "StartOffering"):
 				nextInterval = params['interval']
-				print ("next interval: %s" %nextInterval)
+				#print ("next interval: %s" %nextInterval)
 
 
 
@@ -138,8 +144,10 @@ def initialize(input_):
 		np.save('id_bidders.npy', list_bidders)
 
 
-		# read rate of delay
-		rate_delay = np.load('rate_delay.npy')
+		# read targets
+		rate_delay = np.load('reate_delay.npy', allow_pickle=True)
+		target_gw = np.load('target_gw.npy', allow_pickle=True)
+
 
 
 		# Assign prosumers to gateways
@@ -153,32 +161,20 @@ def initialize(input_):
 			else:
 				gw_assignment[prosumer_id] = 2
 
-			# register prosumers
-			# print(cfg.PROSUMER_FEEDER)
-			#print(prosumer_id)
 			txHash = contract.registerProsumer(account, prosumer_id, cfg.PROSUMER_FEEDER[prosumer_id])
-			#print(txHash)
-		print(txHash)
+
+		print('***initialized blockchain****')
+
 		receipt = wait4receipt(ethclient, txHash, "registerProsumer")
 		return 
-	except Exception as err: 
-		print (err)
+
+
+	except Exception as err:
+		print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+		print(err)
 		pdb.set_trace()
 
-'''
-# write the address of the contract
-file_name = 'contract_address'
-try:
-	os.remove(file_name)
-except:
-	pass
 
-f = open(file_name, 'w')
-f.write( contract_address )
-f.close()
-
-ethclient.terminate()
-'''
 
 class prosumer():
 	def __init__(self):
@@ -209,7 +205,7 @@ def mitigate(attacked_bids):
 def post(parameters):
 	global txHash
 	global type_bid
-	global rate_delay
+	#global rate_delay
 	
 	try :
 		bidder_name, price, quantity, period, time = parameters
@@ -217,27 +213,14 @@ def post(parameters):
 		t = int(float(period))
 		tau = t % periods
 
-		# write the bids in logs
 		data = [period, time, bidder_name, price, quantity, 'unknown']
-		f = open('bids.csv', 'a')
-		f.write( ','.join(data) + '\n' )
-		f.close()
-
-		f = open('bids_log.csv', 'a')
+		f = open('bids_log_nom.csv', 'a')
 		f.write( ','.join(data) + '\n' )
 		f.close()
 
 		# get list of bidders
 		list_bidders = np.load('id_bidders.npy', allow_pickle=True).item()
-		'''
-		print(ethclient)
-		# get the current period
-		poll = contract.poll_events()
-		for event in poll:
-			name = event['name']
-			if (name == "StartOffering"):
-				nextInterval = params['interval']
-		'''		
+
 		bidder_id = list_bidders[bidder_name]
 		try:
 			start_time = nextInterval
@@ -249,13 +232,22 @@ def post(parameters):
 		bid_quantity = int(float(quantity)*1000)
 		bid_price = int(float(price)*1000)
 
-		# energy = encode(price, quantity)
 
 		# ATTACK GOES HERE
+		rate_delay_tau = rate_delay[tau]
+		is_targeted = False
+		# check if the bidder is in the right gw
+		if gw_assignment[bidder_id] == target_gw:
+			rand = random.random()
+			if rand <= rate_delay_tau:
+				#change the bids of the victims
+				is_targeted = True 
 
-		is_delayed = random.random() <= rate_delay[tau]
-		is_detected = random.random() <= 1
-		if gw_assignment[bidder_id] == target_gw and is_delayed and not is_detected:
+
+		is_detected = random.random() <= 0
+		bidder_is_seller = bid_quantity > 0
+		# sellers (attackers always detect the attack)
+		if is_targeted and not (is_detected or bidder_is_seller):
 			pass
 			# attacked_bids[bidder_id] = data #Make this global # don't need it if we use is_detected
 		else:
@@ -275,10 +267,25 @@ def post(parameters):
 				# receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
 				type_bid = "postSellingOffer"
 
-		#pdb.set_trace()
+			#pdb.set_trace()
+			# write bids in the log that we use to cumpute the equilibria
+			#
+			f = open('bids.csv', 'a')
+			f.write( ','.join(data) + '\n' )
+			f.close()
+
+			f = open('bids_log_att.csv', 'a')
+			f.write( ','.join(data) + '\n' )
+			f.close()
+
+
+
+
 
 		return '1'
+
 	except Exception as err:
+		print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
 		print(err)
 		pdb.set_trace()
 
@@ -291,85 +298,135 @@ def get_solution(parameters):
 	global contract
 	global poll
 	receipt = wait4receipt(ethclient, txHash, type_bid)
-	
-	#pdb.set_trace()
-	# get the bids
-	bids = dict()
-	bids_demand = []
-	bids_offer = []
 
-	poll = contract.poll_events()
-	for event in poll:
-		params = event['params']
-		name = event['name']
-		print("{}({}).".format(name, params))
+
+	if receipt == None:
+		print('Failed check transaction')
+		pdb.set_trace()
+		return '0.0'
+
+	try:
+		# input data
+		total_load, period, time = parameters
+
+		# calculate the current period
+		t = int(float(period))
+		tau = t % periods
+
+		# extract the bids of responsive loads
+		bids = dict()
+		bids_demand = []
+		bids_offer = []
+
+		total_demand = 0
+
+		poll = contract.poll_events()
+		for event in poll:
+			params = event['params']
+			name = event['name']
+			#print("{}({}).".format(name, params))
 		
 
-		if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
-			#pdb.set_trace()
+			if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
+				#pdb.set_trace()
 
-			new_offers = True
-			interval = params['startTime']
+				new_offers = True
+				interval = params['startTime']
 
-			q = params['energy']/1000.0
-			p = params['value']/1000.0
-			# p, q = decode(energy)
-			bidder = params['prosumer'] 
+				q = params['energy']/1000.0
+				p = params['value']/1000.0
+				# p, q = decode(energy)
+				bidder = params['prosumer'] 
 
-			bids[bidder] = [p, q]
+				bids[bidder] = [p, q]
 
-			if name == "BuyingOfferPosted":
-				bids_demand.append( [p, q] )
-			else:
-				bids_offer.append( [p, q] )
+				if name == "BuyingOfferPosted":
+					bids_demand.append( [p, q] )
+					total_demand += q
+				else:
+					bids_offer.append( [p, q] )
 
 
-	# transform into an array
-	bids_demand = np.array(bids_demand)
-	bids_offer = np.array(bids_offer)
 
-	# order the bids
-	bids_demand = order_bids_descending(bids_demand)
-	bids_offer = order_bids_ascending(bids_offer)
+		# calculate unresponsive load
+		quantity_unresponsive = -1 * (float(total_load) - total_demand)
+		bidder_name = 'unresp_bidder_nom'
+		price_cap = '0.63'
+	
+		# write the bid unresponsive load in logs
+		data = [period, time, bidder_name, price_cap, str(quantity_unresponsive), 'unknown']
+		f = open('bids.csv', 'a')
+		f.write( ','.join(data) + '\n' )
+		f.close()
 
-	# find the equilibria
-	number_offers = len(bids_offer)
-	number_demand = len(bids_demand)
+		f = open('bids_log_nom.csv', 'a')
+		f.write( ','.join(data) + '\n' )
+		f.close()
 
-	if number_demand<=0 or number_offers<=0:
-		q_eq = 0
-		p_eq = 0
+		f = open('bids_log_att.csv', 'a')
+		f.write( ','.join(data) + '\n' )
+		f.close()
 
-	else:
-		q_eq, p_eq = find_equilibrium_auction(bids_offer, bids_demand)
+
+		# add bid unresopnsive loads
+		bids_demand.append( [float(price_cap), -1*quantity_unresponsive] ) 
+
+		# transform into an array
+		bids_demand = np.array(bids_demand)
+		bids_offer = np.array(bids_offer)
+
+		# order the bids
+		bids_demand = order_bids_descending(bids_demand)
+		bids_offer = order_bids_ascending(bids_offer)
+
+		# find the equilibria
+		number_offers = len(bids_offer)
+		number_demand = len(bids_demand)
+
+		if number_demand<=0 or number_offers<=0:
+			q_eq = 0
+			p_eq = 0
+
+		else:
+			q_eq, p_eq = find_equilibrium_auction(bids_offer, bids_demand)
 
 	
+		# the following is only necessary to verify that the market works well
+		'''
+		# get the equilibrium and the bids in each time period
+		file_name = 'bids.csv'
+		try:
+			eq_time_nom, market_eq_nom, bids_nom, curves_nom = find_market_equilibrium(file_name)
+		except:
+			print('error')
+			pdb.set_trace()
 
-	# get the equilibrium and the bids in each time period
-	file_name = 'bids.csv'
-	try:
-		eq_time_nom, market_eq_nom, bids_nom, curves_nom = find_market_equilibrium(file_name)
-	except:
-		print('error')
+		# rewrite the bid file
+		try:
+			os.remove(file_name)
+		except:
+			pass
+
+
+		# write the equilibria price
+		prices = [str(market_eq_nom['p'][0]), str(p_eq)]
+		f = open('eq_price.csv', 'a')
+		f.write( ','.join(prices) + '\n' )
+		f.close()
+
+
+		'''
+
+		# initialize the file for the bids of the next period
+		f = open('bids.csv', 'w')
+		f.write( 'market_id,timestamp,bidder_name,bid_price,bid_quantity,bid_state\n' )
+		f.close()
+
+
+	except Exception as err:
+		print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+		print(err)
 		pdb.set_trace()
-
-	# rewrite the bid file
-	try:
-		os.remove(file_name)
-	except:
-		pass
-
-	# initialize the file for the bids of the next period
-	f = open(file_name, 'w')
-	f.write( 'market_id,timestamp,bidder_name,bid_price,bid_quantity,bid_state\n' )
-	f.close()
-
-
-	# write the equilibria price
-	prices = [str(market_eq_nom['p'][0]), str(p_eq)]
-	f = open('eq_price.csv', 'a')
-	f.write( ','.join(prices) + '\n' )
-	f.close()
 
 	#return str(market_eq_nom['p'][0])
 	
@@ -378,16 +435,16 @@ def get_solution(parameters):
 	for event in contract.poll_events():
 		params = event['params']
 		name = event['name']
-		print("{}({}).".format(name, params))
+		#print("{}({}).".format(name, params))
 
 		if (name == "ClearingPrice"):
 			interval = params['interval']
 			price = params['price']
-			print ("price in interval %s = %s" %(interval, price))
+			#print ("price in interval %s = %s" %(interval, price))
 
 		if (name == "StartOffering"):
 			nextInterval = params['interval']
-			print ("next interval: %s" %nextInterval)
+			#print ("next interval: %s" %nextInterval)
 
 	return str(p_eq)
 	

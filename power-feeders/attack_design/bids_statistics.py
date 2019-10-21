@@ -366,17 +366,57 @@ def equilibria_delay_attacks(rho):
 					# change the bids of the victims
 					bids_a_t[i][0] = 0.63
 
-					'''
-					if tau == 150:
-						print( bids[tau][i][0] )
-						print( bids_tau[i][0] )
-						print()
-					'''
+		bids_att.append( bids_a_t )
+
+		# calculate the equilibrium with the new bids
+		# select bids of offer and demand
+		offer = []
+		asks = []
+		for i in bids_a_t.keys():
+			p, q = bids_a_t[i]
+			if q > 0:
+				offer.append( [p, q] )
+			else:
+				asks.append( [p, -q] )
+
+		asks = order_bids_descending( np.array( asks ) )
+		offer = order_bids_ascending( np.array( offer ) )
+
+		number_offers = len(offer)
+		number_demand = len(asks)
+
+		if number_demand<=0 or number_offers<=0:
+			q_eq = 0
+			p_eq = 0
+		else:
+			# order the bids according to the price
+			q_eq, p_eq = find_equilibrium_auction(offer, asks)
+
+		q_eq_att.append( q_eq )
+		p_eq_att.append( p_eq )
+
+	return p_eq_att, q_eq_att, bids_att
+
+
+def equilibria_delay_attacks_rand(rate, target_gw):
+	p_eq_att = []
+	q_eq_att = []
+	bids_att = []
+	for t in range(T):
+		tau = t % periods
+		rate_tau = rate[tau]
+
+		# get the bids for this period
+		bids_a_t = copy.deepcopy( bids[t] )
+
+		for i in bids_a_t.keys():
+			if i in buyers and i in bidders_gw[ target_gw ]:
+				rand = random.random()
+				if rand <= rate_tau:
+					# change the bids of the victims
+					bids_a_t[i][0] = 0.63
 
 		bids_att.append( bids_a_t )
-		#if tau == 150:
-		#	pdb.set_trace()
-
 
 		# calculate the equilibrium with the new bids
 		# select bids of offer and demand
@@ -411,7 +451,9 @@ def equilibria_delay_attacks(rho):
 
 
 
+
 # find the impact's attack in each gateway
+print('Case II')
 rho_gw = []
 error = []
 for i in range(n_gw):
@@ -444,42 +486,46 @@ np.save('../target_gw.npy', target_gw )
 
 #exit
 
+print('\nCase III')
+# define the rate of delay for the random attack
+error = []
+rate_gw = []
+for i in range(n_gw):
+	exp_impact_i = exp_impact_gw[gw]
 
-#exp_impact = exp_impact_gw[ target_gw ]
-rho = rho_gw[target_gw]
+	rate_delay = []
+	for tau in range(periods):
+		impact = 0
+		bidders_tau = exp_impact_i[tau].keys()
+		num_bidders = len(bidders_tau)
+		num_bidders_gw = len(buyers)/3.0
+		for bidder in bidders_tau:
+			impact += exp_impact_i[tau][bidder]
+		avg_impact = impact / num_bidders
+		exp_impact = num_bidders_gw * avg_impact
+		rate = min(1, delta_q_a_avg[tau] / exp_impact)
+		rate_delay.append( rate )
+	rate_gw.append( rate_delay )
 
+	# evaluate impact
+	p_a_real, q_a_real, bids_att = equilibria_delay_attacks_rand( rate_delay, i )
+	error_i = np.mean(q_a[T_train:T] - q_a_real[T_train:T])
+	error.append( error_i )
 
-# define the number of bids that we should compromise
-total_impact = []
-num_victims = []
-rho_rand = copy.deepcopy(rho)
-rate_delay = []
-for tau in range(periods):
-	impact = 0
-	bidders_tau = exp_impact[tau].keys()
-	for bidder in bidders_tau:
-		impact += exp_impact[tau][bidder]
-	total_impact.append( impact )
-	rho_single = min(1, delta_q_a_avg[tau]/impact)
-	num_victims.append( len(bidders_tau) * rho_single )
+	print('Error in the attack`s goal gw='+str(i))
+	print(error_i)
 
-	rate_delay.append( min(1, rho_single * 3) )
-
-	rho_tau = rho_rand[tau]
-	for i in rho_tau.keys():
-		rho_tau[i] = rho_single
-	rho_rand[tau] = rho_tau
-
+target_gw_rand = np.argmin( error )
 	
-'''
-# save the number of bids that we need to delay
-np.save('../targets_rand.npy', rho_rand)
 
-np.save('../num_rand_targets.npy', num_victims)
+np.save('../rate_delay.npy', rate_gw[target_gw_rand])
+np.save('../target_gw_rand.npy', target_gw_rand )
 
-np.save('../rate_delay.npy', rate_delay)
-'''
 
+
+exit
+
+rho = rho_gw[target_gw]
 
 # get the number of victims
 n = []
