@@ -307,10 +307,11 @@ def get_solution(parameters):
 
 	if receipt == None:
 		print('Failed check transaction')
+		print("last_bid: %s" %last_bid)
 
 		if type_bid == "postBuyingOffer":
 			bidder_id, start_time, end_time, bid_quantity, bid_price = last_bid
-			txHash = contract1.postBuyingOffer(account, bidder_id, start_time, end_time, -bid_quantity, bid_price)
+			txHash = contract.postBuyingOffer(account, bidder_id, start_time, end_time, -bid_quantity, bid_price)
 			receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
 			type_bid = "postBuyingOffer"
 		elif type_bid == "postSellingOffer":
