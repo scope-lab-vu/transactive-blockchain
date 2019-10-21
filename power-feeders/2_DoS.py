@@ -354,20 +354,17 @@ def get_solution(parameters):
 				#print("{}({}).".format(name, params))
 
 				if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
-					#pdb.set_trace()
 
-					bidder = int(params['prosumer'])
-					last_bid.remove(bidder)
-					pdb.set_trace()
+					bidder = params['prosumer']
+					last_bid.remove(int(bidder))
+					# print(len(last_bid))
 
-					new_offers = True
 					interval = params['startTime']
 
 					q = params['energy']/1000.0
 					p = params['value']/1000.0
 					# p, q = decode(energy)
-					bidder = params['prosumer'] 
-
+					
 					bids[bidder] = [p, q]
 
 					if name == "BuyingOfferPosted":
@@ -475,6 +472,9 @@ def get_solution(parameters):
 		if (name == "StartOffering"):
 			nextInterval = params['interval']
 			#print ("next interval: %s" %nextInterval)
+
+	print("period: {}".format(period))
+	print("price: {}".format(p_eq))
 
 	return str(p_eq)
 	
