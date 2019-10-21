@@ -353,13 +353,12 @@ def get_solution(parameters):
 				name = event['name']
 				#print("{}({}).".format(name, params))
 
-
-				bidder = int(params['prosumer'])
-				last_bid.remove(bidder)
-				pdb.set_trace()
-
 				if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
 					#pdb.set_trace()
+
+					bidder = int(params['prosumer'])
+					last_bid.remove(bidder)
+					pdb.set_trace()
 
 					new_offers = True
 					interval = params['startTime']
