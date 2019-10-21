@@ -1,0 +1,90 @@
+
+# read the bids of the controllers 
+object: ^bidder_control_.*
+option: repeat
+delay: 60
+attribute: price, quantity
++5m; control_.*/bid_price, control_.*/bid_quantity
+
+
+# calculate the total load and total quantity 
+object: total_load
+option: virtual_object, save, repeat
+delay: 120
+attribute: val
++5m; multiply(substation_transformer/power_out_real, 0.001)
+
+
+#object: total_q_nom
+#option: virtual_object, save, repeat
+#delay: 120
+#attribute: val
+#+5m; stats(^bidder_control_.*/quantity)
+
+
+## calculate the bids of unresponsive loads 
+#object: unresp_bidder_nom
+#option: repeat
+#attribute: quantity, price
+#delay: 180
+#+5m; subtract(total_load/val, total_q_nom/val), 0.63
+
+
+
+
+# variables ot make the log of bids
+
+# time  when we submit the bids
+object: timer
+option: virtual_object, save, repeat
+delay: 60
+attribute: val
++5m; clock/
+
+# period simulated
+object: counter
+option: virtual_object, save, repeat
+attribute: val
++5m; sum(counter/val, 1)
+
+
+# write bids in an external file
+object: init
+option: virtual_object
+delay: 0
+attribute: val
++0m; bc_normal.initialize()
+
+
+
+# bids of controllers
+object: ^bidder_control_.*
+option: repeat, virtual_object
+delay: 200
+attribute: val
++5m; bc_normal.post(^bidder_control_.*/name, ^bidder_control_.*/price, multiply(-1, ^bidder_control_.*/quantity), counter/val, timer/val)
+
+# bis for the unresponsive load
+#object: unresp_bidder_nom
+#option: repeat, virtual_object
+#delay: 200
+#attribute: val
+#+5m; bc_normal.post(unresp_bidder_nom/name, unresp_bidder_nom/price, multiply(-1, unresp_bidder_nom/quantity), counter/val, timer/val)
+
+# bids for the offer
+object: ^block_nom_.*
+option: repeat, virtual_object
+delay: 200
+attribute: val
++5m; bc_normal.post(^block_nom_.*/name, ^block_nom_.*/price, ^block_nom_.*/quantity, counter/val, timer/val)
+
+
+# calculate the clearing price and send an offer for the market_ctrl
+object: seller_bid
+option: repeat
+attribute: price
+delay: 240
++5m; bc_normal.get_solution(total_load/val, counter/val, timer/val)
+
+
+
