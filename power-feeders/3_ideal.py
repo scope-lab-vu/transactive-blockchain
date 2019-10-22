@@ -147,7 +147,6 @@ def initialize(input_):
 
 
 		# read targets
-		rate_delay = np.load('rate_delay.npy', allow_pickle=True)
 		target_gw = np.load('target_gw_ideal.npy', allow_pickle=True)
 
 
@@ -237,15 +236,8 @@ def post(parameters):
 
 
 		# ATTACK GOES HERE
-		rate_delay_tau = rate_delay[tau]
-		is_targeted = False
-		# check if the bidder is in the right gw
-		if gw_assignment[bidder_id] == target_gw:
-			rand = random.random()
-			if rand <= rate_delay_tau:
-				#change the bids of the victims
-				is_targeted = True 
 
+		is_targeted = False
 
 		is_detected = random.random() <= 0
 		bidder_is_seller = bid_quantity > 0
