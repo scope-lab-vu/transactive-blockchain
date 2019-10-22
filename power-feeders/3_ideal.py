@@ -148,7 +148,7 @@ def initialize(input_):
 
 		# read targets
 		rate_delay = np.load('rate_delay.npy', allow_pickle=True)
-		target_gw = np.load('target_gw.npy', allow_pickle=True)
+		target_gw = np.load('target_gw_ideal.npy', allow_pickle=True)
 
 
 
@@ -299,35 +299,13 @@ def post(parameters):
 
 
 
+
 def get_solution(parameters):
 	global txHash
 	global type_bid
 	global contract
 	global poll
 
-	
-	# receipt = wait4receipt(ethclient, txHash, type_bid)
-
-
-	# if receipt == None:
-	# 	print('Failed check transaction')
-	# 	print("last_bid: %s" %last_bid)
-
-	# 	if type_bid == "postBuyingOffer":
-	# 		bidder_id, start_time, end_time, bid_quantity, bid_price = last_bid
-	# 		txHash = contract.postBuyingOffer(account, bidder_id, start_time, end_time, -bid_quantity, bid_price)
-	# 		receipt = wait4receipt(ethclient, txHash, "postBuyingOffer")
-	# 		type_bid = "postBuyingOffer"
-	# 	elif type_bid == "postSellingOffer":
-	# 		bidder_id, start_time, end_time, bid_quantity, bid_price = last_bid
-	# 		txHash = contract.postSellingOffer(account, bidder_id, start_time, end_time, bid_quantity, bid_price)
-	# 		receipt = wait4receipt(ethclient, txHash, "postSellingOffer")
-	# 		type_bid = "postSellingOffer"
-	# 	else:
-	# 		print("Then what is it?")
-	# 		print(type_bid)
-
-	# 	pdb.set_trace()
 		
 
 	try:
@@ -338,14 +316,13 @@ def get_solution(parameters):
 		t = int(float(period))
 		tau = t % periods
 
+		###########################################################
 		# extract the bids of responsive loads
 		bids = dict()
 		bids_demand = []
 		bids_offer = []
 
 		total_demand = 0
-
-		
 		while last_bid: 
 			poll = contract.poll_events()
 			for event in poll:
@@ -374,26 +351,23 @@ def get_solution(parameters):
 						bids_offer.append( [p, q] )
 
 
+		bids_bc = copy.deepcopy( bids )
+
 
 		# calculate unresponsive load
 		quantity_unresponsive = -1 * (float(total_load) - total_demand)
 		bidder_name = 'unresp_bidder_nom'
 		price_cap = '0.63'
-	
-		# write the bid unresponsive load in logs
-		data = [period, time, bidder_name, price_cap, str(quantity_unresponsive), 'unknown']
-		f = open('bids.csv', 'a')
-		f.write( ','.join(data) + '\n' )
-		f.close()
 
+		# save the unresponsive load in bids for the nominal case
+		data = [period, time, bidder_name, price_cap, str(quantity_unresponsive), 'unknown']
 		f = open('bids_log_nom.csv', 'a')
 		f.write( ','.join(data) + '\n' )
 		f.close()
 
-		f = open('bids_log_att.csv', 'a')
-		f.write( ','.join(data) + '\n' )
-		f.close()
 
+		################################################
+		# calculate the equilibria
 
 		# add bid unresopnsive loads
 		bids_demand.append( [float(price_cap), -1*quantity_unresponsive] ) 
@@ -418,31 +392,84 @@ def get_solution(parameters):
 			q_eq, p_eq = find_equilibrium_auction(bids_offer, bids_demand)
 
 	
-		# the following is only necessary to verify that the market works well
-		'''
-		# get the equilibrium and the bids in each time period
-		file_name = 'bids.csv'
-		try:
-			eq_time_nom, market_eq_nom, bids_nom, curves_nom = find_market_equilibrium(file_name)
-		except:
-			print('error')
-			pdb.set_trace()
 
-		# rewrite the bid file
-		try:
-			os.remove(file_name)
-		except:
-			pass
+		#############################################3
+		# implement the attck
+
+		# desired impact 
+		q_a = q_eq * (1 + attack_impact)**0.5
+		delta_q_a = q_a - q_eq
+		
+		sorted_bids = sorted(bids_bc.items(), key=lambda kv: kv[1][1], reverse=True)
+
+		# max possible impact
+		max_impact = 0
+		feasible_targets = []
+		for entry in sorted_bids:
+			p, q = entry[1]
+			bidder = entry[0]
+			bidder_id = int(list_bidders[bidder])
+			if p <= p_eq and q < 0 and gw_assignment[bidder_id] == target_gw:
+				max_impact += -1 * q
+				feasible_targets.append( bidder )
+
+		# select the victims
+		rho = dict()
+		exp_impact = 0
+		for bidder in feasible_targets:
+			p, q = bids_bc[bidder]
+			if q+exp_impact < delta_q_a:
+				rho[x] = 1
+				exp_impact += -1 * q
+			else:
+				rho[x] = (delta_q_a - exp_impact) / (-1 * q)
+				exp_impact += rho[x] * -1 * q
 
 
-		# write the equilibria price
-		prices = [str(market_eq_nom['p'][0]), str(p_eq)]
-		f = open('eq_price.csv', 'a')
-		f.write( ','.join(prices) + '\n' )
+
+		
+		
+		# implement the attack
+		bids_a = {}
+		total_demand_a = 0
+		for bidder in bids_bc.keys():
+			p, q = bids[bidder]
+			if bidder in rho.keys():
+				rand = random.random()
+				if rand <= rho[x]:
+					# do not send the bid of a victim
+					pass
+				else:
+					bids_a[bidder] = [p, q]
+					total_demand_a += q
+			else:
+				bids_a[bidder] = [p, q]
+				total_demand_a += q
+
+
+		# find unresponsive load with the attack
+		quantity_unresponsive_a = -1 * (float(total_load) - total_demand_a)
+		bidder_name = 'unresp_bidder_nom'
+		price_cap = '0.63'
+
+
+
+		# save the bids in a log
+		f = open('bids_log_att.csv', 'a')
+		for bidder in bids_a.keys():
+			p, q = bids_a[bidder]
+			data = [counter, timestamp, bidder, str(p), str(q), 'unknown']
+			f.write( ','.join(data) + '\n' )
+		
+
+		data = [period, time, bidder_name, price_cap, str(quantity_unresponsive_a), 'unknown']
+
+		f.write( ','.join(data) + '\n' )
 		f.close()
 
 
-		'''
+
+
 
 		# initialize the file for the bids of the next period
 		f = open('bids.csv', 'w')
@@ -478,7 +505,6 @@ def get_solution(parameters):
 
 	return str(p_eq)
 	
-
 
 
 
