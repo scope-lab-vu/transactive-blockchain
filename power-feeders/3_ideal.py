@@ -6,13 +6,15 @@ import time
 import numpy as np
 import pdb
 import random
-
+import copy
 import csv
 import os
 import sys 
 
 from functions_auction import build_curves, find_equilibrium_auction, extract_bids, order_bids_descending, order_bids_ascending, find_market_equilibrium, surplus_f, ideal_eq_attack, maer, avg_total_surplus, stats
 from functions_read_data import read_data, rolling_statistics, get_avg_data
+
+from parameters import attack_impact
 
 gateways = None
 # ethclient = None
@@ -32,8 +34,12 @@ txHash = None
 type_bid = None
 last_bid = []
 
+list_bidders = {}
+
 nextInterval = 1
 periods = int(24*60/5)
+
+mitigation_prob = 0.0
 
 def wait4receipt(ethclient,txHash,name,getReceipt=True):
 
@@ -95,6 +101,7 @@ def initialize(input_):
 	global nextInterval
 	global target_gw
 	global rate_delay
+	global list_bidders
 
 	try: 
 
@@ -138,8 +145,8 @@ def initialize(input_):
 		list_bidders = {}
 		with open(file_bidders, 'r') as f_bidders:
 			prosumer_id = 101
-			for x in f_bidders:
-				list_bidders[x.strip()]=prosumer_id
+			for line in f_bidders:
+				list_bidders[line.strip()]=prosumer_id
 				prosumer_id = prosumer_id + 1
 
 		# save the dictionary
@@ -221,7 +228,7 @@ def post(parameters):
 		f.close()
 
 		# get list of bidders
-		list_bidders = np.load('id_bidders.npy', allow_pickle=True).item()
+		#list_bidders = np.load('id_bidders.npy', allow_pickle=True).item()
 
 		bidder_id = int(list_bidders[bidder_name])
 		try:
@@ -311,6 +318,9 @@ def get_solution(parameters):
 		###########################################################
 		# extract the bids of responsive loads
 		bids = dict()
+
+		bidders_demand = []
+
 		bids_demand = []
 		bids_offer = []
 
@@ -325,6 +335,13 @@ def get_solution(parameters):
 				if (name == "BuyingOfferPosted") or (name == "SellingOfferPosted"):
 
 					bidder = params['prosumer']
+					# get the bidder's name
+					'''
+					for name, id in list_bidders.items():
+						if id == bidder:
+							bidder_name = list_bidders
+							break
+					'''
 					last_bid.remove(int(bidder))
 					# print(len(last_bid))
 
@@ -334,12 +351,12 @@ def get_solution(parameters):
 					p = params['value']/1000.0
 					# p, q = decode(energy)
 					
-					bids[bidder] = [p, q]
-
 					if name == "BuyingOfferPosted":
+						bids[bidder] = [p, -q]
 						bids_demand.append( [p, q] )
 						total_demand += q
 					else:
+						bids[bidder] = [p, q]
 						bids_offer.append( [p, q] )
 
 
@@ -386,24 +403,21 @@ def get_solution(parameters):
 	
 
 		#############################################3
-		# implement the attck
+		# implement the attack
 
 		# desired impact 
 		q_a = q_eq * (1 + attack_impact)**0.5
 		delta_q_a = q_a - q_eq
 		
-		sorted_bids = sorted(bids_bc.items(), key=lambda kv: kv[1][1], reverse=True)
+		sorted_bids = sorted(bids.items(), key=lambda kv: kv[1][1])
 
-		# max possible impact
-		max_impact = 0
+		# find feasible targets
 		feasible_targets = []
 		for entry in sorted_bids:
 			p, q = entry[1]
-			bidder = entry[0]
-			bidder_id = int(list_bidders[bidder])
-			if p <= p_eq and q < 0 and gw_assignment[bidder_id] == target_gw:
-				max_impact += -1 * q
-				feasible_targets.append( bidder )
+			bidder_id = entry[0]
+			if p <= p_eq and gw_assignment[bidder_id] == target_gw and q < 0:
+				feasible_targets.append( bidder_id )
 
 		# select the victims
 		rho = dict()
@@ -411,38 +425,32 @@ def get_solution(parameters):
 		for bidder in feasible_targets:
 			p, q = bids_bc[bidder]
 			if q+exp_impact < delta_q_a:
-				rho[x] = 1
-				exp_impact += -1 * q
+				rho[bidder] = 1
+				exp_impact += -1* q
 			else:
-				rho[x] = (delta_q_a - exp_impact) / (-1 * q)
-				exp_impact += rho[x] * -1 * q
+				rho[bidder] = (delta_q_a - exp_impact) / (-1 * q)
+				exp_impact += rho[bidder] * -1 * q
 
-
-
-		
+	
 		
 		# implement the attack
 		bids_a = {}
 		total_demand_a = 0
 		for bidder in bids_bc.keys():
 			p, q = bids[bidder]
-			if bidder in rho.keys():
-				rand = random.random()
-				if rand <= rho[x]:
+			rand = random.random()
+			is_detected = random.random() <= mitigation_prob
+			
+			if bidder in rho.keys() and rand <= rho[bidder] and not is_detected:
 					# do not send the bid of a victim
 					pass
-				else:
-					bids_a[bidder] = [p, q]
-					total_demand_a += q
 			else:
 				bids_a[bidder] = [p, q]
-				total_demand_a += q
+				total_demand_a += -q
 
 
-		# find unresponsive load with the attack
-		quantity_unresponsive_a = -1 * (float(total_load) - total_demand_a)
-		bidder_name = 'unresp_bidder_nom'
-		price_cap = '0.63'
+
+
 
 
 
@@ -450,17 +458,43 @@ def get_solution(parameters):
 		f = open('bids_log_att.csv', 'a')
 		for bidder in bids_a.keys():
 			p, q = bids_a[bidder]
-			data = [counter, timestamp, bidder, str(p), str(q), 'unknown']
+			data = [period, time, str(bidder), str(p), str(q), 'unknown']
 			f.write( ','.join(data) + '\n' )
-		
 
+		# find unresponsive load with the attack
+		quantity_unresponsive_a = -1 * (float(total_load) - total_demand_a)
+		bidder_name = 'unresp_bidder_att'
+		price_cap = '0.63'
 		data = [period, time, bidder_name, price_cap, str(quantity_unresponsive_a), 'unknown']
 
 		f.write( ','.join(data) + '\n' )
 		f.close()
+		bids_a[bidder_name]  = [float(price_cap), quantity_unresponsive_a]
 
 
+		# calculate the equilibria with the attack
+		# select bids of offer and demand
+		offer = []
+		asks = []
+		for i in bids_a.keys():
+			p, q = bids_a[i]
+			if q > 0:
+				offer.append( [p, q] )
+			else:
+				asks.append( [p, -q] )
 
+		asks = order_bids_descending( np.array( asks ) )
+		offer = order_bids_ascending( np.array( offer ) )
+
+		number_offers = len(offer)
+		number_demand = len(asks)
+
+		if number_demand<=0 or number_offers<=0:
+			q_eq_att = 0
+			p_eq_att = 0
+		else:
+			# order the bids according to the price
+			q_eq_att, p_eq_att = find_equilibrium_auction(offer, asks)
 
 
 		# initialize the file for the bids of the next period
@@ -495,8 +529,12 @@ def get_solution(parameters):
 	print("period: {}".format(period))
 	print("price: {}".format(p_eq))
 
-	return str(p_eq)
+	#pdb.set_trace()
+
+	return str(p_eq_att)
 	
+
+
 
 
 
