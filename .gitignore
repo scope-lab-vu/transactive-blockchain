@@ -9,3 +9,8 @@ docs/**/*.out
 *.pyc
 *.json
 *.log
+*.abi
+*.bin*
+*.evm
+*.ast
+.ipynb_checkpoints
