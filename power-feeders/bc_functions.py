@@ -19,8 +19,6 @@ import time
 
 
 ethclient = EthereumClient(ip='localhost', port=10000, TXGAS=cfg.TRANSACTION_GAS)
-ethclient1 = EthereumClient(ip='localhost', port=10001, TXGAS=cfg.TRANSACTION_GAS)
-ethclient2 = EthereumClient(ip='localhost', port=10002, TXGAS=cfg.TRANSACTION_GAS)
 
 account = ethclient.accounts()[0] # use the first owned address
 
