@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Rename this file to .myenv
+# -----------------------------
+
+# --The password of the user on the machine running riaps_ctrl --
+# -- Remove the < and > and replace CTRL password with the password --
+export PASS='FNCSsim'
+# --The user name of the user on the machine running riaps_ctrl --
+# -- Remove the < and > and replace CTRL user with the username --
+export USER=riaps
+
+
+# -- The path to the ssh key for the nodes to be accessed. e.g., '~/.ssh/mykey' --
+export SSHKEY=~/.ssh/cluster_2018_9_10
+# -- Port on which remote nodes allow ssh access. --
+export SSHPORT=222
